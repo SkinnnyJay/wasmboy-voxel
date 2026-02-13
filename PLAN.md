@@ -201,3 +201,4 @@
 - 2026-02-13: Expanded CI path filters to include `.github/workflows/*.yml`, ensuring workflow-only edits still execute the full quality gate.
 - 2026-02-13: Set explicit `shell: bash` on log-capturing workflow steps so `set -o pipefail` behavior is guaranteed across CI, nightly, contract, and release gates.
 - 2026-02-13: Updated diagnostic artifact names to include GitHub run id/attempt, improving failure-trace disambiguation across reruns and repeated pipeline executions.
+- 2026-02-13: Added `changeset:status:ci` wrapper to suppress repeated known workspace file-dependency notices and switched release/contract verification scripts to use cleaner CI status output.

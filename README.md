@@ -331,6 +331,9 @@ npm run release:verify
 # Run focused contract-check workflow gate locally
 npm run contract:ci
 
+# CI-friendly changeset status (suppresses known file-dependency noise)
+npm run changeset:status:ci
+
 # Linting commands used during precommit an tests
 npm run prettier:*
 
