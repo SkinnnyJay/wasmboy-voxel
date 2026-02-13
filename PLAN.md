@@ -345,3 +345,4 @@
 - 2026-02-13: Expanded `changeset-status-ci-lib` regression coverage with whitespace-variant warning deduplication and empty-output handling cases, locking normalization behavior for duplicate-heavy and sparse output streams.
 - 2026-02-13: Hardened shared `test-fixtures` helper with executable-name validation (reject empty and path-segment names) to prevent fake-bin escape paths; added focused unit coverage for invalid-name rejection.
 - 2026-02-13: Extended shared `test-fixtures` executable-name validation to reject backslash path separators for cross-platform path safety; added focused unit coverage for backslash-separated invalid names.
+- 2026-02-13: Extended shared `test-fixtures` executable-name validation to reject dot-segment names (`.` / `..`) to avoid invalid directory-like executable identifiers; added focused unit coverage for dot-segment rejection.

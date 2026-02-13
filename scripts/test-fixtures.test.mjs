@@ -75,3 +75,31 @@ echo 'should not run'
     /Invalid executable name: \.\.\\fixture-cmd/u,
   );
 });
+
+test('writeFakeExecutable rejects dot-segment executable names', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-dot-segment-name-'));
+
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        tempDirectory,
+        '.',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid executable name: \./u,
+  );
+
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        tempDirectory,
+        '..',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid executable name: \.\./u,
+  );
+});
