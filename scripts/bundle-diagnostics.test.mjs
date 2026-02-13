@@ -262,6 +262,7 @@ test('bundle-diagnostics prints usage with --help', () => {
   assert.match(result.stdout, /Usage:/u);
   assert.match(result.stdout, /--output/u);
   assert.match(result.stdout, /--pattern/u);
+  assert.match(result.stdout, /BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS/u);
 });
 
 test('bundle-diagnostics prints usage with -h alias', () => {

@@ -1,6 +1,8 @@
 import { spawnSync } from 'node:child_process';
 import { filterChangesetStatusOutput } from './changeset-status-ci-lib.mjs';
 
+const DEFAULT_TIMEOUT_MS = 120000;
+const TIMEOUT_ENV_VARIABLE = 'CHANGESET_STATUS_CI_TIMEOUT_MS';
 const USAGE_TEXT = `Usage:
 node scripts/changeset-status-ci.mjs
 
@@ -8,9 +10,10 @@ Runs \`changeset status\` and suppresses expected local workspace \`file:\`
 dependency warnings for @wasmboy/* packages against @wasmboy/api.
 
 Options:
-  -h, --help   Show this help message`;
-const DEFAULT_TIMEOUT_MS = 120000;
-const TIMEOUT_ENV_VARIABLE = 'CHANGESET_STATUS_CI_TIMEOUT_MS';
+  -h, --help   Show this help message
+
+Environment:
+  ${TIMEOUT_ENV_VARIABLE}=<ms>  changeset timeout in milliseconds (default: ${DEFAULT_TIMEOUT_MS})`;
 
 function resolveTimeoutMs(rawTimeoutValue) {
   if (rawTimeoutValue === undefined || rawTimeoutValue.length === 0) {

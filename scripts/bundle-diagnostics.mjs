@@ -21,7 +21,10 @@ node scripts/bundle-diagnostics.mjs \\
   [--message 'No diagnostics files were produced for this run.']
 
 Options:
-  -h, --help   Show this help message`;
+  -h, --help   Show this help message
+
+Environment:
+  ${TAR_TIMEOUT_ENV_VARIABLE}=<ms>  tar timeout in milliseconds (default: ${DEFAULT_TAR_TIMEOUT_MS})`;
 
 function resolveTarTimeoutMs(rawTimeoutValue) {
   if (rawTimeoutValue === undefined || rawTimeoutValue.length === 0) {
