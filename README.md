@@ -343,6 +343,7 @@ npm run changeset:status:ci
 node scripts/changeset-status-ci.mjs --help
 # Optional: override changeset wrapper timeout in milliseconds
 CHANGESET_STATUS_CI_TIMEOUT_MS=180000 node scripts/changeset-status-ci.mjs
+# Timeout env values must be positive integers <= 2147483647
 
 # Linting commands used during precommit an tests
 npm run prettier:*
@@ -408,6 +409,7 @@ npm run automation:check
 node scripts/bundle-diagnostics.mjs --help
 # Optional: override tar timeout in milliseconds for diagnostics bundling
 BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS=180000 node scripts/bundle-diagnostics.mjs --output artifacts/ci-diagnostics.tar.gz --pattern 'ci-quality.log'
+# Timeout env values must be positive integers <= 2147483647
 
 # All commands for testing, and are test related
 npm run test:*
