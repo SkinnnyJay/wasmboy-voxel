@@ -74,8 +74,18 @@ declare module "./dist/wasmboy.wasm.esm.js" {
     setJoypadState(state: WasmBoyJoypadState): void;
     resumeAudioContext(): void;
     _getWasmMemorySection(start: number, end: number): Promise<Uint8Array>;
+    _setWasmMemorySection(start: number, data: Uint8Array | ArrayBuffer): Promise<boolean>;
+    setWasmMemorySection(start: number, data: Uint8Array | ArrayBuffer): Promise<boolean>;
     _getWasmConstant(name: string): Promise<number>;
     _runWasmExport(name: string, parameters?: readonly number[]): Promise<number>;
+    _getCartridgeRam(): Promise<Uint8Array>;
+    getWRAM(): Promise<Uint8Array>;
+    setWRAM(payload: Uint8Array): Promise<void>;
+    getWorkRAM(): Promise<Uint8Array>;
+    setWorkRAM(payload: Uint8Array): Promise<void>;
+    writeRAM(address: number, payload: Uint8Array): Promise<boolean>;
+    getFullMemory(): Promise<Uint8Array>;
+    readMemory(address: number, length: number): Promise<Uint8Array>;
   }
 
   export const WasmBoy: WasmBoyApi;

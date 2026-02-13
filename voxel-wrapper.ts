@@ -44,8 +44,20 @@ interface WasmBoyApi {
   setJoypadState(state: WasmBoyJoypadState): void;
   resumeAudioContext(): void;
   _getWasmMemorySection(start: number, end: number): Promise<Uint8Array>;
+  _setWasmMemorySection?(start: number, data: Uint8Array | ArrayBuffer): Promise<boolean>;
+  setWasmMemorySection?(start: number, data: Uint8Array | ArrayBuffer): Promise<boolean>;
   _getWasmConstant(name: string): Promise<number>;
+  _getPpuSnapshotBuffer?(): Promise<ArrayBuffer | null>;
+  _parsePpuSnapshotBuffer?(buffer: ArrayBuffer): WasmBoyPpuSnapshot | null;
   _runWasmExport(name: string, parameters?: readonly number[]): Promise<number>;
+  _getCartridgeRam?(): Promise<Uint8Array>;
+  getWRAM?(): Promise<Uint8Array>;
+  setWRAM?(payload: Uint8Array): Promise<void>;
+  getWorkRAM?(): Promise<Uint8Array>;
+  setWorkRAM?(payload: Uint8Array): Promise<void>;
+  writeRAM?(address: number, payload: Uint8Array): Promise<boolean>;
+  getFullMemory?(): Promise<Uint8Array>;
+  readMemory?(address: number, length: number): Promise<Uint8Array>;
 }
 
 interface WasmBoyConfig {
@@ -68,7 +80,8 @@ interface WasmBoyJoypadState {
   START: boolean;
 }
 
-const GAME_MEMORY_BASE_CONSTANT = "WASMBOY_GAME_BYTES_LOCATION";
+/** WASM export for the base of the 64K Game Boy memory mirror (core/constants.ts). */
+const GAME_MEMORY_BASE_CONSTANT = "DEBUG_GAMEBOY_MEMORY_LOCATION";
 const TILE_DATA_START = 0x8000;
 const TILE_DATA_END_EXCLUSIVE = 0x9800;
 const BG_TILEMAP_0_START = 0x9800;
@@ -111,6 +124,23 @@ export interface WasmBoyPpuSnapshot {
   windowTileMap: Uint8Array;
   oamData: Uint8Array;
 }
+
+/** Layer names for getPpuSnapshotLayers (LLM/tooling). */
+export type PpuSnapshotLayer =
+  | "tileData"
+  | "bgTileMap"
+  | "windowTileMap"
+  | "oamData"
+  | "registers";
+
+export interface GetPpuSnapshotLayersOptions {
+  layers?: PpuSnapshotLayer[];
+}
+
+/** Event handler for subscribe('snapshot', ...). */
+export type SnapshotEventHandler = (snapshot: WasmBoyPpuSnapshot) => void;
+/** Event handler for subscribe('error', ...). */
+export type SnapshotErrorEventHandler = (error: unknown) => void;
 
 /** Debug/fork API types (see fork-api-spec.ts). */
 interface DirtyTileBitfield {
@@ -169,7 +199,18 @@ const BYTES_PER_GBC_COLOR = 2;
 export interface WasmBoyVoxelApi extends WasmBoyApi {
   supportsPpuSnapshot(): Promise<boolean>;
   getPpuSnapshot(): Promise<WasmBoyPpuSnapshot | null>;
+  getPpuSnapshotLayers(options?: GetPpuSnapshotLayersOptions): Promise<Partial<WasmBoyPpuSnapshot> | null>;
   getLastSnapshotDurationMs(): number | null;
+  clearPpuSnapshotCache(): void;
+  readMemory(start: number, endExclusive: number): Promise<Uint8Array | null>;
+  subscribe(
+    event: "snapshot",
+    handler: SnapshotEventHandler
+  ): () => void;
+  subscribe(
+    event: "error",
+    handler: SnapshotErrorEventHandler
+  ): () => void;
   getDirtyTiles(): DirtyTileBitfield;
   getJoypadTrace(): JoypadTraceEntry[];
   setJoypadTraceConfig(config: JoypadTraceConfig): void;
@@ -237,15 +278,67 @@ const resolveGameMemoryBase = async (api: WasmBoyInternalSnapshotApi): Promise<n
   } catch {
     /* Worker communication failed. */
   }
+  cachedGameMemoryBase = null;
   return null;
 };
+
+/** Clears cached PPU snapshot base. Call after reset() or worker reload so next snapshot uses fresh base. */
+function clearPpuSnapshotCache(): void {
+  cachedGameMemoryBase = null;
+}
+
+const snapshotHandlers: SnapshotEventHandler[] = [];
+const errorHandlers: SnapshotErrorEventHandler[] = [];
+
+function emitSnapshot(snapshot: WasmBoyPpuSnapshot): void {
+  snapshotHandlers.forEach((h) => {
+    try {
+      h(snapshot);
+    } catch {
+      /* ignore handler errors */
+    }
+  });
+}
+
+function emitSnapshotError(error: unknown): void {
+  errorHandlers.forEach((h) => {
+    try {
+      h(error);
+    } catch {
+      /* ignore handler errors */
+    }
+  });
+}
 
 const getPpuSnapshot = async (api: WasmBoyApi): Promise<WasmBoyPpuSnapshot | null> => {
   if (!hasSnapshotInternals(api)) return null;
   const internal = api as WasmBoyInternalSnapshotApi;
   const snapshotStart = typeof performance !== "undefined" ? performance.now() : Date.now();
+
+  const batched = internal._getPpuSnapshotBuffer?.();
+  if (batched) {
+    try {
+      const buffer = await batched;
+      if (buffer) {
+        const snapshot = internal._parsePpuSnapshotBuffer?.(buffer);
+        if (snapshot) {
+          lastSnapshotDurationMs =
+            (typeof performance !== "undefined" ? performance.now() : Date.now()) - snapshotStart;
+          emitSnapshot(snapshot);
+          return snapshot;
+        }
+      }
+    } catch (e) {
+      emitSnapshotError(e);
+      /* Batched path failed; fall back to per-section reads. */
+    }
+  }
+
   const gameMemoryBase = await resolveGameMemoryBase(internal);
-  if (gameMemoryBase === null) return null;
+  if (gameMemoryBase === null) {
+    emitSnapshotError(new Error("resolveGameMemoryBase failed"));
+    return null;
+  }
 
   const lcdc = await readGameMemoryByte(internal, gameMemoryBase, REG_LCDC);
   const bgMapStart =
@@ -276,14 +369,64 @@ const getPpuSnapshot = async (api: WasmBoyApi): Promise<WasmBoyPpuSnapshot | nul
   lastSnapshotDurationMs =
     (typeof performance !== "undefined" ? performance.now() : Date.now()) - snapshotStart;
 
-  return {
+  const snapshot: WasmBoyPpuSnapshot = {
     registers: { scx, scy, wx, wy, lcdc, bgp, obp0, obp1 },
     tileData,
     bgTileMap,
     windowTileMap,
     oamData,
   };
+  emitSnapshot(snapshot);
+  return snapshot;
 };
+
+async function getPpuSnapshotLayers(
+  api: WasmBoyApi,
+  options?: GetPpuSnapshotLayersOptions,
+): Promise<Partial<WasmBoyPpuSnapshot> | null> {
+  const full = await getPpuSnapshot(api);
+  if (!full) return null;
+  const layers = options?.layers;
+  if (!layers || layers.length === 0) return full;
+  const result: Partial<WasmBoyPpuSnapshot> = {};
+  for (const layer of layers) {
+    if (layer === "registers") result.registers = full.registers;
+    else if (layer in full) (result as WasmBoyPpuSnapshot)[layer] = full[layer];
+  }
+  return result;
+}
+
+async function readMemory(
+  api: WasmBoyApi,
+  start: number,
+  endExclusive: number,
+): Promise<Uint8Array | null> {
+  if (!hasSnapshotInternals(api)) return null;
+  const internal = api as WasmBoyInternalSnapshotApi;
+  const base = await resolveGameMemoryBase(internal);
+  if (base === null) return null;
+  try {
+    return await internal._getWasmMemorySection(base + start, base + endExclusive);
+  } catch {
+    return null;
+  }
+}
+
+function subscribeSnapshot(handler: SnapshotEventHandler): () => void {
+  snapshotHandlers.push(handler);
+  return () => {
+    const i = snapshotHandlers.indexOf(handler);
+    if (i !== -1) snapshotHandlers.splice(i, 1);
+  };
+}
+
+function subscribeError(handler: SnapshotErrorEventHandler): () => void {
+  errorHandlers.push(handler);
+  return () => {
+    const i = errorHandlers.indexOf(handler);
+    if (i !== -1) errorHandlers.splice(i, 1);
+  };
+}
 
 const BaseApi = BaseWasmBoy as unknown as WasmBoyApi;
 
@@ -347,8 +490,25 @@ export const WasmBoy: WasmBoyVoxelApi = Object.assign(BaseWasmBoy, {
   getPpuSnapshot(): Promise<WasmBoyPpuSnapshot | null> {
     return getPpuSnapshot(BaseApi);
   },
+  getPpuSnapshotLayers(options?: GetPpuSnapshotLayersOptions): Promise<Partial<WasmBoyPpuSnapshot> | null> {
+    return getPpuSnapshotLayers(BaseApi, options);
+  },
   getLastSnapshotDurationMs(): number | null {
     return lastSnapshotDurationMs;
+  },
+  clearPpuSnapshotCache(): void {
+    clearPpuSnapshotCache();
+  },
+  readMemory(start: number, endExclusive: number): Promise<Uint8Array | null> {
+    return readMemory(BaseApi, start, endExclusive);
+  },
+  subscribe(event: "snapshot" | "error", handler: SnapshotEventHandler | SnapshotErrorEventHandler): () => void {
+    if (event === "snapshot") return subscribeSnapshot(handler as SnapshotEventHandler);
+    return subscribeError(handler as SnapshotErrorEventHandler);
+  },
+  reset(options?: WasmBoyConfig): Promise<void> {
+    clearPpuSnapshotCache();
+    return BaseApi.reset(options);
   },
   getDirtyTiles(): DirtyTileBitfield {
     return createStubDirtyTileBitfield();
@@ -375,7 +535,7 @@ export const WasmBoy: WasmBoyVoxelApi = Object.assign(BaseWasmBoy, {
       snapshot?.tileData ?? new Uint8Array(TILE_DATA_END_EXCLUSIVE - TILE_DATA_START);
     return {
       currentBank: 0,
-      combinedTileData: new Uint8Array(tileData),
+      combinedTileData: tileData,
     };
   },
   getDirectMemoryAccess(): DirectMemoryAccess {
