@@ -308,11 +308,11 @@ are extended hardening work (dependency audit + PyBoy-rigor add-ons).
 [x] - Phase 10: Finalization - Tag release and update changelog
 [x] - Phase 10: Finalization - Remove deprecated code after grace period
 
-[ ] - Phase 10: PyBoy Rigor - Add `tick(count, render)` contract + tests
-[ ] - Phase 10: PyBoy Rigor - Add frame-skip equivalence tests
+[x] - Phase 10: PyBoy Rigor - Add `tick(count, render)` contract + tests
+[x] - Phase 10: PyBoy Rigor - Add frame-skip equivalence tests
 [x] - Phase 10: PyBoy Rigor - Add multi-instance isolation test
 [x] - Phase 10: PyBoy Rigor - Add memory view bounds tests
-[ ] - Phase 10: PyBoy Rigor - Add delayed input queue tests
+[x] - Phase 10: PyBoy Rigor - Add delayed input queue tests
 [x] - Phase 10: PyBoy Rigor - Add API error taxonomy tests
 [x] - Phase 10: PyBoy Rigor - Add headless throughput baseline
 
@@ -361,11 +361,11 @@ are extended hardening work (dependency audit + PyBoy-rigor add-ons).
 
 #### PyBoy Rigor Tasks (Actionable)
 
-- [ ] Add `tick(count, render)` contract and unit tests for headless parity.
-- [ ] Add frame-skip equivalence tests (`tick(1)` vs `tick(n)`).
+- [x] Add `tick(count, render)` contract and unit tests for headless parity.
+- [x] Add frame-skip equivalence tests (`tick(1)` vs `tick(n)`).
 - [x] Add multi-instance isolation test (no shared state across instances).
 - [x] Add memory view bounds tests (read/write, out-of-bounds errors).
-- [ ] Add delayed input queue tests (press/release scheduling).
+- [x] Add delayed input queue tests (press/release scheduling).
 - [x] Add API error taxonomy tests (`InvalidInput`, `InvalidOperation`, `OutOfBounds`).
 - [x] Add headless throughput regression baseline (frames/sec).
 
