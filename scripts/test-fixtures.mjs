@@ -2,21 +2,32 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 /**
+ * @param {unknown} value
+ */
+function formatErrorValue(value) {
+  try {
+    return String(value);
+  } catch {
+    return '[unprintable]';
+  }
+}
+
+/**
  * @param {string} tempDirectory
  * @param {string} executableName
  * @param {string} body
  */
 export function writeFakeExecutable(tempDirectory, executableName, body) {
   if (typeof tempDirectory !== 'string' || tempDirectory.trim().length === 0 || tempDirectory.includes('\0')) {
-    throw new Error(`Invalid temp directory: ${tempDirectory}`);
+    throw new Error(`Invalid temp directory: ${formatErrorValue(tempDirectory)}`);
   }
 
   if (typeof executableName !== 'string') {
-    throw new Error(`Invalid executable name: ${executableName}`);
+    throw new Error(`Invalid executable name: ${formatErrorValue(executableName)}`);
   }
 
   if (typeof body !== 'string' || body.trim().length === 0 || body.includes('\0')) {
-    throw new Error(`Invalid executable body for ${executableName}`);
+    throw new Error(`Invalid executable body for ${formatErrorValue(executableName)}`);
   }
 
   if (
@@ -28,7 +39,7 @@ export function writeFakeExecutable(tempDirectory, executableName, body) {
     /[\\/]/u.test(executableName) ||
     path.basename(executableName) !== executableName
   ) {
-    throw new Error(`Invalid executable name: ${executableName}`);
+    throw new Error(`Invalid executable name: ${formatErrorValue(executableName)}`);
   }
 
   const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');

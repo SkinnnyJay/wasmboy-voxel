@@ -167,6 +167,8 @@ Workflow hardening applied:
 - shared fake-executable fixture helper coverage now includes null-byte temp-directory/executable-name rejection, locking fixture path-token sanitization semantics
 - shared fake-executable fixture helper now also rejects null-byte executable-body inputs, preventing malformed script payload propagation into generated fixture binaries
 - shared fake-executable fixture helper coverage now includes null-byte executable-body rejection, locking fixture script-payload sanitization semantics
+- shared fake-executable fixture helper now normalizes error-value rendering with safe string conversion, preventing Symbol/non-string invalid fixture inputs from triggering formatting TypeErrors in validation paths
+- shared fake-executable fixture helper coverage now includes Symbol temp-directory/name/body rejection paths, locking robust error-reporting behavior for non-string invalid fixture inputs
 - `changeset-status-ci` output-filter helper coverage now includes whitespace-padded warning suppression and passthrough internal-blank-line preservation, locking output-formatting behavior under mixed warning/info streams
 - `changeset-status-ci` output-filter helper coverage now also includes whitespace-variant warning deduplication and empty-output handling, locking normalization behavior for sparse and duplicate-heavy output streams
 - `changeset-status-ci` output-filter helper coverage now includes an only-warnings stream case (empty passthrough output assertion), locking filtered-output behavior when no informational lines remain
