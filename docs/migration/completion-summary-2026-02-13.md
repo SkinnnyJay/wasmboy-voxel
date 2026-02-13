@@ -38,6 +38,11 @@ CI automation now runs the same gate in:
 Release pipeline build uses:
 
 - `npm run release:build` (root emulator/lib build + workspace package builds)
+- `npm run release:verify` (full no-build quality gate + changeset status)
+
+Contract workflow uses:
+
+- `npm run contract:ci` (package build + quality gate + changeset status + sample contract validation)
 
 Workflow hardening applied:
 

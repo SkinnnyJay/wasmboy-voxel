@@ -33,6 +33,8 @@
     "stack:build": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" build",
     "stack:build:packages": "pnpm -r --if-present --filter \"./packages/**\" build",
     "release:build": "run-s build stack:build:packages",
+    "release:verify": "run-s test:all:nobuild changeset:status",
+    "contract:ci": "run-s stack:build:packages test:all:nobuild changeset:status contract:sample:registers",
     "stack:test": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" test",
     "stack:typecheck": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" typecheck",
     "stack:lint": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" lint",

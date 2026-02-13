@@ -35,14 +35,5 @@ jobs:
       - name: Install workspace dependencies
         run: npm run install:stack:ci
 
-      - name: Build package stack
-        run: npm run stack:build:packages
-
-      - name: Run unified quality suite
-        run: npm run test:all:nobuild
-
-      - name: Verify changeset status
-        run: npm run changeset:status
-
-      - name: Run explicit contract-check command
-        run: npm run contract:sample:registers
+      - name: Run contract CI gate
+        run: npm run contract:ci

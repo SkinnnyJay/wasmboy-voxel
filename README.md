@@ -322,6 +322,12 @@ npm run stack:build:packages
 # Build release artifacts (root emulator/lib + workspace packages)
 npm run release:build
 
+# Run release verification gate (quality suite + changeset status)
+npm run release:verify
+
+# Run contract-check workflow gate locally
+npm run contract:ci
+
 # Linting commands used during precommit an tests
 npm run prettier:*
 

@@ -49,11 +49,8 @@ jobs:
       - name: Build release artifacts
         run: npm run release:build
 
-      - name: Run release quality gate
-        run: npm run test:all:nobuild
-
-      - name: Verify changeset status
-        run: npm run changeset:status
+      - name: Run release verification gate
+        run: npm run release:verify
 
       - name: Create release PR or publish
         uses: changesets/action@v1
