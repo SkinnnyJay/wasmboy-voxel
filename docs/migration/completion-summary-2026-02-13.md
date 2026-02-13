@@ -141,6 +141,7 @@ Workflow hardening applied:
 - wrapper-level timeout-environment boundary coverage now also includes plus-prefixed and negative env rejection for both helpers, preserving strict positive integer semantics for env-driven timeout parsing in wrapper entry points
 - wrapper-level CLI timeout boundary coverage now also includes acceptance tests at the maximum supported timeout (`2147483647`) in split and inline forms for both wrappers, preserving inclusive upper-bound semantics
 - wrapper-level timeout-environment boundary coverage now includes acceptance tests at the maximum supported timeout (`2147483647`) for both wrappers, preserving inclusive upper-bound semantics for env-driven timeout resolution
+- timeout-override precedence coverage now also includes failure-path assertions where invalid CLI timeout overrides still fail even when environment timeout values are valid, preserving strict CLI validation semantics under precedence rules
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity

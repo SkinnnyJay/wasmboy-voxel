@@ -549,6 +549,26 @@ test('changeset-status-ci rejects inline CLI timeout overrides above supported c
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci rejects invalid split CLI timeout override even with valid env timeout', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '0'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects invalid inline CLI timeout override even with valid env timeout', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=50ms'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci rejects timeout values with non-numeric suffixes', () => {
   const result = runStatusScript(createNodeOnlyPath(), {
     CHANGESET_STATUS_CI_TIMEOUT_MS: '50ms',
