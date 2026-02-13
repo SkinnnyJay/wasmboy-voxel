@@ -40,6 +40,7 @@
     "release:verify:strict": "run-s ci:local:strict changeset:status:ci",
     "contract:ci": "run-s workflow:check automation:test ci:packages changeset:status:ci contract:sample:registers",
     "contract:ci:full": "run-s ci:local changeset:status:ci contract:sample:registers",
+    "contract:ci:full:strict": "run-s ci:local:strict changeset:status:ci contract:sample:registers",
     "stack:test": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" test",
     "stack:typecheck": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" typecheck",
     "stack:lint": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" lint",

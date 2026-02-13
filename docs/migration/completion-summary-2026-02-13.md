@@ -65,10 +65,11 @@ Contract workflow uses:
 - `npm run ci:packages` (package build + package typecheck/tests)
 - `npm run contract:ci` (workflow checks + automation tests + package CI checks + changeset status + sample contract validation)
 - `npm run contract:ci:full` (full `ci:local` gate + changeset status + sample contract validation)
+- `npm run contract:ci:full:strict` (full `ci:local:strict` gate + changeset status + sample contract validation)
 - `npm run changeset:status:ci` (deduplicated/suppressed expected local file-dependency notices in CI output)
 - path filters so the workflow runs only when contract/package/release-metadata files change (including debugger package metadata used by changeset checks)
 - contract workflow path filters include `contracts/**` so contract-schema/documentation edits still exercise contract CI gates
-- contract workflow manual dispatch supports `full_gate=true` to execute `contract:ci:full` on demand
+- contract workflow manual dispatch supports `full_gate=true`, with optional `strict=true` to run `contract:ci:full:strict`
 
 Workflow hardening applied:
 

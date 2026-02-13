@@ -8,6 +8,11 @@ on:
         required: false
         type: boolean
         default: false
+      strict:
+        description: 'Use strict no-retry full gate when full_gate is enabled'
+        required: false
+        type: boolean
+        default: false
   push:
     branches: ['master', 'cursor/**']
     paths:
@@ -72,7 +77,11 @@ jobs:
         run: |
           set -o pipefail
           if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.full_gate }}" == "true" ]]; then
-            npm run contract:ci:full 2>&1 | tee contract-ci.log
+            if [[ "${{ inputs.strict }}" == "true" ]]; then
+              npm run contract:ci:full:strict 2>&1 | tee contract-ci.log
+            else
+              npm run contract:ci:full 2>&1 | tee contract-ci.log
+            fi
           else
             npm run contract:ci 2>&1 | tee contract-ci.log
           fi

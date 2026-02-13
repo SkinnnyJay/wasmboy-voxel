@@ -334,6 +334,9 @@ npm run contract:ci
 # Run full contract gate variant (full ci gate + contract checks)
 npm run contract:ci:full
 
+# Run strict full contract gate variant (no-retry ci gate + contract checks)
+npm run contract:ci:full:strict
+
 # CI-friendly changeset status (suppresses known file-dependency noise)
 npm run changeset:status:ci
 
