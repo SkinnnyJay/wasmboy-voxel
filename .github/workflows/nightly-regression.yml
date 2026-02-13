@@ -1,0 +1,44 @@
+name: nightly-regression
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  full-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Cache Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            apps/debugger/.next/cache
+          key: ${{ runner.os }}-next-nightly-cache-${{ hashFiles('apps/debugger/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-next-nightly-cache-
+
+      - name: Install root dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Install API package dependencies
+        run: npm --prefix packages/api install
+
+      - name: Install CLI package dependencies
+        run: npm --prefix packages/cli install
+
+      - name: Install debugger app dependencies
+        run: npm --prefix apps/debugger install
+
+      - name: Run full no-build quality suite
+        run: npm run test:all:nobuild

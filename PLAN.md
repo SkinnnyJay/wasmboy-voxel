@@ -165,3 +165,4 @@
 - 2026-02-13: Completed Phase 8 dependency audit hardening by removing unused vulnerable `uglifyjs-webpack-plugin`, rerunning full workspace/integration/core suites, and reaching `npm audit --omit=optional` = 0 vulnerabilities.
 - 2026-02-13: Added consolidated root quality-gate scripts (`test:all`, `test:all:nobuild`, `audit:check`) and updated CI to run the unified no-build quality suite end-to-end.
 - 2026-02-13: Added migration completion summary doc capturing final validation script, audit posture, and release markers for quick downstream reference.
+- 2026-02-13: Added scheduled nightly regression workflow to run `test:all:nobuild` on CI daily (plus manual trigger) for ongoing post-migration drift detection.
