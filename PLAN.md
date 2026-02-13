@@ -403,3 +403,4 @@
 - 2026-02-13: Expanded shared `readRequiredArgumentValue` allowed-known-token contract coverage with explicit invalid `allowedKnownValues` set-shape rejection and subset-enforcement rejection paths, further locking read-path option validation semantics.
 - 2026-02-13: Expanded shared `readRequiredArgumentValue` allowed-known-token entry coverage with explicit null and whitespace-only `allowedKnownValues` entry rejection paths, locking token-entry contract semantics on parser read-path validation.
 - 2026-02-13: Added focused read-path regression assertions for null/whitespace `allowedKnownValues` entries in `readRequiredArgumentValue`, aligning test implementation with documented parser-helper token-entry contracts.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` allowed-known-token entry coverage with explicit non-string (`number`) `allowedKnownValues` entry rejection, locking read-path token-type contract semantics for allowed-known-value validation.

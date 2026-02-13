@@ -555,6 +555,20 @@ test('readRequiredArgumentValue rejects null allowedKnownValues entries', () => 
   );
 });
 
+test('readRequiredArgumentValue rejects non-string allowedKnownValues entries', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--message', '--help'], 0, {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: new Set([42]),
+      }),
+    /Invalid allowedKnownValues entries for --message/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects whitespace-only allowedKnownValues entries', () => {
   assert.throws(
     () =>
