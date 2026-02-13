@@ -36,6 +36,18 @@ test('resolveStrictPositiveIntegerEnv rejects non-integer default values', () =>
   );
 });
 
+test('resolveStrictPositiveIntegerEnv rejects non-finite default values', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: undefined,
+        defaultValue: Number.NaN,
+      }),
+    /Invalid default value for TEST_TIMEOUT: NaN/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv rejects above-ceiling default values', () => {
   assert.throws(
     () =>

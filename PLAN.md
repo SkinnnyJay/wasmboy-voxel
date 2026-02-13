@@ -352,3 +352,4 @@
 - 2026-02-13: Extended shared `test-fixtures` body-validation semantics to reject whitespace-only executable bodies (in addition to empty bodies), preventing ambiguous no-op fixture scripts; added focused unit coverage for whitespace-only body rejection.
 - 2026-02-13: Hardened shared timeout parser internals to validate default timeout values (`defaultValue`) as strict positive safe integers within supported bounds; expanded helper unit coverage with invalid-default rejection cases (zero, non-integer, above-ceiling) to lock fallback contract semantics.
 - 2026-02-13: Expanded `changeset-status-ci-lib` regression coverage with an only-warnings output case asserting empty passthrough output, locking filtered-output behavior when warning suppression removes all lines.
+- 2026-02-13: Expanded shared timeout default-validation unit coverage with non-finite (`NaN`) default rejection, locking finite-number constraints in helper fallback semantics.
