@@ -168,6 +168,16 @@ test('changeset-status-ci rejects timeout values with non-numeric suffixes', () 
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci rejects timeout values above supported ceiling', () => {
+  const result = runStatusScript(createNodeOnlyPath(), {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '2147483648',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid CHANGESET_STATUS_CI_TIMEOUT_MS value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci reports timeout errors with configured value', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-'));
   const fakeBinDirectory = writeFakeChangeset(

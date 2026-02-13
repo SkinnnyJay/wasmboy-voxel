@@ -222,6 +222,7 @@
 - 2026-02-13: Added timeout upper-bound validation (`<= 2147483647ms`) in shared timeout parsing helper, with regression coverage to prevent out-of-range process timeout configuration.
 - 2026-02-13: Expanded shared timeout helper coverage to reject whitespace-only env values, ensuring invalid CI timeout config is surfaced explicitly.
 - 2026-02-13: Added shared timeout helper coverage for empty-string env values to confirm default-timeout fallback semantics remain stable.
+- 2026-02-13: Added wrapper-level regression coverage for above-ceiling timeout env values in both helpers so shared timeout-bound enforcement remains visible through CLI behavior.
 - 2026-02-13: Updated README helper usage examples to explicitly document timeout env bounds (`1..2147483647`) for both automation wrappers.
 - 2026-02-13: Refined diagnostics argument parsing so values starting with `--` are accepted when valid (e.g. custom message text) while true flag-missing cases still fail reliably.
 - 2026-02-13: Tightened diagnostics value parsing for `--output` / `--pattern` so unknown long-flag tokens are treated as missing values (while `--message` still allows dash-prefixed content), reducing accidental argument-swallowing risk.
