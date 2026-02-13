@@ -15,7 +15,7 @@ export function writeFakeExecutable(tempDirectory, executableName, body) {
     throw new Error(`Invalid executable name: ${executableName}`);
   }
 
-  if (typeof body !== 'string' || body.trim().length === 0) {
+  if (typeof body !== 'string' || body.trim().length === 0 || body.includes('\0')) {
     throw new Error(`Invalid executable body for ${executableName}`);
   }
 

@@ -227,3 +227,12 @@ test('writeFakeExecutable rejects non-string executable bodies', () => {
 
   assert.throws(() => writeFakeExecutable(tempDirectory, 'fixture-cmd', 42), /Invalid executable body for fixture-cmd/u);
 });
+
+test('writeFakeExecutable rejects executable bodies containing null bytes', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-null-byte-body-'));
+
+  assert.throws(
+    () => writeFakeExecutable(tempDirectory, 'fixture-cmd', '#!/usr/bin/env bash\0\necho "x"\n'),
+    /Invalid executable body for fixture-cmd/u,
+  );
+});
