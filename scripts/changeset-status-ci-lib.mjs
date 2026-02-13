@@ -1,4 +1,4 @@
-const expectedWorkspaceWarningPattern = /^Package "(@wasmboy\/debugger-app|@wasmboy\/cli)" must depend on the current version of "@wasmboy\/api": "0\.0\.0" vs "file:/;
+const expectedWorkspaceWarningPattern = /^Package "@wasmboy\/[^"]+" must depend on the current version of "@wasmboy\/api": "[^"]+" vs "file:/;
 
 /**
  * @param {string} rawOutput

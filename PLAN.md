@@ -201,6 +201,7 @@
 - 2026-02-13: Expanded diagnostics bundler automation coverage for custom placeholder message handling when no diagnostics files are present.
 - 2026-02-13: Made diagnostics bundling deterministic by lexicographically sorting matched files before archive creation, and added automation coverage for archive ordering stability.
 - 2026-02-13: Refactored `changeset:status:ci` filtering into a reusable module and added automation tests for warning suppression/dedup behavior, improving confidence in CI log-sanitization correctness.
+- 2026-02-13: Generalized `changeset:status:ci` suppression matching to support future `@wasmboy/*` workspace package names and non-`0.0.0` expected versions while still only filtering `file:`-based notices.
 - 2026-02-13: Added diagnostics bundler negative-path tests for required CLI arguments (`--output`, `--pattern`), strengthening guardrail coverage for automation script misuse.
 - 2026-02-13: Expanded diagnostics bundler negative-path automation coverage for unknown flags and missing flag values, hardening script argument-validation guarantees.
 - 2026-02-13: Added failure-diagnostics artifact uploads (quality logs + generated screenshots) to CI and nightly workflows to improve regression triage speed when quality gates fail.

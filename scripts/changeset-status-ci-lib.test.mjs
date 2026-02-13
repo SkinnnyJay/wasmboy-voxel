@@ -4,8 +4,8 @@ import { filterChangesetStatusOutput } from './changeset-status-ci-lib.mjs';
 
 test('filterChangesetStatusOutput suppresses expected workspace file warnings', () => {
   const input = [
-    'Package "@wasmboy/debugger-app" must depend on the current version of "@wasmboy/api": "0.0.0" vs "file:../../packages/api"',
-    'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "0.0.0" vs "file:../api"',
+    'Package "@wasmboy/debugger-app" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../../packages/api"',
+    'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "1.0.0-beta.1" vs "file:../api"',
     '🦋  info Packages to be bumped at minor:',
     '🦋  info - @wasmboy/api',
   ].join('\n');
@@ -24,4 +24,14 @@ test('filterChangesetStatusOutput de-duplicates repeated warning lines', () => {
 
   assert.deepEqual(result.suppressedWarnings, [repeatedWarning]);
   assert.equal(result.passthroughOutput, '🦋  info NO packages to be bumped at patch');
+});
+
+test('filterChangesetStatusOutput keeps non-file dependency warnings', () => {
+  const npmVersionWarning = 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "0.7.1" vs "^0.7.1"';
+  const input = [npmVersionWarning, '🦋  info NO packages to be bumped at patch'].join('\n');
+
+  const result = filterChangesetStatusOutput(input);
+
+  assert.deepEqual(result.suppressedWarnings, []);
+  assert.equal(result.passthroughOutput, input);
 });

@@ -98,6 +98,7 @@ Workflow hardening applied:
 - automation coverage includes custom placeholder message behavior for empty diagnostics archives
 - diagnostics archive file collection now sorts matches lexicographically for deterministic artifact structure across runs
 - automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)
+- changeset status warning filter now tolerates version bumps by suppressing only `file:` workspace warnings from `@wasmboy/*` packages against `@wasmboy/api`
 - automation coverage also validates diagnostics bundle CLI argument guards (missing `--output` and missing `--pattern`)
 - automation coverage also validates diagnostics bundle argument parsing errors (unknown flags and missing flag values)
 - CI and nightly workflows now capture full quality-gate logs and relevant screenshot outputs as artifacts on failure for faster triage
