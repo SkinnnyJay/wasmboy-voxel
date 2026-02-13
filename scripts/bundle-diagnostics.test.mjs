@@ -198,6 +198,29 @@ test('bundle-diagnostics archives files whose names start with a dash', () => {
   );
 });
 
+test('bundle-diagnostics excludes output archive path from matched inputs', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-output-match-'));
+  const logsDirectory = path.join(tempDirectory, 'logs');
+  const artifactsDirectory = path.join(tempDirectory, 'artifacts');
+  fs.mkdirSync(logsDirectory, { recursive: true });
+  fs.mkdirSync(artifactsDirectory, { recursive: true });
+  fs.writeFileSync(path.join(logsDirectory, 'example.log'), 'diagnostic line\n', 'utf8');
+  fs.writeFileSync(path.join(artifactsDirectory, 'self.tar.gz'), 'preexisting archive placeholder\n', 'utf8');
+
+  runBundlerCommand(tempDirectory, ['--output', 'artifacts/self.tar.gz', '--pattern', 'logs/*.log', '--pattern', 'artifacts/self.tar.gz']);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/self.tar.gz');
+  assert.ok(
+    archiveContents.some(entry => entry.endsWith('logs/example.log')),
+    'archive should still include other matched diagnostic files',
+  );
+  assert.equal(
+    archiveContents.some(entry => entry.endsWith('artifacts/self.tar.gz')),
+    false,
+    'archive should not include itself even when matched by an input pattern',
+  );
+});
+
 test('bundle-diagnostics requires output argument', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-output-required-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--pattern', 'logs/*.log']);

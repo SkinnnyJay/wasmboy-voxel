@@ -85,13 +85,18 @@ function assertRequiredConfig(output, patterns) {
   }
 }
 
-function collectFiles(patterns) {
+function collectFiles(patterns, outputPath) {
   const filesByResolvedPath = new Map();
+  const resolvedOutputPath = path.resolve(outputPath);
 
   for (const pattern of patterns) {
     const matches = fs.globSync(pattern, { withFileTypes: false });
     for (const file of matches) {
       const resolvedFilePath = path.resolve(file);
+      if (resolvedFilePath === resolvedOutputPath) {
+        continue;
+      }
+
       if (fs.existsSync(resolvedFilePath) && fs.statSync(resolvedFilePath).isFile()) {
         const normalizedArchivePath = path.normalize(file);
         filesByResolvedPath.set(resolvedFilePath, normalizedArchivePath);
@@ -136,7 +141,7 @@ function main() {
 
   fs.mkdirSync(path.dirname(args.output), { recursive: true });
 
-  const matchedFiles = collectFiles(args.patterns);
+  const matchedFiles = collectFiles(args.patterns, args.output);
   const placeholderFile = matchedFiles.length > 0 ? null : createPlaceholderFile(args.output, args.message);
   const filesToArchive = matchedFiles.length > 0 ? matchedFiles : [placeholderFile];
 
