@@ -369,3 +369,4 @@
 - 2026-02-13: Hardened shared `cli-arg-values` options-shape validation by rejecting array-shaped options containers and expanded helper unit coverage for array-options rejection across direct/read-path entrypoints.
 - 2026-02-13: Expanded shared timeout default-validation coverage with non-numeric default-type (`string`) rejection paths for both direct and composed timeout-resolution helpers.
 - 2026-02-13: Hardened shared `cli-arg-values` token-set contract validation by enforcing string-only entries in `knownArgs`/`allowedKnownValues` and expanded helper unit coverage for non-string set-entry rejection.
+- 2026-02-13: Hardened shared `cli-arg-values` value-type contract by rejecting non-string required argument values before string-token operations and expanded helper unit coverage for direct/read-path non-string value rejection.

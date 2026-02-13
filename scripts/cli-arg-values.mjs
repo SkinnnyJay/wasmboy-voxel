@@ -71,6 +71,10 @@ function assertStringSetValues(optionName, values, flagName) {
 export function validateRequiredArgumentValue(value, options) {
   assertValidRequiredArgumentValueOptions(options);
 
+  if (value !== undefined && typeof value !== 'string') {
+    throw new Error(`Invalid value type for ${options.flagName} argument: ${value}`);
+  }
+
   const isKnownToken = value ? options.knownArgs.has(value) : false;
   const isAllowedKnownValue = Boolean(value && options.allowedKnownValues?.has(value));
 

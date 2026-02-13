@@ -28,6 +28,18 @@ test('validateRequiredArgumentValue rejects missing values', () => {
   );
 });
 
+test('validateRequiredArgumentValue rejects non-string values', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue(42, {
+        flagName: '--output',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid value type for --output argument: 42/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects missing options objects', () => {
   assert.throws(() => validateRequiredArgumentValue('value', undefined), /Invalid required argument options\./u);
 });
@@ -212,6 +224,19 @@ test('readRequiredArgumentValue rejects non-array argv inputs', () => {
         allowWhitespaceOnly: true,
       }),
     /Invalid argv array for --timeout-ms/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects non-string following argument values', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', 42], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid value type for --timeout-ms argument: 42/u,
   );
 });
 
