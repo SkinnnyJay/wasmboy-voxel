@@ -308,3 +308,4 @@
 - 2026-02-13: Expanded timeout-value token-guard regression coverage with self-flag misuse cases (`--timeout-ms --timeout-ms`, `--timeout-ms=--timeout-ms`, plus diagnostics equivalents), preserving missing-value semantics when timeout flag tokens are repeated in value positions.
 - 2026-02-13: Expanded diagnostics duplicate-flag regression coverage with equals-only duplicate cases for `--output` and `--message`, preserving duplicate-detection semantics across split-only, equals-only, and mixed argument forms.
 - 2026-02-13: Expanded diagnostics path-value token-guard regression coverage with help-token cases for `--output`/`--pattern` in split and equals forms, preserving missing-value semantics when help tokens are misused as path values.
+- 2026-02-13: Expanded help-timeout exclusivity regression coverage with trailing-help permutations (timeout args preceding help in split and inline forms, across both long and short help aliases) for both helper wrappers.

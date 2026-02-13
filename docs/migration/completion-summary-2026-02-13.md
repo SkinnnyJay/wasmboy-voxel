@@ -125,6 +125,7 @@ Workflow hardening applied:
 - timeout-value token-guard coverage now also includes self-flag misuse tokens (`--timeout-ms --timeout-ms`, `--timeout-ms=--timeout-ms`, and diagnostics equivalents), preserving missing-value semantics when a timeout flag token is repeated in value position
 - diagnostics duplicate-flag regression coverage now includes equals-only duplicate paths for `--output` and `--message`, preserving duplicate-detection semantics across split-only, equals-only, and mixed argument forms
 - diagnostics path-value token-guard coverage now includes help-token variants for `--output` / `--pattern` (split and equals forms), preserving missing-value semantics for help-token misuse in path-value positions
+- help-timeout exclusivity regression coverage now includes trailing-help permutations (timeout args before help in both split/inline forms and both help aliases) for `changeset-status-ci` and `bundle-diagnostics`
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity

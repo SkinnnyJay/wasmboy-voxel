@@ -309,6 +309,38 @@ test('changeset-status-ci rejects mixed short-help and inline timeout arguments'
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci rejects mixed timeout and trailing help arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '100', '--help']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Help flag cannot be combined with timeout override arguments/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects mixed inline timeout and trailing help arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=100', '--help']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Help flag cannot be combined with timeout override arguments/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects mixed timeout and trailing short-help arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '100', '-h']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Help flag cannot be combined with timeout override arguments/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects mixed inline timeout and trailing short-help arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=100', '-h']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Help flag cannot be combined with timeout override arguments/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci rejects unknown arguments', () => {
   const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--unknown']);
 
