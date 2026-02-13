@@ -28,7 +28,7 @@ export default class HelpComponent extends Component {
               <b>Special, Space</b> - Play / Pause
             </li>
             <li>
-              <b>Keyboard (fallback)</b> - Arrow keys (D-pad), Z/X (A/B), Enter (Start), Shift (Select)
+              <b>Keyboard (fallback)</b> - Arrow keys (D-pad), Z/X or A/S (A/B), Enter/Space (Start), Shift (Select)
             </li>
           </ul>
         </div>
