@@ -872,6 +872,18 @@ test('readRequiredArgumentValue rejects bigint flag names', () => {
   );
 });
 
+test('readRequiredArgumentValue rejects numeric flag names', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: 1234,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid flag name: 1234/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects missing known-args options', () => {
   assert.throws(
     () =>
