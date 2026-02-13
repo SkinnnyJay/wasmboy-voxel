@@ -441,6 +441,28 @@ test('readRequiredArgumentValue rejects array options', () => {
   assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, []), /Invalid required argument options\./u);
 });
 
+test('readRequiredArgumentValue rejects missing known-args options', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args set for --timeout-ms/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects missing allowDoubleDashValue options', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+      }),
+    /Invalid allowDoubleDashValue option for --timeout-ms/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects invalid argument indexes', () => {
   const args = ['--timeout-ms', '00050'];
   assert.throws(
