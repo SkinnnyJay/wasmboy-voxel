@@ -214,6 +214,7 @@
 - 2026-02-13: Standardized diagnostics helper failure output with `[bundle-diagnostics]` prefixed error lines and usage-on-parse-failure behavior for clearer CI troubleshooting logs.
 - 2026-02-13: Added regression assertions for helper error-prefix contracts (`[bundle-diagnostics]`, `[changeset:status:ci]`) to keep automation troubleshooting output stable.
 - 2026-02-13: Tightened diagnostics helper CLI semantics by rejecting mixed help + operational argument combinations, reducing ambiguous invocation modes.
+- 2026-02-13: Extracted shared strict timeout env parsing into `scripts/cli-timeout.mjs` and wired both automation wrappers to it, with dedicated helper unit coverage to reduce duplicated parsing logic.
 - 2026-02-13: Refactored `changeset:status:ci` filtering into a reusable module and added automation tests for warning suppression/dedup behavior, improving confidence in CI log-sanitization correctness.
 - 2026-02-13: Generalized `changeset:status:ci` suppression matching to support future `@wasmboy/*` workspace package names and non-`0.0.0` expected versions while still only filtering `file:`-based notices.
 - 2026-02-13: Added direct automation tests for `changeset-status-ci.mjs` wrapper behavior, covering filtered output reporting, non-zero exit pass-through, and missing-command error handling.

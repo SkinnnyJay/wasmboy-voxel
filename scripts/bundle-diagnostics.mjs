@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { resolveStrictPositiveIntegerEnv } from './cli-timeout.mjs';
 
 /**
  * Usage:
@@ -25,24 +26,6 @@ Options:
 
 Environment:
   ${TAR_TIMEOUT_ENV_VARIABLE}=<ms>  tar timeout in milliseconds (default: ${DEFAULT_TAR_TIMEOUT_MS})`;
-
-function resolveTarTimeoutMs(rawTimeoutValue) {
-  if (rawTimeoutValue === undefined || rawTimeoutValue.length === 0) {
-    return DEFAULT_TAR_TIMEOUT_MS;
-  }
-
-  const normalizedTimeout = rawTimeoutValue.trim();
-  if (!/^\d+$/u.test(normalizedTimeout)) {
-    throw new Error(`Invalid ${TAR_TIMEOUT_ENV_VARIABLE} value: ${rawTimeoutValue}`);
-  }
-
-  const parsedTimeout = Number.parseInt(normalizedTimeout, 10);
-  if (!Number.isFinite(parsedTimeout) || parsedTimeout <= 0) {
-    throw new Error(`Invalid ${TAR_TIMEOUT_ENV_VARIABLE} value: ${rawTimeoutValue}`);
-  }
-
-  return parsedTimeout;
-}
 
 function readRequiredValue(argv, index, flagName) {
   const value = argv[index + 1];
@@ -227,7 +210,11 @@ function main() {
   let placeholderFile = null;
   try {
     assertRequiredConfig(args.output, args.patterns);
-    const tarTimeoutMs = resolveTarTimeoutMs(process.env[TAR_TIMEOUT_ENV_VARIABLE]);
+    const tarTimeoutMs = resolveStrictPositiveIntegerEnv({
+      name: TAR_TIMEOUT_ENV_VARIABLE,
+      rawValue: process.env[TAR_TIMEOUT_ENV_VARIABLE],
+      defaultValue: DEFAULT_TAR_TIMEOUT_MS,
+    });
 
     fs.mkdirSync(path.dirname(args.output), { recursive: true });
 

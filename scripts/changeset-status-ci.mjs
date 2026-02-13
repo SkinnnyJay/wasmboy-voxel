@@ -1,5 +1,6 @@
 import { spawnSync } from 'node:child_process';
 import { filterChangesetStatusOutput } from './changeset-status-ci-lib.mjs';
+import { resolveStrictPositiveIntegerEnv } from './cli-timeout.mjs';
 
 const DEFAULT_TIMEOUT_MS = 120000;
 const TIMEOUT_ENV_VARIABLE = 'CHANGESET_STATUS_CI_TIMEOUT_MS';
@@ -14,24 +15,6 @@ Options:
 
 Environment:
   ${TIMEOUT_ENV_VARIABLE}=<ms>  changeset timeout in milliseconds (default: ${DEFAULT_TIMEOUT_MS})`;
-
-function resolveTimeoutMs(rawTimeoutValue) {
-  if (rawTimeoutValue === undefined || rawTimeoutValue.length === 0) {
-    return DEFAULT_TIMEOUT_MS;
-  }
-
-  const normalizedTimeout = rawTimeoutValue.trim();
-  if (!/^\d+$/u.test(normalizedTimeout)) {
-    throw new Error(`Invalid ${TIMEOUT_ENV_VARIABLE} value: ${rawTimeoutValue}`);
-  }
-
-  const parsedTimeout = Number.parseInt(normalizedTimeout, 10);
-  if (!Number.isFinite(parsedTimeout) || parsedTimeout <= 0) {
-    throw new Error(`Invalid ${TIMEOUT_ENV_VARIABLE} value: ${rawTimeoutValue}`);
-  }
-
-  return parsedTimeout;
-}
 
 function parseArgs(argv) {
   /** @type {{showHelp: boolean}} */
@@ -66,7 +49,11 @@ if (parsedArgs.showHelp) {
 
 let timeoutMs = DEFAULT_TIMEOUT_MS;
 try {
-  timeoutMs = resolveTimeoutMs(process.env[TIMEOUT_ENV_VARIABLE]);
+  timeoutMs = resolveStrictPositiveIntegerEnv({
+    name: TIMEOUT_ENV_VARIABLE,
+    rawValue: process.env[TIMEOUT_ENV_VARIABLE],
+    defaultValue: DEFAULT_TIMEOUT_MS,
+  });
 } catch (error) {
   const errorMessage = error instanceof Error ? error.message : 'Invalid timeout configuration.';
   console.error(`[changeset:status:ci] ${errorMessage}`);
