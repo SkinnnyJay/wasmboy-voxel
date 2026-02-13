@@ -11,6 +11,7 @@ on:
       - 'core/**'
       - 'lib/**'
       - 'packages/**'
+      - 'scripts/**'
       - 'contracts/**'
       - 'index.ts'
       - 'voxel-wrapper.ts'
