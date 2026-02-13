@@ -323,6 +323,18 @@ test('validateRequiredArgumentValue rejects symbol allowDoubleDashValue options'
   );
 });
 
+test('validateRequiredArgumentValue rejects bigint allowDoubleDashValue options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: 1n,
+      }),
+    /Invalid allowDoubleDashValue option for --output/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects unprintable allowDoubleDashValue options', () => {
   assert.throws(
     () =>
@@ -369,6 +381,19 @@ test('validateRequiredArgumentValue rejects symbol allowWhitespaceOnly options',
         knownArgs: KNOWN_ARGS,
         allowDoubleDashValue: false,
         allowWhitespaceOnly: Symbol('allow-whitespace-only'),
+      }),
+    /Invalid allowWhitespaceOnly option for --output/u,
+  );
+});
+
+test('validateRequiredArgumentValue rejects bigint allowWhitespaceOnly options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: 1n,
       }),
     /Invalid allowWhitespaceOnly option for --output/u,
   );
@@ -843,6 +868,18 @@ test('readRequiredArgumentValue rejects symbol allowDoubleDashValue options', ()
   );
 });
 
+test('readRequiredArgumentValue rejects bigint allowDoubleDashValue options', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: 1n,
+      }),
+    /Invalid allowDoubleDashValue option for --timeout-ms/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects unprintable allowDoubleDashValue options', () => {
   assert.throws(
     () =>
@@ -889,6 +926,19 @@ test('readRequiredArgumentValue rejects symbol allowWhitespaceOnly options', () 
         knownArgs: KNOWN_ARGS,
         allowDoubleDashValue: false,
         allowWhitespaceOnly: Symbol('allow-whitespace-only'),
+      }),
+    /Invalid allowWhitespaceOnly option for --timeout-ms/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects bigint allowWhitespaceOnly options', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: 1n,
       }),
     /Invalid allowWhitespaceOnly option for --timeout-ms/u,
   );

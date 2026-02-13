@@ -315,6 +315,7 @@ Workflow hardening applied:
 - read-path parser-helper value-type coverage now explicitly asserts `null`, `Symbol`, and unprintable following-token rejection with stable formatted error output
 - composed timeout-resolution coverage now explicitly asserts `null`, `Symbol`, and unprintable default-timeout rejection with stable formatted error output
 - parser-helper boolean-option coverage now explicitly asserts `Symbol` rejection for `allowDoubleDashValue` and `allowWhitespaceOnly` in direct/read validation helpers
+- parser-helper boolean-option coverage now explicitly asserts `bigint` rejection for `allowDoubleDashValue` and `allowWhitespaceOnly` in direct/read validation helpers
 - parser-helper boolean-option coverage now explicitly asserts unprintable-object rejection for `allowDoubleDashValue` and `allowWhitespaceOnly` in direct/read validation helpers
 - changeset-status output filtering coverage now explicitly asserts `bigint` output rejection in `filterChangesetStatusOutput`
 - timeout helper coverage now explicitly asserts `bigint` rejection for direct/composed default values and env/CLI raw timeout inputs
