@@ -182,6 +182,8 @@ Workflow hardening applied:
 - shared argument-value helper coverage now includes missing/non-object options rejection in both direct validation and read-path entrypoints, locking top-level helper-option contract semantics
 - shared argument-value helper now also rejects array-shaped options containers, tightening helper options-shape validation against ambiguous non-record input types
 - shared argument-value helper coverage now includes array-options rejection across direct/read-path entrypoints, locking strict options-shape contract semantics
+- shared argument-value helper now validates that configured known-token sets contain only string entries, preventing malformed set entries from silently bypassing parser token checks
+- shared argument-value helper coverage now includes non-string set-entry rejection for `knownArgs` and `allowedKnownValues`, locking helper token-set input contract semantics
 - timeout env/CLI precedence resolution now uses a shared helper (`resolveTimeoutFromCliAndEnv`) across both wrappers, reducing duplicated timeout-resolution scaffolding while preserving current env-first validation + CLI-override semantics
 - shared timeout-precedence helper now has focused unit coverage for default/env/CLI precedence plus invalid-env and invalid-CLI failure paths
 - shared timeout-precedence helper coverage now also includes empty-env + CLI-override resolution, whitespace-padded max-int CLI override acceptance, and whitespace-only CLI rejection with valid env fallback

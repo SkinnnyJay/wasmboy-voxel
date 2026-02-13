@@ -22,6 +22,7 @@ function assertValidRequiredArgumentValueOptions(options) {
   if (!(options.knownArgs instanceof Set)) {
     throw new Error(`Invalid known-args set for ${options.flagName}`);
   }
+  assertStringSetValues('known-args', options.knownArgs, options.flagName);
 
   if (typeof options.allowDoubleDashValue !== 'boolean') {
     throw new Error(`Invalid allowDoubleDashValue option for ${options.flagName}`);
@@ -33,6 +34,23 @@ function assertValidRequiredArgumentValueOptions(options) {
 
   if (options.allowedKnownValues !== undefined && !(options.allowedKnownValues instanceof Set)) {
     throw new Error(`Invalid allowedKnownValues set for ${options.flagName}`);
+  }
+
+  if (options.allowedKnownValues) {
+    assertStringSetValues('allowedKnownValues', options.allowedKnownValues, options.flagName);
+  }
+}
+
+/**
+ * @param {string} optionName
+ * @param {Set<unknown>} values
+ * @param {string} flagName
+ */
+function assertStringSetValues(optionName, values, flagName) {
+  for (const value of values) {
+    if (typeof value !== 'string') {
+      throw new Error(`Invalid ${optionName} entries for ${flagName}`);
+    }
   }
 }
 
