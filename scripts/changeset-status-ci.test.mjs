@@ -139,6 +139,15 @@ test('changeset-status-ci rejects unknown arguments', () => {
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci rejects unknown args even when help is present', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--help', '--unknown']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[changeset:status:ci\]/u);
+  assert.match(result.stderr, /Unknown argument: --unknown/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci fails fast for invalid timeout configuration', () => {
   const result = runStatusScript(createNodeOnlyPath(), {
     CHANGESET_STATUS_CI_TIMEOUT_MS: 'invalid-timeout',

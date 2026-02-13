@@ -111,6 +111,7 @@ Workflow hardening applied:
 - diagnostics/changeset wrappers now include usage text for invalid timeout configuration failures, improving remediation context in CI logs
 - automation tests now explicitly assert helper-specific error prefixes (`[bundle-diagnostics]`, `[changeset:status:ci]`) for stable troubleshooting output contracts
 - diagnostics helper now rejects mixed help + operational arguments to keep CLI intent explicit and avoid ambiguous invocation behavior
+- changeset helper now also has regression coverage for `--help` mixed with unknown arguments, preserving strict invocation semantics across both wrappers
 - automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)
 - changeset status warning filter now tolerates version bumps by suppressing only `file:` workspace warnings from `@wasmboy/*` packages against `@wasmboy/api`
 - suppressed changeset workspace warnings are now lexicographically sorted before reporting for deterministic CI log output
