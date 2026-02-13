@@ -871,6 +871,17 @@ test('bundle-diagnostics rejects duplicate output across split and equals forms'
   assert.match(output, /Duplicate --output argument provided/u);
 });
 
+test('bundle-diagnostics rejects duplicate output flags in equals-only order', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-output-inline-only-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output=artifacts/one.tar.gz',
+    '--output=artifacts/two.tar.gz',
+    '--pattern=missing/*.log',
+  ]);
+  assert.match(output, /Duplicate --output argument provided/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects duplicate message flags', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-message-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, [
@@ -898,6 +909,18 @@ test('bundle-diagnostics rejects duplicate message across split and equals forms
     'second',
   ]);
   assert.match(output, /Duplicate --message argument provided/u);
+});
+
+test('bundle-diagnostics rejects duplicate message flags in equals-only order', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-message-inline-only-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output=artifacts/out.tar.gz',
+    '--pattern=missing/*.log',
+    '--message=first',
+    '--message=second',
+  ]);
+  assert.match(output, /Duplicate --message argument provided/u);
+  assert.match(output, /Usage:/u);
 });
 
 test('bundle-diagnostics rejects invalid tar timeout configuration', () => {
