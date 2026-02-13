@@ -197,24 +197,44 @@ function createArchive(outputPath, files, timeoutMs) {
   }
 }
 
+function toErrorMessage(error) {
+  return error instanceof Error ? error.message : 'Unexpected diagnostics bundling error.';
+}
+
+function failWithUsage(message) {
+  console.error(`[bundle-diagnostics] ${message}`);
+  console.error(USAGE_TEXT);
+}
+
 function main() {
-  const args = parseArgs(process.argv.slice(2));
+  let args;
+  try {
+    args = parseArgs(process.argv.slice(2));
+  } catch (error) {
+    failWithUsage(toErrorMessage(error));
+    process.exit(1);
+  }
+
   if (args.showHelp) {
     console.log(USAGE_TEXT);
     return;
   }
 
-  assertRequiredConfig(args.output, args.patterns);
-  const tarTimeoutMs = resolveTarTimeoutMs(process.env[TAR_TIMEOUT_ENV_VARIABLE]);
-
-  fs.mkdirSync(path.dirname(args.output), { recursive: true });
-
-  const matchedFiles = collectFiles(args.patterns, args.output);
-  const placeholderFile = matchedFiles.length > 0 ? null : createPlaceholderFile(args.output, args.message);
-  const filesToArchive = matchedFiles.length > 0 ? matchedFiles : [placeholderFile];
-
+  let placeholderFile = null;
   try {
+    assertRequiredConfig(args.output, args.patterns);
+    const tarTimeoutMs = resolveTarTimeoutMs(process.env[TAR_TIMEOUT_ENV_VARIABLE]);
+
+    fs.mkdirSync(path.dirname(args.output), { recursive: true });
+
+    const matchedFiles = collectFiles(args.patterns, args.output);
+    placeholderFile = matchedFiles.length > 0 ? null : createPlaceholderFile(args.output, args.message);
+    const filesToArchive = matchedFiles.length > 0 ? matchedFiles : [placeholderFile];
+
     createArchive(args.output, filesToArchive, tarTimeoutMs);
+  } catch (error) {
+    console.error(`[bundle-diagnostics] ${toErrorMessage(error)}`);
+    process.exit(1);
   } finally {
     if (placeholderFile && fs.existsSync(placeholderFile)) {
       fs.unlinkSync(placeholderFile);
