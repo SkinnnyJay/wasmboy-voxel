@@ -88,6 +88,18 @@ test('validateRequiredArgumentValue rejects non-string known-args entries', () =
   );
 });
 
+test('validateRequiredArgumentValue rejects empty known-args entries', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: new Set(['']),
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args entries for --output/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects non-boolean allowDoubleDashValue options', () => {
   assert.throws(
     () =>
@@ -123,6 +135,20 @@ test('validateRequiredArgumentValue rejects non-string allowedKnownValues entrie
         allowDoubleDashValue: true,
         allowWhitespaceOnly: true,
         allowedKnownValues: new Set([42]),
+      }),
+    /Invalid allowedKnownValues entries for --message/u,
+  );
+});
+
+test('validateRequiredArgumentValue rejects whitespace-only allowedKnownValues entries', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('--help', {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: new Set(['  ']),
       }),
     /Invalid allowedKnownValues entries for --message/u,
   );
