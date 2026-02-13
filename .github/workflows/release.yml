@@ -28,6 +28,11 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            packages/api/package-lock.json
+            packages/cli/package-lock.json
+            apps/debugger/package-lock.json
 
       - name: Install workspace dependencies
         run: npm run install:stack

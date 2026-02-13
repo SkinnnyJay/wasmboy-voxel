@@ -26,6 +26,11 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            packages/api/package-lock.json
+            packages/cli/package-lock.json
+            apps/debugger/package-lock.json
 
       - name: Cache Next.js build cache
         uses: actions/cache@v4

@@ -40,6 +40,7 @@ Workflow hardening applied:
 - explicit workflow permissions (least privilege defaults)
 - concurrency groups with `cancel-in-progress` to avoid duplicate CI spend
 - shared install command (`npm run install:stack`) to keep CI/release dependency setup consistent across workflows
+- setup-node cache dependency paths include all workspace lockfiles for stable multi-package npm cache keys
 
 ## Security posture at completion
 
