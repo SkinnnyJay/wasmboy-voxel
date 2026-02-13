@@ -490,6 +490,18 @@ test('resolveTimeoutFromCliAndEnv rejects invalid environment option names', () 
   );
 });
 
+test('resolveTimeoutFromCliAndEnv rejects symbol environment option names', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: Symbol('env-timeout'), rawValue: undefined },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid timeout option name: Symbol\(env-timeout\)/u,
+  );
+});
+
 test('resolveTimeoutFromCliAndEnv rejects non-string env timeout values', () => {
   assert.throws(
     () =>
@@ -499,5 +511,17 @@ test('resolveTimeoutFromCliAndEnv rejects non-string env timeout values', () => 
         cli: { name: '--test-timeout', rawValue: undefined },
       }),
     /Invalid TEST_TIMEOUT_ENV value: 5000/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects symbol cli option names', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: { name: Symbol('cli-timeout'), rawValue: undefined },
+      }),
+    /Invalid timeout option name: Symbol\(cli-timeout\)/u,
   );
 });
