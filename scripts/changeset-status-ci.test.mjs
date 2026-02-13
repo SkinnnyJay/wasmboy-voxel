@@ -667,6 +667,28 @@ test('changeset-status-ci inline timeout CLI override takes precedence over envi
   assert.match(result.stderr, /timed out after 50ms/u);
 });
 
+test('changeset-status-ci timeout CLI override still applies when timeout env is empty', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-override-empty-env-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms', '50'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
+test('changeset-status-ci inline timeout CLI override still applies when timeout env is empty', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-inline-override-empty-env-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms=50'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
 test('changeset-status-ci accepts max split CLI timeout override', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-max-split-'));
   const fakeBinDirectory = writeNoBumpChangeset(tempDirectory);
