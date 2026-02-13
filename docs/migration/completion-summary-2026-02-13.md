@@ -90,6 +90,7 @@ Workflow hardening applied:
 - `workflow:check` consolidates workflow + automation script format checks for reuse in CI scripts
 - automation helper scripts are covered by `automation:test` (Node test runner), and this test step is included in the unified quality gate
 - automation coverage includes diagnostics bundle behavior checks (matched files, empty-placeholder fallback, duplicate-pattern deduplication)
+- automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)
 - CI and nightly workflows now capture full quality-gate logs and relevant screenshot outputs as artifacts on failure for faster triage
 - contract and release workflows now capture gate logs as failure artifacts to support post-failure debugging without reruns
 - release workflow failure artifacts now also include core/headless generated screenshots from release verification test failures

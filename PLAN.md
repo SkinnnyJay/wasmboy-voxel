@@ -197,6 +197,7 @@
 - 2026-02-13: Added `workflow:check` to compose workflow/script format checks and reused it in `test:all:nobuild` + `contract:ci`, reducing duplicated script chains while preserving gate coverage.
 - 2026-02-13: Added `automation:test` with Node-based tests for CI helper scripts (including diagnostics bundling), and wired it into both strict and CI-flavored full quality gates.
 - 2026-02-13: Expanded diagnostics bundler automation tests with duplicate-pattern deduplication coverage, complementing existing matched-file and empty-placeholder assertions.
+- 2026-02-13: Refactored `changeset:status:ci` filtering into a reusable module and added automation tests for warning suppression/dedup behavior, improving confidence in CI log-sanitization correctness.
 - 2026-02-13: Added failure-diagnostics artifact uploads (quality logs + generated screenshots) to CI and nightly workflows to improve regression triage speed when quality gates fail.
 - 2026-02-13: Extended failure-diagnostics artifact support to contract and release workflows by teeing gate logs and uploading them on failure for consistent cross-pipeline observability.
 - 2026-02-13: Expanded release failure artifact payloads to include generated core/headless screenshots from verification failures, aligning triage depth with CI/nightly diagnostics.
