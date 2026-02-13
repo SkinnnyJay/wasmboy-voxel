@@ -191,3 +191,9 @@ test('writeFakeExecutable rejects whitespace-only executable bodies', () => {
 
   assert.throws(() => writeFakeExecutable(tempDirectory, 'fixture-cmd', '   \n\t  '), /Invalid executable body for fixture-cmd/u);
 });
+
+test('writeFakeExecutable rejects non-string executable bodies', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-non-string-body-'));
+
+  assert.throws(() => writeFakeExecutable(tempDirectory, 'fixture-cmd', 42), /Invalid executable body for fixture-cmd/u);
+});

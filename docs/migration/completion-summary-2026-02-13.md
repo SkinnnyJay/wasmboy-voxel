@@ -162,6 +162,7 @@ Workflow hardening applied:
 - shared fake-executable fixture helper now validates executable-name/body input types (including non-string name rejection and empty-body rejection), tightening fixture helper input contracts
 - shared fake-executable fixture helper now rejects whitespace-only executable bodies in addition to empty bodies, tightening fixture-helper script-body input contracts
 - shared fake-executable fixture helper now validates temp-directory inputs (non-string and empty-string rejection), tightening fixture-helper path contract safety before filesystem operations
+- shared fake-executable fixture helper coverage now includes non-string executable-body rejection, tightening helper body-type input contract validation semantics
 - `changeset-status-ci` output-filter helper coverage now includes whitespace-padded warning suppression and passthrough internal-blank-line preservation, locking output-formatting behavior under mixed warning/info streams
 - `changeset-status-ci` output-filter helper coverage now also includes whitespace-variant warning deduplication and empty-output handling, locking normalization behavior for sparse and duplicate-heavy output streams
 - `changeset-status-ci` output-filter helper coverage now includes an only-warnings stream case (empty passthrough output assertion), locking filtered-output behavior when no informational lines remain

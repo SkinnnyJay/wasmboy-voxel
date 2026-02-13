@@ -355,3 +355,4 @@
 - 2026-02-13: Expanded shared timeout default-validation unit coverage with non-finite (`NaN`) default rejection, locking finite-number constraints in helper fallback semantics.
 - 2026-02-13: Hardened shared `test-fixtures` temp-directory input validation (non-string and empty-string rejection), preventing ambiguous path inputs before fake-bin filesystem operations; added focused unit coverage for invalid temp-directory paths.
 - 2026-02-13: Expanded shared timeout default-validation regression coverage with explicit `Infinity` rejection in both `resolveStrictPositiveIntegerEnv` and `resolveTimeoutFromCliAndEnv` helper tests, locking finite default constraints across direct and composed timeout resolution paths.
+- 2026-02-13: Expanded shared `test-fixtures` regression coverage with non-string executable-body rejection, locking helper body-type input contract semantics in addition to empty/whitespace body guards.
