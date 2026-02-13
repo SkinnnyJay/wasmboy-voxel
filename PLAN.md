@@ -36,17 +36,17 @@
 [x] - Milestone 0.5: Repo Scaffolding - Add root scripts for new stack tasks (`package.json` scripts)
 [x] - Milestone 0.5: Repo Scaffolding - Add `changeset` config (if publishing) (`.changeset/config.json`)
 
-[ ] - Milestone 1: Contracts + Types - Create `packages/api` skeleton
-[ ] - Milestone 1: Contracts + Types - Add `contracts/v1` directory
-[ ] - Milestone 1: Contracts + Types - Define `PpuSnapshot` schema in Zod
-[ ] - Milestone 1: Contracts + Types - Define `Registers` schema in Zod
-[ ] - Milestone 1: Contracts + Types - Define `MemorySection` schema in Zod
-[ ] - Milestone 1: Contracts + Types - Define `DebugFrame` schema in Zod
-[ ] - Milestone 1: Contracts + Types - Add schema version metadata
-[ ] - Milestone 1: Contracts + Types - Export inferred TS types from schemas
-[ ] - Milestone 1: Contracts + Types - Add schema validation helper
-[ ] - Milestone 1: Contracts + Types - Add contract registry (map of versions)
-[ ] - Milestone 1: Contracts + Types - Document contract usage in README
+[x] - Milestone 1: Contracts + Types - Create `packages/api` skeleton
+[x] - Milestone 1: Contracts + Types - Add `contracts/v1` directory
+[x] - Milestone 1: Contracts + Types - Define `PpuSnapshot` schema in Zod
+[x] - Milestone 1: Contracts + Types - Define `Registers` schema in Zod
+[x] - Milestone 1: Contracts + Types - Define `MemorySection` schema in Zod
+[x] - Milestone 1: Contracts + Types - Define `DebugFrame` schema in Zod
+[x] - Milestone 1: Contracts + Types - Add schema version metadata
+[x] - Milestone 1: Contracts + Types - Export inferred TS types from schemas
+[x] - Milestone 1: Contracts + Types - Add schema validation helper
+[x] - Milestone 1: Contracts + Types - Add contract registry (map of versions)
+[x] - Milestone 1: Contracts + Types - Document contract usage in README
 
 [ ] - Milestone 2: Wrapper Integration - Identify all public wrapper entry points
 [ ] - Milestone 2: Wrapper Integration - Add contract gate for `getPpuSnapshot()`
@@ -142,3 +142,4 @@
 - 2026-02-13: Completed M0-08, M0-09, M0-10 by adding a snapshot-capture script and committed JSON/checksum/timing artifacts for local test ROMs. Reason: create executable baseline evidence for migration regression checks.
 - 2026-02-13: Completed M0-11 with initial function-to-payload contract table for snapshot/debug APIs. Reason: establish explicit migration contract targets before adding Zod schemas.
 - 2026-02-13: Completed all M0.5 scaffolding tasks (workspace, strict TS base, lint/format/editor configs, node pin, stack scripts, changeset config). Reason: establish monorepo-ready foundations before adding new packages.
+- 2026-02-13: Completed all M1 tasks by creating `packages/api` + `contracts/v1`, implementing Zod schemas/metadata/registry/validation helpers, and adding contract tests plus usage docs. Reason: establish typed runtime contracts before wrapper integration.

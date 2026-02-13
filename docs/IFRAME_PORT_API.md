@@ -8,18 +8,18 @@ When the emulator runs inside an iframe (e.g. the demo iframe), the parent windo
 
 All requests must include a `messageId` (string or number) so the parent can correlate the response. Optional `payload` is used where noted.
 
-| Type | Payload | Description |
-|------|---------|-------------|
-| `emulator:setMemoryBreakpoint` | `{ address, access: 'read' \| 'write' }` | Set a memory breakpoint. Response: `{ id }`. |
-| `emulator:clearMemoryBreakpoint` | `{ id }` | Clear breakpoint by id (`bp-read` or `bp-write`). |
-| `emulator:clearAllMemoryBreakpoints` | — | Clear all breakpoints. |
-| `emulator:getCPURegisters` | — | Get CPU registers and PC/SP/opcode. |
-| `emulator:getTimerState` | — | Get timer state (div, tima, tma, tac, enabled). |
-| `emulator:getLCDState` | — | Get LCD state (ly, lcdc, stat, scrollX/Y, windowX/Y). |
-| `emulator:getScanlineParameters` | — | Get per-scanline [scx, scy, wx, wy] for 144 scanlines. |
-| `emulator:getBackgroundMapImage` | — | Get background map debug image. |
-| `emulator:getTileDataImage` | — | Get tile data debug image. |
-| `emulator:getOamSpritesImage` | — | Get OAM sprites debug image. |
+| Type                                 | Payload                                  | Description                                            |
+| ------------------------------------ | ---------------------------------------- | ------------------------------------------------------ |
+| `emulator:setMemoryBreakpoint`       | `{ address, access: 'read' \| 'write' }` | Set a memory breakpoint. Response: `{ id }`.           |
+| `emulator:clearMemoryBreakpoint`     | `{ id }`                                 | Clear breakpoint by id (`bp-read` or `bp-write`).      |
+| `emulator:clearAllMemoryBreakpoints` | —                                        | Clear all breakpoints.                                 |
+| `emulator:getCPURegisters`           | —                                        | Get CPU registers and PC/SP/opcode.                    |
+| `emulator:getTimerState`             | —                                        | Get timer state (div, tima, tma, tac, enabled).        |
+| `emulator:getLCDState`               | —                                        | Get LCD state (ly, lcdc, stat, scrollX/Y, windowX/Y).  |
+| `emulator:getScanlineParameters`     | —                                        | Get per-scanline [scx, scy, wx, wy] for 144 scanlines. |
+| `emulator:getBackgroundMapImage`     | —                                        | Get background map debug image.                        |
+| `emulator:getTileDataImage`          | —                                        | Get tile data debug image.                             |
+| `emulator:getOamSpritesImage`        | —                                        | Get OAM sprites debug image.                           |
 
 ## Response format
 
@@ -33,11 +33,7 @@ The iframe always replies with a single message type: `emulator:response`.
 
 ```js
 if (response && response.data) {
-  const imageData = new ImageData(
-    new Uint8ClampedArray(response.data),
-    response.width,
-    response.height
-  );
+  const imageData = new ImageData(new Uint8ClampedArray(response.data), response.width, response.height);
 }
 ```
 

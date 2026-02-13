@@ -85,6 +85,19 @@ Try to test and aim for support on all major browsers (Chrome, Firefox, and Safa
 
 This fork exposes `WasmBoyVoxelApi` via `voxel-wrapper.ts`, which adds PPU snapshot helpers on top of the base WasmBoy API. Use `supportsPpuSnapshot()` before calling `getPpuSnapshot()`, and handle `null` when the worker is not ready. Snapshot data includes tile data, BG/window tilemaps, OAM, and key PPU registers for voxel renderers.
 
+### Typed Contract Package (Migration)
+
+The migration introduces a typed contract package at `packages/api` with Zod
+schemas for versioned payloads (starting with `contracts/v1`):
+
+- `PpuSnapshotSchema`
+- `RegistersSchema`
+- `MemorySectionSchema`
+- `DebugFrameSchema`
+
+Use these contracts to validate payloads at API boundaries and preserve
+compatibility during refactors.
+
 # In-Game Screenshots
 
 ### Gameboy Support
@@ -172,7 +185,14 @@ An Iframe embeddable version of WasmBoy. Simply provide information through [URL
 Add an iframe to your website like the following:
 
 ```html
-<iframe title="WasmBoy Iframe Embed" width="160" height="144" allowfullscreen="true" src="https://wasmboy.app/iframe/?[QUERY_PARAMS_GO_HERE]"> </iframe>
+<iframe
+  title="WasmBoy Iframe Embed"
+  width="160"
+  height="144"
+  allowfullscreen="true"
+  src="https://wasmboy.app/iframe/?[QUERY_PARAMS_GO_HERE]"
+>
+</iframe>
 ```
 
 The iframe is configured by adding [URL Query Params](https://en.wikipedia.org/wiki/Query_string). The configuration params are:
