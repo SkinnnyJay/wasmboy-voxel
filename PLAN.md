@@ -309,3 +309,4 @@
 - 2026-02-13: Expanded diagnostics duplicate-flag regression coverage with equals-only duplicate cases for `--output` and `--message`, preserving duplicate-detection semantics across split-only, equals-only, and mixed argument forms.
 - 2026-02-13: Expanded diagnostics path-value token-guard regression coverage with help-token cases for `--output`/`--pattern` in split and equals forms, preserving missing-value semantics when help tokens are misused as path values.
 - 2026-02-13: Expanded help-timeout exclusivity regression coverage with trailing-help permutations (timeout args preceding help in split and inline forms, across both long and short help aliases) for both helper wrappers.
+- 2026-02-13: Refactored `changeset-status-ci` timeout argument parsing to use a reusable value-validation helper (known-token + prefix guards), aligning parser structure with diagnostics helper semantics while preserving existing timeout error behavior.

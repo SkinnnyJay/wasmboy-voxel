@@ -5,6 +5,10 @@ import { resolveStrictPositiveIntegerEnv } from './cli-timeout.mjs';
 const DEFAULT_TIMEOUT_MS = 120000;
 const TIMEOUT_ENV_VARIABLE = 'CHANGESET_STATUS_CI_TIMEOUT_MS';
 const CLI_TIMEOUT_FLAG = '--timeout-ms';
+const HELP_SHORT_FLAG = '-h';
+const HELP_LONG_FLAG = '--help';
+const HELP_ARGS = new Set([HELP_LONG_FLAG, HELP_SHORT_FLAG]);
+const KNOWN_ARGS = new Set([CLI_TIMEOUT_FLAG, HELP_LONG_FLAG, HELP_SHORT_FLAG]);
 const USAGE_TEXT = `Usage:
 node scripts/changeset-status-ci.mjs
 
@@ -19,31 +23,39 @@ Options:
 Environment:
   ${TIMEOUT_ENV_VARIABLE}=<ms>  changeset timeout in milliseconds (default: ${DEFAULT_TIMEOUT_MS})`;
 
+/**
+ * @param {string | undefined} value
+ * @param {string} flagName
+ * @param {{allowDoubleDashValue: boolean; allowWhitespaceOnly?: boolean}} options
+ */
+function validateValue(value, flagName, options) {
+  if (!value || KNOWN_ARGS.has(value)) {
+    throw new Error(`Missing value for ${flagName} argument.`);
+  }
+
+  if (!options.allowWhitespaceOnly && value.trim().length === 0) {
+    throw new Error(`Missing value for ${flagName} argument.`);
+  }
+
+  if (!options.allowDoubleDashValue && value.startsWith('--')) {
+    throw new Error(`Missing value for ${flagName} argument.`);
+  }
+
+  if (/^-[a-zA-Z]$/u.test(value)) {
+    throw new Error(`Missing value for ${flagName} argument.`);
+  }
+}
+
 function parseArgs(argv) {
   /** @type {{showHelp: boolean; timeoutMsOverride: string}} */
   const parsed = { showHelp: false, timeoutMsOverride: '' };
   let helpConfigured = false;
   let timeoutConfigured = false;
 
-  /**
-   * @param {string | undefined} value
-   */
-  function isMissingTimeoutValue(value) {
-    if (!value || value === '--help' || value === '-h' || value === CLI_TIMEOUT_FLAG) {
-      return true;
-    }
-
-    if (value.startsWith('--')) {
-      return true;
-    }
-
-    return /^-[a-zA-Z]$/u.test(value);
-  }
-
   for (let i = 0; i < argv.length; i += 1) {
     const token = argv[i];
 
-    if (token === '--help' || token === '-h') {
+    if (HELP_ARGS.has(token)) {
       if (helpConfigured) {
         throw new Error('Duplicate help flag provided.');
       }
@@ -58,9 +70,7 @@ function parseArgs(argv) {
       }
 
       const value = argv[i + 1];
-      if (isMissingTimeoutValue(value)) {
-        throw new Error(`Missing value for ${CLI_TIMEOUT_FLAG} argument.`);
-      }
+      validateValue(value, CLI_TIMEOUT_FLAG, { allowDoubleDashValue: false, allowWhitespaceOnly: true });
 
       parsed.timeoutMsOverride = value;
       timeoutConfigured = true;
@@ -74,9 +84,7 @@ function parseArgs(argv) {
       }
 
       const value = token.slice(`${CLI_TIMEOUT_FLAG}=`.length);
-      if (isMissingTimeoutValue(value)) {
-        throw new Error(`Missing value for ${CLI_TIMEOUT_FLAG} argument.`);
-      }
+      validateValue(value, CLI_TIMEOUT_FLAG, { allowDoubleDashValue: false, allowWhitespaceOnly: true });
 
       parsed.timeoutMsOverride = value;
       timeoutConfigured = true;
