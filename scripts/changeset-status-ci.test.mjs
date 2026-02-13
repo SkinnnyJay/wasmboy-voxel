@@ -204,6 +204,14 @@ test('changeset-status-ci rejects mixed help and timeout arguments', () => {
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci rejects mixed help and inline timeout arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--help', '--timeout-ms=100']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Help flag cannot be combined with timeout override arguments/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci rejects unknown arguments', () => {
   const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--unknown']);
 

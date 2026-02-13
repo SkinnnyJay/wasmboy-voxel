@@ -433,6 +433,13 @@ test('bundle-diagnostics rejects help flag mixed with timeout args', () => {
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics rejects help flag mixed with inline timeout args', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-help-mixed-timeout-inline-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--help', '--tar-timeout-ms=100']);
+  assert.match(output, /Help flag cannot be combined with other arguments/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics requires at least one pattern argument', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-pattern-required-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz']);
