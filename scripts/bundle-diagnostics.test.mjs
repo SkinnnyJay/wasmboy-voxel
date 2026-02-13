@@ -356,6 +356,36 @@ test('bundle-diagnostics rejects duplicate timeout flags in inline-first order',
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics rejects duplicate timeout flags in split-only order', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-timeout-split-only-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms',
+    '200',
+    '--tar-timeout-ms',
+    '100',
+  ]);
+  assert.match(output, /Duplicate --tar-timeout-ms argument provided/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics rejects duplicate timeout flags in inline-only order', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-timeout-inline-only-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms=200',
+    '--tar-timeout-ms=100',
+  ]);
+  assert.match(output, /Duplicate --tar-timeout-ms argument provided/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects missing timeout values', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-missing-timeout-value-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, [
