@@ -15,9 +15,11 @@ import postcssImport from 'postcss-import';
 import copy from 'rollup-plugin-copy-glob';
 import del from 'rollup-plugin-delete';
 import hash from 'rollup-plugin-hash';
-import pkg from './package.json';
+import { createRequire } from 'node:module';
+import fs from 'node:fs';
 
-const fs = require('fs');
+const require = createRequire(import.meta.url);
+const pkg = require('./package.json');
 
 const writeIndexHtmlToBuild = bundleName => {
   let indexHtml = fs.readFileSync('demo/debugger/index.html', 'utf8');
@@ -127,8 +129,7 @@ const debuggerBundles = [
     },
     external: ['crypto'],
     context: 'window',
-    plugins: plugins,
-    sourcemap: true
+    plugins: plugins
   }
 ];
 

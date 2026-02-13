@@ -7,8 +7,10 @@ import copy from 'rollup-plugin-copy-glob';
 import babel from 'rollup-plugin-babel';
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import bundleSize from 'rollup-plugin-bundle-size';
-import pkg from './package.json';
+import { createRequire } from 'node:module';
 
+const require = createRequire(import.meta.url);
+const pkg = require('./package.json');
 const fs = require('fs');
 
 const writeIndexHtmlToBuild = bundleName => {

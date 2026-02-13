@@ -11,7 +11,10 @@ import json from 'rollup-plugin-json';
 import replace from 'rollup-plugin-replace';
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import bundleSize from 'rollup-plugin-bundle-size';
-import pkg from './package.json';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const pkg = require('./package.json');
 
 // Our base plugins needed by every bundle type
 let plugins = [
