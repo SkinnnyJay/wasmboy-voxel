@@ -45,6 +45,18 @@ test('validateRequiredArgumentValue rejects non-string values', () => {
   );
 });
 
+test('validateRequiredArgumentValue rejects bigint values', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue(42n, {
+        flagName: '--output',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid value type for --output argument: 42/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects null values', () => {
   assert.throws(
     () =>
@@ -534,6 +546,19 @@ test('readRequiredArgumentValue rejects non-string following argument values', (
   assert.throws(
     () =>
       readRequiredArgumentValue(['--timeout-ms', 42], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid value type for --timeout-ms argument: 42/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects bigint following argument values', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', 42n], 0, {
         flagName: '--timeout-ms',
         knownArgs: KNOWN_ARGS,
         allowDoubleDashValue: false,
