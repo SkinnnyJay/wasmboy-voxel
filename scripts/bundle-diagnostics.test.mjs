@@ -1849,3 +1849,35 @@ test('bundle-diagnostics accepts max inline CLI timeout override', () => {
 
   assert.equal(result.status, 0);
 });
+
+test('bundle-diagnostics accepts whitespace-padded max split CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-max-split-whitespace-padded-'));
+  const fakeBinDirectory = writeDelayedFakeTar(tempDirectory);
+
+  const result = runBundlerCommandRaw(
+    tempDirectory,
+    ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log', '--tar-timeout-ms', ' 2147483647 '],
+    {
+      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '50',
+    },
+  );
+
+  assert.equal(result.status, 0);
+});
+
+test('bundle-diagnostics accepts whitespace-padded max inline CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-max-inline-whitespace-padded-'));
+  const fakeBinDirectory = writeDelayedFakeTar(tempDirectory);
+
+  const result = runBundlerCommandRaw(
+    tempDirectory,
+    ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log', '--tar-timeout-ms= 2147483647 '],
+    {
+      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '50',
+    },
+  );
+
+  assert.equal(result.status, 0);
+});

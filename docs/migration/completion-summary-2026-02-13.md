@@ -150,6 +150,7 @@ Workflow hardening applied:
 - timeout-override precedence coverage now includes invalid-env/valid-CLI failure-path assertions (split and inline forms) for both wrappers, preserving current env-first timeout resolution semantics
 - timeout-environment coverage now includes leading-zero acceptance (`00050`) for both wrappers, preserving trimmed numeric parsing semantics and timeout behavior for canonicalizable integer env inputs
 - timeout-environment boundary coverage now includes whitespace-padded max-int acceptance (`' 2147483647 '`) for both wrappers, preserving trim semantics at the upper supported timeout boundary
+- timeout CLI boundary coverage now includes whitespace-padded max-int override acceptance (`' 2147483647 '`) in split and inline forms for both wrappers, preserving trim semantics at the upper supported timeout boundary for CLI overrides
 - timeout fixture defaults in automation tests now use shorter delayed-command sleeps (`0.1s`), reducing automation runtime while preserving timeout-path behavior and assertions
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - timeout argument-value validation now uses a shared helper module (`cli-arg-values`) across both wrappers, reducing parser duplication while preserving split/equals token-guard semantics
