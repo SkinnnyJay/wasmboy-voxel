@@ -165,6 +165,29 @@ test('validateRequiredArgumentValue rejects invalid known-args options', () => {
   );
 });
 
+test('validateRequiredArgumentValue rejects missing known-args options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args set for --output/u,
+  );
+});
+
+test('validateRequiredArgumentValue rejects null known-args options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: null,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args set for --output/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects non-string known-args entries', () => {
   assert.throws(
     () =>

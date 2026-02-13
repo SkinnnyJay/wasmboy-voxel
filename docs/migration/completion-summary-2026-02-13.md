@@ -294,6 +294,7 @@ Workflow hardening applied:
 - shared test-fixture helper coverage now explicitly asserts `undefined` rejection for temp-directory, executable-name, and executable-body inputs
 - shared CLI argument-value helper coverage now explicitly asserts undefined flag-name rejection and missing `allowDoubleDashValue` option rejection
 - shared timeout helper coverage now explicitly asserts undefined default-timeout rejection for both direct env parsing and composed env/CLI timeout resolution helpers
+- shared CLI argument-value helper coverage now explicitly asserts missing/null `knownArgs` set rejection in required-argument option validation
 
 ## Security posture at completion
 

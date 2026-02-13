@@ -396,3 +396,4 @@
 - 2026-02-13: Expanded shared `test-fixtures` helper coverage with explicit `undefined` input rejection paths (`tempDirectory`, executable name, executable body), locking undefined-input contract semantics alongside existing null/symbol/unprintable guards.
 - 2026-02-13: Expanded shared `cli-arg-values` options-contract coverage with explicit `undefined` flag-name rejection and missing `allowDoubleDashValue` rejection, locking required-option semantics in parser-helper validation.
 - 2026-02-13: Expanded shared timeout-helper coverage with explicit `undefined` default-timeout rejection in direct and composed helpers, locking undefined default-value contract semantics in timeout fallback validation.
+- 2026-02-13: Expanded shared `cli-arg-values` options-contract coverage with explicit missing/null `knownArgs` set rejection, locking required known-token set semantics in parser-helper validation.
