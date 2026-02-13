@@ -123,6 +123,7 @@ Workflow hardening applied:
 - diagnostics helper now treats unknown long-flag tokens as missing-value errors for `--output` / `--pattern`, preventing accidental flag-token capture as path values
 - bundle argument parsing now tests both accepted dash-prefixed message payloads and rejected long-flag token capture for path-oriented args, documenting the intended parsing boundary
 - bundle token-capture regression assertions now require usage-text output on those failures, preserving CLI guidance when path args are malformed
+- bundle parser now rejects short-flag-like tokens (e.g. `-x`) in `--output` / `--pattern` value positions to reduce accidental option-token capture
 - automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)
 - changeset status warning filter now tolerates version bumps by suppressing only `file:` workspace warnings from `@wasmboy/*` packages against `@wasmboy/api`
 - suppressed changeset workspace warnings are now lexicographically sorted before reporting for deterministic CI log output

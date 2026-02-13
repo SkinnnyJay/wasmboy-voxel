@@ -343,6 +343,13 @@ test('bundle-diagnostics rejects unknown long-flag token as output value', () =>
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics rejects short-flag token as output value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-output-short-token-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', '-x', '--pattern', 'logs/*.log']);
+  assert.match(output, /Missing value for --output argument/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics requires a value for message flag', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-missing-message-value-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, [
@@ -358,6 +365,13 @@ test('bundle-diagnostics requires a value for message flag', () => {
 test('bundle-diagnostics rejects unknown long-flag token as pattern value', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-pattern-value-token-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', '--unexpected']);
+  assert.match(output, /Missing value for --pattern argument/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics rejects short-flag token as pattern value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-pattern-short-token-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', '-x']);
   assert.match(output, /Missing value for --pattern argument/u);
   assert.match(output, /Usage:/u);
 });

@@ -40,6 +40,10 @@ function readRequiredValue(argv, index, flagName, options) {
     throw new Error(`Missing value for ${flagName} argument.`);
   }
 
+  if (!options.allowDoubleDashValue && /^-[a-zA-Z]$/u.test(value)) {
+    throw new Error(`Missing value for ${flagName} argument.`);
+  }
+
   if (!options.allowDoubleDashValue && value.startsWith('--')) {
     throw new Error(`Missing value for ${flagName} argument.`);
   }
