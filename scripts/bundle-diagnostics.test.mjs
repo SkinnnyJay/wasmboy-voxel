@@ -65,7 +65,7 @@ function readArchiveEntry(cwd, archivePath, entryPath) {
   return result.stdout;
 }
 
-function writeDelayedFakeTar(tempDirectory, delaySeconds = '0.2') {
+function writeDelayedFakeTar(tempDirectory, delaySeconds = '0.1') {
   const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
   fs.mkdirSync(fakeBinDirectory, { recursive: true });
   const fakeTarPath = path.join(fakeBinDirectory, 'tar');

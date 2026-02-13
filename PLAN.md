@@ -332,3 +332,4 @@
 - 2026-02-13: Expanded timeout parsing regression coverage with whitespace-padded timeout values (`' 50 '`) across env and CLI override paths (split and inline) for both wrappers, preserving trimmed numeric parsing semantics while enforcing configured timeout behavior.
 - 2026-02-13: Expanded timeout-override precedence regression coverage with invalid-env/valid-CLI permutations (split and inline forms) across both wrappers, preserving current env-first timeout resolution semantics.
 - 2026-02-13: Expanded timeout-environment regression coverage with leading-zero acceptance cases (`00050`) across both wrappers, preserving trimmed numeric parsing semantics for canonicalizable integer env inputs.
+- 2026-02-13: Reduced delayed-timeout fixture defaults in automation tests from `0.2s` to `0.1s` for both wrapper harness helpers, preserving timeout assertions while improving automation runtime.

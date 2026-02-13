@@ -55,7 +55,7 @@ exit 0
   );
 }
 
-function writeDelayedChangeset(tempDirectory, delaySeconds = '0.2') {
+function writeDelayedChangeset(tempDirectory, delaySeconds = '0.1') {
   return writeFakeChangeset(
     tempDirectory,
     `#!/usr/bin/env bash
