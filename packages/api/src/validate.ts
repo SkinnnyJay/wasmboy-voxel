@@ -29,7 +29,7 @@ export function validateContractPayload<TPayload>(
 
 export function validateRegistryPayload(
   version: ContractVersion,
-  contractName: keyof (typeof ContractRegistry)[ContractVersion],
+  contractName: string,
   payload: unknown,
 ): ValidationResult<unknown> {
   const schema = ContractRegistry[version][contractName];

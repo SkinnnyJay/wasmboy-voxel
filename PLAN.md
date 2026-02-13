@@ -58,14 +58,14 @@
 [x] - Milestone 2: Wrapper Integration - Add dev-only contract validation flag
 [x] - Milestone 2: Wrapper Integration - Add `compat` wrapper for old API
 
-[ ] - Milestone 2.5: Build + Packaging - Add tsup/esbuild config for packages
-[ ] - Milestone 2.5: Build + Packaging - Configure ESM/CJS outputs + `types`
-[ ] - Milestone 2.5: Build + Packaging - Add `exports` maps for new packages
-[ ] - Milestone 2.5: Build + Packaging - Add `typecheck` script for packages
-[ ] - Milestone 2.5: Build + Packaging - Add `test` runner (vitest/jest)
-[ ] - Milestone 2.5: Build + Packaging - Add publish metadata (name/version/files)
-[ ] - Milestone 2.5: Build + Packaging - Add `sideEffects` metadata if needed
-[ ] - Milestone 2.5: Build + Packaging - Add `tsconfig.build.json` per package
+[x] - Milestone 2.5: Build + Packaging - Add tsup/esbuild config for packages (`packages/api/tsup.config.ts`)
+[x] - Milestone 2.5: Build + Packaging - Configure ESM/CJS outputs + `types` (`tsup` outputs + d.ts)
+[x] - Milestone 2.5: Build + Packaging - Add `exports` maps for new packages (`packages/api/package.json`)
+[x] - Milestone 2.5: Build + Packaging - Add `typecheck` script for packages
+[x] - Milestone 2.5: Build + Packaging - Add `test` runner (vitest/jest) (vitest)
+[x] - Milestone 2.5: Build + Packaging - Add publish metadata (name/version/files)
+[x] - Milestone 2.5: Build + Packaging - Add `sideEffects` metadata if needed
+[x] - Milestone 2.5: Build + Packaging - Add `tsconfig.build.json` per package
 
 [ ] - Milestone 3: Next.js Debugger - Create `apps/debugger` skeleton
 [ ] - Milestone 3: Next.js Debugger - Configure Next.js (app router)
@@ -144,3 +144,4 @@
 - 2026-02-13: Completed all M0.5 scaffolding tasks (workspace, strict TS base, lint/format/editor configs, node pin, stack scripts, changeset config). Reason: establish monorepo-ready foundations before adding new packages.
 - 2026-02-13: Completed all M1 tasks by creating `packages/api` + `contracts/v1`, implementing Zod schemas/metadata/registry/validation helpers, and adding contract tests plus usage docs. Reason: establish typed runtime contracts before wrapper integration.
 - 2026-02-13: Completed all M2 tasks by adding snapshot/register/memory contract gates, debug event validation, explicit support guards, dev-toggle validation controls, and `WasmBoyCompat` export. Reason: preserve compatibility while introducing contract-first wrapper behavior.
+- 2026-02-13: Completed all M2.5 tasks by moving `packages/api` to tsup (ESM/CJS+d.ts), adding exports/publish metadata/sideEffects, and switching tests to vitest. Reason: make new package production-consumable and verifiable.
