@@ -320,6 +320,7 @@ Workflow hardening applied:
 - parser-helper argument-value coverage now explicitly asserts `bigint` rejection in direct and read-path value validation helpers
 - test-fixture helper coverage now explicitly asserts `bigint` rejection for temp-directory, executable-name, and executable-body inputs
 - parser-helper set-entry coverage now explicitly asserts `bigint` entry rejection for `knownArgs` and `allowedKnownValues` in direct/read validation helpers
+- parser-helper set-entry coverage now explicitly asserts `Symbol` entry rejection for `knownArgs` and `allowedKnownValues` in direct/read validation helpers
 - timeout-helper coverage now explicitly asserts null/undefined direct option-name rejection for `resolveStrictPositiveIntegerEnv`
 - read-path parser-helper coverage now explicitly asserts undefined argument-index rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper coverage now explicitly asserts `bigint` argument-index rejection in `readRequiredArgumentValue` validation paths
