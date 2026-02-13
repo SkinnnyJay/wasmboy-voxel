@@ -271,6 +271,18 @@ test('validateRequiredArgumentValue rejects symbol allowDoubleDashValue options'
   );
 });
 
+test('validateRequiredArgumentValue rejects unprintable allowDoubleDashValue options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: UNPRINTABLE_VALUE,
+      }),
+    /Invalid allowDoubleDashValue option for --output/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects non-boolean allowWhitespaceOnly options', () => {
   assert.throws(
     () =>
@@ -305,6 +317,19 @@ test('validateRequiredArgumentValue rejects symbol allowWhitespaceOnly options',
         knownArgs: KNOWN_ARGS,
         allowDoubleDashValue: false,
         allowWhitespaceOnly: Symbol('allow-whitespace-only'),
+      }),
+    /Invalid allowWhitespaceOnly option for --output/u,
+  );
+});
+
+test('validateRequiredArgumentValue rejects unprintable allowWhitespaceOnly options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: UNPRINTABLE_VALUE,
       }),
     /Invalid allowWhitespaceOnly option for --output/u,
   );
@@ -655,6 +680,18 @@ test('readRequiredArgumentValue rejects symbol allowDoubleDashValue options', ()
   );
 });
 
+test('readRequiredArgumentValue rejects unprintable allowDoubleDashValue options', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: UNPRINTABLE_VALUE,
+      }),
+    /Invalid allowDoubleDashValue option for --timeout-ms/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects non-boolean allowWhitespaceOnly options', () => {
   assert.throws(
     () =>
@@ -689,6 +726,19 @@ test('readRequiredArgumentValue rejects symbol allowWhitespaceOnly options', () 
         knownArgs: KNOWN_ARGS,
         allowDoubleDashValue: false,
         allowWhitespaceOnly: Symbol('allow-whitespace-only'),
+      }),
+    /Invalid allowWhitespaceOnly option for --timeout-ms/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects unprintable allowWhitespaceOnly options', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: UNPRINTABLE_VALUE,
       }),
     /Invalid allowWhitespaceOnly option for --timeout-ms/u,
   );
