@@ -316,6 +316,7 @@ Workflow hardening applied:
 - parser-helper boolean-option coverage now explicitly asserts unprintable-object rejection for `allowDoubleDashValue` and `allowWhitespaceOnly` in direct/read validation helpers
 - changeset-status output filtering coverage now explicitly asserts `bigint` output rejection in `filterChangesetStatusOutput`
 - timeout helper coverage now explicitly asserts `bigint` rejection for direct/composed default values and env/CLI raw timeout inputs
+- timeout helper coverage now explicitly asserts `bigint` option-name rejection for direct/composed timeout option metadata (`name`, `env.name`, `cli.name`)
 - parser-helper argument-value coverage now explicitly asserts `bigint` rejection in direct and read-path value validation helpers
 - test-fixture helper coverage now explicitly asserts `bigint` rejection for temp-directory, executable-name, and executable-body inputs
 - parser-helper set-entry coverage now explicitly asserts `bigint` entry rejection for `knownArgs` and `allowedKnownValues` in direct/read validation helpers

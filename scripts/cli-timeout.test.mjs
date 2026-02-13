@@ -58,6 +58,18 @@ test('resolveStrictPositiveIntegerEnv rejects non-string option names', () => {
   );
 });
 
+test('resolveStrictPositiveIntegerEnv rejects bigint option names', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 42n,
+        rawValue: undefined,
+        defaultValue: 120000,
+      }),
+    /Invalid timeout option name: 42/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv rejects null option names', () => {
   assert.throws(
     () =>
@@ -764,6 +776,18 @@ test('resolveTimeoutFromCliAndEnv rejects undefined environment option names', (
   );
 });
 
+test('resolveTimeoutFromCliAndEnv rejects bigint environment option names', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 42n, rawValue: undefined },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid timeout option name: 42/u,
+  );
+});
+
 test('resolveTimeoutFromCliAndEnv rejects symbol environment option names', () => {
   assert.throws(
     () =>
@@ -917,6 +941,18 @@ test('resolveTimeoutFromCliAndEnv rejects undefined cli option names', () => {
         cli: { name: undefined, rawValue: undefined },
       }),
     /Invalid timeout option name: undefined/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects bigint cli option names', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: { name: 42n, rawValue: undefined },
+      }),
+    /Invalid timeout option name: 42/u,
   );
 });
 
