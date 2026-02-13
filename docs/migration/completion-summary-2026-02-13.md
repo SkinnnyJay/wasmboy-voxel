@@ -309,6 +309,7 @@ Workflow hardening applied:
 - read-path parser-helper coverage now explicitly asserts undefined argument-index rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper coverage now explicitly asserts `NaN` argument-index rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper coverage now explicitly asserts `Infinity` argument-index rejection in `readRequiredArgumentValue` validation paths
+- read-path parser-helper coverage now explicitly asserts `-Infinity` argument-index rejection in `readRequiredArgumentValue` validation paths
 
 ## Security posture at completion
 
