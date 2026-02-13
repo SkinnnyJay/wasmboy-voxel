@@ -384,3 +384,4 @@
 - 2026-02-13: Hardened `changeset-status-ci-lib` input contract with explicit non-string output rejection and expanded helper unit coverage for non-string/symbol/unprintable output rejection paths.
 - 2026-02-13: Expanded shared timeout-helper coverage with explicit `null` invalid-input rejection paths (direct raw timeout + composed env-name + composed cli raw timeout cases).
 - 2026-02-13: Expanded shared `cli-arg-values` coverage with explicit `null` invalid-input rejection paths (value token, `flagName`, options object, argument index).
+- 2026-02-13: Expanded shared `test-fixtures` coverage with explicit `null` invalid-input rejection paths (`tempDirectory`, executable name, executable body).
