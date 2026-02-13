@@ -11,6 +11,8 @@ import { spawnSync } from 'node:child_process';
  */
 
 const DEFAULT_EMPTY_MESSAGE = 'No diagnostics files were produced for this run.';
+const DEFAULT_TAR_TIMEOUT_MS = 120000;
+const TAR_TIMEOUT_ENV_VARIABLE = 'BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS';
 const USAGE_TEXT = `Usage:
 node scripts/bundle-diagnostics.mjs \\
   --output artifacts/ci-diagnostics.tar.gz \\
@@ -20,6 +22,19 @@ node scripts/bundle-diagnostics.mjs \\
 
 Options:
   -h, --help   Show this help message`;
+
+function resolveTarTimeoutMs(rawTimeoutValue) {
+  if (rawTimeoutValue === undefined || rawTimeoutValue.length === 0) {
+    return DEFAULT_TAR_TIMEOUT_MS;
+  }
+
+  const parsedTimeout = Number.parseInt(rawTimeoutValue, 10);
+  if (!Number.isFinite(parsedTimeout) || parsedTimeout <= 0) {
+    throw new Error(`Invalid ${TAR_TIMEOUT_ENV_VARIABLE} value: ${rawTimeoutValue}`);
+  }
+
+  return parsedTimeout;
+}
 
 function readRequiredValue(argv, index, flagName) {
   const value = argv[index + 1];
@@ -148,12 +163,18 @@ function createPlaceholderFile(outputPath, message) {
   return placeholderPath;
 }
 
-function createArchive(outputPath, files) {
+function createArchive(outputPath, files, timeoutMs) {
   const archiveResult = spawnSync('tar', ['-czf', outputPath, '--', ...files], {
     stdio: 'inherit',
+    timeout: timeoutMs,
+    killSignal: 'SIGTERM',
   });
 
   if (archiveResult.error) {
+    if (archiveResult.error.code === 'ETIMEDOUT') {
+      throw new Error(`tar timed out after ${timeoutMs}ms`);
+    }
+
     throw archiveResult.error;
   }
 
@@ -171,6 +192,7 @@ function main() {
 
   const args = parseArgs(argv);
   assertRequiredConfig(args.output, args.patterns);
+  const tarTimeoutMs = resolveTarTimeoutMs(process.env[TAR_TIMEOUT_ENV_VARIABLE]);
 
   fs.mkdirSync(path.dirname(args.output), { recursive: true });
 
@@ -179,7 +201,7 @@ function main() {
   const filesToArchive = matchedFiles.length > 0 ? matchedFiles : [placeholderFile];
 
   try {
-    createArchive(args.output, filesToArchive);
+    createArchive(args.output, filesToArchive, tarTimeoutMs);
   } finally {
     if (placeholderFile && fs.existsSync(placeholderFile)) {
       fs.unlinkSync(placeholderFile);

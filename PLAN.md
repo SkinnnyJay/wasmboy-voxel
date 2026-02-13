@@ -206,6 +206,7 @@
 - 2026-02-13: Hardened diagnostics archive creation by passing `--` to tar before file arguments, preventing option-parsing issues for dash-prefixed filenames (with regression coverage).
 - 2026-02-13: Added diagnostics bundler protection to exclude the output archive path from matched input files, preventing self-archiving with broad artifact patterns.
 - 2026-02-13: Improved diagnostics archive path selection so absolute matches under the working directory are normalized to relative archive entries, reducing host-path leakage and preserving deterministic artifact structure.
+- 2026-02-13: Added configurable tar timeout protection to diagnostics bundler (`BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS`, default 120000ms), including regression coverage for invalid timeout config and timeout failure reporting.
 - 2026-02-13: Refactored `changeset:status:ci` filtering into a reusable module and added automation tests for warning suppression/dedup behavior, improving confidence in CI log-sanitization correctness.
 - 2026-02-13: Generalized `changeset:status:ci` suppression matching to support future `@wasmboy/*` workspace package names and non-`0.0.0` expected versions while still only filtering `file:`-based notices.
 - 2026-02-13: Added direct automation tests for `changeset-status-ci.mjs` wrapper behavior, covering filtered output reporting, non-zero exit pass-through, and missing-command error handling.

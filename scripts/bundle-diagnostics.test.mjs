@@ -10,26 +10,27 @@ const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirectory = path.dirname(currentFilePath);
 const bundlerScriptPath = path.join(currentDirectory, 'bundle-diagnostics.mjs');
 
-function runBundlerCommand(cwd, args) {
-  const result = runBundlerCommandRaw(cwd, args);
+function runBundlerCommand(cwd, args, env = {}) {
+  const result = runBundlerCommandRaw(cwd, args, env);
 
   if (result.status !== 0) {
     throw new Error(`bundle-diagnostics command failed: ${result.stderr || result.stdout || 'unknown error'}`);
   }
 }
 
-function runBundlerCommandRaw(cwd, args) {
+function runBundlerCommandRaw(cwd, args, env = {}) {
   return spawnSync('node', [bundlerScriptPath, ...args], {
     cwd,
     encoding: 'utf8',
+    env: {
+      ...process.env,
+      ...env,
+    },
   });
 }
 
-function runBundlerCommandExpectFailure(cwd, args) {
-  const result = spawnSync('node', [bundlerScriptPath, ...args], {
-    cwd,
-    encoding: 'utf8',
-  });
+function runBundlerCommandExpectFailure(cwd, args, env = {}) {
+  const result = runBundlerCommandRaw(cwd, args, env);
 
   assert.notEqual(result.status, 0, 'bundle-diagnostics command should fail');
   return `${result.stdout ?? ''}${result.stderr ?? ''}`;
@@ -334,4 +335,34 @@ test('bundle-diagnostics rejects duplicate message flags', () => {
     'second',
   ]);
   assert.match(output, /Duplicate --message argument provided/u);
+});
+
+test('bundle-diagnostics rejects invalid tar timeout configuration', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-timeout-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log'], {
+    BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: 'invalid',
+  });
+  assert.match(output, /Invalid BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS value/u);
+});
+
+test('bundle-diagnostics reports tar timeout failures', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-'));
+  const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
+  fs.mkdirSync(fakeBinDirectory, { recursive: true });
+  const fakeTarPath = path.join(fakeBinDirectory, 'tar');
+  fs.writeFileSync(
+    fakeTarPath,
+    `#!/usr/bin/env bash
+sleep 1
+exit 0
+`,
+    'utf8',
+  );
+  fs.chmodSync(fakeTarPath, 0o755);
+
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log'], {
+    PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+    BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '50',
+  });
+  assert.match(output, /tar timed out after 50ms/u);
 });
