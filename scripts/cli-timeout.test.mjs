@@ -422,6 +422,18 @@ test('resolveStrictPositiveIntegerEnv rejects whitespace-only values', () => {
   );
 });
 
+test('resolveStrictPositiveIntegerEnv rejects unicode-whitespace-only values', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: '\u2003\u2003',
+        defaultValue: 120000,
+      }),
+    /Invalid TEST_TIMEOUT value:\s*/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv rejects zero values', () => {
   assert.throws(
     () =>
@@ -478,6 +490,16 @@ test('resolveStrictPositiveIntegerEnv accepts max supported timeout value', () =
   });
 
   assert.equal(timeout, 2_147_483_647);
+});
+
+test('resolveStrictPositiveIntegerEnv accepts unicode-whitespace-padded timeout values', () => {
+  const timeout = resolveStrictPositiveIntegerEnv({
+    name: 'TEST_TIMEOUT',
+    rawValue: '\u200350\u2003',
+    defaultValue: 120000,
+  });
+
+  assert.equal(timeout, 50);
 });
 
 test('resolveStrictPositiveIntegerEnv accepts leading-zero values', () => {
@@ -864,6 +886,16 @@ test('resolveTimeoutFromCliAndEnv accepts whitespace-padded max timeout cli over
   assert.equal(timeout, 2_147_483_647);
 });
 
+test('resolveTimeoutFromCliAndEnv accepts unicode-whitespace-padded env timeout values', () => {
+  const timeout = resolveTimeoutFromCliAndEnv({
+    defaultValue: 120000,
+    env: { name: 'TEST_TIMEOUT_ENV', rawValue: '\u200350\u2003' },
+    cli: { name: '--test-timeout', rawValue: undefined },
+  });
+
+  assert.equal(timeout, 50);
+});
+
 test('resolveTimeoutFromCliAndEnv rejects whitespace-only cli timeout even with valid env timeout', () => {
   assert.throws(
     () =>
@@ -873,6 +905,18 @@ test('resolveTimeoutFromCliAndEnv rejects whitespace-only cli timeout even with 
         cli: { name: '--test-timeout', rawValue: '   ' },
       }),
     /Invalid --test-timeout value:\s+/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects unicode-whitespace-only cli timeout even with valid env timeout', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: '5000' },
+        cli: { name: '--test-timeout', rawValue: '\u2003\u2003' },
+      }),
+    /Invalid --test-timeout value:\s*/u,
   );
 });
 
