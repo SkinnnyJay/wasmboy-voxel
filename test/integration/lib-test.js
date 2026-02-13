@@ -85,4 +85,14 @@ describe('WasmBoy Lib', () => {
       assert(saveStateInternalState[i] === saveStateTwoInternalState[i], true);
     }
   });
+
+  it('setSpeed returns a thenable', () => {
+    const result = WasmBoy.setSpeed(1);
+    assert.strictEqual(typeof result?.then, 'function', 'setSpeed should return a thenable');
+  });
+
+  it('setSpeed can be awaited without throwing', async () => {
+    await WasmBoy.setSpeed(2);
+    await WasmBoy.setSpeed(1);
+  });
 });
