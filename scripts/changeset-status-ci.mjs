@@ -1,6 +1,21 @@
 import { spawnSync } from 'node:child_process';
 import { filterChangesetStatusOutput } from './changeset-status-ci-lib.mjs';
 
+const USAGE_TEXT = `Usage:
+node scripts/changeset-status-ci.mjs
+
+Runs \`changeset status\` and suppresses expected local workspace \`file:\`
+dependency warnings for @wasmboy/* packages against @wasmboy/api.
+
+Options:
+  -h, --help   Show this help message`;
+
+const argv = process.argv.slice(2);
+if (argv.includes('--help') || argv.includes('-h')) {
+  console.log(USAGE_TEXT);
+  process.exit(0);
+}
+
 const statusResult = spawnSync('changeset', ['status'], {
   encoding: 'utf8',
 });

@@ -20,6 +20,16 @@ function runStatusScript(customPath) {
   });
 }
 
+function runStatusScriptWithArgs(customPath, args) {
+  return spawnSync('node', [statusScriptPath, ...args], {
+    encoding: 'utf8',
+    env: {
+      ...process.env,
+      PATH: customPath,
+    },
+  });
+}
+
 function createNodeOnlyPath() {
   return path.dirname(process.execPath);
 }
@@ -99,4 +109,20 @@ test('changeset-status-ci reports command execution failure', () => {
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Failed to execute changeset status/u);
+});
+
+test('changeset-status-ci prints usage with --help', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--help']);
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Usage:/u);
+  assert.match(result.stdout, /changeset status/u);
+});
+
+test('changeset-status-ci prints usage with -h alias', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['-h']);
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Options:/u);
+  assert.match(result.stdout, /-h, --help/u);
 });
