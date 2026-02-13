@@ -8,6 +8,31 @@ function createMissingValueError(flagName) {
 }
 
 /**
+ * @param {RequiredArgumentValueOptions} options
+ */
+function assertValidRequiredArgumentValueOptions(options) {
+  if (typeof options.flagName !== 'string' || options.flagName.trim().length === 0) {
+    throw new Error(`Invalid flag name: ${options.flagName}`);
+  }
+
+  if (!(options.knownArgs instanceof Set)) {
+    throw new Error(`Invalid known-args set for ${options.flagName}`);
+  }
+
+  if (typeof options.allowDoubleDashValue !== 'boolean') {
+    throw new Error(`Invalid allowDoubleDashValue option for ${options.flagName}`);
+  }
+
+  if (options.allowWhitespaceOnly !== undefined && typeof options.allowWhitespaceOnly !== 'boolean') {
+    throw new Error(`Invalid allowWhitespaceOnly option for ${options.flagName}`);
+  }
+
+  if (options.allowedKnownValues !== undefined && !(options.allowedKnownValues instanceof Set)) {
+    throw new Error(`Invalid allowedKnownValues set for ${options.flagName}`);
+  }
+}
+
+/**
  * @typedef {{
  *   flagName: string;
  *   knownArgs: Set<string>;
@@ -22,6 +47,8 @@ function createMissingValueError(flagName) {
  * @param {RequiredArgumentValueOptions} options
  */
 export function validateRequiredArgumentValue(value, options) {
+  assertValidRequiredArgumentValueOptions(options);
+
   const isKnownToken = value ? options.knownArgs.has(value) : false;
   const isAllowedKnownValue = Boolean(value && options.allowedKnownValues?.has(value));
 

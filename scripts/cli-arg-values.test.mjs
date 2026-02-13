@@ -28,6 +28,56 @@ test('validateRequiredArgumentValue rejects missing values', () => {
   );
 });
 
+test('validateRequiredArgumentValue rejects empty flag names', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: ' ',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid flag name:\s+/u,
+  );
+});
+
+test('validateRequiredArgumentValue rejects invalid known-args options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: /** @type {unknown as Set<string>} */ (['--help']),
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args set for --output/u,
+  );
+});
+
+test('validateRequiredArgumentValue rejects non-boolean allowDoubleDashValue options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: /** @type {unknown as boolean} */ ('yes'),
+      }),
+    /Invalid allowDoubleDashValue option for --output/u,
+  );
+});
+
+test('validateRequiredArgumentValue rejects invalid allowedKnownValues options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('--help', {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: /** @type {unknown as Set<string>} */ (['--help']),
+      }),
+    /Invalid allowedKnownValues set for --message/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects known argument tokens by default', () => {
   assert.throws(
     () =>
