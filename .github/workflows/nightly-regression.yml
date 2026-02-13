@@ -45,6 +45,7 @@ jobs:
 
       - name: Run full no-build quality suite
         run: set -o pipefail && npm run test:all:nobuild 2>&1 | tee nightly-quality.log
+        shell: bash
 
       - name: Upload failure diagnostics
         if: failure()
