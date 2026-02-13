@@ -316,6 +316,9 @@ npm run watch
 # Build everything to be ready to be pushed to npm or released
 npm run build
 
+# Build only workspace packages (`packages/*`) and skip app builds
+npm run stack:build:packages
+
 # Linting commands used during precommit an tests
 npm run prettier:*
 

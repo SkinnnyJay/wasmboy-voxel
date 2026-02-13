@@ -31,6 +31,7 @@
     "prepare": "run-s core:build lib:build:wasm",
     "stack:dev": "pnpm -r --if-present --parallel --filter \"./packages/**\" --filter \"./apps/**\" dev",
     "stack:build": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" build",
+    "stack:build:packages": "pnpm -r --if-present --filter \"./packages/**\" build",
     "stack:test": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" test",
     "stack:typecheck": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" typecheck",
     "stack:lint": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" lint",
