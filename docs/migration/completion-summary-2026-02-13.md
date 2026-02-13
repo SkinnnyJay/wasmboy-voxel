@@ -311,6 +311,7 @@ Workflow hardening applied:
 - parser-helper options-contract coverage now explicitly asserts `null` `allowDoubleDashValue` rejection in `validateRequiredArgumentValue` validation paths
 - parser-helper options-contract coverage now explicitly asserts `null` `allowWhitespaceOnly` rejection in both direct and read-path argument validation helpers
 - read-path parser-helper value-type coverage now explicitly asserts `null`, `Symbol`, and unprintable following-token rejection with stable formatted error output
+- composed timeout-resolution coverage now explicitly asserts `null`, `Symbol`, and unprintable default-timeout rejection with stable formatted error output
 - timeout-helper coverage now explicitly asserts null/undefined direct option-name rejection for `resolveStrictPositiveIntegerEnv`
 - read-path parser-helper coverage now explicitly asserts undefined argument-index rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper coverage now explicitly asserts `NaN` argument-index rejection in `readRequiredArgumentValue` validation paths

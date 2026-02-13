@@ -620,6 +620,42 @@ test('resolveTimeoutFromCliAndEnv rejects non-numeric default timeout value type
   );
 });
 
+test('resolveTimeoutFromCliAndEnv rejects null default timeout value types', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: null,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid default value for TEST_TIMEOUT_ENV: null/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects symbol default timeout value types', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: Symbol('timeout-default'),
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid default value for TEST_TIMEOUT_ENV: Symbol\(timeout-default\)/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv safely formats unprintable default timeout values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: UNPRINTABLE_VALUE,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid default value for TEST_TIMEOUT_ENV: \[unprintable\]/u,
+  );
+});
+
 test('resolveTimeoutFromCliAndEnv rejects undefined default timeout value types', () => {
   assert.throws(
     () =>
