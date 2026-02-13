@@ -24,8 +24,9 @@ test/accuracy/testroms/**/*.png
 test/performance/testroms/**/*.png
 !test/performance/testroms/**/*.*.noPerformanceOptions.png
 
-# Ignore build output
+# Ignore build output (but keep ESM type declaration for consumers)
 dist/
+!dist/wasmboy.wasm.esm.d.ts
 assets/*.map
 build/
 

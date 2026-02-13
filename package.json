@@ -105,6 +105,10 @@
     "dist",
     "core",
     "lib",
+    "index.ts",
+    "fork-api-spec.ts",
+    "voxel-wrapper.ts",
+    "wasm-fork.d.ts",
     "README.md",
     "LICENSE"
   ],
