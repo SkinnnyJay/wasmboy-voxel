@@ -28,6 +28,14 @@ test('validateRequiredArgumentValue rejects missing values', () => {
   );
 });
 
+test('validateRequiredArgumentValue rejects missing options objects', () => {
+  assert.throws(() => validateRequiredArgumentValue('value', undefined), /Invalid required argument options\./u);
+});
+
+test('validateRequiredArgumentValue rejects non-object options', () => {
+  assert.throws(() => validateRequiredArgumentValue('value', 42), /Invalid required argument options\./u);
+});
+
 test('validateRequiredArgumentValue rejects empty flag names', () => {
   assert.throws(
     () =>
@@ -175,6 +183,10 @@ test('readRequiredArgumentValue rejects non-array argv inputs', () => {
       }),
     /Invalid argv array for --timeout-ms/u,
   );
+});
+
+test('readRequiredArgumentValue rejects missing options objects', () => {
+  assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, undefined), /Invalid required argument options\./u);
 });
 
 test('readRequiredArgumentValue rejects invalid argument indexes', () => {
