@@ -17,8 +17,11 @@ const TAR_TIMEOUT_ENV_VARIABLE = 'BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS';
 const CLI_TIMEOUT_FLAG = '--tar-timeout-ms';
 const HELP_SHORT_FLAG = '-h';
 const HELP_LONG_FLAG = '--help';
+const OUTPUT_FLAG = '--output';
+const PATTERN_FLAG = '--pattern';
+const MESSAGE_FLAG = '--message';
 const HELP_ARGS = new Set([HELP_LONG_FLAG, HELP_SHORT_FLAG]);
-const KNOWN_ARGS = new Set(['--output', '--pattern', '--message', CLI_TIMEOUT_FLAG, '--help', '-h']);
+const KNOWN_ARGS = new Set([OUTPUT_FLAG, PATTERN_FLAG, MESSAGE_FLAG, CLI_TIMEOUT_FLAG, HELP_LONG_FLAG, HELP_SHORT_FLAG]);
 const USAGE_TEXT = `Usage:
 node scripts/bundle-diagnostics.mjs \\
   --output artifacts/ci-diagnostics.tar.gz \\
@@ -99,30 +102,30 @@ function parseArgs(argv) {
       continue;
     }
 
-    if (token.startsWith('--output=')) {
+    if (token.startsWith(`${OUTPUT_FLAG}=`)) {
       if (outputConfigured) {
-        throw new Error('Duplicate --output argument provided.');
+        throw new Error(`Duplicate ${OUTPUT_FLAG} argument provided.`);
       }
-      const value = token.slice('--output='.length);
-      validateValue(value, '--output', { allowDoubleDashValue: false });
+      const value = token.slice(`${OUTPUT_FLAG}=`.length);
+      validateValue(value, OUTPUT_FLAG, { allowDoubleDashValue: false });
       parsed.output = value;
       outputConfigured = true;
       continue;
     }
 
-    if (token.startsWith('--pattern=')) {
-      const value = token.slice('--pattern='.length);
-      validateValue(value, '--pattern', { allowDoubleDashValue: false });
+    if (token.startsWith(`${PATTERN_FLAG}=`)) {
+      const value = token.slice(`${PATTERN_FLAG}=`.length);
+      validateValue(value, PATTERN_FLAG, { allowDoubleDashValue: false });
       parsed.patterns.push(value);
       continue;
     }
 
-    if (token.startsWith('--message=')) {
+    if (token.startsWith(`${MESSAGE_FLAG}=`)) {
       if (messageConfigured) {
-        throw new Error('Duplicate --message argument provided.');
+        throw new Error(`Duplicate ${MESSAGE_FLAG} argument provided.`);
       }
-      const value = token.slice('--message='.length);
-      validateValue(value, '--message', {
+      const value = token.slice(`${MESSAGE_FLAG}=`.length);
+      validateValue(value, MESSAGE_FLAG, {
         allowDoubleDashValue: true,
         allowWhitespaceOnly: true,
         allowedKnownValues: HELP_ARGS,
@@ -143,27 +146,27 @@ function parseArgs(argv) {
       continue;
     }
 
-    if (token === '--output') {
+    if (token === OUTPUT_FLAG) {
       if (outputConfigured) {
-        throw new Error('Duplicate --output argument provided.');
+        throw new Error(`Duplicate ${OUTPUT_FLAG} argument provided.`);
       }
-      parsed.output = readRequiredValue(argv, i, '--output', { allowDoubleDashValue: false });
+      parsed.output = readRequiredValue(argv, i, OUTPUT_FLAG, { allowDoubleDashValue: false });
       outputConfigured = true;
       i += 1;
       continue;
     }
 
-    if (token === '--pattern') {
-      parsed.patterns.push(readRequiredValue(argv, i, '--pattern', { allowDoubleDashValue: false }));
+    if (token === PATTERN_FLAG) {
+      parsed.patterns.push(readRequiredValue(argv, i, PATTERN_FLAG, { allowDoubleDashValue: false }));
       i += 1;
       continue;
     }
 
-    if (token === '--message') {
+    if (token === MESSAGE_FLAG) {
       if (messageConfigured) {
-        throw new Error('Duplicate --message argument provided.');
+        throw new Error(`Duplicate ${MESSAGE_FLAG} argument provided.`);
       }
-      parsed.message = readRequiredValue(argv, i, '--message', {
+      parsed.message = readRequiredValue(argv, i, MESSAGE_FLAG, {
         allowDoubleDashValue: true,
         allowWhitespaceOnly: true,
         allowedKnownValues: HELP_ARGS,

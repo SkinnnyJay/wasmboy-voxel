@@ -130,6 +130,7 @@ Workflow hardening applied:
 - diagnostics path-value token-guard coverage now includes timeout-flag token misuse variants for `--output` / `--pattern` (split and equals forms), preserving missing-value semantics for known flag tokens in path-value slots
 - diagnostics message-value token-guard coverage now includes timeout-flag token misuse variants (`--message --tar-timeout-ms`, `--message=--tar-timeout-ms`), preserving current known-token missing-value semantics for non-whitelisted message tokens
 - diagnostics message-value token-guard coverage now also includes operational known-flag misuse variants (`--message --output`, `--message --pattern`, plus equals forms), preserving known-token missing-value semantics for non-whitelisted message tokens while keeping explicit help-token literal allowances
+- `bundle-diagnostics` parser internals now use shared flag constants (`--output`, `--pattern`, `--message`) across known-token sets, split/equals parsing, and duplicate-error paths to reduce literal drift risk while preserving CLI behavior and error text
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity
