@@ -104,6 +104,26 @@ test('resolveStrictPositiveIntegerEnv rejects values above supported timeout cei
   );
 });
 
+test('resolveStrictPositiveIntegerEnv accepts max supported timeout value', () => {
+  const timeout = resolveStrictPositiveIntegerEnv({
+    name: 'TEST_TIMEOUT',
+    rawValue: ' 2147483647 ',
+    defaultValue: 120000,
+  });
+
+  assert.equal(timeout, 2_147_483_647);
+});
+
+test('resolveStrictPositiveIntegerEnv accepts leading-zero values', () => {
+  const timeout = resolveStrictPositiveIntegerEnv({
+    name: 'TEST_TIMEOUT',
+    rawValue: '00050',
+    defaultValue: 120000,
+  });
+
+  assert.equal(timeout, 50);
+});
+
 test('resolveTimeoutFromCliAndEnv returns default when cli/env are unset', () => {
   const timeout = resolveTimeoutFromCliAndEnv({
     defaultValue: 120000,
