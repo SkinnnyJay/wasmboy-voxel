@@ -12,6 +12,15 @@ import { spawnSync } from 'node:child_process';
 
 const DEFAULT_EMPTY_MESSAGE = 'No diagnostics files were produced for this run.';
 
+function readRequiredValue(argv, index, flagName) {
+  const value = argv[index + 1];
+  if (!value || value.startsWith('--')) {
+    throw new Error(`Missing value for ${flagName} argument.`);
+  }
+
+  return value;
+}
+
 function parseArgs(argv) {
   /** @type {{output: string; patterns: string[]; message: string}} */
   const parsed = {
@@ -24,25 +33,24 @@ function parseArgs(argv) {
     const token = argv[i];
 
     if (token === '--output') {
-      parsed.output = argv[i + 1] ?? '';
+      parsed.output = readRequiredValue(argv, i, '--output');
       i += 1;
       continue;
     }
 
     if (token === '--pattern') {
-      const pattern = argv[i + 1] ?? '';
-      if (pattern.length > 0) {
-        parsed.patterns.push(pattern);
-      }
+      parsed.patterns.push(readRequiredValue(argv, i, '--pattern'));
       i += 1;
       continue;
     }
 
     if (token === '--message') {
-      parsed.message = argv[i + 1] ?? DEFAULT_EMPTY_MESSAGE;
+      parsed.message = readRequiredValue(argv, i, '--message');
       i += 1;
       continue;
     }
+
+    throw new Error(`Unknown argument: ${token}`);
   }
 
   return parsed;
