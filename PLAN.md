@@ -295,3 +295,4 @@
 - 2026-02-13: Expanded help-mixed timeout regression coverage to include inline timeout forms for both helpers, preserving strict help-flag exclusivity semantics across split and equals argument styles.
 - 2026-02-13: Expanded help-mode strictness regression coverage with unknown short-flag mixes (`--help -x`) for both helpers, preserving unknown-short rejection guarantees even when help is present.
 - 2026-02-13: Expanded timeout-value token-guard regression coverage with help-alias tokens (`--help`, `-h`) across split/inline timeout value positions for both helpers, preserving missing-value semantics when option tokens are misused as timeout values.
+- 2026-02-13: Expanded duplicate-timeout regression coverage with inline-first ordering (`--flag=...` then `--flag ...`) in both helpers, preserving ordering-agnostic duplicate detection across split and equals argument forms.

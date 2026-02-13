@@ -148,6 +148,14 @@ test('changeset-status-ci rejects duplicate timeout flags', () => {
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci rejects duplicate timeout flags in inline-first order', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=200', '--timeout-ms', '100']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Duplicate --timeout-ms argument provided/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci rejects missing timeout values', () => {
   const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms']);
 
