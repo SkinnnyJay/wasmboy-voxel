@@ -249,6 +249,14 @@ test('changeset-status-ci rejects whitespace-only CLI timeout override', () => {
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci rejects whitespace-only inline CLI timeout override', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=   ']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci rejects plus-prefixed CLI timeout override', () => {
   const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '+5000']);
 
@@ -257,8 +265,24 @@ test('changeset-status-ci rejects plus-prefixed CLI timeout override', () => {
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci rejects plus-prefixed inline CLI timeout override', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=+5000']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci rejects negative CLI timeout override', () => {
   const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '-5']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects negative inline CLI timeout override', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=-5']);
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Invalid --timeout-ms value/u);
