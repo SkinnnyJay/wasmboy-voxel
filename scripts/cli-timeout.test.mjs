@@ -106,6 +106,18 @@ test('resolveStrictPositiveIntegerEnv returns default for empty-string values', 
   assert.equal(timeout, 120000);
 });
 
+test('resolveStrictPositiveIntegerEnv rejects non-string raw values', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: 5000,
+        defaultValue: 120000,
+      }),
+    /Invalid TEST_TIMEOUT value: 5000/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv parses numeric string values', () => {
   const timeout = resolveStrictPositiveIntegerEnv({
     name: 'TEST_TIMEOUT',
@@ -327,5 +339,17 @@ test('resolveTimeoutFromCliAndEnv rejects invalid environment option names', () 
         cli: { name: '--test-timeout', rawValue: undefined },
       }),
     /Invalid timeout option name:\s+/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects non-string env timeout values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: 5000 },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid TEST_TIMEOUT_ENV value: 5000/u,
   );
 });

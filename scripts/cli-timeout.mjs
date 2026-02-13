@@ -28,6 +28,10 @@ export function resolveStrictPositiveIntegerEnv(options) {
   const { name, rawValue, defaultValue } = options;
   assertValidDefaultValue(name, defaultValue);
 
+  if (rawValue !== undefined && typeof rawValue !== 'string') {
+    throw new Error(`Invalid ${name} value: ${rawValue}`);
+  }
+
   if (rawValue === undefined || rawValue.length === 0) {
     return defaultValue;
   }

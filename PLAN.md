@@ -358,3 +358,4 @@
 - 2026-02-13: Expanded shared `test-fixtures` regression coverage with non-string executable-body rejection, locking helper body-type input contract semantics in addition to empty/whitespace body guards.
 - 2026-02-13: Hardened shared timeout parser option-metadata validation with explicit option-name guards (rejecting empty/non-string names) and expanded helper unit coverage for direct/composed invalid-name rejection paths.
 - 2026-02-13: Hardened shared `cli-arg-values` helper option-contract validation (flag-name, known-args set, boolean option toggles, allowed-known-values set) and expanded helper unit coverage for invalid-option rejection paths.
+- 2026-02-13: Hardened shared timeout parser raw-value input contract by rejecting non-string timeout values before normalization and expanded helper unit coverage for direct/composed non-string raw-value rejection.
