@@ -196,3 +196,4 @@
 - 2026-02-13: Extended failure-diagnostics artifact support to contract and release workflows by teeing gate logs and uploading them on failure for consistent cross-pipeline observability.
 - 2026-02-13: Updated `contract:ci` to include `workflow:lint`, ensuring contract workflow changes also enforce YAML formatting standards before package-level validation.
 - 2026-02-13: Updated README CI section with trigger/filter and failure-artifact behavior notes so contributors can better understand when workflows run and where diagnostics appear.
+- 2026-02-13: Added 14-day retention policies to CI/contract/nightly/release failure artifacts, standardizing diagnostics lifecycle management across workflows.

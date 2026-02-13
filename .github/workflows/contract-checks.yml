@@ -64,6 +64,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: contract-failure-diagnostics
+          retention-days: 14
           if-no-files-found: ignore
           path: |
             contract-ci.log

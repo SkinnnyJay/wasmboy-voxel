@@ -66,6 +66,7 @@ Workflow hardening applied:
 - workflow formatting checks are enforced via `workflow:lint` and included in the unified quality gate
 - CI and nightly workflows now capture full quality-gate logs and relevant screenshot outputs as artifacts on failure for faster triage
 - contract and release workflows now capture gate logs as failure artifacts to support post-failure debugging without reruns
+- failure diagnostics artifacts use a 14-day retention window to balance triage utility with storage footprint
 
 ## Security posture at completion
 
