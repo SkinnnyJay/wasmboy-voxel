@@ -281,6 +281,12 @@ test('bundle-diagnostics rejects unknown args even when help is present', () => 
   assert.match(output, /Unknown argument: --unknown/u);
 });
 
+test('bundle-diagnostics rejects help flag mixed with operational args', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-help-mixed-args-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--help', '--output', 'artifacts/out.tar.gz']);
+  assert.match(output, /Help flag cannot be combined with other arguments/u);
+});
+
 test('bundle-diagnostics requires at least one pattern argument', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-pattern-required-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz']);

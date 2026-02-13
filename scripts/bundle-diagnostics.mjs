@@ -101,6 +101,10 @@ function parseArgs(argv) {
     throw new Error(`Unknown argument: ${token}`);
   }
 
+  if (parsed.showHelp && (outputConfigured || messageConfigured || parsed.patterns.length > 0)) {
+    throw new Error('Help flag cannot be combined with other arguments.');
+  }
+
   return parsed;
 }
 
