@@ -295,6 +295,7 @@ Workflow hardening applied:
 - shared CLI argument-value helper coverage now explicitly asserts undefined flag-name rejection and missing `allowDoubleDashValue` option rejection
 - shared timeout helper coverage now explicitly asserts undefined default-timeout rejection for both direct env parsing and composed env/CLI timeout resolution helpers
 - shared CLI argument-value helper coverage now explicitly asserts missing/null `knownArgs` set rejection in required-argument option validation
+- parser-helper set-option coverage now explicitly asserts `Symbol`/`bigint` non-Set rejection for `knownArgs` and `allowedKnownValues` in direct/read validation helpers
 - shared timeout precedence-helper coverage now explicitly asserts undefined option-name rejection for both composed env and CLI option metadata
 - read-path CLI argument parsing coverage now explicitly asserts missing `knownArgs` and missing `allowDoubleDashValue` option rejection in `readRequiredArgumentValue` validation paths
 - read-path CLI argument parsing coverage now explicitly asserts null `knownArgs` and null `allowDoubleDashValue` option rejection in `readRequiredArgumentValue` validation paths

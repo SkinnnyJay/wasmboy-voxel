@@ -208,6 +208,30 @@ test('validateRequiredArgumentValue rejects null known-args options', () => {
   );
 });
 
+test('validateRequiredArgumentValue rejects symbol known-args options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: Symbol('known-args'),
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args set for --output/u,
+  );
+});
+
+test('validateRequiredArgumentValue rejects bigint known-args options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: 42n,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args set for --output/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects non-string known-args entries', () => {
   assert.throws(
     () =>
@@ -425,6 +449,34 @@ test('validateRequiredArgumentValue rejects invalid allowedKnownValues options',
         allowDoubleDashValue: true,
         allowWhitespaceOnly: true,
         allowedKnownValues: /** @type {unknown as Set<string>} */ (['--help']),
+      }),
+    /Invalid allowedKnownValues set for --message/u,
+  );
+});
+
+test('validateRequiredArgumentValue rejects symbol allowedKnownValues options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('--help', {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: Symbol('allowed-known-values'),
+      }),
+    /Invalid allowedKnownValues set for --message/u,
+  );
+});
+
+test('validateRequiredArgumentValue rejects bigint allowedKnownValues options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('--help', {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: 42n,
       }),
     /Invalid allowedKnownValues set for --message/u,
   );
@@ -807,6 +859,30 @@ test('readRequiredArgumentValue rejects null known-args options', () => {
   );
 });
 
+test('readRequiredArgumentValue rejects symbol known-args options', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: Symbol('known-args'),
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args set for --timeout-ms/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects bigint known-args options', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: 42n,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args set for --timeout-ms/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects non-string known-args entries', () => {
   assert.throws(
     () =>
@@ -1000,6 +1076,34 @@ test('readRequiredArgumentValue rejects invalid allowedKnownValues options', () 
         allowDoubleDashValue: true,
         allowWhitespaceOnly: true,
         allowedKnownValues: /** @type {unknown as Set<string>} */ (['--help']),
+      }),
+    /Invalid allowedKnownValues set for --message/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects symbol allowedKnownValues options', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--message', '--help'], 0, {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: Symbol('allowed-known-values'),
+      }),
+    /Invalid allowedKnownValues set for --message/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects bigint allowedKnownValues options', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--message', '--help'], 0, {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: 42n,
       }),
     /Invalid allowedKnownValues set for --message/u,
   );
