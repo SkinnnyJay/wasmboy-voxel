@@ -430,6 +430,19 @@ test('bundle-diagnostics rejects tar timeout values above supported ceiling', ()
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics treats empty timeout env value as default', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-empty-timeout-env-'));
+  runBundlerCommand(tempDirectory, ['--output', 'artifacts/empty-timeout.tar.gz', '--pattern', 'missing/*.log'], {
+    BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '',
+  });
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/empty-timeout.tar.gz');
+  assert.ok(
+    archiveContents.some(entry => entry.endsWith('artifacts/empty-timeout.txt')),
+    'archive should still be created when timeout env is set to an empty string',
+  );
+});
+
 test('bundle-diagnostics reports tar timeout failures', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-'));
   const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
