@@ -383,3 +383,4 @@
 - 2026-02-13: Hardened shared `readRequiredArgumentValue` cursor-bounds validation by rejecting out-of-range indexes (`index >= argv.length`) and expanded helper unit coverage for out-of-range index rejection.
 - 2026-02-13: Hardened `changeset-status-ci-lib` input contract with explicit non-string output rejection and expanded helper unit coverage for non-string/symbol/unprintable output rejection paths.
 - 2026-02-13: Expanded shared timeout-helper coverage with explicit `null` invalid-input rejection paths (direct raw timeout + composed env-name + composed cli raw timeout cases).
+- 2026-02-13: Expanded shared `cli-arg-values` coverage with explicit `null` invalid-input rejection paths (value token, `flagName`, options object, argument index).

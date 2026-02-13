@@ -45,6 +45,18 @@ test('validateRequiredArgumentValue rejects non-string values', () => {
   );
 });
 
+test('validateRequiredArgumentValue rejects null values', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue(null, {
+        flagName: '--output',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid value type for --output argument: null/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects symbol values', () => {
   assert.throws(
     () =>
@@ -114,6 +126,18 @@ test('validateRequiredArgumentValue rejects empty flag names', () => {
         allowDoubleDashValue: false,
       }),
     /Invalid flag name:\s+/u,
+  );
+});
+
+test('validateRequiredArgumentValue rejects null flag names', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: null,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid flag name: null/u,
   );
 });
 
@@ -323,6 +347,10 @@ test('readRequiredArgumentValue rejects missing options objects', () => {
   assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, undefined), /Invalid required argument options\./u);
 });
 
+test('readRequiredArgumentValue rejects null options objects', () => {
+  assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, null), /Invalid required argument options\./u);
+});
+
 test('readRequiredArgumentValue rejects array options', () => {
   assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, []), /Invalid required argument options\./u);
 });
@@ -338,6 +366,20 @@ test('readRequiredArgumentValue rejects invalid argument indexes', () => {
         allowWhitespaceOnly: true,
       }),
     /Invalid argument index for --timeout-ms: -1/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects null argument indexes', () => {
+  const args = ['--timeout-ms', '00050'];
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(args, null, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid argument index for --timeout-ms: null/u,
   );
 });
 

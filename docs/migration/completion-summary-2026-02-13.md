@@ -196,6 +196,7 @@ Workflow hardening applied:
 - shared argument-value helper now normalizes error-value rendering with safe string conversion, preventing Symbol/non-string invalid inputs from triggering unexpected formatting TypeErrors in validation paths
 - shared argument-value helper coverage now includes Symbol invalid value/flag-name/index rejection paths, locking robust error-reporting behavior for non-string invalid helper inputs
 - shared argument-value helper coverage now includes unprintable-value fallback assertions (`toString`-throwing value/flag-name/index inputs), locking `[unprintable]` fallback error-format semantics under hostile invalid-input shapes
+- shared argument-value helper coverage now includes explicit `null` invalid-input rejection paths (value token, `flagName`, options object, argument index), locking null-value contract semantics across direct/read-path helper entrypoints
 - shared argument-value helper now rejects out-of-range parser cursor indexes (`index >= argv.length`) before reading following tokens, preventing ambiguous missing-value errors from invalid parser-cursor positions
 - shared argument-value helper coverage now includes out-of-range index rejection, locking parser-cursor bounds semantics for required-following-token reads
 - timeout env/CLI precedence resolution now uses a shared helper (`resolveTimeoutFromCliAndEnv`) across both wrappers, reducing duplicated timeout-resolution scaffolding while preserving current env-first validation + CLI-override semantics
