@@ -345,6 +345,14 @@ test('bundle-diagnostics rejects invalid tar timeout configuration', () => {
   assert.match(output, /Invalid BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS value/u);
 });
 
+test('bundle-diagnostics rejects non-numeric tar timeout suffixes', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-timeout-suffix-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log'], {
+    BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '50ms',
+  });
+  assert.match(output, /Invalid BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS value/u);
+});
+
 test('bundle-diagnostics reports tar timeout failures', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-'));
   const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');

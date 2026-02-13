@@ -28,7 +28,12 @@ function resolveTarTimeoutMs(rawTimeoutValue) {
     return DEFAULT_TAR_TIMEOUT_MS;
   }
 
-  const parsedTimeout = Number.parseInt(rawTimeoutValue, 10);
+  const normalizedTimeout = rawTimeoutValue.trim();
+  if (!/^\d+$/u.test(normalizedTimeout)) {
+    throw new Error(`Invalid ${TAR_TIMEOUT_ENV_VARIABLE} value: ${rawTimeoutValue}`);
+  }
+
+  const parsedTimeout = Number.parseInt(normalizedTimeout, 10);
   if (!Number.isFinite(parsedTimeout) || parsedTimeout <= 0) {
     throw new Error(`Invalid ${TAR_TIMEOUT_ENV_VARIABLE} value: ${rawTimeoutValue}`);
   }
