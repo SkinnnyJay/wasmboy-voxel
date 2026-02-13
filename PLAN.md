@@ -181,3 +181,4 @@
 - 2026-02-13: Migrated all workflows from install to lockfile-driven `install:stack:ci` for deterministic dependency resolution while preserving existing build/test behavior.
 - 2026-02-13: Optimized CI dependency bootstrap by running lockfile installs with `--ignore-scripts`, removing redundant prepare-time builds while keeping explicit quality/build stages authoritative.
 - 2026-02-13: Added Next.js cache step to release workflow to speed repeated debugger app builds during release validations.
+- 2026-02-13: Introduced `release:build` script and switched release workflow to it, aligning release build scope with publish artifacts (root emulator/lib + workspace packages) while avoiding unnecessary app builds.

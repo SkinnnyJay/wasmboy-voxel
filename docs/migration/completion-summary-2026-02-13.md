@@ -35,6 +35,10 @@ CI automation now runs the same gate in:
 - `nightly-regression.yml` (daily scheduled drift detection)
 - `release.yml` (pre-publish release guard before changesets action)
 
+Release pipeline build uses:
+
+- `npm run release:build` (root emulator/lib build + workspace package builds)
+
 Workflow hardening applied:
 
 - explicit workflow permissions (least privilege defaults)

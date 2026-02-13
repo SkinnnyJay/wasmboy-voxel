@@ -319,6 +319,9 @@ npm run build
 # Build only workspace packages (`packages/*`) and skip app builds
 npm run stack:build:packages
 
+# Build release artifacts (root emulator/lib + workspace packages)
+npm run release:build
+
 # Linting commands used during precommit an tests
 npm run prettier:*
 

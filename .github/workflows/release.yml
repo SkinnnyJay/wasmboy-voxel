@@ -46,8 +46,8 @@ jobs:
       - name: Install workspace dependencies
         run: npm run install:stack:ci
 
-      - name: Build workspace stack
-        run: npm run stack:build
+      - name: Build release artifacts
+        run: npm run release:build
 
       - name: Run release quality gate
         run: npm run test:all:nobuild
