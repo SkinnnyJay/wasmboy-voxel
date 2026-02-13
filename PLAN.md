@@ -446,3 +446,4 @@
 - 2026-02-13: Expanded shared read-path index-contract coverage with symbol index rejection in upper-bound cursor scenarios (`argv.length - 1`), locking invalid-index-type precedence before missing-value boundary handling.
 - 2026-02-13: Expanded shared read-path value-token coverage with empty-string following-token rejection for required flags, locking missing-value semantics for explicit empty argv payloads.
 - 2026-02-13: Added read-path inline-equals parity regression coverage by asserting `validateRequiredArgumentValue` acceptance for extracted `--flag=value` payloads and equality with `readRequiredArgumentValue` split-form reads, locking parser helper consistency across inline/split argument styles.
+- 2026-02-13: Hardened timeout option-name validation by rejecting whitespace-padded option labels (`name !== name.trim()`) and expanded helper coverage across direct/composed env/cli timeout resolution entrypoints.

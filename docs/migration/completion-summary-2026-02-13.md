@@ -344,6 +344,7 @@ Workflow hardening applied:
 - read-path index-contract coverage now explicitly asserts symbol index rejection in upper-bound cursor scenarios, locking invalid-index-type precedence before missing-value boundary handling
 - read-path value-token coverage now explicitly asserts empty-string following-token rejection for required flags, locking missing-value semantics for explicit empty argv payloads
 - read-path inline-equals parity coverage now asserts extracted `--flag=value` payload validation parity with split-form `readRequiredArgumentValue` reads, locking parser-helper consistency across inline/split argument styles
+- timeout option-name validation now rejects whitespace-padded names (`name !== name.trim()`), with direct/composed env+cli helper coverage locking disallowed padded-label semantics
 
 ## Security posture at completion
 

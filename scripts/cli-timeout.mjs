@@ -24,7 +24,7 @@ function assertValidTimeoutEnvOptions(options) {
  * @param {string} name
  */
 function assertValidOptionName(name) {
-  if (typeof name !== 'string' || name.trim().length === 0) {
+  if (typeof name !== 'string' || name.trim().length === 0 || name !== name.trim()) {
     throw new Error(`Invalid timeout option name: ${formatErrorValue(name)}`);
   }
 }

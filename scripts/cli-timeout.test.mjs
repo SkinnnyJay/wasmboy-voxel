@@ -54,6 +54,18 @@ test('resolveStrictPositiveIntegerEnv rejects empty option names', () => {
   );
 });
 
+test('resolveStrictPositiveIntegerEnv rejects whitespace-padded option names', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: ' TEST_TIMEOUT ',
+        rawValue: undefined,
+        defaultValue: 120000,
+      }),
+    /Invalid timeout option name:\s+TEST_TIMEOUT\s+/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv rejects non-string option names', () => {
   assert.throws(
     () =>
@@ -816,6 +828,18 @@ test('resolveTimeoutFromCliAndEnv rejects invalid environment option names', () 
   );
 });
 
+test('resolveTimeoutFromCliAndEnv rejects whitespace-padded environment option names', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: ' TEST_TIMEOUT_ENV ', rawValue: undefined },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid timeout option name:\s+TEST_TIMEOUT_ENV\s+/u,
+  );
+});
+
 test('resolveTimeoutFromCliAndEnv rejects null environment option names', () => {
   assert.throws(
     () =>
@@ -993,6 +1017,18 @@ test('resolveTimeoutFromCliAndEnv rejects null cli option names', () => {
         cli: { name: null, rawValue: undefined },
       }),
     /Invalid timeout option name: null/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects whitespace-padded cli option names', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: '5000' },
+        cli: { name: ' --test-timeout ', rawValue: undefined },
+      }),
+    /Invalid timeout option name:\s+--test-timeout\s+/u,
   );
 });
 
