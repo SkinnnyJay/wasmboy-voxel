@@ -163,3 +163,4 @@
 - 2026-02-13: Added PyBoy-rigor tick/frame equivalence/input-delay regression coverage (`test:integration:tick`) to validate tick contract input checks, `tick(1)xN` vs `tick(N)` determinism, and queued delayed input scheduling behavior.
 - 2026-02-13: Applied `npm audit fix --omit=optional --legacy-peer-deps` to pick up safe transitive updates; post-change audit moved to 4 high findings (from 5 total), with remaining issues isolated to legacy webpack-era minifier dependency chains.
 - 2026-02-13: Completed Phase 8 dependency audit hardening by removing unused vulnerable `uglifyjs-webpack-plugin`, rerunning full workspace/integration/core suites, and reaching `npm audit --omit=optional` = 0 vulnerabilities.
+- 2026-02-13: Added consolidated root quality-gate scripts (`test:all`, `test:all:nobuild`, `audit:check`) and updated CI to run the unified no-build quality suite end-to-end.

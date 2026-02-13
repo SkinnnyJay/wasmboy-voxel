@@ -331,6 +331,12 @@ npm run test
 # Run tests in `test/performance/test.js`
 npm run test:performance
 
+# Run migration-era full quality gate (lint/typecheck/tests/integration/core/perf/audit)
+npm run test:all:nobuild
+
+# Dependency audit check used by CI
+npm run audit:check
+
 # All commands for testing, and are test related
 npm run test:*
 

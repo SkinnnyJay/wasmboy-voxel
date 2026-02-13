@@ -40,11 +40,5 @@ jobs:
       - name: Install debugger app dependencies
         run: npm --prefix apps/debugger install
 
-      - name: Lint workspace stack
-        run: npm run stack:lint
-
-      - name: Typecheck workspace stack
-        run: npm run stack:typecheck
-
-      - name: Test workspace stack
-        run: npm run stack:test
+      - name: Run full no-build quality suite
+        run: npm run test:all:nobuild
