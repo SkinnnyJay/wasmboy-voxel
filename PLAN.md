@@ -303,3 +303,4 @@
 - 2026-02-13: Expanded duplicate-timeout regression coverage to include split-only and inline-only duplicates for both helpers, preserving syntax/order-agnostic duplicate-timeout detection semantics across split, equals, and mixed forms.
 - 2026-02-13: Expanded timeout-override precedence regression coverage with inline CLI override forms for both helpers, preserving env-override precedence parity between split (`--flag value`) and equals (`--flag=value`) styles.
 - 2026-02-13: Expanded diagnostics placeholder-message regression coverage with whitespace-only message values in split and equals forms, preserving intended whitespace payload semantics for custom empty-artifact notes.
+- 2026-02-13: Updated `bundle-diagnostics` message parsing to allow help-token literals (`--help`, `-h`) as intentional message payloads (split and equals forms), with regression coverage for both literal cases.

@@ -15,6 +15,9 @@ const DEFAULT_EMPTY_MESSAGE = 'No diagnostics files were produced for this run.'
 const DEFAULT_TAR_TIMEOUT_MS = 120000;
 const TAR_TIMEOUT_ENV_VARIABLE = 'BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS';
 const CLI_TIMEOUT_FLAG = '--tar-timeout-ms';
+const HELP_SHORT_FLAG = '-h';
+const HELP_LONG_FLAG = '--help';
+const HELP_ARGS = new Set([HELP_LONG_FLAG, HELP_SHORT_FLAG]);
 const KNOWN_ARGS = new Set(['--output', '--pattern', '--message', CLI_TIMEOUT_FLAG, '--help', '-h']);
 const USAGE_TEXT = `Usage:
 node scripts/bundle-diagnostics.mjs \\
@@ -36,7 +39,7 @@ Environment:
  * @param {string[]} argv
  * @param {number} index
  * @param {string} flagName
- * @param {{allowDoubleDashValue: boolean; allowWhitespaceOnly?: boolean}} options
+ * @param {{allowDoubleDashValue: boolean; allowWhitespaceOnly?: boolean; allowedKnownValues?: Set<string>}} options
  */
 function readRequiredValue(argv, index, flagName, options) {
   const value = argv[index + 1];
@@ -47,10 +50,13 @@ function readRequiredValue(argv, index, flagName, options) {
 /**
  * @param {string | undefined} value
  * @param {string} flagName
- * @param {{allowDoubleDashValue: boolean; allowWhitespaceOnly?: boolean}} options
+ * @param {{allowDoubleDashValue: boolean; allowWhitespaceOnly?: boolean; allowedKnownValues?: Set<string>}} options
  */
 function validateValue(value, flagName, options) {
-  if (!value || KNOWN_ARGS.has(value)) {
+  const isKnownToken = value ? KNOWN_ARGS.has(value) : false;
+  const isAllowedKnownValue = Boolean(value && options.allowedKnownValues?.has(value));
+
+  if (!value || (isKnownToken && !isAllowedKnownValue)) {
     throw new Error(`Missing value for ${flagName} argument.`);
   }
 
@@ -84,7 +90,7 @@ function parseArgs(argv) {
   for (let i = 0; i < argv.length; i += 1) {
     const token = argv[i];
 
-    if (token === '--help' || token === '-h') {
+    if (token === HELP_LONG_FLAG || token === HELP_SHORT_FLAG) {
       if (helpConfigured) {
         throw new Error('Duplicate help flag provided.');
       }
@@ -116,7 +122,11 @@ function parseArgs(argv) {
         throw new Error('Duplicate --message argument provided.');
       }
       const value = token.slice('--message='.length);
-      validateValue(value, '--message', { allowDoubleDashValue: true, allowWhitespaceOnly: true });
+      validateValue(value, '--message', {
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: HELP_ARGS,
+      });
       parsed.message = value;
       messageConfigured = true;
       continue;
@@ -153,7 +163,11 @@ function parseArgs(argv) {
       if (messageConfigured) {
         throw new Error('Duplicate --message argument provided.');
       }
-      parsed.message = readRequiredValue(argv, i, '--message', { allowDoubleDashValue: true, allowWhitespaceOnly: true });
+      parsed.message = readRequiredValue(argv, i, '--message', {
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: HELP_ARGS,
+      });
       messageConfigured = true;
       i += 1;
       continue;
