@@ -19,10 +19,15 @@ Environment:
 function parseArgs(argv) {
   /** @type {{showHelp: boolean}} */
   const parsed = { showHelp: false };
+  let helpConfigured = false;
 
   for (const token of argv) {
     if (token === '--help' || token === '-h') {
+      if (helpConfigured) {
+        throw new Error('Duplicate help flag provided.');
+      }
       parsed.showHelp = true;
+      helpConfigured = true;
       continue;
     }
 

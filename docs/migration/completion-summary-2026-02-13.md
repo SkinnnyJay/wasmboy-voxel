@@ -120,6 +120,7 @@ Workflow hardening applied:
 - diagnostics helper now rejects mixed help + operational arguments to keep CLI intent explicit and avoid ambiguous invocation behavior
 - changeset helper now also has regression coverage for `--help` mixed with unknown arguments, preserving strict invocation semantics across both wrappers
 - changeset timeout-suffix failure tests now assert usage-text output, locking guidance quality for timeout-config error paths
+- both helpers now reject duplicate help-flag combinations (e.g. `--help -h`) with explicit parse errors to keep invocation semantics strict
 - diagnostics helper argument parsing now allows dash-prefixed message values (e.g. `--message "--custom note"`) while still treating known flags as missing-value sentinels
 - diagnostics helper now treats unknown long-flag tokens as missing-value errors for `--output` / `--pattern`, preventing accidental flag-token capture as path values
 - bundle argument parsing now tests both accepted dash-prefixed message payloads and rejected long-flag token capture for path-oriented args, documenting the intended parsing boundary

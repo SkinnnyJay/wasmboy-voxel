@@ -297,6 +297,13 @@ test('bundle-diagnostics prints usage with -h alias', () => {
   assert.match(result.stdout, /-h, --help/u);
 });
 
+test('bundle-diagnostics rejects duplicate help flags', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-help-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--help', '-h']);
+  assert.match(output, /Duplicate help flag provided/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects unknown args even when help is present', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-help-unknown-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--help', '--unknown']);

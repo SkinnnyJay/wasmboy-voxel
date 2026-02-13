@@ -130,6 +130,15 @@ test('changeset-status-ci prints usage with -h alias', () => {
   assert.match(result.stdout, /-h, --help/u);
 });
 
+test('changeset-status-ci rejects duplicate help flags', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--help', '-h']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[changeset:status:ci\]/u);
+  assert.match(result.stderr, /Duplicate help flag provided/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci rejects unknown arguments', () => {
   const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--unknown']);
 

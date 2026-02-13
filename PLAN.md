@@ -218,6 +218,7 @@
 - 2026-02-13: Tightened diagnostics helper CLI semantics by rejecting mixed help + operational argument combinations, reducing ambiguous invocation modes.
 - 2026-02-13: Added regression coverage ensuring `changeset-status-ci` rejects unknown arguments even when mixed with help flags, aligning strict invocation guarantees across both automation helpers.
 - 2026-02-13: Expanded `changeset-status-ci` timeout-suffix regression assertions to require usage-text output for timeout-config failures, preserving operator guidance guarantees.
+- 2026-02-13: Tightened helper arg parsing to reject duplicate help-flag combinations (`--help -h`) in both wrappers, with regression coverage for strict help-flag semantics.
 - 2026-02-13: Extracted shared strict timeout env parsing into `scripts/cli-timeout.mjs` and wired both automation wrappers to it, with dedicated helper unit coverage to reduce duplicated parsing logic.
 - 2026-02-13: Added timeout upper-bound validation (`<= 2147483647ms`) in shared timeout parsing helper, with regression coverage to prevent out-of-range process timeout configuration.
 - 2026-02-13: Expanded shared timeout helper coverage to reject whitespace-only env values, ensuring invalid CI timeout config is surfaced explicitly.

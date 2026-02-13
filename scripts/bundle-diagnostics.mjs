@@ -61,12 +61,17 @@ function parseArgs(argv) {
   };
   let outputConfigured = false;
   let messageConfigured = false;
+  let helpConfigured = false;
 
   for (let i = 0; i < argv.length; i += 1) {
     const token = argv[i];
 
     if (token === '--help' || token === '-h') {
+      if (helpConfigured) {
+        throw new Error('Duplicate help flag provided.');
+      }
       parsed.showHelp = true;
+      helpConfigured = true;
       continue;
     }
 
