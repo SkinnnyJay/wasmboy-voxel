@@ -311,6 +311,7 @@ Workflow hardening applied:
 - timeout-helper default-value coverage now explicitly asserts `-Infinity` default-timeout rejection for both direct env and composed env/CLI timeout resolution helpers
 - read-path parser-helper options-shape coverage now explicitly asserts primitive non-object (`number`) options rejection in `readRequiredArgumentValue` validation paths
 - parser-helper options-shape coverage now explicitly asserts `Symbol` options rejection across direct/read required-argument validation entrypoints
+- parser-helper options-shape coverage now explicitly asserts `bigint` options rejection across direct/read required-argument validation entrypoints
 - parser-helper options-contract coverage now explicitly asserts `null` `allowDoubleDashValue` rejection in `validateRequiredArgumentValue` validation paths
 - parser-helper options-contract coverage now explicitly asserts `null` `allowWhitespaceOnly` rejection in both direct and read-path argument validation helpers
 - read-path parser-helper value-type coverage now explicitly asserts `null`, `Symbol`, and unprintable following-token rejection with stable formatted error output

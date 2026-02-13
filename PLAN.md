@@ -413,6 +413,7 @@
 - 2026-02-13: Expanded shared timeout-helper default-value coverage with explicit `-Infinity` default-timeout rejection across direct/composed timeout helpers, locking negative-infinite default-value contract semantics.
 - 2026-02-13: Expanded shared `readRequiredArgumentValue` options-shape coverage with explicit primitive non-object (`number`) options rejection, locking read-path helper options-container contract semantics.
 - 2026-02-13: Expanded shared parser-helper options-shape coverage with explicit `Symbol` options rejection across direct/read entrypoints, locking primitive symbol options-container semantics.
+- 2026-02-13: Expanded shared parser-helper options-shape coverage with explicit `bigint` options rejection across direct/read entrypoints, locking primitive bigint options-container semantics.
 - 2026-02-13: Expanded shared `validateRequiredArgumentValue` options-contract coverage with explicit `null` `allowDoubleDashValue` rejection, locking nullability semantics for required boolean parser options.
 - 2026-02-13: Expanded shared parser-helper options-contract coverage with explicit `null` `allowWhitespaceOnly` rejection across direct/read validation entrypoints, locking nullable optional-boolean contract semantics.
 - 2026-02-13: Expanded shared `readRequiredArgumentValue` value-type coverage with explicit `null`, `Symbol`, and unprintable following-token rejection assertions, locking read-path value-type error-format contract semantics.

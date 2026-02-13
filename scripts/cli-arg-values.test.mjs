@@ -109,6 +109,10 @@ test('validateRequiredArgumentValue rejects symbol options', () => {
   assert.throws(() => validateRequiredArgumentValue('value', Symbol('required-arg-options')), /Invalid required argument options\./u);
 });
 
+test('validateRequiredArgumentValue rejects bigint options', () => {
+  assert.throws(() => validateRequiredArgumentValue('value', 42n), /Invalid required argument options\./u);
+});
+
 test('validateRequiredArgumentValue rejects symbol flag names', () => {
   assert.throws(
     () =>
@@ -770,6 +774,10 @@ test('readRequiredArgumentValue rejects symbol options', () => {
     () => readRequiredArgumentValue(['--timeout-ms', '50'], 0, Symbol('required-arg-options')),
     /Invalid required argument options\./u,
   );
+});
+
+test('readRequiredArgumentValue rejects bigint options', () => {
+  assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, 42n), /Invalid required argument options\./u);
 });
 
 test('readRequiredArgumentValue rejects non-object options', () => {
