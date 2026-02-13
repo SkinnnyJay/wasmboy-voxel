@@ -175,3 +175,4 @@
 - 2026-02-13: Updated README and completion summary with explicit CI workflow map + hardening notes so contributors can mirror and reason about automation behavior locally.
 - 2026-02-13: Added explicit job timeouts to CI, contract-check, and release workflows to prevent runaway minutes and align pipeline reliability with nightly timeout behavior.
 - 2026-02-13: Added root `install:stack` script and migrated all workflows to it, reducing duplicated dependency install logic and keeping CI/release setup behavior aligned.
+- 2026-02-13: Strengthened release automation by requiring `test:all:nobuild` and `changeset:status` prior to the changesets publish/create-PR action.

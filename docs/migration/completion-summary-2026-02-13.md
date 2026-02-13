@@ -33,6 +33,7 @@ CI automation now runs the same gate in:
 - `ci.yml` (push/PR)
 - `contract-checks.yml` (contract-focused gate + explicit contract payload validation)
 - `nightly-regression.yml` (daily scheduled drift detection)
+- `release.yml` (pre-publish release guard before changesets action)
 
 Workflow hardening applied:
 

@@ -35,6 +35,12 @@ jobs:
       - name: Build workspace stack
         run: npm run stack:build
 
+      - name: Run release quality gate
+        run: npm run test:all:nobuild
+
+      - name: Verify changeset status
+        run: npm run changeset:status
+
       - name: Create release PR or publish
         uses: changesets/action@v1
         with:
