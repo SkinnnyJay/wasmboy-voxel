@@ -14,6 +14,7 @@ import { resolveStrictPositiveIntegerEnv } from './cli-timeout.mjs';
 const DEFAULT_EMPTY_MESSAGE = 'No diagnostics files were produced for this run.';
 const DEFAULT_TAR_TIMEOUT_MS = 120000;
 const TAR_TIMEOUT_ENV_VARIABLE = 'BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS';
+const KNOWN_ARGS = new Set(['--output', '--pattern', '--message', '--help', '-h']);
 const USAGE_TEXT = `Usage:
 node scripts/bundle-diagnostics.mjs \\
   --output artifacts/ci-diagnostics.tar.gz \\
@@ -29,7 +30,7 @@ Environment:
 
 function readRequiredValue(argv, index, flagName) {
   const value = argv[index + 1];
-  if (!value || value.startsWith('--')) {
+  if (!value || KNOWN_ARGS.has(value)) {
     throw new Error(`Missing value for ${flagName} argument.`);
   }
 

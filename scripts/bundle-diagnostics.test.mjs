@@ -111,6 +111,27 @@ test('bundle-diagnostics writes custom placeholder message when provided', () =>
   assert.equal(placeholderText, customMessage, 'placeholder file should contain the custom message text');
 });
 
+test('bundle-diagnostics accepts custom messages that begin with double dashes', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-empty-message-dash-prefix-'));
+  const customMessage = '--custom placeholder message';
+
+  runBundlerCommand(tempDirectory, [
+    '--output',
+    'artifacts/custom-dash-empty.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--message',
+    customMessage,
+  ]);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/custom-dash-empty.tar.gz');
+  const placeholderEntry = archiveContents.find(entry => entry.endsWith('artifacts/custom-dash-empty.txt'));
+  assert.ok(placeholderEntry, 'archive should include placeholder entry');
+
+  const placeholderText = readArchiveEntry(tempDirectory, 'artifacts/custom-dash-empty.tar.gz', placeholderEntry).trim();
+  assert.equal(placeholderText, customMessage, 'placeholder file should preserve dash-prefixed message text');
+});
+
 test('bundle-diagnostics de-duplicates files matched by repeated patterns', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-dedupe-'));
   const logsDirectory = path.join(tempDirectory, 'logs');
