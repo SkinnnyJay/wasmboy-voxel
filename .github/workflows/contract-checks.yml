@@ -65,6 +65,12 @@ jobs:
       - name: Run contract CI gate
         run: set -o pipefail && npm run contract:ci 2>&1 | tee contract-ci.log
 
+      - name: Compress diagnostics payload
+        if: ${{ failure() || cancelled() }}
+        run: |
+          mkdir -p artifacts
+          tar --ignore-failed-read -czf artifacts/contract-diagnostics.tar.gz contract-ci.log
+
       - name: Upload failure diagnostics
         if: ${{ failure() || cancelled() }}
         uses: actions/upload-artifact@v4
@@ -73,4 +79,4 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
           path: |
-            contract-ci.log
+            artifacts/contract-diagnostics.tar.gz

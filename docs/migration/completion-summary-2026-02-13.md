@@ -89,6 +89,7 @@ Workflow hardening applied:
 - failure artifact names include run id/attempt for clearer traceability in repeated or retried runs
 - diagnostics upload steps now run on both failure and cancellation, preserving partial logs from interrupted pipelines
 - workflows now set job-level `defaults.run.shell: bash` so bash semantics are consistently applied across all run steps
+- diagnostics are archived into per-workflow tarballs before upload to keep artifacts compact and grouped for easier download/inspection
 
 ## Security posture at completion
 

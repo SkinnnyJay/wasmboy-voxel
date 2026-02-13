@@ -215,3 +215,4 @@
 - 2026-02-13: Added a single retry to `test:integration:headless` (`--retries 1`) to mitigate occasional golden-frame flake in CI while retaining strict pixel-diff assertions.
 - 2026-02-13: Added a single retry to `test:core:savestate` (`--retries 1`) to reduce occasional screenshot-timing flakes while preserving strict save-state golden comparisons.
 - 2026-02-13: Refined retry strategy by restoring strict default local headless/save-state commands and introducing CI-specific retry scripts (`test:integration:headless:ci`, `test:core:savestate:ci`) used by `test:all:nobuild`.
+- 2026-02-13: Added compression steps for CI/contract/nightly/release diagnostics and upload archived tarballs, keeping failure artifacts compact and easier to fetch/inspect while retaining log+screenshot coverage.

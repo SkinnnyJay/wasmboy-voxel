@@ -68,6 +68,16 @@ jobs:
       - name: Run release verification gate
         run: set -o pipefail && npm run release:verify 2>&1 | tee release-verify.log
 
+      - name: Compress diagnostics payload
+        if: ${{ failure() || cancelled() }}
+        run: |
+          mkdir -p artifacts
+          tar --ignore-failed-read -czf artifacts/release-diagnostics.tar.gz \
+            release-build.log \
+            release-verify.log \
+            test/core/save-state/*.png \
+            test/integration/headless-simple*.png
+
       - name: Create release PR or publish
         uses: changesets/action@v1
         with:
@@ -85,7 +95,4 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
           path: |
-            release-build.log
-            release-verify.log
-            test/core/save-state/*.png
-            test/integration/headless-simple*.png
+            artifacts/release-diagnostics.tar.gz

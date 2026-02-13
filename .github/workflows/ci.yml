@@ -81,6 +81,15 @@ jobs:
       - name: Run full no-build quality suite
         run: set -o pipefail && npm run ci:local 2>&1 | tee ci-quality.log
 
+      - name: Compress diagnostics payload
+        if: ${{ failure() || cancelled() }}
+        run: |
+          mkdir -p artifacts
+          tar --ignore-failed-read -czf artifacts/ci-diagnostics.tar.gz \
+            ci-quality.log \
+            test/core/save-state/*.png \
+            test/integration/headless-simple*.png
+
       - name: Upload failure diagnostics
         if: ${{ failure() || cancelled() }}
         uses: actions/upload-artifact@v4
@@ -89,6 +98,4 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
           path: |
-            ci-quality.log
-            test/core/save-state/*.png
-            test/integration/headless-simple*.png
+            artifacts/ci-diagnostics.tar.gz
