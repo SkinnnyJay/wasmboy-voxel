@@ -78,6 +78,30 @@ test('validateRequiredArgumentValue rejects flag-like tokens when double-dash va
   );
 });
 
+test('validateRequiredArgumentValue rejects unknown long-flag-like tokens when double-dash values are disallowed', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('--unknown-timeout', {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Missing value for --timeout-ms argument\./u,
+  );
+});
+
+test('validateRequiredArgumentValue accepts whitespace-only values when explicitly allowed', () => {
+  assert.doesNotThrow(() => {
+    validateRequiredArgumentValue('   ', {
+      flagName: '--timeout-ms',
+      knownArgs: KNOWN_ARGS,
+      allowDoubleDashValue: false,
+      allowWhitespaceOnly: true,
+    });
+  });
+});
+
 test('readRequiredArgumentValue returns and validates following token', () => {
   const args = ['--timeout-ms', '00050'];
   const value = readRequiredArgumentValue(args, 0, {
@@ -88,6 +112,19 @@ test('readRequiredArgumentValue returns and validates following token', () => {
   });
 
   assert.equal(value, '00050');
+});
+
+test('readRequiredArgumentValue allows configured known value tokens', () => {
+  const args = ['--message', '--help'];
+  const value = readRequiredArgumentValue(args, 0, {
+    flagName: '--message',
+    knownArgs: KNOWN_ARGS,
+    allowDoubleDashValue: true,
+    allowWhitespaceOnly: true,
+    allowedKnownValues: HELP_ARGS,
+  });
+
+  assert.equal(value, '--help');
 });
 
 test('readRequiredArgumentValue rejects missing following tokens', () => {
