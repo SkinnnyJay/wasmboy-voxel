@@ -319,6 +319,13 @@ test('bundle-diagnostics rejects duplicate help flags', () => {
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics rejects duplicate help flags in short-first order', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-help-short-first-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['-h', '--help']);
+  assert.match(output, /Duplicate help flag provided/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects duplicate timeout flags', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-timeout-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, [

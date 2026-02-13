@@ -140,6 +140,15 @@ test('changeset-status-ci rejects duplicate help flags', () => {
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci rejects duplicate help flags in short-first order', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['-h', '--help']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[changeset:status:ci\]/u);
+  assert.match(result.stderr, /Duplicate help flag provided/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci rejects duplicate timeout flags', () => {
   const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '100', '--timeout-ms=200']);
 

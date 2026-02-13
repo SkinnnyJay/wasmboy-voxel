@@ -299,3 +299,4 @@
 - 2026-02-13: Expanded help-timeout exclusivity regression coverage with short-help alias scenarios (`-h --flag ...`, `-h --flag=...`) for both helpers, preserving help-flag exclusivity semantics across both help aliases and timeout argument styles.
 - 2026-02-13: Expanded help-mode unknown-argument regression coverage with short-help alias scenarios (`-h --unknown`, `-h -x`) for both helpers, preserving strict unknown-argument rejection behavior even when help alias mode is active.
 - 2026-02-13: Hardened `bundle-diagnostics` path-value parsing so whitespace-only `--output` / `--pattern` values are treated as missing (split and equals forms), with regression coverage to prevent blank path-value acceptance.
+- 2026-02-13: Expanded duplicate-help regression coverage with short-first alias ordering (`-h --help`) for both helpers, preserving ordering-agnostic duplicate-help detection semantics.
