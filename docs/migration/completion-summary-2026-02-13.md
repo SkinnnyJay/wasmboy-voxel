@@ -300,6 +300,7 @@ Workflow hardening applied:
 - read-path CLI argument parsing coverage now explicitly asserts null `knownArgs` and null `allowDoubleDashValue` option rejection in `readRequiredArgumentValue` validation paths
 - read-path CLI argument parsing coverage now explicitly asserts invalid `allowedKnownValues` set-shape rejection and read-path subset-enforcement rejection in `readRequiredArgumentValue` validation paths
 - read-path CLI argument parsing coverage now explicitly asserts null and whitespace-only `allowedKnownValues` entry rejection in `readRequiredArgumentValue` validation paths
+- read-path parser-helper tests now include explicit implemented assertions for null/whitespace `allowedKnownValues` entries in `readRequiredArgumentValue` to match documented token-entry guardrails
 
 ## Security posture at completion
 
