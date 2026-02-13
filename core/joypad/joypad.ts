@@ -45,7 +45,7 @@ export class Joypad {
 
   static readonly memoryLocationJoypadRegister: i32 = 0xff00;
   // Cache some values on the Joypad register
-  static joypadRegisterFlipped: i32 = 0;
+  static joypadRegisterFlipped: i32 = 0xff;
   static isDpadType: boolean = false;
   static isButtonType: boolean = false;
   static updateJoypad(value: i32): void {
@@ -139,6 +139,9 @@ export function getJoypadState(): i32 {
     } else {
       joypadRegister = setBitOnByte(3, joypadRegister);
     }
+  } else {
+    // Neither buttons nor d-pad selected: low nibble reads 0xF (all released per Pan Docs)
+    joypadRegister = joypadRegister | 0x0f;
   }
 
   // Set the top 4 bits to on

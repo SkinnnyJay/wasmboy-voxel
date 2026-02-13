@@ -111,6 +111,7 @@ function initializeVarious(): void {
     eightBitStoreIntoGBMemory(0xff4f, 0xfe);
     eightBitStoreIntoGBMemory(0xff4d, 0x7e);
     eightBitStoreIntoGBMemory(0xff00, 0xcf);
+    Joypad.updateJoypad(0xcf);
 
     eightBitStoreIntoGBMemory(0xff0f, 0xe1);
     // 0xFFFF = 0x00
@@ -123,6 +124,7 @@ function initializeVarious(): void {
     eightBitStoreIntoGBMemory(0xff4f, 0xff);
     eightBitStoreIntoGBMemory(0xff4d, 0xff);
     eightBitStoreIntoGBMemory(0xff00, 0xcf);
+    Joypad.updateJoypad(0xcf);
 
     eightBitStoreIntoGBMemory(0xff0f, 0xe1);
     // 0xFFFF = 0x00
