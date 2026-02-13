@@ -43,6 +43,7 @@ Release pipeline build uses:
 Contract workflow uses:
 
 - `npm run contract:ci` (package build + package typecheck/tests + changeset status + sample contract validation)
+- path filters so the workflow runs only when contract/package/release-metadata files change
 
 Workflow hardening applied:
 

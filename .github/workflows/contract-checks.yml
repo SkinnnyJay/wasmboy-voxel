@@ -3,8 +3,26 @@ name: contract-checks
 on:
   push:
     branches: ['master', 'cursor/**']
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'pnpm-workspace.yaml'
+      - 'packages/api/**'
+      - 'packages/cli/**'
+      - 'test/fixtures/contracts/**'
+      - '.changeset/**'
+      - '.github/workflows/contract-checks.yml'
   pull_request:
     branches: ['master']
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'pnpm-workspace.yaml'
+      - 'packages/api/**'
+      - 'packages/cli/**'
+      - 'test/fixtures/contracts/**'
+      - '.changeset/**'
+      - '.github/workflows/contract-checks.yml'
 
 permissions:
   contents: read
