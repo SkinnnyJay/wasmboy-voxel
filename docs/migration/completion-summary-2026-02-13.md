@@ -28,6 +28,12 @@ This executes:
 - headless throughput baseline
 - dependency audit check
 
+CI automation now runs the same gate in:
+
+- `ci.yml` (push/PR)
+- `contract-checks.yml` (contract-focused gate + explicit contract payload validation)
+- `nightly-regression.yml` (daily scheduled drift detection)
+
 ## Security posture at completion
 
 ```bash
