@@ -353,7 +353,7 @@ test('bundle-diagnostics reports tar timeout failures', () => {
   fs.writeFileSync(
     fakeTarPath,
     `#!/usr/bin/env bash
-sleep 1
+sleep 0.2
 exit 0
 `,
     'utf8',

@@ -104,6 +104,7 @@ Workflow hardening applied:
 - diagnostics bundling now excludes the output archive path from matched inputs to avoid accidental self-inclusion when broad patterns are used
 - diagnostics bundling now normalizes absolute file matches to relative archive paths (when under repo cwd) to keep artifact contents stable and portable
 - diagnostics bundling now enforces a configurable tar timeout (`BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS`, default 120000ms) with explicit invalid-config and timeout failure handling
+- timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)
 - changeset status warning filter now tolerates version bumps by suppressing only `file:` workspace warnings from `@wasmboy/*` packages against `@wasmboy/api`
 - suppressed changeset workspace warnings are now lexicographically sorted before reporting for deterministic CI log output

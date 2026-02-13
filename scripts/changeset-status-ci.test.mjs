@@ -151,7 +151,7 @@ test('changeset-status-ci reports timeout errors with configured value', () => {
   const fakeBinDirectory = writeFakeChangeset(
     tempDirectory,
     `#!/usr/bin/env bash
-sleep 1
+sleep 0.2
 echo '🦋  info delayed status'
 exit 0
 `,
