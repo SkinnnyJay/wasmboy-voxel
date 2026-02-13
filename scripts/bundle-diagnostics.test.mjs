@@ -806,6 +806,60 @@ test('bundle-diagnostics rejects short-help mixed with inline timeout args', () 
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics rejects explicit help flag after message literal --help value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-message-help-literal-then-help-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--message',
+    '--help',
+    '--help',
+  ]);
+  assert.match(output, /Help flag cannot be combined with other arguments/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics rejects explicit short-help flag after message literal -h value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-message-short-help-literal-then-short-help-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--message',
+    '-h',
+    '-h',
+  ]);
+  assert.match(output, /Help flag cannot be combined with other arguments/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics rejects explicit help flag after equals-form message literal --help value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-message-inline-help-literal-then-help-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output=artifacts/out.tar.gz',
+    '--pattern=missing/*.log',
+    '--message=--help',
+    '--help',
+  ]);
+  assert.match(output, /Help flag cannot be combined with other arguments/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics rejects explicit short-help flag after equals-form message literal -h value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-message-inline-short-help-literal-then-short-help-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output=artifacts/out.tar.gz',
+    '--pattern=missing/*.log',
+    '--message=-h',
+    '-h',
+  ]);
+  assert.match(output, /Help flag cannot be combined with other arguments/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects timeout args followed by trailing help flag', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-timeout-trailing-help-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, [
