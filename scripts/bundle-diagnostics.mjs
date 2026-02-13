@@ -207,15 +207,21 @@ function main() {
     return;
   }
 
-  let placeholderFile = null;
+  let tarTimeoutMs = DEFAULT_TAR_TIMEOUT_MS;
   try {
     assertRequiredConfig(args.output, args.patterns);
-    const tarTimeoutMs = resolveStrictPositiveIntegerEnv({
+    tarTimeoutMs = resolveStrictPositiveIntegerEnv({
       name: TAR_TIMEOUT_ENV_VARIABLE,
       rawValue: process.env[TAR_TIMEOUT_ENV_VARIABLE],
       defaultValue: DEFAULT_TAR_TIMEOUT_MS,
     });
+  } catch (error) {
+    failWithUsage(toErrorMessage(error));
+    process.exit(1);
+  }
 
+  let placeholderFile = null;
+  try {
     fs.mkdirSync(path.dirname(args.output), { recursive: true });
 
     const matchedFiles = collectFiles(args.patterns, args.output);

@@ -253,6 +253,7 @@ test('bundle-diagnostics requires output argument', () => {
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--pattern', 'logs/*.log']);
   assert.match(output, /\[bundle-diagnostics\]/u);
   assert.match(output, /Missing required --output argument/u);
+  assert.match(output, /Usage:/u);
 });
 
 test('bundle-diagnostics prints usage with --help', () => {
@@ -358,6 +359,7 @@ test('bundle-diagnostics rejects invalid tar timeout configuration', () => {
     BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: 'invalid',
   });
   assert.match(output, /Invalid BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS value/u);
+  assert.match(output, /Usage:/u);
 });
 
 test('bundle-diagnostics rejects non-numeric tar timeout suffixes', () => {

@@ -57,6 +57,7 @@ try {
 } catch (error) {
   const errorMessage = error instanceof Error ? error.message : 'Invalid timeout configuration.';
   console.error(`[changeset:status:ci] ${errorMessage}`);
+  console.error(USAGE_TEXT);
   process.exit(1);
 }
 

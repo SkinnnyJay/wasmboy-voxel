@@ -212,6 +212,7 @@
 - 2026-02-13: Extended README helper references with timeout override examples for both automation wrappers to improve operational discoverability during CI triage.
 - 2026-02-13: Tightened diagnostics helper argument handling so unknown flags still fail even when help is requested, preserving strict invocation semantics across automation scripts.
 - 2026-02-13: Standardized diagnostics helper failure output with `[bundle-diagnostics]` prefixed error lines and usage-on-parse-failure behavior for clearer CI troubleshooting logs.
+- 2026-02-13: Extended helper failure UX so invalid timeout-config errors also print usage context (not just parse errors), improving operator guidance in CI logs.
 - 2026-02-13: Added regression assertions for helper error-prefix contracts (`[bundle-diagnostics]`, `[changeset:status:ci]`) to keep automation troubleshooting output stable.
 - 2026-02-13: Tightened diagnostics helper CLI semantics by rejecting mixed help + operational argument combinations, reducing ambiguous invocation modes.
 - 2026-02-13: Extracted shared strict timeout env parsing into `scripts/cli-timeout.mjs` and wired both automation wrappers to it, with dedicated helper unit coverage to reduce duplicated parsing logic.
