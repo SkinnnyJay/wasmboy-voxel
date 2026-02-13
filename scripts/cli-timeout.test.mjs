@@ -784,6 +784,18 @@ test('resolveTimeoutFromCliAndEnv fails for invalid env timeout even when cli ti
   );
 });
 
+test('resolveTimeoutFromCliAndEnv fails for plus-prefixed env timeout even when cli timeout is valid', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: '+5000' },
+        cli: { name: '--test-timeout', rawValue: '50' },
+      }),
+    /Invalid TEST_TIMEOUT_ENV value: \+5000/u,
+  );
+});
+
 test('resolveTimeoutFromCliAndEnv fails for max-safe-integer-overflow env timeout even when cli timeout is valid', () => {
   assert.throws(
     () =>
@@ -805,6 +817,18 @@ test('resolveTimeoutFromCliAndEnv fails for invalid cli timeout even when env ti
         cli: { name: '--test-timeout', rawValue: 'invalid-timeout' },
       }),
     /Invalid --test-timeout value: invalid-timeout/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv fails for plus-prefixed cli timeout even when env timeout is valid', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: '5000' },
+        cli: { name: '--test-timeout', rawValue: '+50' },
+      }),
+    /Invalid --test-timeout value: \+50/u,
   );
 });
 

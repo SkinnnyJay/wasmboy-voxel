@@ -348,6 +348,7 @@ Workflow hardening applied:
 - timeout options-container validation now enforces plain-object inputs, with Date/Map/Set rejection coverage across direct helper options and composed top-level/env/cli timeout option containers
 - timeout default-value boundary coverage now explicitly asserts `-0` rejection in direct and composed timeout helpers, locking negative-zero default semantics alongside existing non-positive default guards
 - timeout raw-value overflow coverage now explicitly asserts max-safe-integer overflow string rejection (`9007199254740992`) across direct env parsing and composed env/cli precedence paths
+- composed timeout precedence coverage now explicitly asserts plus-prefixed raw-timeout rejection (`+5000`, `+50`) across env and CLI override paths, locking strict digit-only override semantics
 
 ## Security posture at completion
 

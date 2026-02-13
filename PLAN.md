@@ -450,3 +450,4 @@
 - 2026-02-13: Hardened timeout options-container shape guards with plain-object validation (`Object`/`null` prototype only), adding direct/composed Date/Map/Set rejection coverage for top-level, env, and cli timeout option containers.
 - 2026-02-13: Expanded timeout default-value boundary coverage with explicit `-0` rejection assertions in direct and composed timeout resolution helpers, locking negative-zero default semantics alongside existing non-positive default guards.
 - 2026-02-13: Expanded timeout raw-value overflow coverage with max-safe-integer overflow string rejection (`9007199254740992`) across direct env parsing and composed env/cli precedence paths, locking overflow guard semantics beyond ceiling-only checks.
+- 2026-02-13: Expanded composed timeout precedence coverage with plus-prefixed raw-timeout rejection (`+5000`, `+50`) for env and CLI override paths, locking strict digit-only semantics in override resolution.
