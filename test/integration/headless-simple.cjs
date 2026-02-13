@@ -1,10 +1,10 @@
 // Test to make sure a "hello world" of the Headless WasmBoy Works
 
 // Common test functions
-const commonTest = require('../common-test');
+const commonTest = require('../common-test.cjs');
 
 // Golden file handling
-const { goldenFileCompareOrCreate } = require('../golden-compare');
+const { goldenFileCompareOrCreate } = require('../golden-compare.cjs');
 
 // Wasm Boy library
 const WasmBoy = require('../../dist/wasmboy.wasm.cjs.cjs').WasmBoy;

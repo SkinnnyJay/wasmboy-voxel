@@ -8,6 +8,13 @@
   const EMULATOR_CLEAR_MEMORY_BREAKPOINT = 'emulator:clearMemoryBreakpoint';
   const EMULATOR_CLEAR_ALL_MEMORY_BREAKPOINTS = 'emulator:clearAllMemoryBreakpoints';
   const EMULATOR_RESPONSE = 'emulator:response';
+  const EMULATOR_GET_BACKGROUND_MAP_IMAGE = 'emulator:getBackgroundMapImage';
+  const EMULATOR_GET_TILE_DATA_IMAGE = 'emulator:getTileDataImage';
+  const EMULATOR_GET_OAM_SPRITES_IMAGE = 'emulator:getOamSpritesImage';
+  const EMULATOR_GET_CPU_REGISTERS = 'emulator:getCPURegisters';
+  const EMULATOR_GET_TIMER_STATE = 'emulator:getTimerState';
+  const EMULATOR_GET_LCD_STATE = 'emulator:getLCDState';
+  const EMULATOR_GET_SCANLINE_PARAMETERS = 'emulator:getScanlineParameters';
 
   let mountResolve;
   let mountPromise = new Promise(resolve => {
@@ -19,9 +26,19 @@
       const d = event.data;
       if (!d || typeof d.type !== 'string' || !d.type.startsWith('emulator:')) return;
       const source = event.source || window.parent;
+      const messageId = d.messageId;
       const reply = (response, error) => {
-        if (d.messageId != null) {
-          source.postMessage({ type: EMULATOR_RESPONSE, messageId: d.messageId, response, error }, '*');
+        if (messageId != null) {
+          source.postMessage({ type: EMULATOR_RESPONSE, messageId, response, error }, '*');
+        }
+      };
+      const replyImage = (result) => {
+        if (messageId == null) return;
+        if (result && result.data && result.data.buffer) {
+          const response = { width: result.width, height: result.height, data: result.data.buffer };
+          source.postMessage({ type: EMULATOR_RESPONSE, messageId, response }, '*', [response.data]);
+        } else {
+          source.postMessage({ type: EMULATOR_RESPONSE, messageId, response: null }, '*');
         }
       };
       if (d.type === EMULATOR_SET_MEMORY_BREAKPOINT && d.payload) {
@@ -30,6 +47,20 @@
         WasmBoy.clearMemoryBreakpoint(d.payload.id).then(() => reply()).catch(err => reply(null, String(err && err.message)));
       } else if (d.type === EMULATOR_CLEAR_ALL_MEMORY_BREAKPOINTS) {
         WasmBoy.clearAllMemoryBreakpoints().then(() => reply()).catch(err => reply(null, String(err && err.message)));
+      } else if (d.type === EMULATOR_GET_CPU_REGISTERS) {
+        WasmBoy.getCPURegisters().then(res => reply(res)).catch(err => reply(null, String(err && err.message)));
+      } else if (d.type === EMULATOR_GET_TIMER_STATE) {
+        WasmBoy.getTimerState().then(res => reply(res)).catch(err => reply(null, String(err && err.message)));
+      } else if (d.type === EMULATOR_GET_LCD_STATE) {
+        WasmBoy.getLCDState().then(res => reply(res)).catch(err => reply(null, String(err && err.message)));
+      } else if (d.type === EMULATOR_GET_SCANLINE_PARAMETERS) {
+        WasmBoy.getScanlineParameters().then(res => reply(res)).catch(err => reply(null, String(err && err.message)));
+      } else if (d.type === EMULATOR_GET_BACKGROUND_MAP_IMAGE) {
+        WasmBoy.getBackgroundMapImage().then(replyImage).catch(err => reply(null, String(err && err.message)));
+      } else if (d.type === EMULATOR_GET_TILE_DATA_IMAGE) {
+        WasmBoy.getTileDataImage().then(replyImage).catch(err => reply(null, String(err && err.message)));
+      } else if (d.type === EMULATOR_GET_OAM_SPRITES_IMAGE) {
+        WasmBoy.getOamSpritesImage().then(replyImage).catch(err => reply(null, String(err && err.message)));
       }
     };
     window.addEventListener('message', handleMessage);

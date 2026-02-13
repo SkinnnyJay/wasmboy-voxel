@@ -2,7 +2,7 @@
 const commonTest = require('../common-test');
 
 // Wasm Boy library
-const WasmBoy = require('../../dist/wasmboy.wasm.cjs.js').WasmBoy;
+const WasmBoy = require('../../dist/wasmboy.wasm.cjs.cjs').WasmBoy;
 
 // File management
 const fs = require('fs');
