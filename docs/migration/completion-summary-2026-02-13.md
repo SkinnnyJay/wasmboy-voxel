@@ -287,6 +287,7 @@ Workflow hardening applied:
 - shared CLI argument-value parsing now enforces that `allowedKnownValues` is a subset of `knownArgs`, preventing misconfigured token whitelists in helper callers
 - shared timeout resolution coverage now explicitly asserts `null` environment raw-timeout rejection in composed env/CLI precedence helper paths
 - shared timeout helper coverage now explicitly asserts `null` default-timeout rejection and `null` composed CLI option-name rejection paths
+- shared CLI argument-value helper coverage now explicitly asserts `null` token rejection for both `knownArgs` and `allowedKnownValues` set entries
 
 ## Security posture at completion
 
