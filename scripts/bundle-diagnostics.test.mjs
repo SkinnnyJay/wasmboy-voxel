@@ -120,6 +120,28 @@ test('bundle-diagnostics de-duplicates files matched by repeated patterns', () =
   assert.equal(duplicateEntries.length, 1, 'archive should only include duplicate log once');
 });
 
+test('bundle-diagnostics ignores directories matched by patterns', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-dir-match-'));
+  const logsDirectory = path.join(tempDirectory, 'logs');
+  const nestedDirectory = path.join(logsDirectory, 'nested');
+  fs.mkdirSync(nestedDirectory, { recursive: true });
+  fs.writeFileSync(path.join(logsDirectory, 'root.log'), 'root log entry\n', 'utf8');
+  fs.writeFileSync(path.join(nestedDirectory, 'nested.log'), 'nested log entry\n', 'utf8');
+
+  runBundlerCommand(tempDirectory, ['--output', 'artifacts/dirs.tar.gz', '--pattern', 'logs/*']);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/dirs.tar.gz');
+  assert.ok(
+    archiveContents.some(entry => entry.endsWith('logs/root.log')),
+    'archive should include root file matches',
+  );
+  assert.equal(
+    archiveContents.some(entry => entry.endsWith('logs/nested') || entry.endsWith('logs/nested/')),
+    false,
+    'archive should not include directory-only matches',
+  );
+});
+
 test('bundle-diagnostics archives matched files in deterministic sorted order', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-order-'));
   const logsDirectory = path.join(tempDirectory, 'logs');

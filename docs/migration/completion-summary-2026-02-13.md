@@ -95,6 +95,7 @@ Workflow hardening applied:
 - automation helper scripts are covered by `automation:test` (Node test runner), and this test step is included in the unified quality gate
 - `automation:check` composes `workflow:check` + `automation:test` so quality-gate scripts can reuse one consolidated automation preflight command
 - automation coverage includes diagnostics bundle behavior checks (matched files, empty-placeholder fallback, duplicate-pattern deduplication)
+- automation coverage verifies directory matches are excluded so bundle inputs remain file-only
 - automation coverage includes custom placeholder message behavior for empty diagnostics archives
 - diagnostics archive file collection now sorts matches lexicographically for deterministic artifact structure across runs
 - diagnostics placeholder files are now cleaned up after archive creation to avoid leaving temporary files in workflow workspaces
