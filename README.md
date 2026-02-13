@@ -373,6 +373,12 @@ npm run workflow:lint
 # Auto-format GitHub workflow files
 npm run workflow:format
 
+# Check automation helper script formatting
+npm run scripts:lint
+
+# Auto-format automation helper scripts
+npm run scripts:format
+
 # All commands for testing, and are test related
 npm run test:*
 

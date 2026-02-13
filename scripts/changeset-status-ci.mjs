@@ -12,8 +12,7 @@ if (statusResult.error) {
 
 const combinedOutput = `${statusResult.stdout ?? ''}${statusResult.stderr ?? ''}`;
 const outputLines = combinedOutput.split(/\r?\n/);
-const expectedWorkspaceWarning =
-  /^Package "(@wasmboy\/debugger-app|@wasmboy\/cli)" must depend on the current version of "@wasmboy\/api": "0\.0\.0" vs "file:/;
+const expectedWorkspaceWarning = /^Package "(@wasmboy\/debugger-app|@wasmboy\/cli)" must depend on the current version of "@wasmboy\/api": "0\.0\.0" vs "file:/;
 
 const suppressedWarnings = new Set();
 const passthroughLines = [];
@@ -29,9 +28,7 @@ for (const line of outputLines) {
 }
 
 if (suppressedWarnings.size > 0) {
-  console.log(
-    `[changeset:status:ci] Suppressed ${suppressedWarnings.size} expected workspace file-dependency notices:`,
-  );
+  console.log(`[changeset:status:ci] Suppressed ${suppressedWarnings.size} expected workspace file-dependency notices:`);
   for (const warningLine of suppressedWarnings) {
     console.log(`- ${warningLine}`);
   }
