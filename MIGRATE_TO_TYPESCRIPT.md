@@ -30,6 +30,7 @@ preserving emulator correctness, API contracts, and existing consumer behavior.
 - CLI usage guide: `docs/migration/cli-usage-guide.md`
 - Troubleshooting FAQ: `docs/migration/troubleshooting-faq.md`
 - Dependency audit notes: `docs/migration/dependency-audit-2026-02-13.md`
+- Completion summary: `docs/migration/completion-summary-2026-02-13.md`
 
 ## Goals
 
