@@ -25,6 +25,21 @@ function parseArgs(argv) {
   let helpConfigured = false;
   let timeoutConfigured = false;
 
+  /**
+   * @param {string | undefined} value
+   */
+  function isMissingTimeoutValue(value) {
+    if (!value || value === '--help' || value === '-h' || value === CLI_TIMEOUT_FLAG) {
+      return true;
+    }
+
+    if (value.startsWith('--')) {
+      return true;
+    }
+
+    return /^-[a-zA-Z]$/u.test(value);
+  }
+
   for (let i = 0; i < argv.length; i += 1) {
     const token = argv[i];
 
@@ -43,7 +58,7 @@ function parseArgs(argv) {
       }
 
       const value = argv[i + 1];
-      if (!value || value === '--help' || value === '-h' || value === CLI_TIMEOUT_FLAG) {
+      if (isMissingTimeoutValue(value)) {
         throw new Error(`Missing value for ${CLI_TIMEOUT_FLAG} argument.`);
       }
 
