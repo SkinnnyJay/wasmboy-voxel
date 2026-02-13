@@ -135,6 +135,7 @@ Workflow hardening applied:
 - diagnostics help-literal message regression coverage now includes explicit-help follow-up permutations (`--message --help --help`, `--message -h -h`, plus equals-form variants), preserving help-flag exclusivity when help-token literals are used intentionally as message payloads
 - diagnostics help-literal message coverage now includes timeout coexistence permutations (`--message --help --tar-timeout-ms ...` and equals-form `--message=-h` with inline timeout), preserving intentional help-literal payload semantics alongside timeout override arguments
 - duplicate-help regression coverage now includes same-alias duplicates (`--help --help` and `-h -h`) for both helper wrappers, preserving duplicate-help failure semantics independent of alias mixing order
+- `changeset-status-ci` parser now uses a shared `readRequiredValue` helper for split-form timeout parsing, aligning parser structure with diagnostics helper internals while preserving existing CLI behavior and timeout validation semantics
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity

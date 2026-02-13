@@ -46,6 +46,18 @@ function validateValue(value, flagName, options) {
   }
 }
 
+/**
+ * @param {string[]} argv
+ * @param {number} index
+ * @param {string} flagName
+ * @param {{allowDoubleDashValue: boolean; allowWhitespaceOnly?: boolean}} options
+ */
+function readRequiredValue(argv, index, flagName, options) {
+  const value = argv[index + 1];
+  validateValue(value, flagName, options);
+  return value;
+}
+
 function parseArgs(argv) {
   /** @type {{showHelp: boolean; timeoutMsOverride: string}} */
   const parsed = { showHelp: false, timeoutMsOverride: '' };
@@ -69,10 +81,10 @@ function parseArgs(argv) {
         throw new Error(`Duplicate ${CLI_TIMEOUT_FLAG} argument provided.`);
       }
 
-      const value = argv[i + 1];
-      validateValue(value, CLI_TIMEOUT_FLAG, { allowDoubleDashValue: false, allowWhitespaceOnly: true });
-
-      parsed.timeoutMsOverride = value;
+      parsed.timeoutMsOverride = readRequiredValue(argv, i, CLI_TIMEOUT_FLAG, {
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      });
       timeoutConfigured = true;
       i += 1;
       continue;
