@@ -197,3 +197,4 @@
 - 2026-02-13: Updated `contract:ci` to include `workflow:lint`, ensuring contract workflow changes also enforce YAML formatting standards before package-level validation.
 - 2026-02-13: Updated README CI section with trigger/filter and failure-artifact behavior notes so contributors can better understand when workflows run and where diagnostics appear.
 - 2026-02-13: Added 14-day retention policies to CI/contract/nightly/release failure artifacts, standardizing diagnostics lifecycle management across workflows.
+- 2026-02-13: Expanded CI path filters to include `.github/workflows/*.yml`, ensuring workflow-only edits still execute the full quality gate.

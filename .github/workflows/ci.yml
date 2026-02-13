@@ -17,7 +17,7 @@ on:
       - 'voxel-wrapper.ts'
       - 'fork-api-spec.ts'
       - '.changeset/**'
-      - '.github/workflows/ci.yml'
+      - '.github/workflows/*.yml'
   pull_request:
     branches: ['master']
     paths:
@@ -33,7 +33,7 @@ on:
       - 'voxel-wrapper.ts'
       - 'fork-api-spec.ts'
       - '.changeset/**'
-      - '.github/workflows/ci.yml'
+      - '.github/workflows/*.yml'
 
 permissions:
   contents: read
