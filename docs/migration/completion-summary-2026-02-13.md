@@ -109,6 +109,7 @@ Workflow hardening applied:
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity
 - shared timeout parser tests now cover whitespace-only env values as invalid, preventing accidental silent coercion in CI configuration
 - shared timeout parser tests now cover empty-string env values as default-fallback behavior, preserving predictable unset-env semantics
+- shared timeout parser tests now cover plus-prefixed and negative numeric inputs as invalid, tightening timeout-config input contract clarity
 - wrapper-level timeout regression coverage now includes above-ceiling env values for both helpers, ensuring shared timeout bounds enforcement is surfaced at CLI entrypoints
 - README helper command examples now explicitly call out timeout env bounds (`1..2147483647`) for operator clarity
 - diagnostics bundler help handling now remains strict about unknown flags (`--help --unknown` fails), matching stricter wrapper argument-guard behavior

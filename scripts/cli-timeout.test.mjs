@@ -44,6 +44,18 @@ test('resolveStrictPositiveIntegerEnv rejects non-numeric suffix values', () => 
   );
 });
 
+test('resolveStrictPositiveIntegerEnv rejects plus-prefixed values', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: '+5000',
+        defaultValue: 120000,
+      }),
+    /Invalid TEST_TIMEOUT value: \+5000/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv rejects whitespace-only values', () => {
   assert.throws(
     () =>
@@ -65,6 +77,18 @@ test('resolveStrictPositiveIntegerEnv rejects zero values', () => {
         defaultValue: 120000,
       }),
     /Invalid TEST_TIMEOUT value: 0/u,
+  );
+});
+
+test('resolveStrictPositiveIntegerEnv rejects negative values', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: '-5',
+        defaultValue: 120000,
+      }),
+    /Invalid TEST_TIMEOUT value: -5/u,
   );
 });
 
