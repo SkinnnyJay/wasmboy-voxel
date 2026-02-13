@@ -272,6 +272,19 @@ test('validateRequiredArgumentValue rejects non-boolean allowWhitespaceOnly opti
   );
 });
 
+test('validateRequiredArgumentValue rejects null allowWhitespaceOnly options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: null,
+      }),
+    /Invalid allowWhitespaceOnly option for --output/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects invalid allowedKnownValues options', () => {
   assert.throws(
     () =>
@@ -574,6 +587,19 @@ test('readRequiredArgumentValue rejects non-boolean allowWhitespaceOnly options'
         knownArgs: KNOWN_ARGS,
         allowDoubleDashValue: false,
         allowWhitespaceOnly: /** @type {unknown as boolean} */ ('yes'),
+      }),
+    /Invalid allowWhitespaceOnly option for --timeout-ms/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects null allowWhitespaceOnly options', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: null,
       }),
     /Invalid allowWhitespaceOnly option for --timeout-ms/u,
   );
