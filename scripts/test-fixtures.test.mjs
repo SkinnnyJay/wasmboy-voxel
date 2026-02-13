@@ -6,6 +6,12 @@ import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { writeFakeExecutable } from './test-fixtures.mjs';
 
+const UNPRINTABLE_VALUE = {
+  toString() {
+    throw new Error('cannot stringify');
+  },
+};
+
 test('writeFakeExecutable creates runnable command in fake-bin directory', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-'));
   const fakeBinDirectory = writeFakeExecutable(
@@ -53,6 +59,20 @@ echo 'should not run'
 `,
       ),
     /Invalid temp directory: Symbol\(tmp\)/u,
+  );
+});
+
+test('writeFakeExecutable safely formats unprintable temp directories', () => {
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        UNPRINTABLE_VALUE,
+        'fixture-cmd',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid temp directory: \[unprintable\]/u,
   );
 });
 
@@ -224,6 +244,22 @@ echo 'should not run'
   );
 });
 
+test('writeFakeExecutable safely formats unprintable executable names', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-unprintable-name-'));
+
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        tempDirectory,
+        UNPRINTABLE_VALUE,
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid executable name: \[unprintable\]/u,
+  );
+});
+
 test('writeFakeExecutable rejects executable names containing null bytes', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-null-byte-name-'));
 
@@ -265,6 +301,12 @@ test('writeFakeExecutable rejects symbol executable bodies', () => {
     () => writeFakeExecutable(tempDirectory, 'fixture-cmd', Symbol('fixture-body')),
     /Invalid executable body for fixture-cmd/u,
   );
+});
+
+test('writeFakeExecutable safely formats unprintable executable bodies', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-unprintable-body-'));
+
+  assert.throws(() => writeFakeExecutable(tempDirectory, 'fixture-cmd', UNPRINTABLE_VALUE), /Invalid executable body for fixture-cmd/u);
 });
 
 test('writeFakeExecutable rejects executable bodies containing null bytes', () => {
