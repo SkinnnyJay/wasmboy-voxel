@@ -7,6 +7,14 @@ import path from 'node:path';
  * @param {string} body
  */
 export function writeFakeExecutable(tempDirectory, executableName, body) {
+  if (typeof executableName !== 'string') {
+    throw new Error(`Invalid executable name: ${executableName}`);
+  }
+
+  if (typeof body !== 'string' || body.length === 0) {
+    throw new Error(`Invalid executable body for ${executableName}`);
+  }
+
   if (
     !executableName ||
     /\s/u.test(executableName) ||

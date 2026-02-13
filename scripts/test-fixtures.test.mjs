@@ -135,3 +135,25 @@ echo 'should not run'
     /Invalid executable name: fixture cmd/u,
   );
 });
+
+test('writeFakeExecutable rejects non-string executable names', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-non-string-name-'));
+
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        tempDirectory,
+        42,
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid executable name: 42/u,
+  );
+});
+
+test('writeFakeExecutable rejects empty executable bodies', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-empty-body-'));
+
+  assert.throws(() => writeFakeExecutable(tempDirectory, 'fixture-cmd', ''), /Invalid executable body for fixture-cmd/u);
+});

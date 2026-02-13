@@ -347,3 +347,4 @@
 - 2026-02-13: Extended shared `test-fixtures` executable-name validation to reject backslash path separators for cross-platform path safety; added focused unit coverage for backslash-separated invalid names.
 - 2026-02-13: Extended shared `test-fixtures` executable-name validation to reject dot-segment names (`.` / `..`) to avoid invalid directory-like executable identifiers; added focused unit coverage for dot-segment rejection.
 - 2026-02-13: Extended shared `test-fixtures` executable-name validation to reject whitespace-containing names, reducing ambiguous shell-token fixture command identifiers; added focused unit coverage for whitespace-only and embedded-space invalid names.
+- 2026-02-13: Hardened shared `test-fixtures` input contracts by validating non-string executable-name rejection and empty-body rejection, preventing ambiguous fixture helper inputs; added focused unit coverage for both invalid-input paths.
