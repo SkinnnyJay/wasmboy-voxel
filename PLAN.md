@@ -170,3 +170,4 @@
 - 2026-02-13: Extended migration completion summary with CI mapping details, documenting how push/PR, contract-check, and nightly workflows share the same consolidated quality gate.
 - 2026-02-13: Added `ci:local` root alias and README guidance so contributors can run the exact CI no-build quality gate locally with one command.
 - 2026-02-13: Added reusable sample contract fixture/script for CI contract validation and removed CLI `import.meta` CJS build warning by switching to path-based entrypoint detection.
+- 2026-02-13: Removed Next.js multi-lockfile root warning in debugger builds by setting `outputFileTracingRoot` explicitly in app config.
