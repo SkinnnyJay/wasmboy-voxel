@@ -33,7 +33,7 @@ jobs:
             apps/debugger/package-lock.json
 
       - name: Install workspace dependencies
-        run: npm run install:stack
+        run: npm run install:stack:ci
 
       - name: Build package stack
         run: npm run stack:build:packages

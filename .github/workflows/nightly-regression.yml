@@ -41,7 +41,7 @@ jobs:
             ${{ runner.os }}-next-nightly-cache-
 
       - name: Install workspace dependencies
-        run: npm run install:stack
+        run: npm run install:stack:ci
 
       - name: Run full no-build quality suite
         run: npm run test:all:nobuild

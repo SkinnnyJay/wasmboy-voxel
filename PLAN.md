@@ -178,3 +178,4 @@
 - 2026-02-13: Strengthened release automation by requiring `test:all:nobuild` and `changeset:status` prior to the changesets publish/create-PR action.
 - 2026-02-13: Optimized contract-check automation by introducing `stack:build:packages` and using it in the contract workflow, avoiding unnecessary debugger app build work before contract validation.
 - 2026-02-13: Improved workflow cache determinism by configuring `setup-node` cache dependency paths with all workspace lockfiles across CI, contract, nightly, and release pipelines.
+- 2026-02-13: Migrated all workflows from install to lockfile-driven `install:stack:ci` for deterministic dependency resolution while preserving existing build/test behavior.
