@@ -1641,6 +1641,17 @@ test('bundle-diagnostics accepts max tar timeout environment value', () => {
   );
 });
 
+test('bundle-diagnostics accepts whitespace-padded max tar timeout environment value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-max-timeout-env-whitespace-'));
+  runBundlerCommand(tempDirectory, ['--output', 'artifacts/max-timeout-env-whitespace.tar.gz', '--pattern', 'missing/*.log'], {
+    BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: ' 2147483647 ',
+  });
+  assert.ok(
+    fs.existsSync(path.join(tempDirectory, 'artifacts/max-timeout-env-whitespace.tar.gz')),
+    'archive should be created when max timeout env is whitespace-padded',
+  );
+});
+
 test('bundle-diagnostics accepts leading-zero tar timeout environment values', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-timeout-env-leading-zero-'));
   const fakeBinDirectory = writeDelayedFakeTar(tempDirectory);

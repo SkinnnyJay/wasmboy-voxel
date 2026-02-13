@@ -642,6 +642,17 @@ test('changeset-status-ci accepts max timeout environment value', () => {
   assert.match(result.stdout, /🦋  info NO packages to be bumped at patch/u);
 });
 
+test('changeset-status-ci accepts whitespace-padded max timeout environment value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-max-timeout-env-whitespace-'));
+  const fakeBinDirectory = writeNoBumpChangeset(tempDirectory);
+  const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: ' 2147483647 ',
+  });
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /🦋  info NO packages to be bumped at patch/u);
+});
+
 test('changeset-status-ci accepts leading-zero timeout environment values', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-env-leading-zero-'));
   const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
