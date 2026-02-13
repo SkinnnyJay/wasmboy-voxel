@@ -304,10 +304,12 @@ Workflow hardening applied:
 - read-path parser-helper coverage now explicitly asserts non-string (`number`) `allowedKnownValues` entry rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper coverage now explicitly asserts non-string and whitespace-only `knownArgs` entry rejection in `readRequiredArgumentValue` validation paths
 - parser-helper coverage now explicitly asserts non-boolean `allowWhitespaceOnly` rejection for direct/read validation entrypoints and null/undefined `argv` rejection in read-path parsing
+- read-path parser-helper argv-shape coverage now explicitly asserts `bigint` argv rejection in `readRequiredArgumentValue`
 - timeout-helper options-shape coverage now explicitly asserts null container rejection for direct/composed entrypoints (`options`, composed `env`, composed `cli`)
 - timeout-helper options-shape coverage now explicitly asserts primitive non-object (`number`) top-level options-object rejection for direct/composed timeout helper entrypoints
 - timeout-helper default-value coverage now explicitly asserts `-Infinity` default-timeout rejection for both direct env and composed env/CLI timeout resolution helpers
 - read-path parser-helper options-shape coverage now explicitly asserts primitive non-object (`number`) options rejection in `readRequiredArgumentValue` validation paths
+- parser-helper options-shape coverage now explicitly asserts `Symbol` options rejection across direct/read required-argument validation entrypoints
 - parser-helper options-contract coverage now explicitly asserts `null` `allowDoubleDashValue` rejection in `validateRequiredArgumentValue` validation paths
 - parser-helper options-contract coverage now explicitly asserts `null` `allowWhitespaceOnly` rejection in both direct and read-path argument validation helpers
 - read-path parser-helper value-type coverage now explicitly asserts `null`, `Symbol`, and unprintable following-token rejection with stable formatted error output
