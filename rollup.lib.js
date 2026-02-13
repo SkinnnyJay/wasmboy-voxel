@@ -164,7 +164,7 @@ baseLibBundles.forEach(baseLibBundle => {
     };
     tsBabelPluginConfig.plugins[2][1].imports = filterImportsWasm;
 
-    tsBundle.plugins = [...plugins, babel(tsBabelPluginConfig), bundleSize()];
+    tsBundle.plugins = [replace({ __LIB_WORKER_URL__: 'wasmboyLibTsWorkerUrl' }), ...plugins, babel(tsBabelPluginConfig), bundleSize()];
 
     tsBundle.output.file = `dist/wasmboy.ts.${baseLibBundle.output.format}.js`;
     libBundles.push(tsBundle);
@@ -180,7 +180,7 @@ baseLibBundles.forEach(baseLibBundle => {
     };
     wasmBabelPluginConfig.plugins[2][1].imports = filterImportsTs;
 
-    wasmBundle.plugins = [...plugins, babel(wasmBabelPluginConfig)];
+    wasmBundle.plugins = [replace({ __LIB_WORKER_URL__: 'wasmboyLibWasmWorkerUrl' }), ...plugins, babel(wasmBabelPluginConfig)];
 
     if (baseLibBundle.output.format !== 'cjs' && process.env.PROD) {
       wasmBundle.plugins.push(compiler());
