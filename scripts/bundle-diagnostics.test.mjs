@@ -181,3 +181,21 @@ test('bundle-diagnostics requires values for known flags', () => {
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', '--message']);
   assert.match(output, /Missing value for --pattern argument/u);
 });
+
+test('bundle-diagnostics requires a value for output flag', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-missing-output-value-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output']);
+  assert.match(output, /Missing value for --output argument/u);
+});
+
+test('bundle-diagnostics requires a value for message flag', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-missing-message-value-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--message',
+  ]);
+  assert.match(output, /Missing value for --message argument/u);
+});
