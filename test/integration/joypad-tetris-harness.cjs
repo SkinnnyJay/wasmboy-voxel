@@ -14,7 +14,7 @@
  */
 
 const commonTest = require('../common-test.cjs');
-const WasmBoy = require('../../dist/wasmboy.wasm.cjs.cjs').WasmBoy;
+const WasmBoy = require('../load-wasmboy-runtime.cjs');
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');

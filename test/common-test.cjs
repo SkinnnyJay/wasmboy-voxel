@@ -1,5 +1,5 @@
 // Wasm Boy library
-const WasmBoy = require('../dist/wasmboy.wasm.cjs.cjs').WasmBoy;
+const WasmBoy = require('./load-wasmboy-runtime.cjs');
 
 // Image Creation
 const PNGImage = require('pngjs-image');

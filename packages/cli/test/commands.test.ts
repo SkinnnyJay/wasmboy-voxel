@@ -44,6 +44,14 @@ describe('cli commands', () => {
     expect(() => compareCommand(baselinePath, baselinePath)).not.toThrow();
   });
 
+  it('compare command can run against repository baseline summary', () => {
+    const baselinePath = path.resolve(
+      process.cwd(),
+      '../../test/baseline/snapshots/summary.json',
+    );
+    expect(() => compareCommand(baselinePath, baselinePath)).not.toThrow();
+  });
+
   it('contract-check validates payload file against selected contract', () => {
     const dir = createTempDir();
     const payloadPath = path.join(dir, 'registers.json');

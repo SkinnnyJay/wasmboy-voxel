@@ -103,13 +103,13 @@
 [x] - Milestone 5: CLI - Add `bin` entry + packaging metadata
 [x] - Milestone 5: CLI - Add help text and usage examples
 
-[ ] - Milestone 6: Regression Safety - Add golden snapshot tests
-[ ] - Milestone 6: Regression Safety - Add checksum regression tests
-[ ] - Milestone 6: Regression Safety - Add contract validation tests
-[ ] - Milestone 6: Regression Safety - Add headless CLI regression tests
-[ ] - Milestone 6: Regression Safety - Add Next.js debugger smoke tests
-[ ] - Milestone 6: Regression Safety - Add CI job for contract checks
-[ ] - Milestone 6: Regression Safety - Ensure existing test suites still pass
+[x] - Milestone 6: Regression Safety - Add golden snapshot tests
+[x] - Milestone 6: Regression Safety - Add checksum regression tests
+[x] - Milestone 6: Regression Safety - Add contract validation tests
+[x] - Milestone 6: Regression Safety - Add headless CLI regression tests
+[x] - Milestone 6: Regression Safety - Add Next.js debugger smoke tests
+[x] - Milestone 6: Regression Safety - Add CI job for contract checks
+[x] - Milestone 6: Regression Safety - Ensure existing test suites still pass
 
 [ ] - Milestone 7: Compatibility - Add deprecation warnings (dev-only)
 [ ] - Milestone 7: Compatibility - Add migration notes for `gameboy-remix`
@@ -148,3 +148,4 @@
 - 2026-02-13: Completed all M3 tasks by scaffolding `apps/debugger` (Next app-router), adding layout/routes/error UI/panel components, wiring typed contract client usage, and validating with `next build`.
 - 2026-02-13: Completed all M4 tasks by introducing a Zustand debugger store with selectors/actions, frame metadata + checksums, input/interrupt event stream, JSONL export helper, sandbox mode, rate-limited snapshot capture, and a read-only AI debug API route.
 - 2026-02-13: Completed all M5 tasks by creating `packages/cli` with command routing (`run/snapshot/compare/contract-check`), structured JSON logging, safe path validation, bin metadata, help text/examples, and vitest coverage.
+- 2026-02-13: Completed all M6 tasks by adding baseline checksum/golden regression tests, debugger smoke tests, expanded CLI regression coverage, a CI contract-check workflow, and by re-running integration/core suites to confirm pass status.

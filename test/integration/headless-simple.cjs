@@ -7,7 +7,7 @@ const commonTest = require('../common-test.cjs');
 const { goldenFileCompareOrCreate } = require('../golden-compare.cjs');
 
 // Wasm Boy library
-const WasmBoy = require('../../dist/wasmboy.wasm.cjs.cjs').WasmBoy;
+const WasmBoy = require('../load-wasmboy-runtime.cjs');
 
 // File management
 const fs = require('fs');

@@ -1,19 +1,28 @@
 // Save state tests on the core
 
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+
 // File management
 const fs = require('fs');
+const os = require('os');
+const path = require('path');
 
 // Assertion
 const assert = require('assert');
 
 // WasmBoy get Core
-const getWasmBoyCore = require('../../dist/core/getWasmBoyWasmCore.cjs.js');
+const getWasmBoyCorePath = path.resolve(process.cwd(), 'dist/core/getWasmBoyWasmCore.cjs.js');
+const getWasmBoyCoreCjsPath = path.join(os.tmpdir(), 'getWasmBoyWasmCore.runtime.cjs');
+fs.copyFileSync(getWasmBoyCorePath, getWasmBoyCoreCjsPath);
+const getWasmBoyCore = require(getWasmBoyCoreCjsPath);
 
 // Common test functions
-const commonTest = require('../common-test');
+const commonTest = require('../common-test.cjs');
 
 // Golden file handling
-const { goldenFileCompareOrCreate } = require('../golden-compare');
+const { goldenFileCompareOrCreate } = require('../golden-compare.cjs');
 
 // Path to roms we want to test
 const testRomsPath = './test/performance/testroms';
