@@ -34,11 +34,11 @@ jobs:
       - name: Build workspace stack
         run: npm run stack:build
 
-      - name: Typecheck workspace stack
-        run: npm run stack:typecheck
+      - name: Run unified quality suite
+        run: npm run test:all:nobuild
 
-      - name: Test workspace stack
-        run: npm run stack:test
+      - name: Verify changeset status
+        run: npm run changeset:status
 
       - name: Run explicit contract-check command
         run: |
