@@ -225,3 +225,77 @@ Memory worker response/forwarding behavior:
 - `CLEAR_MEMORY_DONE` includes `{ wasmByteMemory: ArrayBuffer }`.
 - `GET_MEMORY` and `UPDATED` include memory buffers keyed by `MEMORY_TYPE`.
 
+## 0.5 Snapshot field-to-memory mapping
+
+### Primary snapshot source (`voxel-wrapper.ts` fallback path)
+
+`getPpuSnapshot()` resolves a dynamic game-memory base using:
+- `_getWasmConstant("DEBUG_GAMEBOY_MEMORY_LOCATION")`
+
+Then reads these sections via `_getWasmMemorySection(base + start, base + end)`:
+
+| Snapshot field | Source address range (GB memory map) | Notes |
+|---|---:|---|
+| `tileData` | `0x8000..0x97FF` | `TILE_DATA_START` to `TILE_DATA_END_EXCLUSIVE` |
+| `bgTileMap` | `0x9800..0x9BFF` or `0x9C00..0x9FFF` | Selected by LCDC bit `0x08` |
+| `windowTileMap` | `0x9800..0x9BFF` or `0x9C00..0x9FFF` | Selected by LCDC bit `0x40` |
+| `oamData` | `0xFE00..0xFE9F` | OAM sprite attribute table |
+| `registers.lcdc` | `0xFF40` | Also drives map select logic |
+| `registers.scy` | `0xFF42` | Scroll Y |
+| `registers.scx` | `0xFF43` | Scroll X |
+| `registers.wy` | `0xFF4A` | Window Y |
+| `registers.wx` | `0xFF4B` | Window X |
+| `registers.bgp` | `0xFF47` | DMG BG palette |
+| `registers.obp0` | `0xFF48` | DMG OBJ palette 0 |
+| `registers.obp1` | `0xFF49` | DMG OBJ palette 1 |
+
+### Batched snapshot source (`lib` worker fast path)
+
+The lib worker `GET_PPU_SNAPSHOT` builds a packed buffer using:
+- base: `GAMEBOY_INTERNAL_MEMORY_LOCATION`
+- constants from `lib/ppuSnapshotConstants.js`
+
+Packed layout:
+- tile data (`PPU_SNAPSHOT_TILE_LEN = 0x1800`)
+- map0 (`PPU_SNAPSHOT_MAP_LEN = 0x400`)
+- map1 (`PPU_SNAPSHOT_MAP_LEN = 0x400`)
+- oam (`PPU_SNAPSHOT_OAM_LEN = 0xA0`)
+- registers at offset `PPU_SNAPSHOT_REG_OFF = 0x20A0` (8 bytes: `scx, scy, wx, wy, lcdc, bgp, obp0, obp1`)
+
+`parsePpuSnapshotBuffer()` then:
+- selects `bgTileMap` from map0/map1 using LCDC bit `0x08`
+- selects `windowTileMap` from map0/map1 using LCDC bit `0x40`
+
+### Related palette and debug constants
+
+From `core/constants.ts` and wrapper usage:
+- `GBC_PALETTE_LOCATION`, `GBC_PALETTE_SIZE` are used by `getGbcBgPalettes()` / `getGbcObjPalettes()`.
+- `SCANLINE_DEBUG_BUFFER_LOCATION` is used by `getScanlineParameters()`.
+
+## 0.6 Current null/undefined behavior baseline
+
+### `voxel-wrapper.ts` (`WasmBoyVoxelApi`) behavior
+
+| API | Null/undefined behavior |
+|---|---|
+| `supportsPpuSnapshot()` | Returns `false` if snapshot internals are missing or if retry window fails. |
+| `getPpuSnapshot()` | Returns `null` when internals are unavailable or memory base cannot be resolved. |
+| `getPpuSnapshotLayers()` | Returns `null` if full snapshot is `null`. |
+| `getLastSnapshotDurationMs()` | Returns `null` until first successful snapshot. |
+| `readMemory()` | Returns `null` when internals are unavailable, base cannot resolve, or worker read throws. |
+| `getGbcBgPalettes()` / `getGbcObjPalettes()` | Return `null` if internals missing, constants invalid, or read fails. |
+| `getDirectMemoryAccess().getView()` | Returns `null` in current stub implementation. |
+
+### `lib/debug/debug.js` baseline behavior
+
+| API | Null/undefined behavior |
+|---|---|
+| `runWasmExport()` | Returns `undefined` if worker is unavailable. |
+| `getWasmMemorySection()` | Returns `undefined` if worker is unavailable. |
+| `setWasmMemorySection()` | Returns `false` when worker is unavailable or payload invalid. |
+| `getWasmConstant()` | Returns `undefined` when worker unavailable or worker responds with `error`. |
+| `getPpuSnapshotBuffer()` | Returns `null` if worker unavailable or wrong response type. |
+| `parsePpuSnapshotBuffer()` | Returns `null` if buffer is missing/too short. |
+| `getBackgroundMapImage()` / `getTileDataImage()` / `getOamSpritesImage()` | Return `null` when worker unavailable, image unsupported, or rendering/read fails. |
+| `getCPURegisters()` / `getTimerState()` / `getLCDState()` / `getScanlineParameters()` | Return `null` if worker unavailable or runtime error occurs. |
+

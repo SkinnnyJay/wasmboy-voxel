@@ -17,8 +17,8 @@
 [x] - Milestone 0: Baseline - Inventory public exports in `voxel-wrapper.ts` (see `docs/migration/milestone-0-baseline-api-inventory.md`)
 [x] - Milestone 0: Baseline - Inventory public exports in `lib/` entry points (see `docs/migration/milestone-0-baseline-api-inventory.md`)
 [x] - Milestone 0: Baseline - List worker entry points and message schemas (see `docs/migration/milestone-0-baseline-api-inventory.md`)
-[ ] - Milestone 0: Baseline - Map current snapshot fields to memory sources
-[ ] - Milestone 0: Baseline - Document current null/undefined behaviors
+[x] - Milestone 0: Baseline - Map current snapshot fields to memory sources (see `docs/migration/milestone-0-baseline-api-inventory.md`)
+[x] - Milestone 0: Baseline - Document current null/undefined behaviors (see `docs/migration/milestone-0-baseline-api-inventory.md`)
 [ ] - Milestone 0: Baseline - List ROMs used by existing tests/demos
 [ ] - Milestone 0: Baseline - Capture baseline snapshot JSON for each ROM
 [ ] - Milestone 0: Baseline - Record baseline checksums for VRAM/OAM
@@ -137,3 +137,4 @@
 
 - 2026-02-13: Completed M0-01, M0-02, M0-03 by creating baseline API inventory doc. Reason: lock down current public contract surfaces before migration refactors.
 - 2026-02-13: Completed M0-04 by documenting worker entry points and message payload schemas. Reason: preserve worker protocol compatibility during refactors.
+- 2026-02-13: Completed M0-05 and M0-06 by documenting snapshot memory mapping and null/undefined baseline behavior. Reason: prevent accidental behavior drift in migration.
