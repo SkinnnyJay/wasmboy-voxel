@@ -493,6 +493,45 @@ test('readRequiredArgumentValue rejects non-string following argument values', (
   );
 });
 
+test('readRequiredArgumentValue rejects null following argument values', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', null], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid value type for --timeout-ms argument: null/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects symbol following argument values', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', Symbol('timeout-value')], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid value type for --timeout-ms argument: Symbol\(timeout-value\)/u,
+  );
+});
+
+test('readRequiredArgumentValue safely formats unprintable following argument values', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', UNPRINTABLE_VALUE], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid value type for --timeout-ms argument: \[unprintable\]/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects missing options objects', () => {
   assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, undefined), /Invalid required argument options\./u);
 });
