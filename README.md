@@ -409,6 +409,8 @@ npm run automation:check
 
 # Show helper usage/flags for diagnostics archive bundling
 node scripts/bundle-diagnostics.mjs --help
+# Optional: override tar timeout per invocation
+node scripts/bundle-diagnostics.mjs --output artifacts/ci-diagnostics.tar.gz --pattern 'ci-quality.log' --tar-timeout-ms 180000
 # Optional: override tar timeout in milliseconds for diagnostics bundling
 BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS=180000 node scripts/bundle-diagnostics.mjs --output artifacts/ci-diagnostics.tar.gz --pattern 'ci-quality.log'
 # Timeout env values must be positive integers <= 2147483647

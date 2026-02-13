@@ -285,3 +285,4 @@
 - 2026-02-13: Introduced shared `scripts/bundle-diagnostics.mjs` and switched all workflows to use it for diagnostics archive creation, eliminating duplicated bash bundling logic and keeping behavior consistent across pipelines.
 - 2026-02-13: Added `strict` manual-dispatch inputs to CI and nightly workflows so maintainers can optionally run strict no-retry quality-gate variants directly in GitHub Actions.
 - 2026-02-13: Added per-invocation timeout override support to `changeset-status-ci` (`--timeout-ms` / `--timeout-ms=<ms>`) with strict parse guards (duplicate/missing/help-mixed) and regression coverage for CLI-over-env precedence.
+- 2026-02-13: Added per-invocation tar-timeout override support to `bundle-diagnostics` (`--tar-timeout-ms` / `--tar-timeout-ms=<ms>`) with strict parse guards and regression coverage for CLI-over-env timeout precedence.

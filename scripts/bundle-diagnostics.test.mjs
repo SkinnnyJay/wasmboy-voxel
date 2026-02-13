@@ -299,6 +299,7 @@ test('bundle-diagnostics prints usage with --help', () => {
   assert.match(result.stdout, /Usage:/u);
   assert.match(result.stdout, /--output/u);
   assert.match(result.stdout, /--pattern/u);
+  assert.match(result.stdout, /--tar-timeout-ms/u);
   assert.match(result.stdout, /BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS/u);
 });
 
@@ -318,6 +319,47 @@ test('bundle-diagnostics rejects duplicate help flags', () => {
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics rejects duplicate timeout flags', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-timeout-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms',
+    '100',
+    '--tar-timeout-ms=200',
+  ]);
+  assert.match(output, /Duplicate --tar-timeout-ms argument provided/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics rejects missing timeout values', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-missing-timeout-value-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms',
+  ]);
+  assert.match(output, /Missing value for --tar-timeout-ms argument/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics rejects empty inline timeout values', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-missing-timeout-inline-value-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms=',
+  ]);
+  assert.match(output, /Missing value for --tar-timeout-ms argument/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects unknown args even when help is present', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-help-unknown-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--help', '--unknown']);
@@ -328,6 +370,13 @@ test('bundle-diagnostics rejects help flag mixed with operational args', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-help-mixed-args-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--help', '--output', 'artifacts/out.tar.gz']);
   assert.match(output, /Help flag cannot be combined with other arguments/u);
+});
+
+test('bundle-diagnostics rejects help flag mixed with timeout args', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-help-mixed-timeout-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--help', '--tar-timeout-ms', '100']);
+  assert.match(output, /Help flag cannot be combined with other arguments/u);
+  assert.match(output, /Usage:/u);
 });
 
 test('bundle-diagnostics requires at least one pattern argument', () => {
@@ -486,6 +535,20 @@ test('bundle-diagnostics rejects invalid tar timeout configuration', () => {
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics rejects invalid CLI timeout configuration', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-cli-timeout-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms',
+    'invalid',
+  ]);
+  assert.match(output, /Invalid --tar-timeout-ms value/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects non-numeric tar timeout suffixes', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-timeout-suffix-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log'], {
@@ -535,5 +598,31 @@ exit 0
     PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
     BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '50',
   });
+  assert.match(output, /tar timed out after 50ms/u);
+});
+
+test('bundle-diagnostics timeout CLI override takes precedence over timeout env', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-cli-override-'));
+  const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
+  fs.mkdirSync(fakeBinDirectory, { recursive: true });
+  const fakeTarPath = path.join(fakeBinDirectory, 'tar');
+  fs.writeFileSync(
+    fakeTarPath,
+    `#!/usr/bin/env bash
+sleep 0.2
+exit 0
+`,
+    'utf8',
+  );
+  fs.chmodSync(fakeTarPath, 0o755);
+
+  const output = runBundlerCommandExpectFailure(
+    tempDirectory,
+    ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log', '--tar-timeout-ms', '50'],
+    {
+      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '5000',
+    },
+  );
   assert.match(output, /tar timed out after 50ms/u);
 });

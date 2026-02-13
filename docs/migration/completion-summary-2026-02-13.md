@@ -104,6 +104,7 @@ Workflow hardening applied:
 - diagnostics bundling now excludes the output archive path from matched inputs to avoid accidental self-inclusion when broad patterns are used
 - diagnostics bundling now normalizes absolute file matches to relative archive paths (when under repo cwd) to keep artifact contents stable and portable
 - diagnostics bundling now enforces a configurable tar timeout (`BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS`, default 120000ms) with explicit invalid-config and timeout failure handling
+- diagnostics bundler now supports per-invocation tar timeout overrides (`--tar-timeout-ms`, `--tar-timeout-ms=<ms>`) with strict duplicate/missing/help-mixed argument guards
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity

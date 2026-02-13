@@ -14,16 +14,20 @@ import { resolveStrictPositiveIntegerEnv } from './cli-timeout.mjs';
 const DEFAULT_EMPTY_MESSAGE = 'No diagnostics files were produced for this run.';
 const DEFAULT_TAR_TIMEOUT_MS = 120000;
 const TAR_TIMEOUT_ENV_VARIABLE = 'BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS';
-const KNOWN_ARGS = new Set(['--output', '--pattern', '--message', '--help', '-h']);
+const CLI_TIMEOUT_FLAG = '--tar-timeout-ms';
+const KNOWN_ARGS = new Set(['--output', '--pattern', '--message', CLI_TIMEOUT_FLAG, '--help', '-h']);
 const USAGE_TEXT = `Usage:
 node scripts/bundle-diagnostics.mjs \\
   --output artifacts/ci-diagnostics.tar.gz \\
   --pattern 'ci-quality.log' \\
   --pattern 'test/core/save-state/*.png' \\
-  [--message 'No diagnostics files were produced for this run.']
+  [--message 'No diagnostics files were produced for this run.'] \\
+  [--tar-timeout-ms 120000]
 
 Options:
-  -h, --help   Show this help message
+  -h, --help                      Show this help message
+  --tar-timeout-ms <ms>           Override tar timeout in milliseconds for this invocation
+  --tar-timeout-ms=<ms>           Inline tar timeout override variant
 
 Environment:
   ${TAR_TIMEOUT_ENV_VARIABLE}=<ms>  tar timeout in milliseconds (default: ${DEFAULT_TAR_TIMEOUT_MS})`;
@@ -60,16 +64,18 @@ function validateValue(value, flagName, options) {
 }
 
 function parseArgs(argv) {
-  /** @type {{output: string; patterns: string[]; message: string; showHelp: boolean}} */
+  /** @type {{output: string; patterns: string[]; message: string; showHelp: boolean; tarTimeoutMsOverride: string}} */
   const parsed = {
     output: '',
     patterns: [],
     message: DEFAULT_EMPTY_MESSAGE,
     showHelp: false,
+    tarTimeoutMsOverride: '',
   };
   let outputConfigured = false;
   let messageConfigured = false;
   let helpConfigured = false;
+  let timeoutConfigured = false;
 
   for (let i = 0; i < argv.length; i += 1) {
     const token = argv[i];
@@ -112,6 +118,17 @@ function parseArgs(argv) {
       continue;
     }
 
+    if (token.startsWith(`${CLI_TIMEOUT_FLAG}=`)) {
+      if (timeoutConfigured) {
+        throw new Error(`Duplicate ${CLI_TIMEOUT_FLAG} argument provided.`);
+      }
+      const value = token.slice(`${CLI_TIMEOUT_FLAG}=`.length);
+      validateValue(value, CLI_TIMEOUT_FLAG, { allowDoubleDashValue: false });
+      parsed.tarTimeoutMsOverride = value;
+      timeoutConfigured = true;
+      continue;
+    }
+
     if (token === '--output') {
       if (outputConfigured) {
         throw new Error('Duplicate --output argument provided.');
@@ -138,10 +155,20 @@ function parseArgs(argv) {
       continue;
     }
 
+    if (token === CLI_TIMEOUT_FLAG) {
+      if (timeoutConfigured) {
+        throw new Error(`Duplicate ${CLI_TIMEOUT_FLAG} argument provided.`);
+      }
+      parsed.tarTimeoutMsOverride = readRequiredValue(argv, i, CLI_TIMEOUT_FLAG, { allowDoubleDashValue: false });
+      timeoutConfigured = true;
+      i += 1;
+      continue;
+    }
+
     throw new Error(`Unknown argument: ${token}`);
   }
 
-  if (parsed.showHelp && (outputConfigured || messageConfigured || parsed.patterns.length > 0)) {
+  if (parsed.showHelp && (outputConfigured || messageConfigured || timeoutConfigured || parsed.patterns.length > 0)) {
     throw new Error('Help flag cannot be combined with other arguments.');
   }
 
@@ -267,10 +294,15 @@ function main() {
   let tarTimeoutMs = DEFAULT_TAR_TIMEOUT_MS;
   try {
     assertRequiredConfig(args.output, args.patterns);
-    tarTimeoutMs = resolveStrictPositiveIntegerEnv({
+    const envTarTimeoutMs = resolveStrictPositiveIntegerEnv({
       name: TAR_TIMEOUT_ENV_VARIABLE,
       rawValue: process.env[TAR_TIMEOUT_ENV_VARIABLE],
       defaultValue: DEFAULT_TAR_TIMEOUT_MS,
+    });
+    tarTimeoutMs = resolveStrictPositiveIntegerEnv({
+      name: CLI_TIMEOUT_FLAG,
+      rawValue: args.tarTimeoutMsOverride,
+      defaultValue: envTarTimeoutMs,
     });
   } catch (error) {
     failWithUsage(toErrorMessage(error));
