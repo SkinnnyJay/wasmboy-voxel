@@ -616,6 +616,18 @@ test('resolveTimeoutFromCliAndEnv rejects null env timeout values', () => {
   );
 });
 
+test('resolveTimeoutFromCliAndEnv rejects symbol env timeout values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: Symbol('env-timeout-raw') },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid TEST_TIMEOUT_ENV value: Symbol\(env-timeout-raw\)/u,
+  );
+});
+
 test('resolveTimeoutFromCliAndEnv rejects null cli timeout values', () => {
   assert.throws(
     () =>
@@ -625,6 +637,18 @@ test('resolveTimeoutFromCliAndEnv rejects null cli timeout values', () => {
         cli: { name: '--test-timeout', rawValue: null },
       }),
     /Invalid --test-timeout value: null/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects symbol cli timeout values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: { name: '--test-timeout', rawValue: Symbol('cli-timeout-raw') },
+      }),
+    /Invalid --test-timeout value: Symbol\(cli-timeout-raw\)/u,
   );
 });
 

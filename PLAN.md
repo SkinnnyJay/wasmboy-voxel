@@ -391,3 +391,4 @@
 - 2026-02-13: Expanded shared timeout-helper coverage with explicit `null` default-timeout rejection and `null` composed CLI option-name rejection paths, locking additional null-input contract semantics in direct/composed timeout resolution.
 - 2026-02-13: Expanded shared `cli-arg-values` token-set coverage with explicit `null` entry rejection for both `knownArgs` and `allowedKnownValues`, locking null token-entry contract semantics in helper option validation.
 - 2026-02-13: Expanded `changeset-status-ci-lib` filter-helper coverage with explicit `undefined` output rejection, locking undefined-input contract semantics alongside existing non-string/null/symbol/unprintable guards.
+- 2026-02-13: Expanded shared timeout precedence-helper coverage with explicit Symbol raw-timeout rejection for composed `env.rawValue` and `cli.rawValue`, locking symbol-input contract semantics in composed timeout resolution paths.
