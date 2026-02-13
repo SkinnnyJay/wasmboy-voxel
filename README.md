@@ -33,6 +33,7 @@ This fork (WasmBoy-Voxel) adds a PPU snapshot layer used by voxel renderers and 
 - [Usage](#usage)
   - [Supported Platforms](#supported-platforms)
   - [Voxel Snapshot API](#voxel-snapshot-api)
+  - [Migration Stack (Workspace Packages/Apps)](#migration-stack-workspace-packagesapps)
 - [In-Game Screenshots](#in-game-screenshots)
   - [Gameboy Support](#gameboy-support)
   - [Gameboy Color Support](#gameboy-color-support)
@@ -97,6 +98,21 @@ schemas for versioned payloads (starting with `contracts/v1`):
 
 Use these contracts to validate payloads at API boundaries and preserve
 compatibility during refactors.
+
+### Migration Stack (Workspace Packages/Apps)
+
+New migration components are now available in-repo:
+
+- `packages/api` — versioned Zod contracts + runtime validators
+- `packages/cli` — headless tooling (`run`, `snapshot`, `compare`, `contract-check`)
+- `apps/debugger` — Next.js debugger shell with typed contract client + state/event tooling
+
+Guides:
+
+- API usage: `docs/migration/packages-api-usage-guide.md`
+- Debugger usage: `docs/migration/debugger-usage-guide.md`
+- CLI usage: `docs/migration/cli-usage-guide.md`
+- Troubleshooting FAQ: `docs/migration/troubleshooting-faq.md`
 
 # In-Game Screenshots
 
