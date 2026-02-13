@@ -10,22 +10,24 @@ const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirectory = path.dirname(currentFilePath);
 const statusScriptPath = path.join(currentDirectory, 'changeset-status-ci.mjs');
 
-function runStatusScript(customPath) {
+function runStatusScript(customPath, extraEnv = {}) {
   return spawnSync('node', [statusScriptPath], {
     encoding: 'utf8',
     env: {
       ...process.env,
       PATH: customPath,
+      ...extraEnv,
     },
   });
 }
 
-function runStatusScriptWithArgs(customPath, args) {
+function runStatusScriptWithArgs(customPath, args, extraEnv = {}) {
   return spawnSync('node', [statusScriptPath, ...args], {
     encoding: 'utf8',
     env: {
       ...process.env,
       PATH: customPath,
+      ...extraEnv,
     },
   });
 }
@@ -133,4 +135,31 @@ test('changeset-status-ci rejects unknown arguments', () => {
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Unknown argument: --unknown/u);
   assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci fails fast for invalid timeout configuration', () => {
+  const result = runStatusScript(createNodeOnlyPath(), {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: 'invalid-timeout',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid CHANGESET_STATUS_CI_TIMEOUT_MS value/u);
+});
+
+test('changeset-status-ci reports timeout errors with configured value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-'));
+  const fakeBinDirectory = writeFakeChangeset(
+    tempDirectory,
+    `#!/usr/bin/env bash
+sleep 1
+echo '🦋  info delayed status'
+exit 0
+`,
+  );
+  const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '50',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
 });

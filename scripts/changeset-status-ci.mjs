@@ -9,6 +9,21 @@ dependency warnings for @wasmboy/* packages against @wasmboy/api.
 
 Options:
   -h, --help   Show this help message`;
+const DEFAULT_TIMEOUT_MS = 120000;
+const TIMEOUT_ENV_VARIABLE = 'CHANGESET_STATUS_CI_TIMEOUT_MS';
+
+function resolveTimeoutMs(rawTimeoutValue) {
+  if (rawTimeoutValue === undefined || rawTimeoutValue.length === 0) {
+    return DEFAULT_TIMEOUT_MS;
+  }
+
+  const parsedTimeout = Number.parseInt(rawTimeoutValue, 10);
+  if (!Number.isFinite(parsedTimeout) || parsedTimeout <= 0) {
+    throw new Error(`Invalid ${TIMEOUT_ENV_VARIABLE} value: ${rawTimeoutValue}`);
+  }
+
+  return parsedTimeout;
+}
 
 function parseArgs(argv) {
   /** @type {{showHelp: boolean}} */
@@ -41,11 +56,27 @@ if (parsedArgs.showHelp) {
   process.exit(0);
 }
 
+let timeoutMs = DEFAULT_TIMEOUT_MS;
+try {
+  timeoutMs = resolveTimeoutMs(process.env[TIMEOUT_ENV_VARIABLE]);
+} catch (error) {
+  const errorMessage = error instanceof Error ? error.message : 'Invalid timeout configuration.';
+  console.error(`[changeset:status:ci] ${errorMessage}`);
+  process.exit(1);
+}
+
 const statusResult = spawnSync('changeset', ['status'], {
   encoding: 'utf8',
+  timeout: timeoutMs,
+  killSignal: 'SIGTERM',
 });
 
 if (statusResult.error) {
+  if (statusResult.error.code === 'ETIMEDOUT') {
+    console.error(`[changeset:status:ci] changeset status timed out after ${timeoutMs}ms.`);
+    process.exit(1);
+  }
+
   console.error('[changeset:status:ci] Failed to execute changeset status.');
   console.error(statusResult.error);
   process.exit(1);

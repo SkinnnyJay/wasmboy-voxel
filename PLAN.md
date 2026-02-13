@@ -214,6 +214,7 @@
 - 2026-02-13: Added `--help`/`-h` support to `changeset-status-ci` wrapper with automation tests for both help entrypoints.
 - 2026-02-13: Added CRLF-focused regression coverage for changeset warning filtering to validate cross-platform output parsing behavior.
 - 2026-02-13: Tightened `changeset-status-ci` argument handling to fail on unknown flags (with usage output), plus added automation coverage for the strict-arg error path.
+- 2026-02-13: Added configurable timeout protection to `changeset-status-ci` (`CHANGESET_STATUS_CI_TIMEOUT_MS`, default 120000ms), with regression coverage for invalid timeout config and explicit timeout failures.
 - 2026-02-13: Added diagnostics bundler negative-path tests for required CLI arguments (`--output`, `--pattern`), strengthening guardrail coverage for automation script misuse.
 - 2026-02-13: Expanded diagnostics bundler negative-path automation coverage for unknown flags and missing flag values, hardening script argument-validation guarantees.
 - 2026-02-13: Expanded diagnostics bundler negative-path coverage for missing `--output` and `--message` flag values to lock down strict argument parsing semantics.
