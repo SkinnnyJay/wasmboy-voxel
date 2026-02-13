@@ -194,115 +194,118 @@ If desired, add `pnpm` workspaces or `turborepo` to orchestrate builds.
 
 ## Migration Tasks (Checklist)
 
-[ ] - Phase 0: Baseline - Inventory public exports in `index.ts`
-[ ] - Phase 0: Baseline - Inventory public exports in `voxel-wrapper.ts`
-[ ] - Phase 0: Baseline - Inventory public exports in `lib/` entry points
-[ ] - Phase 0: Baseline - List worker entry points and message schemas
-[ ] - Phase 0: Baseline - Map current snapshot fields to memory sources
-[ ] - Phase 0: Baseline - Document current null/undefined behaviors
-[ ] - Phase 0: Baseline - List ROMs used by existing tests/demos
-[ ] - Phase 0: Baseline - Capture baseline snapshot JSON for each ROM
-[ ] - Phase 0: Baseline - Record baseline checksums for VRAM/OAM
-[ ] - Phase 0: Baseline - Record baseline timing/accuracy metrics
-[ ] - Phase 0: Baseline - Write initial contract table (function → payload)
+**Status:** Core migration Phases 0-10 are complete. Remaining unchecked items
+are extended hardening work (dependency audit + PyBoy-rigor add-ons).
 
-[ ] - Phase 1: Contracts + Types - Create `packages/api` skeleton
-[ ] - Phase 1: Contracts + Types - Add `contracts/v1` directory
-[ ] - Phase 1: Contracts + Types - Define `PpuSnapshot` schema in Zod
-[ ] - Phase 1: Contracts + Types - Define `Registers` schema in Zod
-[ ] - Phase 1: Contracts + Types - Define `MemorySection` schema in Zod
-[ ] - Phase 1: Contracts + Types - Define `DebugFrame` schema in Zod
-[ ] - Phase 1: Contracts + Types - Add schema version metadata
-[ ] - Phase 1: Contracts + Types - Export inferred TS types from schemas
-[ ] - Phase 1: Contracts + Types - Add schema validation helper
-[ ] - Phase 1: Contracts + Types - Add contract registry (map of versions)
-[ ] - Phase 1: Contracts + Types - Document contract usage in README
+[x] - Phase 0: Baseline - Inventory public exports in `index.ts`
+[x] - Phase 0: Baseline - Inventory public exports in `voxel-wrapper.ts`
+[x] - Phase 0: Baseline - Inventory public exports in `lib/` entry points
+[x] - Phase 0: Baseline - List worker entry points and message schemas
+[x] - Phase 0: Baseline - Map current snapshot fields to memory sources
+[x] - Phase 0: Baseline - Document current null/undefined behaviors
+[x] - Phase 0: Baseline - List ROMs used by existing tests/demos
+[x] - Phase 0: Baseline - Capture baseline snapshot JSON for each ROM
+[x] - Phase 0: Baseline - Record baseline checksums for VRAM/OAM
+[x] - Phase 0: Baseline - Record baseline timing/accuracy metrics
+[x] - Phase 0: Baseline - Write initial contract table (function → payload)
 
-[ ] - Phase 2: Wrapper Integration - Identify all public wrapper entry points
-[ ] - Phase 2: Wrapper Integration - Add contract gate for `getPpuSnapshot()`
-[ ] - Phase 2: Wrapper Integration - Add contract gate for `getRegisters()`
-[ ] - Phase 2: Wrapper Integration - Add contract gate for `getMemorySection()`
-[ ] - Phase 2: Wrapper Integration - Add contract gate for debug events
-[ ] - Phase 2: Wrapper Integration - Ensure `supportsPpuSnapshot()` guards
-[ ] - Phase 2: Wrapper Integration - Keep null return on worker readiness
-[ ] - Phase 2: Wrapper Integration - Add dev-only contract validation flag
-[ ] - Phase 2: Wrapper Integration - Add `compat` wrapper for old API
+[x] - Phase 1: Contracts + Types - Create `packages/api` skeleton
+[x] - Phase 1: Contracts + Types - Add `contracts/v1` directory
+[x] - Phase 1: Contracts + Types - Define `PpuSnapshot` schema in Zod
+[x] - Phase 1: Contracts + Types - Define `Registers` schema in Zod
+[x] - Phase 1: Contracts + Types - Define `MemorySection` schema in Zod
+[x] - Phase 1: Contracts + Types - Define `DebugFrame` schema in Zod
+[x] - Phase 1: Contracts + Types - Add schema version metadata
+[x] - Phase 1: Contracts + Types - Export inferred TS types from schemas
+[x] - Phase 1: Contracts + Types - Add schema validation helper
+[x] - Phase 1: Contracts + Types - Add contract registry (map of versions)
+[x] - Phase 1: Contracts + Types - Document contract usage in README
 
-[ ] - Phase 2.5: Build + Packaging - Add tsup/esbuild config for packages
-[ ] - Phase 2.5: Build + Packaging - Configure ESM/CJS outputs + `types`
-[ ] - Phase 2.5: Build + Packaging - Add `exports` maps for new packages
-[ ] - Phase 2.5: Build + Packaging - Add `typecheck` script for packages
-[ ] - Phase 2.5: Build + Packaging - Add `test` runner (vitest/jest)
-[ ] - Phase 2.5: Build + Packaging - Add publish metadata (name/version/files)
-[ ] - Phase 2.5: Build + Packaging - Add `sideEffects` metadata if needed
-[ ] - Phase 2.5: Build + Packaging - Add `tsconfig.build.json` per package
+[x] - Phase 2: Wrapper Integration - Identify all public wrapper entry points
+[x] - Phase 2: Wrapper Integration - Add contract gate for `getPpuSnapshot()`
+[x] - Phase 2: Wrapper Integration - Add contract gate for `getRegisters()`
+[x] - Phase 2: Wrapper Integration - Add contract gate for `getMemorySection()`
+[x] - Phase 2: Wrapper Integration - Add contract gate for debug events
+[x] - Phase 2: Wrapper Integration - Ensure `supportsPpuSnapshot()` guards
+[x] - Phase 2: Wrapper Integration - Keep null return on worker readiness
+[x] - Phase 2: Wrapper Integration - Add dev-only contract validation flag
+[x] - Phase 2: Wrapper Integration - Add `compat` wrapper for old API
 
-[ ] - Phase 3: Next.js Debugger - Create `apps/debugger` skeleton
-[ ] - Phase 3: Next.js Debugger - Configure Next.js (app router)
-[ ] - Phase 3: Next.js Debugger - Add global styles and layout
-[ ] - Phase 3: Next.js Debugger - Add top-level routing and nav
-[ ] - Phase 3: Next.js Debugger - Add error boundary and fallback UI
-[ ] - Phase 3: Next.js Debugger - Configure WASM asset handling
-[ ] - Phase 3: Next.js Debugger - Configure worker loading strategy
-[ ] - Phase 3: Next.js Debugger - Add ROM loader UI
-[ ] - Phase 3: Next.js Debugger - Add emulator view panel component
-[ ] - Phase 3: Next.js Debugger - Add registers panel component
-[ ] - Phase 3: Next.js Debugger - Add memory viewer component
-[ ] - Phase 3: Next.js Debugger - Add snapshot timeline component
-[ ] - Phase 3: Next.js Debugger - Add event log panel component
-[ ] - Phase 3: Next.js Debugger - Wire typed client to `packages/api`
+[x] - Phase 2.5: Build + Packaging - Add tsup/esbuild config for packages
+[x] - Phase 2.5: Build + Packaging - Configure ESM/CJS outputs + `types`
+[x] - Phase 2.5: Build + Packaging - Add `exports` maps for new packages
+[x] - Phase 2.5: Build + Packaging - Add `typecheck` script for packages
+[x] - Phase 2.5: Build + Packaging - Add `test` runner (vitest/jest)
+[x] - Phase 2.5: Build + Packaging - Add publish metadata (name/version/files)
+[x] - Phase 2.5: Build + Packaging - Add `sideEffects` metadata if needed
+[x] - Phase 2.5: Build + Packaging - Add `tsconfig.build.json` per package
 
-[ ] - Phase 4: State + Events - Add Zustand store for debugger state
-[ ] - Phase 4: State + Events - Add selectors and actions for UI panels
-[ ] - Phase 4: State + Events - Add frame metadata (timestamp/frame ID)
-[ ] - Phase 4: State + Events - Add snapshot checksums
-[ ] - Phase 4: State + Events - Add event stream for inputs/interrupts
-[ ] - Phase 4: State + Events - Add read-only AI debug endpoint
-[ ] - Phase 4: State + Events - Add JSONL export for events/snapshots
-[ ] - Phase 4: State + Events - Add debug sandbox mode (no mutations)
-[ ] - Phase 4: State + Events - Add rate limiting for snapshot capture
+[x] - Phase 3: Next.js Debugger - Create `apps/debugger` skeleton
+[x] - Phase 3: Next.js Debugger - Configure Next.js (app router)
+[x] - Phase 3: Next.js Debugger - Add global styles and layout
+[x] - Phase 3: Next.js Debugger - Add top-level routing and nav
+[x] - Phase 3: Next.js Debugger - Add error boundary and fallback UI
+[x] - Phase 3: Next.js Debugger - Configure WASM asset handling
+[x] - Phase 3: Next.js Debugger - Configure worker loading strategy
+[x] - Phase 3: Next.js Debugger - Add ROM loader UI
+[x] - Phase 3: Next.js Debugger - Add emulator view panel component
+[x] - Phase 3: Next.js Debugger - Add registers panel component
+[x] - Phase 3: Next.js Debugger - Add memory viewer component
+[x] - Phase 3: Next.js Debugger - Add snapshot timeline component
+[x] - Phase 3: Next.js Debugger - Add event log panel component
+[x] - Phase 3: Next.js Debugger - Wire typed client to `packages/api`
 
-[ ] - Phase 5: CLI - Create `packages/cli` skeleton
-[ ] - Phase 5: CLI - Add CLI argument parser and command router
-[ ] - Phase 5: CLI - Implement `run <rom>` command
-[ ] - Phase 5: CLI - Implement `snapshot <rom>` command
-[ ] - Phase 5: CLI - Implement `compare <baseline>` command
-[ ] - Phase 5: CLI - Implement `contract-check` command
-[ ] - Phase 5: CLI - Add structured logging output
-[ ] - Phase 5: CLI - Add ROM path validation and safe errors
-[ ] - Phase 5: CLI - Add `bin` entry + packaging metadata
-[ ] - Phase 5: CLI - Add help text and usage examples
+[x] - Phase 4: State + Events - Add Zustand store for debugger state
+[x] - Phase 4: State + Events - Add selectors and actions for UI panels
+[x] - Phase 4: State + Events - Add frame metadata (timestamp/frame ID)
+[x] - Phase 4: State + Events - Add snapshot checksums
+[x] - Phase 4: State + Events - Add event stream for inputs/interrupts
+[x] - Phase 4: State + Events - Add read-only AI debug endpoint
+[x] - Phase 4: State + Events - Add JSONL export for events/snapshots
+[x] - Phase 4: State + Events - Add debug sandbox mode (no mutations)
+[x] - Phase 4: State + Events - Add rate limiting for snapshot capture
 
-[ ] - Phase 6: Regression Safety - Add golden snapshot tests
-[ ] - Phase 6: Regression Safety - Add checksum regression tests
-[ ] - Phase 6: Regression Safety - Add contract validation tests
-[ ] - Phase 6: Regression Safety - Add headless CLI regression tests
-[ ] - Phase 6: Regression Safety - Add Next.js debugger smoke tests
-[ ] - Phase 6: Regression Safety - Add CI job for contract checks
-[ ] - Phase 6: Regression Safety - Ensure existing test suites still pass
+[x] - Phase 5: CLI - Create `packages/cli` skeleton
+[x] - Phase 5: CLI - Add CLI argument parser and command router
+[x] - Phase 5: CLI - Implement `run <rom>` command
+[x] - Phase 5: CLI - Implement `snapshot <rom>` command
+[x] - Phase 5: CLI - Implement `compare <baseline>` command
+[x] - Phase 5: CLI - Implement `contract-check` command
+[x] - Phase 5: CLI - Add structured logging output
+[x] - Phase 5: CLI - Add ROM path validation and safe errors
+[x] - Phase 5: CLI - Add `bin` entry + packaging metadata
+[x] - Phase 5: CLI - Add help text and usage examples
 
-[ ] - Phase 7: Compatibility - Add deprecation warnings (dev-only)
-[ ] - Phase 7: Compatibility - Add migration notes for `gameboy-remix`
-[ ] - Phase 7: Compatibility - Add backwards-compat test coverage
-[ ] - Phase 7: Compatibility - Document breaking change policy
+[x] - Phase 6: Regression Safety - Add golden snapshot tests
+[x] - Phase 6: Regression Safety - Add checksum regression tests
+[x] - Phase 6: Regression Safety - Add contract validation tests
+[x] - Phase 6: Regression Safety - Add headless CLI regression tests
+[x] - Phase 6: Regression Safety - Add Next.js debugger smoke tests
+[x] - Phase 6: Regression Safety - Add CI job for contract checks
+[x] - Phase 6: Regression Safety - Ensure existing test suites still pass
 
-[ ] - Phase 8: Tooling - Add workspace scripts (`dev`, `build`, `test`)
-[ ] - Phase 8: Tooling - Add lint + prettier for new packages
-[ ] - Phase 8: Tooling - Add strict TS config per package
-[ ] - Phase 8: Tooling - Add CI workflow for lint/typecheck/tests
-[ ] - Phase 8: Tooling - Add build caching for workspace tasks
-[ ] - Phase 8: Tooling - Add release automation (changesets)
+[x] - Phase 7: Compatibility - Add deprecation warnings (dev-only)
+[x] - Phase 7: Compatibility - Add migration notes for `gameboy-remix`
+[x] - Phase 7: Compatibility - Add backwards-compat test coverage
+[x] - Phase 7: Compatibility - Document breaking change policy
+
+[x] - Phase 8: Tooling - Add workspace scripts (`dev`, `build`, `test`)
+[x] - Phase 8: Tooling - Add lint + prettier for new packages
+[x] - Phase 8: Tooling - Add strict TS config per package
+[x] - Phase 8: Tooling - Add CI workflow for lint/typecheck/tests
+[x] - Phase 8: Tooling - Add build caching for workspace tasks
+[x] - Phase 8: Tooling - Add release automation (changesets)
 [ ] - Phase 8: Tooling - Audit and replace vulnerable/deprecated packages
 
-[ ] - Phase 9: Documentation - Update `MIGRATE_TO_TYPESCRIPT.md` progress links
-[ ] - Phase 9: Documentation - Add `packages/api` usage guide
-[ ] - Phase 9: Documentation - Add debugger usage guide
-[ ] - Phase 9: Documentation - Add CLI usage guide
-[ ] - Phase 9: Documentation - Add troubleshooting FAQ
+[x] - Phase 9: Documentation - Update `MIGRATE_TO_TYPESCRIPT.md` progress links
+[x] - Phase 9: Documentation - Add `packages/api` usage guide
+[x] - Phase 9: Documentation - Add debugger usage guide
+[x] - Phase 9: Documentation - Add CLI usage guide
+[x] - Phase 9: Documentation - Add troubleshooting FAQ
 
-[ ] - Phase 10: Finalization - Verify all tests + contract checks pass
-[ ] - Phase 10: Finalization - Tag release and update changelog
-[ ] - Phase 10: Finalization - Remove deprecated code after grace period
+[x] - Phase 10: Finalization - Verify all tests + contract checks pass
+[x] - Phase 10: Finalization - Tag release and update changelog
+[x] - Phase 10: Finalization - Remove deprecated code after grace period
 
 [ ] - Phase 10: PyBoy Rigor - Add `tick(count, render)` contract + tests
 [ ] - Phase 10: PyBoy Rigor - Add frame-skip equivalence tests
