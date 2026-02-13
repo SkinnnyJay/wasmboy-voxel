@@ -44,7 +44,7 @@ Contract workflow uses:
 
 - `npm run ci:packages` (package build + package typecheck/tests)
 - `npm run contract:ci` (package CI checks + changeset status + sample contract validation)
-- path filters so the workflow runs only when contract/package/release-metadata files change
+- path filters so the workflow runs only when contract/package/release-metadata files change (including debugger package metadata used by changeset checks)
 
 Workflow hardening applied:
 
