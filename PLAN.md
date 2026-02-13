@@ -363,3 +363,4 @@
 - 2026-02-13: Hardened `readRequiredArgumentValue` call-site contract validation in shared `cli-arg-values` helper (`argv` array + non-negative integer index) and expanded helper unit coverage for invalid argv/index rejection paths.
 - 2026-02-13: Hardened shared `test-fixtures` path-token sanitization by rejecting null-byte temp-directory/executable-name inputs and expanded helper unit coverage for null-byte rejection paths.
 - 2026-02-13: Hardened shared `cli-arg-values` top-level options-object contract validation (missing/non-object options rejection) and expanded helper unit coverage for direct/read-path invalid-options rejection.
+- 2026-02-13: Expanded shared timeout precedence helper options-shape coverage with missing top-level options and non-object `env`/`cli` option rejection paths.
