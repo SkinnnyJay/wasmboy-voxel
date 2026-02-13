@@ -35,6 +35,7 @@
     "stack:typecheck": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" typecheck",
     "stack:lint": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" lint",
     "changeset": "changeset",
+    "changeset:status": "changeset status",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
     "start": "concurrently --kill-others --names \"DEBUGGER,CORE,LIB\" -c \"bgBlue.bold,bgMagenta.bold,bgGreen.bold\" \"npm run debugger:watch\" \"npm run core:watch\" \"npm run lib:watch:wasm\"",
