@@ -640,3 +640,37 @@ exit 0
   assert.equal(result.status, 1);
   assert.match(result.stderr, /timed out after 50ms/u);
 });
+
+test('changeset-status-ci accepts max split CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-max-split-'));
+  const fakeBinDirectory = writeFakeChangeset(
+    tempDirectory,
+    `#!/usr/bin/env bash
+echo '🦋  info NO packages to be bumped at patch'
+exit 0
+`,
+  );
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms', '2147483647'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '50',
+  });
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /🦋  info NO packages to be bumped at patch/u);
+});
+
+test('changeset-status-ci accepts max inline CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-max-inline-'));
+  const fakeBinDirectory = writeFakeChangeset(
+    tempDirectory,
+    `#!/usr/bin/env bash
+echo '🦋  info NO packages to be bumped at patch'
+exit 0
+`,
+  );
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms=2147483647'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '50',
+  });
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /🦋  info NO packages to be bumped at patch/u);
+});

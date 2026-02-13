@@ -1646,3 +1646,57 @@ exit 0
   );
   assert.match(output, /tar timed out after 50ms/u);
 });
+
+test('bundle-diagnostics accepts max split CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-max-split-'));
+  const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
+  fs.mkdirSync(fakeBinDirectory, { recursive: true });
+  const fakeTarPath = path.join(fakeBinDirectory, 'tar');
+  fs.writeFileSync(
+    fakeTarPath,
+    `#!/usr/bin/env bash
+sleep 0.2
+exit 0
+`,
+    'utf8',
+  );
+  fs.chmodSync(fakeTarPath, 0o755);
+
+  const result = runBundlerCommandRaw(
+    tempDirectory,
+    ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log', '--tar-timeout-ms', '2147483647'],
+    {
+      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '50',
+    },
+  );
+
+  assert.equal(result.status, 0);
+});
+
+test('bundle-diagnostics accepts max inline CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-max-inline-'));
+  const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
+  fs.mkdirSync(fakeBinDirectory, { recursive: true });
+  const fakeTarPath = path.join(fakeBinDirectory, 'tar');
+  fs.writeFileSync(
+    fakeTarPath,
+    `#!/usr/bin/env bash
+sleep 0.2
+exit 0
+`,
+    'utf8',
+  );
+  fs.chmodSync(fakeTarPath, 0o755);
+
+  const result = runBundlerCommandRaw(
+    tempDirectory,
+    ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log', '--tar-timeout-ms=2147483647'],
+    {
+      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '50',
+    },
+  );
+
+  assert.equal(result.status, 0);
+});

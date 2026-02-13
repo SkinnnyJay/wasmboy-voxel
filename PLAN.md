@@ -322,3 +322,4 @@
 - 2026-02-13: Expanded wrapper-level CLI timeout boundary regression coverage with zero, non-numeric suffix, and above-ceiling override values (split and inline forms) across both helper wrappers.
 - 2026-02-13: Expanded wrapper-level timeout-environment boundary regression coverage with explicit zero-value env rejection cases for both helper wrappers, preserving strict positive-timeout semantics at wrapper entry points.
 - 2026-02-13: Expanded wrapper-level timeout-environment boundary regression coverage with plus-prefixed and negative env-value rejection cases across both helper wrappers, preserving strict positive integer timeout semantics at wrapper entry points.
+- 2026-02-13: Expanded wrapper-level CLI timeout boundary regression coverage with maximum supported timeout acceptance cases (`2147483647`) in split and inline forms across both helper wrappers, preserving inclusive upper-bound semantics.

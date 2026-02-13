@@ -139,6 +139,7 @@ Workflow hardening applied:
 - wrapper-level CLI timeout boundary coverage now explicitly includes zero, non-numeric suffix (`50ms`), and above-ceiling (`2147483648`) overrides in split and inline forms for both `changeset-status-ci` and `bundle-diagnostics`
 - wrapper-level timeout-environment boundary coverage now explicitly includes zero-value env rejection for both helpers (`CHANGESET_STATUS_CI_TIMEOUT_MS=0`, `BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS=0`), preserving strict positive-timeout semantics at wrapper entry points
 - wrapper-level timeout-environment boundary coverage now also includes plus-prefixed and negative env rejection for both helpers, preserving strict positive integer semantics for env-driven timeout parsing in wrapper entry points
+- wrapper-level CLI timeout boundary coverage now also includes acceptance tests at the maximum supported timeout (`2147483647`) in split and inline forms for both wrappers, preserving inclusive upper-bound semantics
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity
