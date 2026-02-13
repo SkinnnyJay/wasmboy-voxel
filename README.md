@@ -364,6 +364,9 @@ npm run install:stack:ci
 # Shortcut for running the same gate used in CI
 npm run ci:local
 
+# Run a strict no-retry variant of the full quality gate
+npm run ci:local:strict
+
 # Dependency audit check used by CI
 npm run audit:check
 
