@@ -438,3 +438,4 @@
 - 2026-02-13: Expanded shared `readRequiredArgumentValue` index-contract coverage with explicit `NaN` argument-index rejection, locking non-finite index contract semantics alongside existing null/undefined/symbol/non-integer/out-of-range guards.
 - 2026-02-13: Expanded shared `readRequiredArgumentValue` index-contract coverage with explicit `Infinity` argument-index rejection, locking infinite-index contract semantics alongside existing null/undefined/NaN/symbol/non-integer/out-of-range guards.
 - 2026-02-13: Expanded shared `readRequiredArgumentValue` index-contract coverage with explicit `-Infinity` argument-index rejection, locking negative-infinite index contract semantics alongside existing null/undefined/NaN/symbol/non-integer/out-of-range guards.
+- 2026-02-13: Expanded shared parser-helper option-name coverage with explicit `bigint` `flagName` rejection in `validateRequiredArgumentValue`, locking non-string primitive flag-name contract semantics.

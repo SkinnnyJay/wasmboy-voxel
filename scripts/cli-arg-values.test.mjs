@@ -173,6 +173,18 @@ test('validateRequiredArgumentValue rejects undefined flag names', () => {
   );
 });
 
+test('validateRequiredArgumentValue rejects bigint flag names', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: 42n,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid flag name: 42/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects invalid known-args options', () => {
   assert.throws(
     () =>
