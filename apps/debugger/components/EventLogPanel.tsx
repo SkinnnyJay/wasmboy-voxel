@@ -1,19 +1,21 @@
-const EVENT_LOG = [
-  { type: 'load-rom', detail: 'ROM selected by user' },
-  { type: 'snapshot', detail: 'Snapshot captured for frame 2' },
-  { type: 'debug', detail: 'Contract validation passed' },
-];
+import { useDebuggerStore } from '../store/debugger-store';
 
 export function EventLogPanel() {
+  const events = useDebuggerStore((state) => state.events);
+
   return (
     <section className="panel">
       <h3>Event Log</h3>
       <ul>
-        {EVENT_LOG.map((entry) => (
-          <li key={`${entry.type}-${entry.detail}`}>
-            [{entry.type}] {entry.detail}
-          </li>
-        ))}
+        {events.length === 0 ? (
+          <li className="muted">No events yet.</li>
+        ) : (
+          events.map((entry) => (
+            <li key={`${entry.type}-${entry.frameId}-${entry.timestampMs}`}>
+              [{entry.type}] frame {entry.frameId} @ {entry.timestampMs}ms
+            </li>
+          ))
+        )}
       </ul>
     </section>
   );

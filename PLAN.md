@@ -82,15 +82,15 @@
 [x] - Milestone 3: Next.js Debugger - Add event log panel component
 [x] - Milestone 3: Next.js Debugger - Wire typed client to `packages/api`
 
-[ ] - Milestone 4: State + Events - Add Zustand store for debugger state
-[ ] - Milestone 4: State + Events - Add selectors and actions for UI panels
-[ ] - Milestone 4: State + Events - Add frame metadata (timestamp/frame ID)
-[ ] - Milestone 4: State + Events - Add snapshot checksums
-[ ] - Milestone 4: State + Events - Add event stream for inputs/interrupts
-[ ] - Milestone 4: State + Events - Add read-only AI debug endpoint
-[ ] - Milestone 4: State + Events - Add JSONL export for events/snapshots
-[ ] - Milestone 4: State + Events - Add debug sandbox mode (no mutations)
-[ ] - Milestone 4: State + Events - Add rate limiting for snapshot capture
+[x] - Milestone 4: State + Events - Add Zustand store for debugger state
+[x] - Milestone 4: State + Events - Add selectors and actions for UI panels
+[x] - Milestone 4: State + Events - Add frame metadata (timestamp/frame ID)
+[x] - Milestone 4: State + Events - Add snapshot checksums
+[x] - Milestone 4: State + Events - Add event stream for inputs/interrupts
+[x] - Milestone 4: State + Events - Add read-only AI debug endpoint
+[x] - Milestone 4: State + Events - Add JSONL export for events/snapshots
+[x] - Milestone 4: State + Events - Add debug sandbox mode (no mutations)
+[x] - Milestone 4: State + Events - Add rate limiting for snapshot capture
 
 [ ] - Milestone 5: CLI - Create `packages/cli` skeleton
 [ ] - Milestone 5: CLI - Add CLI argument parser and command router
@@ -146,3 +146,4 @@
 - 2026-02-13: Completed all M2 tasks by adding snapshot/register/memory contract gates, debug event validation, explicit support guards, dev-toggle validation controls, and `WasmBoyCompat` export. Reason: preserve compatibility while introducing contract-first wrapper behavior.
 - 2026-02-13: Completed all M2.5 tasks by moving `packages/api` to tsup (ESM/CJS+d.ts), adding exports/publish metadata/sideEffects, and switching tests to vitest. Reason: make new package production-consumable and verifiable.
 - 2026-02-13: Completed all M3 tasks by scaffolding `apps/debugger` (Next app-router), adding layout/routes/error UI/panel components, wiring typed contract client usage, and validating with `next build`.
+- 2026-02-13: Completed all M4 tasks by introducing a Zustand debugger store with selectors/actions, frame metadata + checksums, input/interrupt event stream, JSONL export helper, sandbox mode, rate-limited snapshot capture, and a read-only AI debug API route.
