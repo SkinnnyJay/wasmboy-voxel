@@ -377,3 +377,4 @@
 - 2026-02-13: Hardened shared `test-fixtures` error-value formatting with safe string conversion (Symbol-safe) and expanded helper unit coverage for Symbol temp-directory/executable-name/body rejection paths.
 - 2026-02-13: Expanded shared timeout precedence helper coverage with composed Symbol option-name rejection for `env.name` and `cli.name`.
 - 2026-02-13: Expanded shared timeout parser error-format coverage with unprintable (`toString`-throwing) option-name/default/raw-value inputs, locking `[unprintable]` fallback semantics.
+- 2026-02-13: Expanded shared `cli-arg-values` error-format coverage with unprintable (`toString`-throwing) value/flag-name/index inputs, locking `[unprintable]` fallback semantics.

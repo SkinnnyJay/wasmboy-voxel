@@ -4,6 +4,11 @@ import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-
 
 const KNOWN_ARGS = new Set(['--help', '-h', '--output', '--pattern', '--timeout-ms']);
 const HELP_ARGS = new Set(['--help', '-h']);
+const UNPRINTABLE_VALUE = {
+  toString() {
+    throw new Error('cannot stringify');
+  },
+};
 
 test('validateRequiredArgumentValue accepts ordinary values', () => {
   assert.doesNotThrow(() => {
@@ -52,6 +57,18 @@ test('validateRequiredArgumentValue rejects symbol values', () => {
   );
 });
 
+test('validateRequiredArgumentValue safely formats unprintable values', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue(UNPRINTABLE_VALUE, {
+        flagName: '--output',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid value type for --output argument: \[unprintable\]/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects missing options objects', () => {
   assert.throws(() => validateRequiredArgumentValue('value', undefined), /Invalid required argument options\./u);
 });
@@ -73,6 +90,18 @@ test('validateRequiredArgumentValue rejects symbol flag names', () => {
         allowDoubleDashValue: false,
       }),
     /Invalid flag name: Symbol\(timeout-flag\)/u,
+  );
+});
+
+test('validateRequiredArgumentValue safely formats unprintable flag names', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: UNPRINTABLE_VALUE,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid flag name: \[unprintable\]/u,
   );
 });
 
@@ -337,6 +366,20 @@ test('readRequiredArgumentValue rejects symbol argument indexes', () => {
         allowWhitespaceOnly: true,
       }),
     /Invalid argument index for --timeout-ms: Symbol\(index\)/u,
+  );
+});
+
+test('readRequiredArgumentValue safely formats unprintable argument indexes', () => {
+  const args = ['--timeout-ms', '00050'];
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(args, UNPRINTABLE_VALUE, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid argument index for --timeout-ms: \[unprintable\]/u,
   );
 });
 
