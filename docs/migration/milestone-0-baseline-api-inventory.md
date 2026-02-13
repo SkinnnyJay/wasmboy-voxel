@@ -299,3 +299,56 @@ From `core/constants.ts` and wrapper usage:
 | `getBackgroundMapImage()` / `getTileDataImage()` / `getOamSpritesImage()` | Return `null` when worker unavailable, image unsupported, or rendering/read fails. |
 | `getCPURegisters()` / `getTimerState()` / `getLCDState()` / `getScanlineParameters()` | Return `null` if worker unavailable or runtime error occurs. |
 
+## 0.7 ROMs used by existing tests and demos
+
+### ROMs directly referenced in automated tests
+
+- `test/performance/testroms/back-to-color/back-to-color.gbc`
+  - used by: `test/integration/lib-test.js`, `test/integration/breakpoint-test.js`, `test/integration/voxel-snapshot-test.js`, `test/accuracy/accuracy-test.js`
+- `test/performance/testroms/tobutobugirl/tobutobugirl.gb`
+  - used by: `test/integration/headless-simple.js`, `test/core/save-state.js`, `test/integration/joypad-tetris-harness.js`, `test/accuracy/accuracy-test.js`
+
+### Optional fixture ROMs used by integration harnesses
+
+- `test/fixtures/Tetris.gb` (or `test/performance/testroms/tetris/Tetris.gb`)
+  - used by: `test/integration/joypad-tetris-harness.js`
+- `test/fixtures/Space Invaders.gb` (or repo root `Space Invaders.gb`, or `test/performance/testroms/space-invaders/Space Invaders.gb`)
+  - used by: `test/integration/joypad-tetris-harness.js`
+
+### Accuracy-suite ROM identifiers (derived from golden outputs)
+
+Blargg:
+- `blargg/cpu_instrs/cpu_instrs`
+- `blargg/instr_timing/instr_timing`
+- `blargg/mem_timing/mem_timing`
+- `blargg/mem_timing-2/mem_timing-2`
+- `blargg/halt_bug/halt_bug`
+- `blargg/cgb_sound/cgb_sound`
+
+Mooneye timer:
+- `mooneye/timer/div_write/div_write`
+- `mooneye/timer/rapid_toggle/rapid_toggle`
+- `mooneye/timer/tim00/tim00`
+- `mooneye/timer/tim00_div_trigger/tim00_div_trigger`
+- `mooneye/timer/tim01/tim01`
+- `mooneye/timer/tim01_div_trigger/tim01_div_trigger`
+- `mooneye/timer/tim10/tim10`
+- `mooneye/timer/tim10_div_trigger/tim10_div_trigger`
+- `mooneye/timer/tim11/tim11`
+- `mooneye/timer/tim11_div_trigger/tim11_div_trigger`
+- `mooneye/timer/tima_reload/tima_reload`
+- `mooneye/timer/tima_write_reloading/tima_write_reloading`
+- `mooneye/timer/tma_write_reloading/tma_write_reloading`
+
+Mooneye halt:
+- `mooneye/halt/halt_ime0_ei/halt_ime0_ei`
+- `mooneye/halt/halt_ime0_nointr_timing/halt_ime0_nointr_timing`
+- `mooneye/halt/halt_ime1_timing/halt_ime1_timing`
+
+### Demo ROM references
+
+- `demo/amp/index.js` imports `test/performance/testroms/tobutobugirl/tobutobugirl.gb`
+- `demo/debugger/commands/open.js` contains sample remote ROM URL:
+  - `https://gbhh.avivace.com/database/entries/2048gb/2048.gb`
+- `demo/iframe` accepts ROMs via query parameter `rom-url`
+
