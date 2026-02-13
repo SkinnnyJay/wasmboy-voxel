@@ -22,6 +22,10 @@ test('resolveStrictPositiveIntegerEnv rejects missing options objects', () => {
   assert.throws(() => resolveStrictPositiveIntegerEnv(undefined), /Invalid timeout env resolution options\./u);
 });
 
+test('resolveStrictPositiveIntegerEnv rejects null options objects', () => {
+  assert.throws(() => resolveStrictPositiveIntegerEnv(null), /Invalid timeout env resolution options\./u);
+});
+
 test('resolveStrictPositiveIntegerEnv rejects array options objects', () => {
   assert.throws(() => resolveStrictPositiveIntegerEnv([]), /Invalid timeout env resolution options\./u);
 });
@@ -368,6 +372,10 @@ test('resolveTimeoutFromCliAndEnv rejects missing top-level options', () => {
   assert.throws(() => resolveTimeoutFromCliAndEnv(undefined), /Invalid timeout resolution options\./u);
 });
 
+test('resolveTimeoutFromCliAndEnv rejects null top-level options', () => {
+  assert.throws(() => resolveTimeoutFromCliAndEnv(null), /Invalid timeout resolution options\./u);
+});
+
 test('resolveTimeoutFromCliAndEnv rejects array top-level options', () => {
   assert.throws(() => resolveTimeoutFromCliAndEnv([]), /Invalid timeout resolution options\./u);
 });
@@ -390,6 +398,18 @@ test('resolveTimeoutFromCliAndEnv rejects non-object env option values', () => {
       resolveTimeoutFromCliAndEnv({
         defaultValue: 120000,
         env: 42,
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid timeout env options\./u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects null env option values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: null,
         cli: { name: '--test-timeout', rawValue: undefined },
       }),
     /Invalid timeout env options\./u,
@@ -427,6 +447,18 @@ test('resolveTimeoutFromCliAndEnv rejects non-object cli option values', () => {
         defaultValue: 120000,
         env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
         cli: 42,
+      }),
+    /Invalid timeout cli options\./u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects null cli option values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: null,
       }),
     /Invalid timeout cli options\./u,
   );

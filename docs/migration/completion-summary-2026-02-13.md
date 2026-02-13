@@ -304,6 +304,7 @@ Workflow hardening applied:
 - read-path parser-helper coverage now explicitly asserts non-string (`number`) `allowedKnownValues` entry rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper coverage now explicitly asserts non-string and whitespace-only `knownArgs` entry rejection in `readRequiredArgumentValue` validation paths
 - parser-helper coverage now explicitly asserts non-boolean `allowWhitespaceOnly` rejection for direct/read validation entrypoints and null/undefined `argv` rejection in read-path parsing
+- timeout-helper options-shape coverage now explicitly asserts null container rejection for direct/composed entrypoints (`options`, composed `env`, composed `cli`)
 
 ## Security posture at completion
 
