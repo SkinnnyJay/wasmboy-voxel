@@ -1,6 +1,7 @@
 name: contract-checks
 
 on:
+  workflow_dispatch:
   push:
     branches: ['master', 'cursor/**']
     paths:

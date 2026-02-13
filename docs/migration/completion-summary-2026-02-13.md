@@ -35,6 +35,11 @@ CI automation now runs the same gate in:
 - `nightly-regression.yml` (daily scheduled drift detection)
 - `release.yml` (pre-publish release guard before changesets action)
 
+CI and contract workflows now include:
+
+- `workflow_dispatch` manual trigger support
+- push/PR path filters so full CI runs only for relevant runtime/package/test/workflow changes
+
 Release pipeline build uses:
 
 - `npm run release:build` (root emulator/lib build + workspace package builds)

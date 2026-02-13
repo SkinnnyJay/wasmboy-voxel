@@ -1,10 +1,41 @@
 name: ci
 
 on:
+  workflow_dispatch:
   push:
     branches: ['master', 'cursor/**']
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'pnpm-workspace.yaml'
+      - 'core/**'
+      - 'lib/**'
+      - 'packages/**'
+      - 'apps/**'
+      - 'contracts/**'
+      - 'test/**'
+      - 'index.ts'
+      - 'voxel-wrapper.ts'
+      - 'fork-api-spec.ts'
+      - '.changeset/**'
+      - '.github/workflows/ci.yml'
   pull_request:
     branches: ['master']
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'pnpm-workspace.yaml'
+      - 'core/**'
+      - 'lib/**'
+      - 'packages/**'
+      - 'apps/**'
+      - 'contracts/**'
+      - 'test/**'
+      - 'index.ts'
+      - 'voxel-wrapper.ts'
+      - 'fork-api-spec.ts'
+      - '.changeset/**'
+      - '.github/workflows/ci.yml'
 
 permissions:
   contents: read

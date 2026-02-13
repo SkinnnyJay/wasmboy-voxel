@@ -189,3 +189,4 @@
 - 2026-02-13: Added reusable `ci:packages` script and composed `contract:ci` from it, further reducing command duplication and improving local/workflow parity for package-focused validation.
 - 2026-02-13: Extended contract workflow path filters to include debugger package metadata files consumed by changeset validation, preventing missed contract/release-metadata checks on app package updates.
 - 2026-02-13: Added push path filters to release workflow so release automation only runs on changes that can affect published artifacts or release metadata, reducing unnecessary master-branch release jobs.
+- 2026-02-13: Added manual dispatch support and path filters to main CI workflow, plus manual dispatch to contract checks, improving operational control while reducing redundant runs on irrelevant changes.
