@@ -5,6 +5,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { writeFakeExecutable } from './test-fixtures.mjs';
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirectory = path.dirname(currentFilePath);
@@ -37,12 +38,7 @@ function createNodeOnlyPath() {
 }
 
 function writeFakeChangeset(tempDirectory, body) {
-  const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
-  fs.mkdirSync(fakeBinDirectory, { recursive: true });
-  const executablePath = path.join(fakeBinDirectory, 'changeset');
-  fs.writeFileSync(executablePath, body, { encoding: 'utf8' });
-  fs.chmodSync(executablePath, 0o755);
-  return fakeBinDirectory;
+  return writeFakeExecutable(tempDirectory, 'changeset', body);
 }
 
 function writeNoBumpChangeset(tempDirectory) {

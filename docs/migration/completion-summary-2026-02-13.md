@@ -153,6 +153,8 @@ Workflow hardening applied:
 - timeout CLI boundary coverage now includes whitespace-padded max-int override acceptance (`' 2147483647 '`) in split and inline forms for both wrappers, preserving trim semantics at the upper supported timeout boundary for CLI overrides
 - timeout fixture defaults in automation tests now use shorter delayed-command sleeps (`0.1s`), reducing automation runtime while preserving timeout-path behavior and assertions
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
+- automation timeout-wrapper tests now share a reusable fake-executable fixture helper (`test-fixtures`), reducing duplicated executable setup logic across changeset and diagnostics harnesses
+- shared fake-executable fixture helper now has focused unit coverage validating runnable command creation in fake-bin paths
 - timeout argument-value validation now uses a shared helper module (`cli-arg-values`) across both wrappers, reducing parser duplication while preserving split/equals token-guard semantics
 - shared argument-value helper now has focused unit coverage for missing/known-token/whitespace/flag-like value validation and required-following-token reads
 - timeout env/CLI precedence resolution now uses a shared helper (`resolveTimeoutFromCliAndEnv`) across both wrappers, reducing duplicated timeout-resolution scaffolding while preserving current env-first validation + CLI-override semantics

@@ -5,6 +5,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { writeFakeExecutable } from './test-fixtures.mjs';
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirectory = path.dirname(currentFilePath);
@@ -66,19 +67,14 @@ function readArchiveEntry(cwd, archivePath, entryPath) {
 }
 
 function writeDelayedFakeTar(tempDirectory, delaySeconds = '0.1') {
-  const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
-  fs.mkdirSync(fakeBinDirectory, { recursive: true });
-  const fakeTarPath = path.join(fakeBinDirectory, 'tar');
-  fs.writeFileSync(
-    fakeTarPath,
+  return writeFakeExecutable(
+    tempDirectory,
+    'tar',
     `#!/usr/bin/env bash
 sleep ${delaySeconds}
 exit 0
 `,
-    'utf8',
   );
-  fs.chmodSync(fakeTarPath, 0o755);
-  return fakeBinDirectory;
 }
 
 test('bundle-diagnostics archives matched files', () => {
