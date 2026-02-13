@@ -1,0 +1,28 @@
+---
+description: "Pointer: provider interface, cursor-agent, NDJSON, event normalization"
+globs: ["**/*.rs", "**/src-tauri/**", "**/provider/**", "**/*.ts", "**/*.tsx"]
+alwaysApply: false
+---
+
+# Backend and Integration Patterns (Pointer)
+
+## Provider interface
+
+- `AgentProvider.startSession(workspacePath, opts) -> sessionId`
+- `AgentProvider.sendTurn(sessionId, userMsg, attachments?) -> AsyncIterable<AgentEvent>`
+- `AgentProvider.stop(sessionId)`, `AgentProvider.resume(sessionId)`
+- CursorProvider is the only code that knows about cursor-agent; implement this interface and emit normalized AgentEvents.
+
+## cursor-agent
+
+- Run headless: `--print`, `--output-format stream-json` (optionally `--stream-partial-output`).
+- Read stdout line-by-line (NDJSON). Map to normalized events: message.delta, message.final, tool.request, tool.result, files.modified, error, session.started (capture session id for resume).
+- Use `--resume <session_id>` for follow-up turns. One active process per workspace; queue turns (FIFO); stop via SIGINT.
+
+## Event normalization
+
+- Event reducer: (state, event) -> newState so existing CodexMonitor UI state model is fed from new events. Don’t trust Cursor output alone for file changes; verify with git diff for diff view.
+
+## Boundaries
+
+- Validate/sanitize external input (CLI args, config, cursor-agent output) at boundaries. Typed models in Rust and TypeScript.

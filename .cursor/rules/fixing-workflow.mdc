@@ -1,0 +1,42 @@
+---
+description: "Workflow for fixing lint, type, test, and build failures. Follow when resolving multiple errors."
+alwaysApply: true
+---
+
+# Fixing Workflow
+
+When fixing lint errors, type errors, test failures, or build failures, follow this process. Never skip steps or take shortcuts.
+
+## Step 1: Discover ALL Failures
+
+Run the appropriate command for the project and read the full output:
+
+| Category   | Discovery command (adapt to project) |
+|-----------|---------------------------------------|
+| Lint      | Project lint (e.g. `cargo clippy`, `npm run check`, frontend lint) |
+| Type      | Project typecheck (e.g. `cargo build`, `npm run typecheck`, Tauri build) |
+| Tests     | Project test (e.g. `cargo test`, `npm run test`, Tauri test) |
+| Build     | Project build (e.g. `cargo build`, Tauri build, `npm run build`) |
+
+Catalog every failure before changing code.
+
+## Step 2: Create a Task List
+
+- One item per distinct error (group related errors in the same file).
+- Include file path and short description. Mark all items pending.
+
+## Step 3: Fix Each Issue Individually
+
+1. Read the failing file and understand the root cause.
+2. Apply the minimal, correct fix.
+3. Verify with the relevant single-file or scoped command if available.
+4. Mark the item done only after that verification passes.
+5. If a fix introduces a new error, fix it before moving on.
+
+## Step 4: Do NOT Run the Full Suite Until All Items Are Resolved
+
+Iterate through the task list one item at a time. Avoid full suite runs until every item is checked off.
+
+## Step 5: Run the Full Suite to Confirm
+
+When all items are resolved, run the full discovery command again. If new failures appear, add them to the task list and repeat. Run lint and typecheck (or equivalent) as a final gate.

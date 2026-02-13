@@ -1,0 +1,27 @@
+---
+description: "Code quality standards for AssemblyScript, JS, and TS"
+alwaysApply: true
+---
+
+# Code Quality Standards
+
+## AssemblyScript (core/)
+
+- Explicit types; avoid `any` and unsafe casts.
+- Prefer small, focused functions; avoid large allocations in hot paths.
+- Keep memory layout changes coordinated with `core/constants.ts` and wrapper offsets.
+- Only meaningful comments (why, non-obvious logic). No emoji in code or comments.
+
+## JavaScript/TypeScript (lib/, voxel wrapper)
+
+- Explicit types for public APIs; avoid `any` and type assertions (`as`).
+- Prefer early returns and small helpers; keep functions under ~500 lines,
+  files under ~2500 lines.
+- Use named constants instead of magic numbers, except for hardware addresses
+  that are documented and grouped.
+- Avoid `console.*` in library code unless strictly required.
+
+## General
+
+- Do not edit generated output in `dist/` or `build/`.
+- Keep naming consistent: camelCase for functions/variables, PascalCase for types/classes.
