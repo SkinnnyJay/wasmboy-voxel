@@ -36,7 +36,7 @@ Environment:
  * @param {string[]} argv
  * @param {number} index
  * @param {string} flagName
- * @param {{allowDoubleDashValue: boolean}} options
+ * @param {{allowDoubleDashValue: boolean; allowWhitespaceOnly?: boolean}} options
  */
 function readRequiredValue(argv, index, flagName, options) {
   const value = argv[index + 1];
@@ -47,10 +47,14 @@ function readRequiredValue(argv, index, flagName, options) {
 /**
  * @param {string | undefined} value
  * @param {string} flagName
- * @param {{allowDoubleDashValue: boolean}} options
+ * @param {{allowDoubleDashValue: boolean; allowWhitespaceOnly?: boolean}} options
  */
 function validateValue(value, flagName, options) {
   if (!value || KNOWN_ARGS.has(value)) {
+    throw new Error(`Missing value for ${flagName} argument.`);
+  }
+
+  if (!options.allowWhitespaceOnly && value.trim().length === 0) {
     throw new Error(`Missing value for ${flagName} argument.`);
   }
 
@@ -112,7 +116,7 @@ function parseArgs(argv) {
         throw new Error('Duplicate --message argument provided.');
       }
       const value = token.slice('--message='.length);
-      validateValue(value, '--message', { allowDoubleDashValue: true });
+      validateValue(value, '--message', { allowDoubleDashValue: true, allowWhitespaceOnly: true });
       parsed.message = value;
       messageConfigured = true;
       continue;
@@ -123,7 +127,7 @@ function parseArgs(argv) {
         throw new Error(`Duplicate ${CLI_TIMEOUT_FLAG} argument provided.`);
       }
       const value = token.slice(`${CLI_TIMEOUT_FLAG}=`.length);
-      validateValue(value, CLI_TIMEOUT_FLAG, { allowDoubleDashValue: false });
+      validateValue(value, CLI_TIMEOUT_FLAG, { allowDoubleDashValue: false, allowWhitespaceOnly: true });
       parsed.tarTimeoutMsOverride = value;
       timeoutConfigured = true;
       continue;
@@ -149,7 +153,7 @@ function parseArgs(argv) {
       if (messageConfigured) {
         throw new Error('Duplicate --message argument provided.');
       }
-      parsed.message = readRequiredValue(argv, i, '--message', { allowDoubleDashValue: true });
+      parsed.message = readRequiredValue(argv, i, '--message', { allowDoubleDashValue: true, allowWhitespaceOnly: true });
       messageConfigured = true;
       i += 1;
       continue;
@@ -159,7 +163,10 @@ function parseArgs(argv) {
       if (timeoutConfigured) {
         throw new Error(`Duplicate ${CLI_TIMEOUT_FLAG} argument provided.`);
       }
-      parsed.tarTimeoutMsOverride = readRequiredValue(argv, i, CLI_TIMEOUT_FLAG, { allowDoubleDashValue: false });
+      parsed.tarTimeoutMsOverride = readRequiredValue(argv, i, CLI_TIMEOUT_FLAG, {
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      });
       timeoutConfigured = true;
       i += 1;
       continue;

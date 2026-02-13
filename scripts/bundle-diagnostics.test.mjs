@@ -579,10 +579,24 @@ test('bundle-diagnostics requires a value for output flag', () => {
   assert.match(output, /Missing value for --output argument/u);
 });
 
+test('bundle-diagnostics rejects whitespace-only output flag value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-whitespace-output-value-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', '   ', '--pattern', 'logs/*.log']);
+  assert.match(output, /Missing value for --output argument/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics requires a value for equals-form output flag', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-missing-output-inline-value-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output=', '--pattern=logs/*.log']);
   assert.match(output, /Missing value for --output argument/u);
+});
+
+test('bundle-diagnostics rejects whitespace-only equals-form output flag value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-whitespace-output-inline-value-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output=   ', '--pattern=logs/*.log']);
+  assert.match(output, /Missing value for --output argument/u);
+  assert.match(output, /Usage:/u);
 });
 
 test('bundle-diagnostics rejects unknown long-flag token as output value', () => {
@@ -628,6 +642,20 @@ test('bundle-diagnostics requires a value for equals-form pattern flag', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-missing-pattern-inline-value-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output=artifacts/out.tar.gz', '--pattern=']);
   assert.match(output, /Missing value for --pattern argument/u);
+});
+
+test('bundle-diagnostics rejects whitespace-only pattern flag value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-whitespace-pattern-value-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', '   ']);
+  assert.match(output, /Missing value for --pattern argument/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics rejects whitespace-only equals-form pattern flag value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-whitespace-pattern-inline-value-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output=artifacts/out.tar.gz', '--pattern=   ']);
+  assert.match(output, /Missing value for --pattern argument/u);
+  assert.match(output, /Usage:/u);
 });
 
 test('bundle-diagnostics rejects short-flag token as pattern value', () => {
