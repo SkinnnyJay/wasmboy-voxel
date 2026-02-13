@@ -48,15 +48,15 @@
 [x] - Milestone 1: Contracts + Types - Add contract registry (map of versions)
 [x] - Milestone 1: Contracts + Types - Document contract usage in README
 
-[ ] - Milestone 2: Wrapper Integration - Identify all public wrapper entry points
-[ ] - Milestone 2: Wrapper Integration - Add contract gate for `getPpuSnapshot()`
-[ ] - Milestone 2: Wrapper Integration - Add contract gate for `getRegisters()`
-[ ] - Milestone 2: Wrapper Integration - Add contract gate for `getMemorySection()`
-[ ] - Milestone 2: Wrapper Integration - Add contract gate for debug events
-[ ] - Milestone 2: Wrapper Integration - Ensure `supportsPpuSnapshot()` guards
-[ ] - Milestone 2: Wrapper Integration - Keep null return on worker readiness
-[ ] - Milestone 2: Wrapper Integration - Add dev-only contract validation flag
-[ ] - Milestone 2: Wrapper Integration - Add `compat` wrapper for old API
+[x] - Milestone 2: Wrapper Integration - Identify all public wrapper entry points (see `docs/migration/milestone-2-wrapper-integration.md`)
+[x] - Milestone 2: Wrapper Integration - Add contract gate for `getPpuSnapshot()`
+[x] - Milestone 2: Wrapper Integration - Add contract gate for `getRegisters()`
+[x] - Milestone 2: Wrapper Integration - Add contract gate for `getMemorySection()`
+[x] - Milestone 2: Wrapper Integration - Add contract gate for debug events
+[x] - Milestone 2: Wrapper Integration - Ensure `supportsPpuSnapshot()` guards
+[x] - Milestone 2: Wrapper Integration - Keep null return on worker readiness
+[x] - Milestone 2: Wrapper Integration - Add dev-only contract validation flag
+[x] - Milestone 2: Wrapper Integration - Add `compat` wrapper for old API
 
 [ ] - Milestone 2.5: Build + Packaging - Add tsup/esbuild config for packages
 [ ] - Milestone 2.5: Build + Packaging - Configure ESM/CJS outputs + `types`
@@ -143,3 +143,4 @@
 - 2026-02-13: Completed M0-11 with initial function-to-payload contract table for snapshot/debug APIs. Reason: establish explicit migration contract targets before adding Zod schemas.
 - 2026-02-13: Completed all M0.5 scaffolding tasks (workspace, strict TS base, lint/format/editor configs, node pin, stack scripts, changeset config). Reason: establish monorepo-ready foundations before adding new packages.
 - 2026-02-13: Completed all M1 tasks by creating `packages/api` + `contracts/v1`, implementing Zod schemas/metadata/registry/validation helpers, and adding contract tests plus usage docs. Reason: establish typed runtime contracts before wrapper integration.
+- 2026-02-13: Completed all M2 tasks by adding snapshot/register/memory contract gates, debug event validation, explicit support guards, dev-toggle validation controls, and `WasmBoyCompat` export. Reason: preserve compatibility while introducing contract-first wrapper behavior.

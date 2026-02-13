@@ -102,10 +102,20 @@ const LCDC_WINDOW_TILEMAP_SELECT_BIT = 0x40;
 
 const SUPPORT_CHECK_RETRY_DELAY_MS = 200;
 const SUPPORT_CHECK_MAX_RETRIES = 5;
+const CONTRACT_VERSION = "v1";
+const BYTE_MIN = 0;
+const BYTE_MAX = 0xff;
 
 interface WasmBoyInternalSnapshotApi extends WasmBoyApi {
   _getWasmMemorySection(start: number, end: number): Promise<Uint8Array>;
   _getWasmConstant(name: string): Promise<number>;
+}
+
+interface MemorySectionContractPayload {
+  version: "v1";
+  start: number;
+  endExclusive: number;
+  bytes: number[];
 }
 
 export interface WasmBoyPpuSnapshot {
@@ -199,10 +209,14 @@ const BYTES_PER_GBC_COLOR = 2;
 export interface WasmBoyVoxelApi extends WasmBoyApi {
   supportsPpuSnapshot(): Promise<boolean>;
   getPpuSnapshot(): Promise<WasmBoyPpuSnapshot | null>;
+  getRegisters(): Promise<WasmBoyPpuSnapshot["registers"] | null>;
+  getMemorySection(start: number, endExclusive: number): Promise<Uint8Array | null>;
   getPpuSnapshotLayers(options?: GetPpuSnapshotLayersOptions): Promise<Partial<WasmBoyPpuSnapshot> | null>;
   getLastSnapshotDurationMs(): number | null;
   clearPpuSnapshotCache(): void;
   readMemory(start: number, endExclusive: number): Promise<Uint8Array | null>;
+  setContractValidationEnabled(enabled: boolean): void;
+  getContractValidationEnabled(): boolean;
   subscribe(
     event: "snapshot",
     handler: SnapshotEventHandler
@@ -223,6 +237,45 @@ export interface WasmBoyVoxelApi extends WasmBoyApi {
 const hasSnapshotInternals = (api: WasmBoyApi): api is WasmBoyInternalSnapshotApi =>
   typeof (api as WasmBoyInternalSnapshotApi)._getWasmConstant === "function" &&
   typeof (api as WasmBoyInternalSnapshotApi)._getWasmMemorySection === "function";
+
+const isByte = (value: number): boolean =>
+  Number.isInteger(value) && value >= BYTE_MIN && value <= BYTE_MAX;
+
+const hasExpectedLength = (value: Uint8Array, expected: number): boolean =>
+  value.length === expected;
+
+const isValidRegistersContract = (
+  registers: WasmBoyPpuSnapshot["registers"],
+): boolean =>
+  isByte(registers.scx) &&
+  isByte(registers.scy) &&
+  isByte(registers.wx) &&
+  isByte(registers.wy) &&
+  isByte(registers.lcdc) &&
+  isByte(registers.bgp) &&
+  isByte(registers.obp0) &&
+  isByte(registers.obp1);
+
+const isValidPpuSnapshotContract = (snapshot: WasmBoyPpuSnapshot): boolean =>
+  isValidRegistersContract(snapshot.registers) &&
+  hasExpectedLength(snapshot.tileData, TILE_DATA_END_EXCLUSIVE - TILE_DATA_START) &&
+  hasExpectedLength(snapshot.bgTileMap, TILEMAP_SIZE) &&
+  hasExpectedLength(snapshot.windowTileMap, TILEMAP_SIZE) &&
+  hasExpectedLength(snapshot.oamData, OAM_END_EXCLUSIVE - OAM_START);
+
+const isValidMemorySectionContract = (payload: MemorySectionContractPayload): boolean => {
+  if (payload.version !== CONTRACT_VERSION) return false;
+  if (!Number.isInteger(payload.start) || payload.start < 0) return false;
+  if (!Number.isInteger(payload.endExclusive) || payload.endExclusive <= payload.start) return false;
+  if (payload.bytes.length !== payload.endExclusive - payload.start) return false;
+  return payload.bytes.every(isByte);
+};
+
+const isProductionNodeEnv = (): boolean =>
+  typeof process !== "undefined" &&
+  typeof process.env === "object" &&
+  process.env !== null &&
+  process.env.NODE_ENV === "production";
 
 const readGameMemorySection = async (
   api: WasmBoyInternalSnapshotApi,
@@ -248,6 +301,7 @@ const delay = (ms: number): Promise<void> =>
 
 let cachedGameMemoryBase: number | null = null;
 let lastSnapshotDurationMs: number | null = null;
+let contractValidationEnabled = !isProductionNodeEnv();
 
 const supportsPpuSnapshot = async (api: WasmBoyApi): Promise<boolean> => {
   if (!hasSnapshotInternals(api)) return false;
@@ -291,6 +345,11 @@ const snapshotHandlers: SnapshotEventHandler[] = [];
 const errorHandlers: SnapshotErrorEventHandler[] = [];
 
 function emitSnapshot(snapshot: WasmBoyPpuSnapshot): void {
+  if (contractValidationEnabled && !isValidPpuSnapshotContract(snapshot)) {
+    emitSnapshotError(new Error("PPU snapshot contract validation failed during event emit."));
+    return;
+  }
+
   snapshotHandlers.forEach((h) => {
     try {
       h(snapshot);
@@ -313,6 +372,10 @@ function emitSnapshotError(error: unknown): void {
 const getPpuSnapshot = async (api: WasmBoyApi): Promise<WasmBoyPpuSnapshot | null> => {
   if (!hasSnapshotInternals(api)) return null;
   const internal = api as WasmBoyInternalSnapshotApi;
+  if (cachedGameMemoryBase === null) {
+    const supported = await supportsPpuSnapshot(api);
+    if (!supported) return null;
+  }
   const snapshotStart = typeof performance !== "undefined" ? performance.now() : Date.now();
 
   const batched = internal._getPpuSnapshotBuffer?.();
@@ -322,6 +385,10 @@ const getPpuSnapshot = async (api: WasmBoyApi): Promise<WasmBoyPpuSnapshot | nul
       if (buffer) {
         const snapshot = internal._parsePpuSnapshotBuffer?.(buffer);
         if (snapshot) {
+          if (contractValidationEnabled && !isValidPpuSnapshotContract(snapshot)) {
+            emitSnapshotError(new Error("PPU snapshot contract validation failed (batched)."));
+            return null;
+          }
           lastSnapshotDurationMs =
             (typeof performance !== "undefined" ? performance.now() : Date.now()) - snapshotStart;
           emitSnapshot(snapshot);
@@ -376,9 +443,25 @@ const getPpuSnapshot = async (api: WasmBoyApi): Promise<WasmBoyPpuSnapshot | nul
     windowTileMap,
     oamData,
   };
+  if (contractValidationEnabled && !isValidPpuSnapshotContract(snapshot)) {
+    emitSnapshotError(new Error("PPU snapshot contract validation failed (section reads)."));
+    return null;
+  }
   emitSnapshot(snapshot);
   return snapshot;
 };
+
+async function getRegisters(
+  api: WasmBoyApi,
+): Promise<WasmBoyPpuSnapshot["registers"] | null> {
+  const snapshot = await getPpuSnapshot(api);
+  if (!snapshot) return null;
+  if (contractValidationEnabled && !isValidRegistersContract(snapshot.registers)) {
+    emitSnapshotError(new Error("Registers contract validation failed."));
+    return null;
+  }
+  return snapshot.registers;
+}
 
 async function getPpuSnapshotLayers(
   api: WasmBoyApi,
@@ -402,14 +485,46 @@ async function readMemory(
   endExclusive: number,
 ): Promise<Uint8Array | null> {
   if (!hasSnapshotInternals(api)) return null;
+  if (cachedGameMemoryBase === null) {
+    const supported = await supportsPpuSnapshot(api);
+    if (!supported) return null;
+  }
   const internal = api as WasmBoyInternalSnapshotApi;
   const base = await resolveGameMemoryBase(internal);
   if (base === null) return null;
   try {
-    return await internal._getWasmMemorySection(base + start, base + endExclusive);
+    const bytes = await internal._getWasmMemorySection(base + start, base + endExclusive);
+    if (!contractValidationEnabled) return bytes;
+    const payload: MemorySectionContractPayload = {
+      version: CONTRACT_VERSION,
+      start,
+      endExclusive,
+      bytes: Array.from(bytes),
+    };
+    if (!isValidMemorySectionContract(payload)) {
+      emitSnapshotError(new Error("Memory section contract validation failed."));
+      return null;
+    }
+    return bytes;
   } catch {
     return null;
   }
+}
+
+async function getMemorySection(
+  api: WasmBoyApi,
+  start: number,
+  endExclusive: number,
+): Promise<Uint8Array | null> {
+  return readMemory(api, start, endExclusive);
+}
+
+function setContractValidation(enabled: boolean): void {
+  contractValidationEnabled = enabled;
+}
+
+function getContractValidation(): boolean {
+  return contractValidationEnabled;
 }
 
 function subscribeSnapshot(handler: SnapshotEventHandler): () => void {
@@ -490,6 +605,12 @@ export const WasmBoy: WasmBoyVoxelApi = Object.assign(BaseWasmBoy, {
   getPpuSnapshot(): Promise<WasmBoyPpuSnapshot | null> {
     return getPpuSnapshot(BaseApi);
   },
+  getRegisters(): Promise<WasmBoyPpuSnapshot["registers"] | null> {
+    return getRegisters(BaseApi);
+  },
+  getMemorySection(start: number, endExclusive: number): Promise<Uint8Array | null> {
+    return getMemorySection(BaseApi, start, endExclusive);
+  },
   getPpuSnapshotLayers(options?: GetPpuSnapshotLayersOptions): Promise<Partial<WasmBoyPpuSnapshot> | null> {
     return getPpuSnapshotLayers(BaseApi, options);
   },
@@ -501,6 +622,12 @@ export const WasmBoy: WasmBoyVoxelApi = Object.assign(BaseWasmBoy, {
   },
   readMemory(start: number, endExclusive: number): Promise<Uint8Array | null> {
     return readMemory(BaseApi, start, endExclusive);
+  },
+  setContractValidationEnabled(enabled: boolean): void {
+    setContractValidation(enabled);
+  },
+  getContractValidationEnabled(): boolean {
+    return getContractValidation();
   },
   subscribe(event: "snapshot" | "error", handler: SnapshotEventHandler | SnapshotErrorEventHandler): () => void {
     if (event === "snapshot") return subscribeSnapshot(handler as SnapshotEventHandler);
@@ -545,5 +672,13 @@ export const WasmBoy: WasmBoyVoxelApi = Object.assign(BaseWasmBoy, {
     };
   },
 }) as WasmBoyVoxelApi;
+
+export interface WasmBoyCompatApi extends WasmBoyVoxelApi {}
+
+export const WasmBoyCompat: WasmBoyCompatApi = Object.assign({}, WasmBoy, {
+  getMemorySection(start: number, endExclusive: number): Promise<Uint8Array | null> {
+    return WasmBoy.readMemory(start, endExclusive);
+  },
+});
 
 export type { WasmBoyApi };
