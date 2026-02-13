@@ -105,6 +105,10 @@ test('validateRequiredArgumentValue rejects array options', () => {
   assert.throws(() => validateRequiredArgumentValue('value', []), /Invalid required argument options\./u);
 });
 
+test('validateRequiredArgumentValue rejects symbol options', () => {
+  assert.throws(() => validateRequiredArgumentValue('value', Symbol('required-arg-options')), /Invalid required argument options\./u);
+});
+
 test('validateRequiredArgumentValue rejects symbol flag names', () => {
   assert.throws(
     () =>
@@ -594,6 +598,19 @@ test('readRequiredArgumentValue rejects non-array argv inputs', () => {
   );
 });
 
+test('readRequiredArgumentValue rejects bigint argv inputs', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(42n, 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid argv array for --timeout-ms/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects undefined argv inputs', () => {
   assert.throws(
     () =>
@@ -695,6 +712,13 @@ test('readRequiredArgumentValue rejects null options objects', () => {
 
 test('readRequiredArgumentValue rejects array options', () => {
   assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, []), /Invalid required argument options\./u);
+});
+
+test('readRequiredArgumentValue rejects symbol options', () => {
+  assert.throws(
+    () => readRequiredArgumentValue(['--timeout-ms', '50'], 0, Symbol('required-arg-options')),
+    /Invalid required argument options\./u,
+  );
 });
 
 test('readRequiredArgumentValue rejects non-object options', () => {
