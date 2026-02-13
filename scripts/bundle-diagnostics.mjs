@@ -16,7 +16,10 @@ node scripts/bundle-diagnostics.mjs \\
   --output artifacts/ci-diagnostics.tar.gz \\
   --pattern 'ci-quality.log' \\
   --pattern 'test/core/save-state/*.png' \\
-  [--message 'No diagnostics files were produced for this run.']`;
+  [--message 'No diagnostics files were produced for this run.']
+
+Options:
+  -h, --help   Show this help message`;
 
 function readRequiredValue(argv, index, flagName) {
   const value = argv[index + 1];
@@ -123,7 +126,7 @@ function createArchive(outputPath, files) {
 
 function main() {
   const argv = process.argv.slice(2);
-  if (argv.includes('--help')) {
+  if (argv.includes('--help') || argv.includes('-h')) {
     console.log(USAGE_TEXT);
     return;
   }

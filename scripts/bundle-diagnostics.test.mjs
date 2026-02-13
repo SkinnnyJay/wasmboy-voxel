@@ -214,6 +214,15 @@ test('bundle-diagnostics prints usage with --help', () => {
   assert.match(result.stdout, /--pattern/u);
 });
 
+test('bundle-diagnostics prints usage with -h alias', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-help-short-'));
+  const result = runBundlerCommandRaw(tempDirectory, ['-h']);
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Options:/u);
+  assert.match(result.stdout, /-h, --help/u);
+});
+
 test('bundle-diagnostics requires at least one pattern argument', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-pattern-required-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz']);
