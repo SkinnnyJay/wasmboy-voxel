@@ -142,6 +142,18 @@ test('resolveStrictPositiveIntegerEnv rejects non-numeric default value types', 
   );
 });
 
+test('resolveStrictPositiveIntegerEnv rejects bigint default value types', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: undefined,
+        defaultValue: 120000n,
+      }),
+    /Invalid default value for TEST_TIMEOUT: 120000/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv rejects null default value types', () => {
   assert.throws(
     () =>
@@ -254,6 +266,18 @@ test('resolveStrictPositiveIntegerEnv rejects non-string raw values', () => {
       resolveStrictPositiveIntegerEnv({
         name: 'TEST_TIMEOUT',
         rawValue: 5000,
+        defaultValue: 120000,
+      }),
+    /Invalid TEST_TIMEOUT value: 5000/u,
+  );
+});
+
+test('resolveStrictPositiveIntegerEnv rejects bigint raw values', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: 5000n,
         defaultValue: 120000,
       }),
     /Invalid TEST_TIMEOUT value: 5000/u,
@@ -620,6 +644,18 @@ test('resolveTimeoutFromCliAndEnv rejects non-numeric default timeout value type
   );
 });
 
+test('resolveTimeoutFromCliAndEnv rejects bigint default timeout value types', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000n,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid default value for TEST_TIMEOUT_ENV: 120000/u,
+  );
+});
+
 test('resolveTimeoutFromCliAndEnv rejects null default timeout value types', () => {
   assert.throws(
     () =>
@@ -764,6 +800,18 @@ test('resolveTimeoutFromCliAndEnv rejects non-string env timeout values', () => 
   );
 });
 
+test('resolveTimeoutFromCliAndEnv rejects bigint env timeout values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: 5000n },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid TEST_TIMEOUT_ENV value: 5000/u,
+  );
+});
+
 test('resolveTimeoutFromCliAndEnv rejects null env timeout values', () => {
   assert.throws(
     () =>
@@ -809,6 +857,18 @@ test('resolveTimeoutFromCliAndEnv rejects null cli timeout values', () => {
         cli: { name: '--test-timeout', rawValue: null },
       }),
     /Invalid --test-timeout value: null/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects bigint cli timeout values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: { name: '--test-timeout', rawValue: 5000n },
+      }),
+    /Invalid --test-timeout value: 5000/u,
   );
 });
 
