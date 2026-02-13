@@ -662,6 +662,32 @@ test('readRequiredArgumentValue rejects null argv inputs', () => {
   );
 });
 
+test('readRequiredArgumentValue rejects symbol argv inputs', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(Symbol('argv'), 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid argv array for --timeout-ms/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects unprintable argv inputs', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(UNPRINTABLE_VALUE, 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid argv array for --timeout-ms/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects non-string following argument values', () => {
   assert.throws(
     () =>

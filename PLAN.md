@@ -407,6 +407,7 @@
 - 2026-02-13: Expanded shared `readRequiredArgumentValue` known-token set entry coverage with explicit non-string and whitespace-only `knownArgs` entry rejection paths, locking read-path known-token contract semantics for parser option validation.
 - 2026-02-13: Expanded parser-helper option-contract coverage with explicit non-boolean `allowWhitespaceOnly` rejection for both direct and read-path validation entrypoints, plus explicit read-path `argv` null/undefined rejection assertions.
 - 2026-02-13: Expanded read-path parser-helper argv-shape coverage with explicit `bigint` argv rejection, locking non-array primitive argv-container semantics.
+- 2026-02-13: Expanded read-path parser-helper argv-shape coverage with explicit `Symbol` and unprintable argv rejection assertions, locking non-array primitive/object argv-container semantics.
 - 2026-02-13: Expanded shared timeout-helper options-shape coverage with explicit `null` options-object rejection across direct/composed entrypoints (`options`, `env`, `cli`), locking null-container contract semantics in timeout-resolution helpers.
 - 2026-02-13: Expanded shared timeout-helper options-shape coverage with explicit non-object (`number`) options-object rejection across direct/composed entrypoints, locking primitive-container contract semantics in timeout-resolution helper guards.
 - 2026-02-13: Expanded shared timeout-helper default-value coverage with explicit `-Infinity` default-timeout rejection across direct/composed timeout helpers, locking negative-infinite default-value contract semantics.
