@@ -387,3 +387,4 @@
 - 2026-02-13: Expanded shared `test-fixtures` coverage with explicit `null` invalid-input rejection paths (`tempDirectory`, executable name, executable body).
 - 2026-02-13: Expanded `changeset-status-ci-lib` coverage with explicit `null` output rejection, locking null-input contract semantics for filter helper entrypoints.
 - 2026-02-13: Hardened shared `cli-arg-values` option-contract validation by requiring `allowedKnownValues` entries to be a subset of `knownArgs`, with focused helper unit coverage for mismatched token-set rejection paths.
+- 2026-02-13: Expanded shared timeout precedence helper coverage with explicit `null` environment raw-timeout rejection, locking null-value contract semantics alongside existing composed env/cli option guards.

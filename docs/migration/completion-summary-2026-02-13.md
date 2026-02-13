@@ -285,6 +285,7 @@ Workflow hardening applied:
 - diagnostics bundling now collects only existing files (with placeholder manifests when empty), avoiding noisy tar missing-file warnings on early-fail/early-cancel paths
 - diagnostics bundling is centralized via `scripts/bundle-diagnostics.mjs`, reducing duplicated workflow shell logic across CI/contract/nightly/release pipelines
 - shared CLI argument-value parsing now enforces that `allowedKnownValues` is a subset of `knownArgs`, preventing misconfigured token whitelists in helper callers
+- shared timeout resolution coverage now explicitly asserts `null` environment raw-timeout rejection in composed env/CLI precedence helper paths
 
 ## Security posture at completion
 

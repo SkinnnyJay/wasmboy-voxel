@@ -592,6 +592,18 @@ test('resolveTimeoutFromCliAndEnv rejects non-string env timeout values', () => 
   );
 });
 
+test('resolveTimeoutFromCliAndEnv rejects null env timeout values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: null },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid TEST_TIMEOUT_ENV value: null/u,
+  );
+});
+
 test('resolveTimeoutFromCliAndEnv rejects null cli timeout values', () => {
   assert.throws(
     () =>
