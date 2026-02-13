@@ -69,6 +69,7 @@ Workflow hardening applied:
 - contract and release workflows now capture gate logs as failure artifacts to support post-failure debugging without reruns
 - failure diagnostics artifacts use a 14-day retention window to balance triage utility with storage footprint
 - log-capturing workflow steps explicitly use `shell: bash` to guarantee `set -o pipefail` behavior
+- failure artifact names include run id/attempt for clearer traceability in repeated or retried runs
 
 ## Security posture at completion
 
