@@ -1,6 +1,13 @@
 const SHORT_FLAG_TOKEN_PATTERN = /^-[a-zA-Z]$/u;
 
 /**
+ * @param {string} flagName
+ */
+function createMissingValueError(flagName) {
+  return new Error(`Missing value for ${flagName} argument.`);
+}
+
+/**
  * @typedef {{
  *   flagName: string;
  *   knownArgs: Set<string>;
@@ -19,19 +26,19 @@ export function validateRequiredArgumentValue(value, options) {
   const isAllowedKnownValue = Boolean(value && options.allowedKnownValues?.has(value));
 
   if (!value || (isKnownToken && !isAllowedKnownValue)) {
-    throw new Error(`Missing value for ${options.flagName} argument.`);
+    throw createMissingValueError(options.flagName);
   }
 
   if (!options.allowWhitespaceOnly && value.trim().length === 0) {
-    throw new Error(`Missing value for ${options.flagName} argument.`);
+    throw createMissingValueError(options.flagName);
   }
 
   if (!options.allowDoubleDashValue && value.startsWith('--')) {
-    throw new Error(`Missing value for ${options.flagName} argument.`);
+    throw createMissingValueError(options.flagName);
   }
 
   if (!options.allowDoubleDashValue && SHORT_FLAG_TOKEN_PATTERN.test(value)) {
-    throw new Error(`Missing value for ${options.flagName} argument.`);
+    throw createMissingValueError(options.flagName);
   }
 }
 
