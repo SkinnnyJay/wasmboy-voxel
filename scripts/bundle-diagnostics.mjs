@@ -110,9 +110,16 @@ function main() {
   fs.mkdirSync(path.dirname(args.output), { recursive: true });
 
   const matchedFiles = collectFiles(args.patterns);
-  const filesToArchive = matchedFiles.length > 0 ? matchedFiles : [createPlaceholderFile(args.output, args.message)];
+  const placeholderFile = matchedFiles.length > 0 ? null : createPlaceholderFile(args.output, args.message);
+  const filesToArchive = matchedFiles.length > 0 ? matchedFiles : [placeholderFile];
 
-  createArchive(args.output, filesToArchive);
+  try {
+    createArchive(args.output, filesToArchive);
+  } finally {
+    if (placeholderFile && fs.existsSync(placeholderFile)) {
+      fs.unlinkSync(placeholderFile);
+    }
+  }
 }
 
 main();

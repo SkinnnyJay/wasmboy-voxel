@@ -47,6 +47,19 @@ function listArchiveContents(cwd, archivePath) {
     .filter(line => line.length > 0);
 }
 
+function readArchiveEntry(cwd, archivePath, entryPath) {
+  const result = spawnSync('tar', ['-xOf', archivePath, entryPath], {
+    cwd,
+    encoding: 'utf8',
+  });
+
+  if (result.status !== 0) {
+    throw new Error(`Failed to read archive entry: ${result.stderr || 'unknown error'}`);
+  }
+
+  return result.stdout;
+}
+
 test('bundle-diagnostics archives matched files', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-match-'));
   const logsDirectory = path.join(tempDirectory, 'logs');
@@ -71,6 +84,12 @@ test('bundle-diagnostics emits placeholder when no files match', () => {
     archiveContents.some(entry => entry.endsWith('artifacts/empty.txt')),
     'archive should include placeholder file when no diagnostics are present',
   );
+
+  assert.equal(
+    fs.existsSync(path.join(tempDirectory, 'artifacts/empty.txt')),
+    false,
+    'temporary placeholder file should be removed after archive creation',
+  );
 });
 
 test('bundle-diagnostics writes custom placeholder message when provided', () => {
@@ -79,8 +98,11 @@ test('bundle-diagnostics writes custom placeholder message when provided', () =>
 
   runBundlerCommand(tempDirectory, ['--output', 'artifacts/custom-empty.tar.gz', '--pattern', 'missing/*.log', '--message', customMessage]);
 
-  const placeholderPath = path.join(tempDirectory, 'artifacts/custom-empty.txt');
-  const placeholderText = fs.readFileSync(placeholderPath, 'utf8').trim();
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/custom-empty.tar.gz');
+  const placeholderEntry = archiveContents.find(entry => entry.endsWith('artifacts/custom-empty.txt'));
+  assert.ok(placeholderEntry, 'archive should include placeholder entry');
+
+  const placeholderText = readArchiveEntry(tempDirectory, 'artifacts/custom-empty.tar.gz', placeholderEntry).trim();
   assert.equal(placeholderText, customMessage, 'placeholder file should contain the custom message text');
 });
 

@@ -97,6 +97,7 @@ Workflow hardening applied:
 - automation coverage includes diagnostics bundle behavior checks (matched files, empty-placeholder fallback, duplicate-pattern deduplication)
 - automation coverage includes custom placeholder message behavior for empty diagnostics archives
 - diagnostics archive file collection now sorts matches lexicographically for deterministic artifact structure across runs
+- diagnostics placeholder files are now cleaned up after archive creation to avoid leaving temporary files in workflow workspaces
 - automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)
 - changeset status warning filter now tolerates version bumps by suppressing only `file:` workspace warnings from `@wasmboy/*` packages against `@wasmboy/api`
 - suppressed changeset workspace warnings are now lexicographically sorted before reporting for deterministic CI log output
