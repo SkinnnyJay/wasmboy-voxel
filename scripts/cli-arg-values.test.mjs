@@ -40,6 +40,18 @@ test('validateRequiredArgumentValue rejects non-string values', () => {
   );
 });
 
+test('validateRequiredArgumentValue rejects symbol values', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue(Symbol('message'), {
+        flagName: '--output',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid value type for --output argument: Symbol\(message\)/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects missing options objects', () => {
   assert.throws(() => validateRequiredArgumentValue('value', undefined), /Invalid required argument options\./u);
 });
@@ -50,6 +62,18 @@ test('validateRequiredArgumentValue rejects non-object options', () => {
 
 test('validateRequiredArgumentValue rejects array options', () => {
   assert.throws(() => validateRequiredArgumentValue('value', []), /Invalid required argument options\./u);
+});
+
+test('validateRequiredArgumentValue rejects symbol flag names', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: Symbol('timeout-flag'),
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid flag name: Symbol\(timeout-flag\)/u,
+  );
 });
 
 test('validateRequiredArgumentValue rejects empty flag names', () => {
@@ -299,6 +323,20 @@ test('readRequiredArgumentValue rejects non-integer argument indexes', () => {
         allowWhitespaceOnly: true,
       }),
     /Invalid argument index for --timeout-ms: 0\.5/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects symbol argument indexes', () => {
+  const args = ['--timeout-ms', '00050'];
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(args, Symbol('index'), {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid argument index for --timeout-ms: Symbol\(index\)/u,
   );
 });
 

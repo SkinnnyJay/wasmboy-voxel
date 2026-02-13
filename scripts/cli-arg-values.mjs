@@ -1,10 +1,21 @@
 const SHORT_FLAG_TOKEN_PATTERN = /^-[a-zA-Z]$/u;
 
 /**
- * @param {string} flagName
+ * @param {unknown} value
+ */
+function formatErrorValue(value) {
+  try {
+    return String(value);
+  } catch {
+    return '[unprintable]';
+  }
+}
+
+/**
+ * @param {unknown} flagName
  */
 function createMissingValueError(flagName) {
-  return new Error(`Missing value for ${flagName} argument.`);
+  return new Error(`Missing value for ${formatErrorValue(flagName)} argument.`);
 }
 
 /**
@@ -16,7 +27,7 @@ function assertValidRequiredArgumentValueOptions(options) {
   }
 
   if (typeof options.flagName !== 'string' || options.flagName.trim().length === 0) {
-    throw new Error(`Invalid flag name: ${options.flagName}`);
+    throw new Error(`Invalid flag name: ${formatErrorValue(options.flagName)}`);
   }
 
   if (!(options.knownArgs instanceof Set)) {
@@ -49,7 +60,7 @@ function assertValidRequiredArgumentValueOptions(options) {
 function assertStringSetValues(optionName, values, flagName) {
   for (const value of values) {
     if (typeof value !== 'string' || value.trim().length === 0) {
-      throw new Error(`Invalid ${optionName} entries for ${flagName}`);
+      throw new Error(`Invalid ${optionName} entries for ${formatErrorValue(flagName)}`);
     }
   }
 }
@@ -72,7 +83,7 @@ export function validateRequiredArgumentValue(value, options) {
   assertValidRequiredArgumentValueOptions(options);
 
   if (value !== undefined && typeof value !== 'string') {
-    throw new Error(`Invalid value type for ${options.flagName} argument: ${value}`);
+    throw new Error(`Invalid value type for ${options.flagName} argument: ${formatErrorValue(value)}`);
   }
 
   const isKnownToken = value ? options.knownArgs.has(value) : false;
@@ -108,7 +119,7 @@ export function readRequiredArgumentValue(argv, index, options) {
   }
 
   if (!Number.isSafeInteger(index) || index < 0) {
-    throw new Error(`Invalid argument index for ${options.flagName}: ${index}`);
+    throw new Error(`Invalid argument index for ${options.flagName}: ${formatErrorValue(index)}`);
   }
 
   const value = argv[index + 1];

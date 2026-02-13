@@ -373,3 +373,4 @@
 - 2026-02-13: Hardened shared `cli-arg-values` token-set entry contract by rejecting empty/whitespace `knownArgs`/`allowedKnownValues` entries and expanded helper unit coverage for blank token-entry rejection paths.
 - 2026-02-13: Hardened shared timeout env-resolution helper top-level options contract (missing/array options rejection before destructuring) and expanded helper unit coverage for malformed options-object rejection paths.
 - 2026-02-13: Hardened shared timeout parser error-value formatting with safe string conversion (Symbol-safe) and expanded helper unit coverage for Symbol invalid option-name/default/raw-value rejection paths.
+- 2026-02-13: Hardened shared `cli-arg-values` error-value formatting with safe string conversion (Symbol-safe) and expanded helper unit coverage for Symbol invalid value/flag-name/index rejection paths.
