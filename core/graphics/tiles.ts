@@ -54,6 +54,8 @@ export function drawPixelsFromLineOfTile(
   let byteOneForLineOfTilePixels = loadFromVramBank(tileDataAddress + tileLineY * 2, vramBankId);
   let byteTwoForLineOfTilePixels = loadFromVramBank(tileDataAddress + tileLineY * 2 + 1, vramBankId);
 
+  const useGbcPath = Cpu.GBCEnabled && (bgMapAttributes >= 0 || spriteAttributes >= 0);
+
   // Loop through our X values to draw
   for (let x = tileLineXStart; x <= tileLineXEnd; ++x) {
     // First find where we are going to do our final output x
@@ -86,8 +88,8 @@ export function drawPixelsFromLineOfTile(
       let green = 0;
       let blue = 0;
 
-      // Check if we should draw color or not
-      if (Cpu.GBCEnabled && (bgMapAttributes >= 0 || spriteAttributes >= 0)) {
+      // Check if we should draw color or not (path hoisted to avoid per-pixel branch on Cpu/attrs)
+      if (useGbcPath) {
         // Draw C O L O R
 
         let isSprite = spriteAttributes >= 0;

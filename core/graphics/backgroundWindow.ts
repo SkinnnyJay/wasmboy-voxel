@@ -84,11 +84,14 @@ function drawBackgroundWindowScanline(
   // Get our tile Y position in the map
   let tileYPositionInMap = pixelYPositionInMap >> 3;
 
+  // Cache tile map address and tile ID per tile (every 8 pixels) to avoid redundant VRAM lookups
+  let lastTileXPositionInMap: i32 = -1;
+  let tileMapAddress: i32 = 0;
+  let tileIdFromTileMap: i32 = 0;
+
   // Loop through x to draw the line like a CRT
   for (let i = iStart; i < 160; ++i) {
     // Get our Current X position of our pixel on the on the 160x144 camera
-    // this is done by getting the current scroll X position,
-    // and adding it do what X Value the scanline is drawing on the camera.
     let pixelXPositionInMap = i + xOffset;
 
     // This is to compensate wrapping, same as pixelY
@@ -96,24 +99,13 @@ function drawBackgroundWindowScanline(
       pixelXPositionInMap -= 0x100;
     }
 
-    // Divide our pixel position by 8 to get our tile.
-    // Since, there are 256x256 pixels, and 32x32 tiles.
-    // 256 / 8 = 32.
-    // Also, bitshifting by 3, do do a division by 8
-    // Need to use u16s, as they will be used to compute an address, which will cause weird errors and overflows
+    // Compute tile X only when we move to a new tile (every 8 pixels)
     let tileXPositionInMap = pixelXPositionInMap >> 3;
-
-    // Get our tile address on the tileMap
-    // NOTE: (tileMap represents where each tile is displayed on the screen)
-    // NOTE: (tile map represents the entire map, now just what is within the "camera")
-    // For instance, if we have y pixel 144. 144 / 8 = 18. 18 * 32 = line address in map memory.
-    // And we have x pixel 160. 160 / 8 = 20.
-    // * 32, because remember, this is NOT only for the camera, the actual map is 32x32. Therefore, the next tile line of the map, is 32 byte offset.
-    // Think like indexing a 2d array, as a 1d array and it make sense :)
-    let tileMapAddress = tileMapMemoryLocation + (tileYPositionInMap << 5) + tileXPositionInMap;
-
-    // Get the tile Id on the Tile Map
-    let tileIdFromTileMap: i32 = loadFromVramBank(tileMapAddress, 0);
+    if (tileXPositionInMap !== lastTileXPositionInMap) {
+      lastTileXPositionInMap = tileXPositionInMap;
+      tileMapAddress = tileMapMemoryLocation + (tileYPositionInMap << 5) + tileXPositionInMap;
+      tileIdFromTileMap = loadFromVramBank(tileMapAddress, 0);
+    }
 
     // Now that we have our Tile Id, let's check our Tile Cache
     let usedTileCache = false;
@@ -368,18 +360,13 @@ function drawLineOfTileFromTileCache(
     let isCurrentTileHorizontallyFlipped = checkBitOnByte(5, eightBitLoadFromGBMemory(tileMapAddress));
 
     // Simply copy the last 8 pixels from memory to copy the line from the tile
+    const flipOffset = wasLastTileHorizontallyFlipped !== isCurrentTileHorizontallyFlipped ? 1 : 0;
     for (let tileCacheIndex = 0; tileCacheIndex < 8; ++tileCacheIndex) {
-      // Check if we need to render backwards for flipping
-      if (wasLastTileHorizontallyFlipped !== isCurrentTileHorizontallyFlipped) {
-        tileCacheIndex = 7 - tileCacheIndex;
-      }
-
-      let xPos = xPixel + tileCacheIndex;
-      // First check for overflow
+      const srcIndex = flipOffset !== 0 ? 7 - tileCacheIndex : tileCacheIndex;
+      const xPos = xPixel + srcIndex;
       if (xPos <= 160) {
-        // Get the pixel location in memory of the tile
-        let previousXPixel = xPixel - (8 - tileCacheIndex);
-        let previousTilePixelLocation = FRAME_LOCATION + getRgbPixelStart(xPos, yPixel);
+        const previousXPixel = xPos - 8;
+        const previousTilePixelLocation = FRAME_LOCATION + getRgbPixelStart(previousXPixel, yPixel);
 
         // Cycle through the RGB
         // for (let tileCacheRgb = 0; tileCacheRgb < 3; ++tileCacheRgb) {

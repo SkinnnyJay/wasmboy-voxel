@@ -27,6 +27,9 @@ import { eightBitStoreIntoGBMemory, loadBooleanDirectlyFromWasmMemory, storeBool
 import { checkBitOnByte, concatenateBytes, splitLowByte, splitHighByte, log } from '../helpers/index';
 import { i32Portable } from '../portable/portable';
 
+const SAMPLE_PRECISION: i32 = 100000;
+const SAMPLE_MAX_DIVIDER: i32 = i32Portable((120 * SAMPLE_PRECISION) / 254);
+
 export class Sound {
   // Current cycles
   // This will be used for batch processing
@@ -506,26 +509,17 @@ function getSampleAsUnsignedByte(sample: i32, mixerVolume: i32): i32 {
   }
 
   // convert to a signed, precise scale of -6000 to 6000 (cheap way of -1.0 to 1.0)
-  // Multiply by the mixer volume fraction (to find the actual volume)
-  const precision = 100000;
   let convertedSample = sample - 60;
-  convertedSample = convertedSample * precision;
+  convertedSample = convertedSample * SAMPLE_PRECISION;
 
   // Multiply by the mixer volume fraction (to find the actual volume)
   convertedSample = (convertedSample * mixerVolume) >> 3;
 
   // Convert back to scale of 0 to 120
-  convertedSample = i32Portable(convertedSample / precision) + 60;
+  convertedSample = i32Portable(convertedSample / SAMPLE_PRECISION) + 60;
 
-  // Finally, convert to an unsigned byte scale
-  // With Four Channels (0 to 30) and no global volume. Max is 120
-  // max unsigned byte goal is 254 (see blurb at top).
-  // 120 / 254 should give the correct conversion
-  // For example, 120 / 254 = 0.47244094488188976
-  // Multiply by 1000 to increase the float into an int
-  // so, 120 * 1000 / (0.47244094488188976 * 1000) should give approximate answer for max mixer volume
-  let maxDivider = i32Portable((120 * precision) / 254);
-  convertedSample = i32Portable((convertedSample * precision) / maxDivider);
+  // Convert to unsigned byte scale (120 / 254 divisor hoisted to module scope)
+  convertedSample = i32Portable((convertedSample * SAMPLE_PRECISION) / SAMPLE_MAX_DIVIDER);
 
   // Ensure we have an i32 and not a float for JS builds
   convertedSample = i32Portable(convertedSample);

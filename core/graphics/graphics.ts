@@ -1,5 +1,8 @@
 // Main Class and funcitons for rendering the gameboy display
 import { FRAME_LOCATION, GAMEBOY_INTERNAL_MEMORY_LOCATION } from '../constants';
+
+const VRAM_BANK_0_BASE: i32 = GAMEBOY_INTERNAL_MEMORY_LOCATION;
+const VRAM_BANK_1_BASE: i32 = GAMEBOY_INTERNAL_MEMORY_LOCATION + 0x2000;
 import { getSaveStateMemoryOffset } from '../core';
 import { Lcd, setLcdStatus } from './lcd';
 import { renderBackground, renderWindow } from './backgroundWindow';
@@ -343,6 +346,6 @@ export function setPixelOnFrame(x: i32, y: i32, colorId: i32, color: i32): void 
 
 // Function to shortcut the memory map, and load directly from the VRAM Bank
 export function loadFromVramBank(gameboyOffset: i32, vramBankId: i32): u8 {
-  let wasmBoyAddress = gameboyOffset - Memory.videoRamLocation + GAMEBOY_INTERNAL_MEMORY_LOCATION + 0x2000 * (vramBankId & 0x01);
-  return load<u8>(wasmBoyAddress);
+  const base = (vramBankId & 0x01) === 0 ? VRAM_BANK_0_BASE : VRAM_BANK_1_BASE;
+  return load<u8>(gameboyOffset - Memory.videoRamLocation + base);
 }

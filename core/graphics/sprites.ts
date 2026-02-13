@@ -90,12 +90,11 @@ export function renderSprites(scanlineRegister: i32, useLargerSprites: boolean):
       spriteTileAddressStart += currentSpriteLine;
       let spriteTileAddress = spriteTileAddressStart;
 
-      // Find which VRAM Bank to load from
-      let vramBankId = <i32>(Cpu.GBCEnabled && checkBitOnByte(3, spriteAttributes));
+      let isGbc = Cpu.GBCEnabled;
+      let vramBankId = <i32>(isGbc && checkBitOnByte(3, spriteAttributes));
       let spriteDataByteOneForLineOfTilePixels = loadFromVramBank(spriteTileAddress + 0, vramBankId);
       let spriteDataByteTwoForLineOfTilePixels = loadFromVramBank(spriteTileAddress + 1, vramBankId);
 
-      // Iterate over the width of our sprite to find our individual pixels
       for (let tilePixel = 7; tilePixel >= 0; --tilePixel) {
         // Get our spritePixel, and check for flipping
         let spritePixelXInTile = tilePixel;
@@ -129,7 +128,7 @@ export function renderSprites(scanlineRegister: i32, useLargerSprites: boolean):
             //  is active, meaning BG tile will have priority above all OBJs
             //  (regardless of the priority bits in OAM memory)
             // But if GBC and Bit 0 of LCDC is set, we always draw the object
-            let shouldShowFromLcdcPriority = Cpu.GBCEnabled && !Lcd.bgDisplayEnabled; // LCDC Priority
+            let shouldShowFromLcdcPriority = isGbc && !Lcd.bgDisplayEnabled;
             let shouldHideFromOamPriority = false;
             let shouldHideFromBgPriority = false;
 
@@ -144,14 +143,14 @@ export function renderSprites(scanlineRegister: i32, useLargerSprites: boolean):
               if (isSpritePriorityBehindWindowAndBackground && bgColorFromPriorityByte > 0) {
                 // OAM Priority
                 shouldHideFromOamPriority = true;
-              } else if (Cpu.GBCEnabled && checkBitOnByte(2, bgPriorityByte) && bgColorFromPriorityByte > 0) {
+              } else if (isGbc && checkBitOnByte(2, bgPriorityByte) && bgColorFromPriorityByte > 0) {
                 // Bg priority
                 shouldHideFromBgPriority = true;
               }
             }
 
             if (shouldShowFromLcdcPriority || (!shouldHideFromOamPriority && !shouldHideFromBgPriority)) {
-              if (!Cpu.GBCEnabled) {
+              if (!isGbc) {
                 // Get our monochrome color RGB from the current sprite pallete
                 // Get our sprite pallete
                 let spritePaletteLocation = Graphics.memoryLocationSpritePaletteOne;

@@ -129,12 +129,13 @@ export function setLcdStatus(): void {
     newLcdMode = 1;
   } else {
     let scanlineCycleCounter = Graphics.scanlineCycleCounter;
-    let MIN_CYCLES_SPRITES_LCD_MODE = Graphics.MIN_CYCLES_SPRITES_LCD_MODE();
-    if (scanlineCycleCounter >= MIN_CYCLES_SPRITES_LCD_MODE) {
-      // Searching Sprites Atts
+    let minCyclesSprites = Graphics.MIN_CYCLES_SPRITES_LCD_MODE();
+    let minCyclesTransfer = Graphics.MIN_CYCLES_TRANSFER_DATA_LCD_MODE();
+    if (scanlineCycleCounter >= minCyclesSprites) {
+      // Searching Sprites Atts (mode 2)
       newLcdMode = 2;
-    } else if (scanlineCycleCounter >= MIN_CYCLES_SPRITES_LCD_MODE) {
-      // Transferring data to lcd
+    } else if (scanlineCycleCounter >= minCyclesTransfer) {
+      // Transferring data to lcd (mode 3)
       newLcdMode = 3;
     }
   }

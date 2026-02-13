@@ -19,12 +19,12 @@ export function getPriorityforPixel(x: i32, y: i32): u8 {
   return load<u8>(BG_PRIORITY_MAP_LOCATION + getPixelStart(x, y));
 }
 
+const PRIORITY_MAP_PIXELS: i32 = 160 * 144;
+
 // Inlined because closure compiler inlines
 export function clearPriorityMap(): void {
-  for (let y = 0; y < 144; ++y) {
-    for (let x = 0; x < 160; ++x) {
-      store<u8>(BG_PRIORITY_MAP_LOCATION + getPixelStart(x, y), 0);
-    }
+  for (let i = 0; i < PRIORITY_MAP_PIXELS; ++i) {
+    store<u8>(BG_PRIORITY_MAP_LOCATION + i, 0);
   }
 }
 
