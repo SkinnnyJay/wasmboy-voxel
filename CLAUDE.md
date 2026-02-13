@@ -33,7 +33,7 @@ compiled to WebAssembly, with a JavaScript wrapper, workers, and demo apps.
    `WasmBoyVoxelApi` with PPU snapshot helpers.
 
 ## PPU Snapshot System
-- Snapshot uses `_getWasmConstant("WASMBOY_GAME_BYTES_LOCATION")` for base memory.
+- Snapshot uses `_getWasmConstant("DEBUG_GAMEBOY_MEMORY_LOCATION")` for base memory.
 - Reads VRAM, tilemaps, OAM, and registers (see `voxel-wrapper.ts`).
 - Always call `supportsPpuSnapshot()` and handle `null` from `getPpuSnapshot()`.
 

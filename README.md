@@ -13,6 +13,8 @@
 
 🎮👾🕹️ Gameboy Emulator Library written in Web Assembly using [AssemblyScript](https://github.com/AssemblyScript/assemblyscript), Demos in [Preact](https://preactjs.com/) and [Svelte](https://svelte.dev/) 🎮👾🕹️
 
+This fork (WasmBoy-Voxel) adds a PPU snapshot layer used by voxel renderers and other tooling that needs direct access to VRAM, tilemaps, OAM, and key registers.
+
 **Project is still < 1.0.0. Most games are playable, but the emulator is still not very accurate. Expect bugs.**
 
 [Core/Lib Documentation](https://github.com/torch2424/wasmBoy/wiki)
@@ -30,6 +32,7 @@
 - [Features](#features)
 - [Usage](#usage)
   - [Supported Platforms](#supported-platforms)
+  - [Voxel Snapshot API](#voxel-snapshot-api)
 - [In-Game Screenshots](#in-game-screenshots)
   - [Gameboy Support](#gameboy-support)
   - [Gameboy Color Support](#gameboy-color-support)
@@ -77,6 +80,10 @@ Documentation for the project can be found on the [WasmBoy Wiki](https://github.
 ### Supported Platforms
 
 Try to test and aim for support on all major browsers (Chrome, Firefox, and Safari). Also, Node support works with the [`headless` option in the WasmBoy config](https://github.com/torch2424/wasmBoy/wiki/Lib-API#wasmboyoptions), and using the [Worker Threads](https://nodejs.org/api/worker_threads.html) `--experimental-worker` flag.
+
+### Voxel Snapshot API
+
+This fork exposes `WasmBoyVoxelApi` via `voxel-wrapper.ts`, which adds PPU snapshot helpers on top of the base WasmBoy API. Use `supportsPpuSnapshot()` before calling `getPpuSnapshot()`, and handle `null` when the worker is not ready. Snapshot data includes tile data, BG/window tilemaps, OAM, and key PPU registers for voxel renderers.
 
 # In-Game Screenshots
 
