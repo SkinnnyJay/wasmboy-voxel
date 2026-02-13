@@ -106,6 +106,7 @@ Workflow hardening applied:
 - diagnostics bundling now enforces a configurable tar timeout (`BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS`, default 120000ms) with explicit invalid-config and timeout failure handling
 - diagnostics bundler now supports per-invocation tar timeout overrides (`--tar-timeout-ms`, `--tar-timeout-ms=<ms>`) with strict duplicate/missing/help-mixed argument guards
 - diagnostics timeout token guards now include malformed split/inline flag-token value coverage (`--tar-timeout-ms --unexpected`, `--tar-timeout-ms=-x`), ensuring missing-value semantics stay stable
+- helper timeout-override regression coverage now also includes whitespace-only CLI values for both wrappers (`--timeout-ms ' '`, `--tar-timeout-ms ' '`), locking invalid-value behavior at CLI entrypoints
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity

@@ -289,3 +289,4 @@
 - 2026-02-13: Hardened `changeset-status-ci` timeout argument parsing to treat unknown/short flag tokens as missing timeout values (instead of swallowing them), with regression coverage for those malformed-value paths.
 - 2026-02-13: Extended `changeset-status-ci` timeout hardening so inline-equals timeout values (`--timeout-ms=...`) also reject unknown/short flag tokens as missing values, matching split-arg guard behavior.
 - 2026-02-13: Expanded `bundle-diagnostics` timeout parsing regression coverage for malformed flag-token values across split/inline forms (`--tar-timeout-ms --unexpected`, `--tar-timeout-ms=-x`) to keep timeout missing-value semantics locked down.
+- 2026-02-13: Expanded wrapper timeout-override regression coverage to include whitespace-only CLI values for both helpers, ensuring invalid timeout input handling remains explicit at command-entry boundaries.

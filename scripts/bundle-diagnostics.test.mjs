@@ -603,6 +603,20 @@ test('bundle-diagnostics rejects invalid CLI timeout configuration', () => {
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics rejects whitespace-only CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-cli-timeout-whitespace-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms',
+    '   ',
+  ]);
+  assert.match(output, /Invalid --tar-timeout-ms value/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects non-numeric tar timeout suffixes', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-timeout-suffix-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log'], {
