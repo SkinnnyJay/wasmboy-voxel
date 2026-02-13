@@ -1585,6 +1585,32 @@ test('bundle-diagnostics rejects invalid inline CLI timeout override even with v
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics rejects invalid timeout environment values even with valid split CLI override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-timeout-env-with-valid-cli-'));
+  const output = runBundlerCommandExpectFailure(
+    tempDirectory,
+    ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log', '--tar-timeout-ms', '50'],
+    {
+      BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: 'invalid-timeout',
+    },
+  );
+  assert.match(output, /Invalid BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS value/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics rejects invalid timeout environment values even with valid inline CLI override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-timeout-env-with-valid-inline-cli-'));
+  const output = runBundlerCommandExpectFailure(
+    tempDirectory,
+    ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log', '--tar-timeout-ms=50'],
+    {
+      BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: 'invalid-timeout',
+    },
+  );
+  assert.match(output, /Invalid BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS value/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects non-numeric tar timeout suffixes', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-timeout-suffix-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log'], {

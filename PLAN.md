@@ -330,3 +330,4 @@
 - 2026-02-13: Expanded timeout-override precedence regression coverage with empty-timeout-env permutations (split and inline CLI overrides) across both wrappers, preserving CLI override behavior when env timeout inputs fall back to defaults.
 - 2026-02-13: Expanded timeout-override regression coverage with leading-zero CLI override permutations (`00050`) in split and inline forms across both wrappers, preserving numeric parsing semantics while enforcing configured timeout behavior.
 - 2026-02-13: Expanded timeout parsing regression coverage with whitespace-padded timeout values (`' 50 '`) across env and CLI override paths (split and inline) for both wrappers, preserving trimmed numeric parsing semantics while enforcing configured timeout behavior.
+- 2026-02-13: Expanded timeout-override precedence regression coverage with invalid-env/valid-CLI permutations (split and inline forms) across both wrappers, preserving current env-first timeout resolution semantics.
