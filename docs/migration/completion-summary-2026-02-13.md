@@ -307,6 +307,7 @@ Workflow hardening applied:
 - timeout-helper options-shape coverage now explicitly asserts null container rejection for direct/composed entrypoints (`options`, composed `env`, composed `cli`)
 - timeout-helper coverage now explicitly asserts null/undefined direct option-name rejection for `resolveStrictPositiveIntegerEnv`
 - read-path parser-helper coverage now explicitly asserts undefined argument-index rejection in `readRequiredArgumentValue` validation paths
+- read-path parser-helper coverage now explicitly asserts `NaN` argument-index rejection in `readRequiredArgumentValue` validation paths
 
 ## Security posture at completion
 

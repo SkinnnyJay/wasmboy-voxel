@@ -703,6 +703,20 @@ test('readRequiredArgumentValue rejects non-integer argument indexes', () => {
   );
 });
 
+test('readRequiredArgumentValue rejects NaN argument indexes', () => {
+  const args = ['--timeout-ms', '00050'];
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(args, Number.NaN, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid argument index for --timeout-ms: NaN/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects symbol argument indexes', () => {
   const args = ['--timeout-ms', '00050'];
   assert.throws(
