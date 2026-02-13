@@ -160,6 +160,7 @@ Workflow hardening applied:
 - shared argument-value helper coverage now includes unknown long-flag token rejection under double-dash-disallowed settings, explicit whitespace-only acceptance when enabled, and allowed-known-token read behavior (`--message --help`)
 - timeout env/CLI precedence resolution now uses a shared helper (`resolveTimeoutFromCliAndEnv`) across both wrappers, reducing duplicated timeout-resolution scaffolding while preserving current env-first validation + CLI-override semantics
 - shared timeout-precedence helper now has focused unit coverage for default/env/CLI precedence plus invalid-env and invalid-CLI failure paths
+- shared timeout-precedence helper coverage now also includes empty-env + CLI-override resolution, whitespace-padded max-int CLI override acceptance, and whitespace-only CLI rejection with valid env fallback
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity
 - shared timeout parser tests now cover whitespace-only env values as invalid, preventing accidental silent coercion in CI configuration

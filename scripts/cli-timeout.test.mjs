@@ -157,3 +157,35 @@ test('resolveTimeoutFromCliAndEnv fails for invalid cli timeout even when env ti
     /Invalid --test-timeout value: invalid-timeout/u,
   );
 });
+
+test('resolveTimeoutFromCliAndEnv applies cli timeout when env timeout is empty', () => {
+  const timeout = resolveTimeoutFromCliAndEnv({
+    defaultValue: 120000,
+    env: { name: 'TEST_TIMEOUT_ENV', rawValue: '' },
+    cli: { name: '--test-timeout', rawValue: '50' },
+  });
+
+  assert.equal(timeout, 50);
+});
+
+test('resolveTimeoutFromCliAndEnv accepts whitespace-padded max timeout cli override', () => {
+  const timeout = resolveTimeoutFromCliAndEnv({
+    defaultValue: 120000,
+    env: { name: 'TEST_TIMEOUT_ENV', rawValue: '50' },
+    cli: { name: '--test-timeout', rawValue: ' 2147483647 ' },
+  });
+
+  assert.equal(timeout, 2_147_483_647);
+});
+
+test('resolveTimeoutFromCliAndEnv rejects whitespace-only cli timeout even with valid env timeout', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: '5000' },
+        cli: { name: '--test-timeout', rawValue: '   ' },
+      }),
+    /Invalid --test-timeout value:\s+/u,
+  );
+});
