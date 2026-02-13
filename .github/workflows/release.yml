@@ -2,6 +2,12 @@ name: release
 
 on:
   workflow_dispatch:
+    inputs:
+      strict:
+        description: 'Run strict no-retry verification gate before release'
+        required: false
+        type: boolean
+        default: false
   push:
     branches: ['master']
     paths:
@@ -66,7 +72,13 @@ jobs:
         run: set -o pipefail && npm run release:build 2>&1 | tee release-build.log
 
       - name: Run release verification gate
-        run: set -o pipefail && npm run release:verify 2>&1 | tee release-verify.log
+        run: |
+          set -o pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.strict }}" == "true" ]]; then
+            npm run release:verify:strict 2>&1 | tee release-verify.log
+          else
+            npm run release:verify 2>&1 | tee release-verify.log
+          fi
 
       - name: Compress diagnostics payload
         if: ${{ failure() || cancelled() }}

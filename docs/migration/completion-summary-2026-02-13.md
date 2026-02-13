@@ -58,6 +58,7 @@ Release pipeline build uses:
 - `npm run release:verify` (full no-build quality gate + changeset status)
 - push trigger path filters so release automation runs only when releasable/runtime/package metadata changes
 - `release:verify` now composes `ci:local + changeset:status:ci` for direct local/CI gate parity
+- `release:verify:strict` is available for strict no-retry release verification and is selectable in manual release workflow runs
 
 Contract workflow uses:
 

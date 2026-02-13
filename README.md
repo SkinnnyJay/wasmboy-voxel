@@ -367,6 +367,9 @@ npm run ci:local
 # Run a strict no-retry variant of the full quality gate
 npm run ci:local:strict
 
+# Run release verification with strict no-retry full gate + changeset check
+npm run release:verify:strict
+
 # Dependency audit check used by CI
 npm run audit:check
 
