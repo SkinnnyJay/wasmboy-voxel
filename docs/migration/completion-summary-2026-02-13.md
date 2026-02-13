@@ -314,6 +314,7 @@ Workflow hardening applied:
 - composed timeout-resolution coverage now explicitly asserts `null`, `Symbol`, and unprintable default-timeout rejection with stable formatted error output
 - parser-helper boolean-option coverage now explicitly asserts `Symbol` rejection for `allowDoubleDashValue` and `allowWhitespaceOnly` in direct/read validation helpers
 - parser-helper boolean-option coverage now explicitly asserts unprintable-object rejection for `allowDoubleDashValue` and `allowWhitespaceOnly` in direct/read validation helpers
+- changeset-status output filtering coverage now explicitly asserts `bigint` output rejection in `filterChangesetStatusOutput`
 - timeout-helper coverage now explicitly asserts null/undefined direct option-name rejection for `resolveStrictPositiveIntegerEnv`
 - read-path parser-helper coverage now explicitly asserts undefined argument-index rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper coverage now explicitly asserts `NaN` argument-index rejection in `readRequiredArgumentValue` validation paths

@@ -119,6 +119,10 @@ test('filterChangesetStatusOutput rejects non-string output values', () => {
   assert.throws(() => filterChangesetStatusOutput(42), /Invalid changeset status output: 42/u);
 });
 
+test('filterChangesetStatusOutput rejects bigint output values', () => {
+  assert.throws(() => filterChangesetStatusOutput(42n), /Invalid changeset status output: 42/u);
+});
+
 test('filterChangesetStatusOutput rejects undefined output values', () => {
   assert.throws(() => filterChangesetStatusOutput(undefined), /Invalid changeset status output: undefined/u);
 });
