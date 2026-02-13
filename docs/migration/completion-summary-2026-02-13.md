@@ -341,6 +341,7 @@ Workflow hardening applied:
 - parser-helper option-name coverage now explicitly asserts `number` `flagName` rejection in `validateRequiredArgumentValue`, locking numeric primitive flag-name contract semantics in direct parser validation
 - parser-helper option-name coverage now explicitly asserts `number` `flagName` rejection in `readRequiredArgumentValue`, locking numeric primitive flag-name contract semantics in read-path parser validation
 - parser-helper option-name coverage now explicitly asserts unprintable `flagName` rejection in `readRequiredArgumentValue`, locking `[unprintable]` error-format contract semantics in read-path parser validation
+- read-path index-contract coverage now explicitly asserts symbol index rejection in upper-bound cursor scenarios, locking invalid-index-type precedence before missing-value boundary handling
 
 ## Security posture at completion
 

@@ -1407,6 +1407,20 @@ test('readRequiredArgumentValue rejects symbol argument indexes', () => {
   );
 });
 
+test('readRequiredArgumentValue rejects symbol argument indexes at upper-bound cursor positions', () => {
+  const args = ['--timeout-ms'];
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(args, Symbol('upper-bound-index'), {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid argument index for --timeout-ms: Symbol\(upper-bound-index\)/u,
+  );
+});
+
 test('readRequiredArgumentValue safely formats unprintable argument indexes', () => {
   const args = ['--timeout-ms', '00050'];
   assert.throws(
