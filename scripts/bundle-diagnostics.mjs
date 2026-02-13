@@ -78,7 +78,7 @@ function collectFiles(patterns) {
     }
   }
 
-  return [...files];
+  return [...files].sort((left, right) => left.localeCompare(right));
 }
 
 function createPlaceholderFile(outputPath, message) {

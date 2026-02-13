@@ -96,6 +96,7 @@ Workflow hardening applied:
 - `automation:check` composes `workflow:check` + `automation:test` so quality-gate scripts can reuse one consolidated automation preflight command
 - automation coverage includes diagnostics bundle behavior checks (matched files, empty-placeholder fallback, duplicate-pattern deduplication)
 - automation coverage includes custom placeholder message behavior for empty diagnostics archives
+- diagnostics archive file collection now sorts matches lexicographically for deterministic artifact structure across runs
 - automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)
 - automation coverage also validates diagnostics bundle CLI argument guards (missing `--output` and missing `--pattern`)
 - automation coverage also validates diagnostics bundle argument parsing errors (unknown flags and missing flag values)

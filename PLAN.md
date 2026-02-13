@@ -199,6 +199,7 @@
 - 2026-02-13: Added reusable `automation:check` (`workflow:check + automation:test`) and switched quality-gate scripts (`test:all:nobuild*`, `contract:ci`) to use the consolidated automation preflight.
 - 2026-02-13: Expanded diagnostics bundler automation tests with duplicate-pattern deduplication coverage, complementing existing matched-file and empty-placeholder assertions.
 - 2026-02-13: Expanded diagnostics bundler automation coverage for custom placeholder message handling when no diagnostics files are present.
+- 2026-02-13: Made diagnostics bundling deterministic by lexicographically sorting matched files before archive creation, and added automation coverage for archive ordering stability.
 - 2026-02-13: Refactored `changeset:status:ci` filtering into a reusable module and added automation tests for warning suppression/dedup behavior, improving confidence in CI log-sanitization correctness.
 - 2026-02-13: Added diagnostics bundler negative-path tests for required CLI arguments (`--output`, `--pattern`), strengthening guardrail coverage for automation script misuse.
 - 2026-02-13: Expanded diagnostics bundler negative-path automation coverage for unknown flags and missing flag values, hardening script argument-validation guarantees.

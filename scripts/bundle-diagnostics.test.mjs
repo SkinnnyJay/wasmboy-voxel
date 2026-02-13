@@ -98,6 +98,22 @@ test('bundle-diagnostics de-duplicates files matched by repeated patterns', () =
   assert.equal(duplicateEntries.length, 1, 'archive should only include duplicate log once');
 });
 
+test('bundle-diagnostics archives matched files in deterministic sorted order', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-order-'));
+  const logsDirectory = path.join(tempDirectory, 'logs');
+  fs.mkdirSync(logsDirectory, { recursive: true });
+  fs.writeFileSync(path.join(logsDirectory, 'b.log'), 'b entry\n', 'utf8');
+  fs.writeFileSync(path.join(logsDirectory, 'a.log'), 'a entry\n', 'utf8');
+
+  runBundlerCommand(tempDirectory, ['--output', 'artifacts/order.tar.gz', '--pattern', 'logs/b.log', '--pattern', 'logs/a.log']);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/order.tar.gz');
+  const aIndex = archiveContents.findIndex(entry => entry.endsWith('logs/a.log'));
+  const bIndex = archiveContents.findIndex(entry => entry.endsWith('logs/b.log'));
+  assert.ok(aIndex >= 0 && bIndex >= 0, 'archive should include both matched log files');
+  assert.ok(aIndex < bIndex, 'archive entries should be stable and sorted lexicographically');
+});
+
 test('bundle-diagnostics requires output argument', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-output-required-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--pattern', 'logs/*.log']);
