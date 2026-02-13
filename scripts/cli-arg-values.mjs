@@ -75,6 +75,16 @@ export function validateRequiredArgumentValue(value, options) {
  * @param {RequiredArgumentValueOptions} options
  */
 export function readRequiredArgumentValue(argv, index, options) {
+  assertValidRequiredArgumentValueOptions(options);
+
+  if (!Array.isArray(argv)) {
+    throw new Error(`Invalid argv array for ${options.flagName}`);
+  }
+
+  if (!Number.isSafeInteger(index) || index < 0) {
+    throw new Error(`Invalid argument index for ${options.flagName}: ${index}`);
+  }
+
   const value = argv[index + 1];
   validateRequiredArgumentValue(value, options);
   return value;

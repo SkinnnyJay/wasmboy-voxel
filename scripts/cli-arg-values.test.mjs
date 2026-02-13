@@ -164,6 +164,47 @@ test('readRequiredArgumentValue returns and validates following token', () => {
   assert.equal(value, '00050');
 });
 
+test('readRequiredArgumentValue rejects non-array argv inputs', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue('not-an-array', 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid argv array for --timeout-ms/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects invalid argument indexes', () => {
+  const args = ['--timeout-ms', '00050'];
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(args, -1, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid argument index for --timeout-ms: -1/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects non-integer argument indexes', () => {
+  const args = ['--timeout-ms', '00050'];
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(args, 0.5, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid argument index for --timeout-ms: 0\.5/u,
+  );
+});
+
 test('readRequiredArgumentValue allows configured known value tokens', () => {
   const args = ['--message', '--help'];
   const value = readRequiredArgumentValue(args, 0, {
