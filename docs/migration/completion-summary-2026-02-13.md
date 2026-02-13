@@ -293,6 +293,7 @@ Workflow hardening applied:
 - shared timeout precedence-helper coverage now explicitly asserts unprintable raw-timeout rejection for both composed env and CLI raw timeout inputs, preserving `[unprintable]` error formatting semantics
 - shared test-fixture helper coverage now explicitly asserts `undefined` rejection for temp-directory, executable-name, and executable-body inputs
 - shared CLI argument-value helper coverage now explicitly asserts undefined flag-name rejection and missing `allowDoubleDashValue` option rejection
+- shared timeout helper coverage now explicitly asserts undefined default-timeout rejection for both direct env parsing and composed env/CLI timeout resolution helpers
 
 ## Security posture at completion
 

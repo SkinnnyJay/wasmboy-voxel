@@ -122,6 +122,18 @@ test('resolveStrictPositiveIntegerEnv rejects null default value types', () => {
   );
 });
 
+test('resolveStrictPositiveIntegerEnv rejects undefined default value types', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: undefined,
+        defaultValue: undefined,
+      }),
+    /Invalid default value for TEST_TIMEOUT: undefined/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv rejects symbol default value types', () => {
   assert.throws(
     () =>
@@ -529,6 +541,18 @@ test('resolveTimeoutFromCliAndEnv rejects non-numeric default timeout value type
         cli: { name: '--test-timeout', rawValue: undefined },
       }),
     /Invalid default value for TEST_TIMEOUT_ENV: 120000/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects undefined default timeout value types', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: undefined,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid default value for TEST_TIMEOUT_ENV: undefined/u,
   );
 });
 
