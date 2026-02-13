@@ -18,6 +18,18 @@ preserving emulator correctness, API contracts, and existing consumer behavior.
   - Phase 5-6: ~2-4 weeks
   - Phase 7+: ongoing hardening and performance tuning
 
+## Migration Progress Links
+
+- Execution tracker: `PLAN.md`
+- Baseline/API inventory: `docs/migration/milestone-0-baseline-api-inventory.md`
+- Wrapper integration notes: `docs/migration/milestone-2-wrapper-integration.md`
+- gameboy-remix migration notes: `docs/migration/gameboy-remix-notes.md`
+- Breaking change policy: `docs/migration/breaking-change-policy.md`
+- API package usage guide: `docs/migration/packages-api-usage-guide.md`
+- Debugger usage guide: `docs/migration/debugger-usage-guide.md`
+- CLI usage guide: `docs/migration/cli-usage-guide.md`
+- Troubleshooting FAQ: `docs/migration/troubleshooting-faq.md`
+
 ## Goals
 
 1. Keep emulator correctness and memory layout unchanged.

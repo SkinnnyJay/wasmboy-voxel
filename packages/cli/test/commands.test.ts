@@ -45,10 +45,7 @@ describe('cli commands', () => {
   });
 
   it('compare command can run against repository baseline summary', () => {
-    const baselinePath = path.resolve(
-      process.cwd(),
-      '../../test/baseline/snapshots/summary.json',
-    );
+    const baselinePath = path.resolve(process.cwd(), '../../test/baseline/snapshots/summary.json');
     expect(() => compareCommand(baselinePath, baselinePath)).not.toThrow();
   });
 
@@ -65,6 +62,8 @@ describe('cli commands', () => {
       obp0: 7,
       obp1: 8,
     });
-    expect(() => contractCheckCommand(['--contract', 'registers', '--file', payloadPath])).not.toThrow();
+    expect(() =>
+      contractCheckCommand(['--contract', 'registers', '--file', payloadPath]),
+    ).not.toThrow();
   });
 });

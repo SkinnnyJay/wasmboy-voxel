@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "npm run typecheck && npm run format:check",
+    "format:check": "npx prettier --check \"app/**/*.{ts,tsx,css}\" \"components/**/*.tsx\" \"lib/**/*.ts\" \"store/**/*.ts\" \"test/**/*.ts\"",
     "test": "vitest run"
   },
   "dependencies": {
@@ -21,6 +23,7 @@
     "@types/node": "^22.10.0",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
+    "prettier": "^3.6.2",
     "typescript": "^5.9.3",
     "vitest": "^4.0.0"
   }

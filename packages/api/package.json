@@ -23,6 +23,8 @@
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "npm run typecheck && npm run format:check",
+    "format:check": "npx prettier --check \"src/**/*.ts\" \"test/**/*.ts\" \"README.md\"",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -32,6 +34,7 @@
   "devDependencies": {
     "tsup": "^8.5.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.0"
+    "vitest": "^4.0.0",
+    "prettier": "^3.6.2"
   }
 }

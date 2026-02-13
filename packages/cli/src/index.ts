@@ -1,4 +1,10 @@
-import { contractCheckCommand, compareCommand, printHelp, runCommand, snapshotCommand } from './commands.js';
+import {
+  contractCheckCommand,
+  compareCommand,
+  printHelp,
+  runCommand,
+  snapshotCommand,
+} from './commands.js';
 import { log } from './logger.js';
 
 function main(argv: string[]): void {

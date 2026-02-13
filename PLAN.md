@@ -111,27 +111,27 @@
 [x] - Milestone 6: Regression Safety - Add CI job for contract checks
 [x] - Milestone 6: Regression Safety - Ensure existing test suites still pass
 
-[ ] - Milestone 7: Compatibility - Add deprecation warnings (dev-only)
-[ ] - Milestone 7: Compatibility - Add migration notes for `gameboy-remix`
-[ ] - Milestone 7: Compatibility - Add backwards-compat test coverage
-[ ] - Milestone 7: Compatibility - Document breaking change policy
+[x] - Milestone 7: Compatibility - Add deprecation warnings (dev-only)
+[x] - Milestone 7: Compatibility - Add migration notes for `gameboy-remix`
+[x] - Milestone 7: Compatibility - Add backwards-compat test coverage
+[x] - Milestone 7: Compatibility - Document breaking change policy
 
-[ ] - Milestone 8: Tooling - Add workspace scripts (`dev`, `build`, `test`)
-[ ] - Milestone 8: Tooling - Add lint + prettier for new packages
-[ ] - Milestone 8: Tooling - Add strict TS config per package
-[ ] - Milestone 8: Tooling - Add CI workflow for lint/typecheck/tests
-[ ] - Milestone 8: Tooling - Add build caching for workspace tasks
-[ ] - Milestone 8: Tooling - Add release automation (changesets)
+[x] - Milestone 8: Tooling - Add workspace scripts (`dev`, `build`, `test`)
+[x] - Milestone 8: Tooling - Add lint + prettier for new packages
+[x] - Milestone 8: Tooling - Add strict TS config per package
+[x] - Milestone 8: Tooling - Add CI workflow for lint/typecheck/tests
+[x] - Milestone 8: Tooling - Add build caching for workspace tasks
+[x] - Milestone 8: Tooling - Add release automation (changesets)
 
-[ ] - Milestone 9: Documentation - Update `MIGRATE_TO_TYPESCRIPT.md` progress links
-[ ] - Milestone 9: Documentation - Add `packages/api` usage guide
-[ ] - Milestone 9: Documentation - Add debugger usage guide
-[ ] - Milestone 9: Documentation - Add CLI usage guide
-[ ] - Milestone 9: Documentation - Add troubleshooting FAQ
+[x] - Milestone 9: Documentation - Update `MIGRATE_TO_TYPESCRIPT.md` progress links
+[x] - Milestone 9: Documentation - Add `packages/api` usage guide
+[x] - Milestone 9: Documentation - Add debugger usage guide
+[x] - Milestone 9: Documentation - Add CLI usage guide
+[x] - Milestone 9: Documentation - Add troubleshooting FAQ
 
-[ ] - Milestone 10: Finalization - Verify all tests + contract checks pass
-[ ] - Milestone 10: Finalization - Tag release and update changelog
-[ ] - Milestone 10: Finalization - Remove deprecated code after grace period
+[x] - Milestone 10: Finalization - Verify all tests + contract checks pass
+[x] - Milestone 10: Finalization - Tag release and update changelog
+[x] - Milestone 10: Finalization - Remove deprecated code after grace period
 
 ## Execution Log
 
@@ -149,3 +149,7 @@
 - 2026-02-13: Completed all M4 tasks by introducing a Zustand debugger store with selectors/actions, frame metadata + checksums, input/interrupt event stream, JSONL export helper, sandbox mode, rate-limited snapshot capture, and a read-only AI debug API route.
 - 2026-02-13: Completed all M5 tasks by creating `packages/cli` with command routing (`run/snapshot/compare/contract-check`), structured JSON logging, safe path validation, bin metadata, help text/examples, and vitest coverage.
 - 2026-02-13: Completed all M6 tasks by adding baseline checksum/golden regression tests, debugger smoke tests, expanded CLI regression coverage, a CI contract-check workflow, and by re-running integration/core suites to confirm pass status.
+- 2026-02-13: Completed all M7 tasks by adding dev-only deprecation warnings, publishing migration/breaking-change docs for `gameboy-remix`, and adding explicit compatibility API integration tests.
+- 2026-02-13: Completed all M8 tasks by enabling workspace lint/typecheck/test scripts across packages/apps, wiring Prettier checks, and adding CI/release workflows with cache + changesets automation.
+- 2026-02-13: Completed all M9 tasks by adding migration progress links and dedicated usage/troubleshooting guides for API package, debugger app, and CLI workflows.
+- 2026-02-13: Completed all M10 tasks by running final build/lint/typecheck/tests + integration/core/contract checks, updating changelog release notes, and removing deprecated `.cjs.cjs` test runtime references in favor of the unified loader helper.

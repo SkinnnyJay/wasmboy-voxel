@@ -45,7 +45,9 @@ interface DebuggerStoreActions {
   setSandboxMode: (enabled: boolean) => void;
   appendInputEvent: (payload: Record<string, unknown>) => void;
   appendInterruptEvent: (payload: Record<string, unknown>) => void;
-  captureSnapshot: (snapshot: Omit<SnapshotState, 'frameId' | 'timestampMs' | 'checksums'>) => boolean;
+  captureSnapshot: (
+    snapshot: Omit<SnapshotState, 'frameId' | 'timestampMs' | 'checksums'>,
+  ) => boolean;
   clearEvents: () => void;
 }
 
@@ -160,7 +162,7 @@ export const debuggerSelectors = {
   }),
   latestChecksums: (state: DebuggerStoreState) =>
     state.snapshots.length > 0
-      ? (state.snapshots[state.snapshots.length - 1] ?? null)?.checksums ?? null
+      ? ((state.snapshots[state.snapshots.length - 1] ?? null)?.checksums ?? null)
       : null,
   eventStream: (state: DebuggerStoreState) => state.events,
   snapshots: (state: DebuggerStoreState) => state.snapshots,

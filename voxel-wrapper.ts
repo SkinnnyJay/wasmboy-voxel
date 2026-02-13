@@ -302,6 +302,15 @@ const delay = (ms: number): Promise<void> =>
 let cachedGameMemoryBase: number | null = null;
 let lastSnapshotDurationMs: number | null = null;
 let contractValidationEnabled = !isProductionNodeEnv();
+const emittedDeprecationWarnings = new Set<string>();
+
+function emitDeprecationWarningOnce(key: string, message: string): void {
+  if (isProductionNodeEnv()) return;
+  if (emittedDeprecationWarnings.has(key)) return;
+  emittedDeprecationWarnings.add(key);
+  // eslint-disable-next-line no-console
+  console.warn(`[WasmBoy-Voxel deprecation] ${message}`);
+}
 
 const supportsPpuSnapshot = async (api: WasmBoyApi): Promise<boolean> => {
   if (!hasSnapshotInternals(api)) return false;
@@ -621,6 +630,10 @@ export const WasmBoy: WasmBoyVoxelApi = Object.assign(BaseWasmBoy, {
     clearPpuSnapshotCache();
   },
   readMemory(start: number, endExclusive: number): Promise<Uint8Array | null> {
+    emitDeprecationWarningOnce(
+      "readMemory",
+      "readMemory() is kept for compatibility. Prefer getMemorySection().",
+    );
     return readMemory(BaseApi, start, endExclusive);
   },
   setContractValidationEnabled(enabled: boolean): void {

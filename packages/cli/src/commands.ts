@@ -1,10 +1,6 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
-import {
-  CONTRACT_VERSION_V1,
-  ContractRegistry,
-  validateRegistryPayload,
-} from '@wasmboy/api';
+import { CONTRACT_VERSION_V1, ContractRegistry, validateRegistryPayload } from '@wasmboy/api';
 import { log } from './logger.js';
 import { assertFilePath, assertRomPath, resolveInputPath } from './paths.js';
 
@@ -97,7 +93,10 @@ export function compareCommand(baselinePath: string, currentPath?: string): void
     .map((entry) => {
       const base = baselineMap.get(entry.rom);
       if (!base) return { rom: entry.rom, kind: 'missing-in-baseline' };
-      if (base.tileDataSha256 !== entry.tileDataSha256 || base.oamDataSha256 !== entry.oamDataSha256) {
+      if (
+        base.tileDataSha256 !== entry.tileDataSha256 ||
+        base.oamDataSha256 !== entry.oamDataSha256
+      ) {
         return { rom: entry.rom, kind: 'checksum-diff' };
       }
       return null;
@@ -106,7 +105,10 @@ export function compareCommand(baselinePath: string, currentPath?: string): void
 
   log({
     level: differences.length > 0 ? 'warn' : 'info',
-    message: differences.length > 0 ? 'compare command detected differences' : 'compare command found no differences',
+    message:
+      differences.length > 0
+        ? 'compare command detected differences'
+        : 'compare command found no differences',
     context: {
       baselinePath: resolveInputPath(baselinePath),
       currentPath: resolveInputPath(currentPath ?? baselinePath),

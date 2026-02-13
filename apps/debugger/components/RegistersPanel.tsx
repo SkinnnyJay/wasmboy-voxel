@@ -13,8 +13,7 @@ const DEFAULT_REGISTERS = {
 
 export function RegistersPanel() {
   const snapshots = useDebuggerStore((state) => state.snapshots);
-  const latestSnapshot =
-    snapshots.length > 0 ? snapshots[snapshots.length - 1] : undefined;
+  const latestSnapshot = snapshots.length > 0 ? snapshots[snapshots.length - 1] : undefined;
   const registers = latestSnapshot ? latestSnapshot.registers : DEFAULT_REGISTERS;
 
   return (

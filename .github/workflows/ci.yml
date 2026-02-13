@@ -1,0 +1,50 @@
+name: ci
+
+on:
+  push:
+    branches: ['master', 'cursor/**']
+  pull_request:
+    branches: ['master']
+
+jobs:
+  lint-typecheck-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Cache Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            apps/debugger/.next/cache
+          key: ${{ runner.os }}-next-cache-${{ hashFiles('apps/debugger/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-next-cache-
+
+      - name: Install root dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Install API package dependencies
+        run: npm --prefix packages/api install
+
+      - name: Install CLI package dependencies
+        run: npm --prefix packages/cli install
+
+      - name: Install debugger app dependencies
+        run: npm --prefix apps/debugger install
+
+      - name: Lint workspace stack
+        run: npm run stack:lint
+
+      - name: Typecheck workspace stack
+        run: npm run stack:typecheck
+
+      - name: Test workspace stack
+        run: npm run stack:test

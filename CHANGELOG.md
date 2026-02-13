@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-02-13 - Migration Stack Rollout (Phases 0-9)
+
+- Added `@wasmboy/api` contract package with Zod schemas, registry validation, ESM/CJS builds, and vitest coverage.
+- Added wrapper contract gates, `getRegisters()`, `getMemorySection()`, dev-only validation toggles, and `WasmBoyCompat`.
+- Added Next.js debugger app (`apps/debugger`) with typed contract client integration, panel shell UI, Zustand state/event store, JSONL export helper, and read-only AI debug route.
+- Added `@wasmboy/cli` with `run`, `snapshot`, `compare`, and `contract-check` commands plus structured JSON logging.
+- Added regression safety coverage:
+  - baseline golden/checksum regression test
+  - integration compatibility test
+  - debugger smoke tests
+  - CLI regression tests
+- Added CI workflows:
+  - `ci.yml` for lint/typecheck/test
+  - `contract-checks.yml` for contract gate validation
+  - `release.yml` for changesets release automation
+- Added migration docs:
+  - API usage guide
+  - debugger usage guide
+  - CLI usage guide
+  - troubleshooting FAQ
+  - `gameboy-remix` migration notes
+  - breaking change policy
+
 ## Current
 
 - AssemblyScript core (`core/`) compiled to WebAssembly for the emulator runtime.

@@ -45,11 +45,12 @@ export default function HomePage() {
     <div>
       <h2>WasmBoy Debugger (Next.js)</h2>
       <p className="muted">
-        App-router shell with contract-aware panels for ROM loading, emulator view, memory, registers,
-        snapshots, and logs.
+        App-router shell with contract-aware panels for ROM loading, emulator view, memory,
+        registers, snapshots, and logs.
       </p>
       <p className="muted">
-        Contract gate probe: {contractProbe.success ? 'valid placeholder payload' : 'invalid payload'}
+        Contract gate probe:{' '}
+        {contractProbe.success ? 'valid placeholder payload' : 'invalid payload'}
       </p>
       <p className="muted">Worker strategy: {workerState}</p>
       <p className="muted">
@@ -76,7 +77,10 @@ export default function HomePage() {
         >
           Capture snapshot
         </button>
-        <button type="button" onClick={() => appendInterruptEvent({ source: 'ui', kind: 'VBLANK' })}>
+        <button
+          type="button"
+          onClick={() => appendInterruptEvent({ source: 'ui', kind: 'VBLANK' })}
+        >
           Simulate interrupt
         </button>
         <button type="button" onClick={() => setSandboxMode(true)}>
@@ -88,7 +92,10 @@ export default function HomePage() {
         <button type="button" onClick={() => setRateLimitMs(50)}>
           Rate limit 50ms
         </button>
-        <button type="button" onClick={() => setJsonlPreview(exportDebugDataJsonl(events, snapshots))}>
+        <button
+          type="button"
+          onClick={() => setJsonlPreview(exportDebugDataJsonl(events, snapshots))}
+        >
           Export JSONL
         </button>
       </div>

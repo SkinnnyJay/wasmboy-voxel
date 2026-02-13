@@ -10,10 +10,7 @@ export const DebugEventSchema = z.object({
 
 export const DebugFrameSchema = z.object({
   version: z.literal('v1'),
-  frameId: z
-    .number()
-    .int()
-    .nonnegative(),
+  frameId: z.number().int().nonnegative(),
   timestampMs: z.number().nonnegative(),
   fps: z.number().nonnegative(),
   registers: RegistersSchema,
