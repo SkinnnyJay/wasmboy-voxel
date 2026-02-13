@@ -305,3 +305,4 @@
 - 2026-02-13: Expanded diagnostics placeholder-message regression coverage with whitespace-only message values in split and equals forms, preserving intended whitespace payload semantics for custom empty-artifact notes.
 - 2026-02-13: Updated `bundle-diagnostics` message parsing to allow help-token literals (`--help`, `-h`) as intentional message payloads (split and equals forms), with regression coverage for both literal cases.
 - 2026-02-13: Expanded diagnostics help-token message regression coverage to full split/equals parity (`--message --help`, `--message -h`, `--message=--help`, `--message=-h`) so intentional help-literal placeholder text remains stable across argument styles.
+- 2026-02-13: Expanded timeout-value token-guard regression coverage with self-flag misuse cases (`--timeout-ms --timeout-ms`, `--timeout-ms=--timeout-ms`, plus diagnostics equivalents), preserving missing-value semantics when timeout flag tokens are repeated in value positions.
