@@ -11,7 +11,7 @@ function createMissingValueError(flagName) {
  * @param {RequiredArgumentValueOptions} options
  */
 function assertValidRequiredArgumentValueOptions(options) {
-  if (!options || typeof options !== 'object') {
+  if (!options || typeof options !== 'object' || Array.isArray(options)) {
     throw new Error('Invalid required argument options.');
   }
 
