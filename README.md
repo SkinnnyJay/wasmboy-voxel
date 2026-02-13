@@ -386,6 +386,11 @@ The repository uses four GitHub Actions workflows:
 - `nightly-regression.yml`: scheduled daily drift detection (same no-build gate)
 - `release.yml`: changesets-driven release PR/publish automation
 
+Workflow notes:
+
+- CI/contract/release pipelines use path filters and manual dispatch triggers for better signal-to-noise.
+- Quality-gate workflows upload diagnostic artifacts on failure (logs and key generated screenshots).
+
 For local parity with CI, run:
 
 ```bash
