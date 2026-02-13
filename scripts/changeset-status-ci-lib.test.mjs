@@ -59,3 +59,13 @@ test('filterChangesetStatusOutput returns suppressed warnings in deterministic o
     [cliWarning, debuggerWarning].sort((left, right) => left.localeCompare(right)),
   );
 });
+
+test('filterChangesetStatusOutput handles CRLF output safely', () => {
+  const workspaceWarning = 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api"';
+  const input = `${workspaceWarning}\r\n🦋  info NO packages to be bumped at patch\r\n`;
+
+  const result = filterChangesetStatusOutput(input);
+
+  assert.deepEqual(result.suppressedWarnings, [workspaceWarning]);
+  assert.equal(result.passthroughOutput, '🦋  info NO packages to be bumped at patch');
+});
