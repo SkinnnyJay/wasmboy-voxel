@@ -144,6 +144,11 @@ test('bundle-diagnostics de-duplicates equivalent relative and absolute matches'
     entry.endsWith('logs/duplicate.log'),
   );
   assert.equal(duplicateEntries.length, 1, 'archive should only include canonical duplicate path once');
+  assert.equal(
+    duplicateEntries.some(entry => entry.includes(tempDirectory)),
+    false,
+    'canonical duplicate entry should avoid absolute temp-directory archive paths',
+  );
 });
 
 test('bundle-diagnostics ignores directories matched by patterns', () => {
@@ -218,6 +223,27 @@ test('bundle-diagnostics excludes output archive path from matched inputs', () =
     archiveContents.some(entry => entry.endsWith('artifacts/self.tar.gz')),
     false,
     'archive should not include itself even when matched by an input pattern',
+  );
+});
+
+test('bundle-diagnostics normalizes absolute file matches to relative archive paths', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-absolute-path-normalize-'));
+  const logsDirectory = path.join(tempDirectory, 'logs');
+  const absoluteLogPath = path.join(logsDirectory, 'absolute.log');
+  fs.mkdirSync(logsDirectory, { recursive: true });
+  fs.writeFileSync(absoluteLogPath, 'absolute path log\n', 'utf8');
+
+  runBundlerCommand(tempDirectory, ['--output', 'artifacts/absolute.tar.gz', '--pattern', absoluteLogPath]);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/absolute.tar.gz');
+  assert.ok(
+    archiveContents.some(entry => entry.endsWith('logs/absolute.log')),
+    'archive should include the matched absolute-path file',
+  );
+  assert.equal(
+    archiveContents.some(entry => entry.includes(tempDirectory)),
+    false,
+    'archive should avoid absolute temp-directory archive paths',
   );
 });
 

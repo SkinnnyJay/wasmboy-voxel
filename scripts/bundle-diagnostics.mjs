@@ -89,6 +89,38 @@ function collectFiles(patterns, outputPath) {
   const filesByResolvedPath = new Map();
   const resolvedOutputPath = path.resolve(outputPath);
 
+  function toArchivePath(filePath, resolvedFilePath) {
+    const normalizedInputPath = path.normalize(filePath);
+
+    if (path.isAbsolute(normalizedInputPath)) {
+      const relativeToCwd = path.relative(process.cwd(), resolvedFilePath);
+      if (relativeToCwd.length > 0 && !relativeToCwd.startsWith('..') && !path.isAbsolute(relativeToCwd)) {
+        return path.normalize(relativeToCwd);
+      }
+    }
+
+    return normalizedInputPath;
+  }
+
+  function pickPreferredArchivePath(existingPath, candidatePath) {
+    if (!existingPath) {
+      return candidatePath;
+    }
+
+    const existingIsAbsolute = path.isAbsolute(existingPath);
+    const candidateIsAbsolute = path.isAbsolute(candidatePath);
+
+    if (existingIsAbsolute !== candidateIsAbsolute) {
+      return existingIsAbsolute ? candidatePath : existingPath;
+    }
+
+    if (candidatePath.length !== existingPath.length) {
+      return candidatePath.length < existingPath.length ? candidatePath : existingPath;
+    }
+
+    return candidatePath.localeCompare(existingPath) < 0 ? candidatePath : existingPath;
+  }
+
   for (const pattern of patterns) {
     const matches = fs.globSync(pattern, { withFileTypes: false });
     for (const file of matches) {
@@ -98,8 +130,9 @@ function collectFiles(patterns, outputPath) {
       }
 
       if (fs.existsSync(resolvedFilePath) && fs.statSync(resolvedFilePath).isFile()) {
-        const normalizedArchivePath = path.normalize(file);
-        filesByResolvedPath.set(resolvedFilePath, normalizedArchivePath);
+        const candidateArchivePath = toArchivePath(file, resolvedFilePath);
+        const existingArchivePath = filesByResolvedPath.get(resolvedFilePath);
+        filesByResolvedPath.set(resolvedFilePath, pickPreferredArchivePath(existingArchivePath, candidateArchivePath));
       }
     }
   }
