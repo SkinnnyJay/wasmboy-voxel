@@ -45,6 +45,27 @@ function writeFakeChangeset(tempDirectory, body) {
   return fakeBinDirectory;
 }
 
+function writeNoBumpChangeset(tempDirectory) {
+  return writeFakeChangeset(
+    tempDirectory,
+    `#!/usr/bin/env bash
+echo '🦋  info NO packages to be bumped at patch'
+exit 0
+`,
+  );
+}
+
+function writeDelayedChangeset(tempDirectory, delaySeconds = '0.2') {
+  return writeFakeChangeset(
+    tempDirectory,
+    `#!/usr/bin/env bash
+sleep ${delaySeconds}
+echo '🦋  info delayed status'
+exit 0
+`,
+  );
+}
+
 test('changeset-status-ci forwards filtered output and exit status', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-pass-'));
   const fakeBinDirectory = writeFakeChangeset(
@@ -591,13 +612,7 @@ test('changeset-status-ci rejects timeout values above supported ceiling', () =>
 
 test('changeset-status-ci accepts max timeout environment value', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-max-timeout-env-'));
-  const fakeBinDirectory = writeFakeChangeset(
-    tempDirectory,
-    `#!/usr/bin/env bash
-echo '🦋  info NO packages to be bumped at patch'
-exit 0
-`,
-  );
+  const fakeBinDirectory = writeNoBumpChangeset(tempDirectory);
 
   const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, {
     CHANGESET_STATUS_CI_TIMEOUT_MS: '2147483647',
@@ -609,13 +624,7 @@ exit 0
 
 test('changeset-status-ci treats empty timeout env value as default', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-empty-timeout-env-'));
-  const fakeBinDirectory = writeFakeChangeset(
-    tempDirectory,
-    `#!/usr/bin/env bash
-echo '🦋  info NO packages to be bumped at patch'
-exit 0
-`,
-  );
+  const fakeBinDirectory = writeNoBumpChangeset(tempDirectory);
 
   const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, {
     CHANGESET_STATUS_CI_TIMEOUT_MS: '',
@@ -627,14 +636,7 @@ exit 0
 
 test('changeset-status-ci reports timeout errors with configured value', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-'));
-  const fakeBinDirectory = writeFakeChangeset(
-    tempDirectory,
-    `#!/usr/bin/env bash
-sleep 0.2
-echo '🦋  info delayed status'
-exit 0
-`,
-  );
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
   const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, {
     CHANGESET_STATUS_CI_TIMEOUT_MS: '50',
   });
@@ -645,14 +647,7 @@ exit 0
 
 test('changeset-status-ci timeout CLI override takes precedence over environment', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-override-'));
-  const fakeBinDirectory = writeFakeChangeset(
-    tempDirectory,
-    `#!/usr/bin/env bash
-sleep 0.2
-echo '🦋  info delayed status'
-exit 0
-`,
-  );
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
   const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms', '50'], {
     CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
   });
@@ -663,14 +658,7 @@ exit 0
 
 test('changeset-status-ci inline timeout CLI override takes precedence over environment', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-inline-override-'));
-  const fakeBinDirectory = writeFakeChangeset(
-    tempDirectory,
-    `#!/usr/bin/env bash
-sleep 0.2
-echo '🦋  info delayed status'
-exit 0
-`,
-  );
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
   const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms=50'], {
     CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
   });
@@ -681,13 +669,7 @@ exit 0
 
 test('changeset-status-ci accepts max split CLI timeout override', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-max-split-'));
-  const fakeBinDirectory = writeFakeChangeset(
-    tempDirectory,
-    `#!/usr/bin/env bash
-echo '🦋  info NO packages to be bumped at patch'
-exit 0
-`,
-  );
+  const fakeBinDirectory = writeNoBumpChangeset(tempDirectory);
   const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms', '2147483647'], {
     CHANGESET_STATUS_CI_TIMEOUT_MS: '50',
   });
@@ -698,13 +680,7 @@ exit 0
 
 test('changeset-status-ci accepts max inline CLI timeout override', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-max-inline-'));
-  const fakeBinDirectory = writeFakeChangeset(
-    tempDirectory,
-    `#!/usr/bin/env bash
-echo '🦋  info NO packages to be bumped at patch'
-exit 0
-`,
-  );
+  const fakeBinDirectory = writeNoBumpChangeset(tempDirectory);
   const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms=2147483647'], {
     CHANGESET_STATUS_CI_TIMEOUT_MS: '50',
   });

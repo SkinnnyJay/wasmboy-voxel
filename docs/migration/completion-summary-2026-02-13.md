@@ -143,6 +143,7 @@ Workflow hardening applied:
 - wrapper-level timeout-environment boundary coverage now includes acceptance tests at the maximum supported timeout (`2147483647`) for both wrappers, preserving inclusive upper-bound semantics for env-driven timeout resolution
 - timeout-override precedence coverage now also includes failure-path assertions where invalid CLI timeout overrides still fail even when environment timeout values are valid, preserving strict CLI validation semantics under precedence rules
 - diagnostics timeout regression fixtures now use a shared delayed-fake-tar helper in automation tests, reducing fixture duplication while preserving timeout-path behavior and assertions
+- changeset timeout regression fixtures now use shared helper builders for delayed/no-bump fake changeset commands, reducing fixture duplication while preserving timeout and success-path behavior
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity

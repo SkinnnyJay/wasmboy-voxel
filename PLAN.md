@@ -326,3 +326,4 @@
 - 2026-02-13: Expanded wrapper-level timeout-environment boundary regression coverage with maximum supported timeout acceptance cases (`2147483647`) across both helper wrappers, preserving inclusive upper-bound semantics for env-driven timeout resolution.
 - 2026-02-13: Expanded timeout-override precedence regression coverage with invalid-CLI/valid-env failure-path cases (split and inline forms) across both wrappers, preserving strict CLI timeout validation semantics under precedence rules.
 - 2026-02-13: Refactored diagnostics timeout automation fixtures to use a shared delayed-fake-tar helper, reducing duplicated test setup while preserving timeout regression behavior.
+- 2026-02-13: Refactored changeset timeout automation fixtures to use shared fake-changeset helpers for delayed and no-bump outputs, reducing duplicated test setup while preserving timeout and success-path regression behavior.
