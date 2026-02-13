@@ -17,6 +17,28 @@ start Phase 11 (TypeScript migration) until Phase 10 is done.
 
 ---
 
+## What You Get (Outcomes)
+
+When the plan is complete you have:
+
+| Outcome | Where it lives / How you use it |
+|--------|----------------------------------|
+| **Versioned, validated API** | `migration/packages/api`: Zod schemas for `PpuSnapshot`, `Registers`, `MemorySection`, `DebugFrame`; inferred TS types; runtime validation at wrapper boundaries. |
+| **Contract-safe wrapper** | Existing wrapper + optional contract gates (dev flag); `supportsPpuSnapshot()` guards; same behavior for consumers; optional `compat` layer. |
+| **New debugger app** | `migration/apps/debugger`: Next.js + React + shadcn, ROM loader, emulator view, registers, memory viewer, snapshot timeline, event log; typed client from `packages/api`. |
+| **Debug state + AI surface** | Zustand store, frame metadata, checksums, event stream; read-only AI debug endpoint; JSONL export; sandbox mode and rate limiting. |
+| **Headless CLI** | `migration/packages/cli`: `run <rom>`, `snapshot <rom>`, `compare <baseline>`, `contract-check`; structured logs; safe errors; CI-friendly. |
+| **Regression safety** | Golden snapshot tests, checksum regressions, contract validation tests, CLI regressions, debugger smoke tests; existing accuracy/integration/core tests still pass. |
+| **Compatibility + policy** | Deprecation warnings (dev-only), gameboy-remix migration notes, backwards-compat tests, documented breaking-change policy. |
+| **Strict TypeScript lib** | `lib/` fully typed (Phase 11); strict config; no `any` in public API; types aligned with contracts; root `typecheck` script. |
+| **PyBoy-style rigor** | Tests for `tick(count, render)`, frame-skip equivalence, multi-instance isolation, memory bounds, input queue, error taxonomy, throughput baseline. |
+| **Single-command workflow** | Migration: `bun run build`, `bun run test`, `bun run typecheck`; root scripts to run migration tasks; CI for lint/typecheck/tests/contract-check. |
+| **Documentation** | API usage, debugger usage, CLI usage, troubleshooting FAQ, progress links. |
+
+**In short:** A typed, contract-validated emulator API; a modern debugger app; a CLI for regression and contracts; full regression and compatibility coverage; then a fully TypeScript `lib/`—without breaking existing consumers until you choose to cut over.
+
+---
+
 ## How to Work This Plan
 
 1. Pick the next unchecked task (`[ ]`) in phase order.
