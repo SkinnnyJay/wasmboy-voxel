@@ -341,6 +341,20 @@ test('readRequiredArgumentValue rejects invalid argument indexes', () => {
   );
 });
 
+test('readRequiredArgumentValue rejects out-of-range argument indexes', () => {
+  const args = ['--timeout-ms', '00050'];
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(args, 2, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid argument index for --timeout-ms: 2/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects non-integer argument indexes', () => {
   const args = ['--timeout-ms', '00050'];
   assert.throws(

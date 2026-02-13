@@ -122,6 +122,10 @@ export function readRequiredArgumentValue(argv, index, options) {
     throw new Error(`Invalid argument index for ${options.flagName}: ${formatErrorValue(index)}`);
   }
 
+  if (index >= argv.length) {
+    throw new Error(`Invalid argument index for ${options.flagName}: ${formatErrorValue(index)}`);
+  }
+
   const value = argv[index + 1];
   validateRequiredArgumentValue(value, options);
   return value;
