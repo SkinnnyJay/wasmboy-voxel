@@ -41,17 +41,4 @@ jobs:
         run: npm run changeset:status
 
       - name: Run explicit contract-check command
-        run: |
-          cat > /tmp/registers.json << 'EOF'
-          {
-            "scx": 1,
-            "scy": 2,
-            "wx": 3,
-            "wy": 4,
-            "lcdc": 5,
-            "bgp": 6,
-            "obp0": 7,
-            "obp1": 8
-          }
-          EOF
-          node packages/cli/dist/index.js contract-check --contract registers --file /tmp/registers.json
+        run: npm run contract:sample:registers

@@ -1,4 +1,3 @@
-import { pathToFileURL } from 'node:url';
 import {
   contractCheckCommand,
   compareCommand,
@@ -55,7 +54,13 @@ export function executeCli(argv: string[]): void {
 function isEntrypoint(): boolean {
   const argvPath = process.argv[1];
   if (!argvPath) return false;
-  return import.meta.url === pathToFileURL(argvPath).href;
+  const normalizedPath = argvPath.replace(/\\/g, '/');
+  return (
+    normalizedPath.endsWith('/packages/cli/dist/index.js') ||
+    normalizedPath.endsWith('/packages/cli/dist/index.cjs') ||
+    normalizedPath.endsWith('/packages/cli/src/index.ts') ||
+    normalizedPath.endsWith('/packages/cli/src/index.js')
+  );
 }
 
 if (isEntrypoint()) {

@@ -169,3 +169,4 @@
 - 2026-02-13: Updated contract-check CI workflow to reuse the unified `test:all:nobuild` quality gate and include `changeset:status`, reducing duplicate workflow logic while enforcing release metadata checks.
 - 2026-02-13: Extended migration completion summary with CI mapping details, documenting how push/PR, contract-check, and nightly workflows share the same consolidated quality gate.
 - 2026-02-13: Added `ci:local` root alias and README guidance so contributors can run the exact CI no-build quality gate locally with one command.
+- 2026-02-13: Added reusable sample contract fixture/script for CI contract validation and removed CLI `import.meta` CJS build warning by switching to path-based entrypoint detection.
