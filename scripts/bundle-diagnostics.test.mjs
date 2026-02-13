@@ -180,6 +180,20 @@ test('bundle-diagnostics archives matched files in deterministic sorted order', 
   assert.ok(aIndex < bIndex, 'archive entries should be stable and sorted lexicographically');
 });
 
+test('bundle-diagnostics archives files whose names start with a dash', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-dash-file-'));
+  const dashFilePath = path.join(tempDirectory, '-special.log');
+  fs.writeFileSync(dashFilePath, 'dash-prefixed file\n', 'utf8');
+
+  runBundlerCommand(tempDirectory, ['--output', 'artifacts/dash-file.tar.gz', '--pattern', '-*.log']);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/dash-file.tar.gz');
+  assert.ok(
+    archiveContents.some(entry => entry.endsWith('-special.log')),
+    'archive should include files whose names begin with a dash',
+  );
+});
+
 test('bundle-diagnostics requires output argument', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-output-required-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--pattern', 'logs/*.log']);

@@ -92,7 +92,7 @@ function createPlaceholderFile(outputPath, message) {
 }
 
 function createArchive(outputPath, files) {
-  const archiveResult = spawnSync('tar', ['-czf', outputPath, ...files], {
+  const archiveResult = spawnSync('tar', ['-czf', outputPath, '--', ...files], {
     stdio: 'inherit',
   });
 

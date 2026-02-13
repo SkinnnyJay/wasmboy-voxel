@@ -100,6 +100,7 @@ Workflow hardening applied:
 - diagnostics archive file collection now sorts matches lexicographically for deterministic artifact structure across runs
 - diagnostics placeholder files are now cleaned up after archive creation to avoid leaving temporary files in workflow workspaces
 - diagnostics file deduplication now uses canonical resolved paths so mixed relative/absolute pattern inputs cannot archive the same file twice
+- diagnostics archive command now inserts `--` before file entries so dash-prefixed filenames are handled safely
 - automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)
 - changeset status warning filter now tolerates version bumps by suppressing only `file:` workspace warnings from `@wasmboy/*` packages against `@wasmboy/api`
 - suppressed changeset workspace warnings are now lexicographically sorted before reporting for deterministic CI log output
