@@ -480,6 +480,10 @@ test('readRequiredArgumentValue rejects array options', () => {
   assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, []), /Invalid required argument options\./u);
 });
 
+test('readRequiredArgumentValue rejects non-object options', () => {
+  assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, 42), /Invalid required argument options\./u);
+});
+
 test('readRequiredArgumentValue rejects missing known-args options', () => {
   assert.throws(
     () =>

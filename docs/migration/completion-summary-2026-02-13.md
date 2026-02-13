@@ -307,6 +307,7 @@ Workflow hardening applied:
 - timeout-helper options-shape coverage now explicitly asserts null container rejection for direct/composed entrypoints (`options`, composed `env`, composed `cli`)
 - timeout-helper options-shape coverage now explicitly asserts primitive non-object (`number`) top-level options-object rejection for direct/composed timeout helper entrypoints
 - timeout-helper default-value coverage now explicitly asserts `-Infinity` default-timeout rejection for both direct env and composed env/CLI timeout resolution helpers
+- read-path parser-helper options-shape coverage now explicitly asserts primitive non-object (`number`) options rejection in `readRequiredArgumentValue` validation paths
 - timeout-helper coverage now explicitly asserts null/undefined direct option-name rejection for `resolveStrictPositiveIntegerEnv`
 - read-path parser-helper coverage now explicitly asserts undefined argument-index rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper coverage now explicitly asserts `NaN` argument-index rejection in `readRequiredArgumentValue` validation paths
