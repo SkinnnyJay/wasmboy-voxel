@@ -196,6 +196,7 @@
 - 2026-02-13: Added `scripts:lint`/`scripts:format` for automation helpers and wired `scripts:lint` into `test:all:nobuild` to keep CI helper scripts formatting-gated alongside workflows.
 - 2026-02-13: Added `workflow:check` to compose workflow/script format checks and reused it in `test:all:nobuild` + `contract:ci`, reducing duplicated script chains while preserving gate coverage.
 - 2026-02-13: Added `automation:test` with Node-based tests for CI helper scripts (including diagnostics bundling), and wired it into both strict and CI-flavored full quality gates.
+- 2026-02-13: Added reusable `automation:check` (`workflow:check + automation:test`) and switched quality-gate scripts (`test:all:nobuild*`, `contract:ci`) to use the consolidated automation preflight.
 - 2026-02-13: Expanded diagnostics bundler automation tests with duplicate-pattern deduplication coverage, complementing existing matched-file and empty-placeholder assertions.
 - 2026-02-13: Expanded diagnostics bundler automation coverage for custom placeholder message handling when no diagnostics files are present.
 - 2026-02-13: Refactored `changeset:status:ci` filtering into a reusable module and added automation tests for warning suppression/dedup behavior, improving confidence in CI log-sanitization correctness.

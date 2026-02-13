@@ -93,6 +93,7 @@ Workflow hardening applied:
 - automation helper scripts can be auto-formatted via `scripts:format`
 - `workflow:check` consolidates workflow + automation script format checks for reuse in CI scripts
 - automation helper scripts are covered by `automation:test` (Node test runner), and this test step is included in the unified quality gate
+- `automation:check` composes `workflow:check` + `automation:test` so quality-gate scripts can reuse one consolidated automation preflight command
 - automation coverage includes diagnostics bundle behavior checks (matched files, empty-placeholder fallback, duplicate-pattern deduplication)
 - automation coverage includes custom placeholder message behavior for empty diagnostics archives
 - automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)

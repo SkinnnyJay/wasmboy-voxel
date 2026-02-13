@@ -397,6 +397,9 @@ npm run scripts:format
 # Run automation helper unit tests
 npm run automation:test
 
+# Run automation formatting + helper unit tests together
+npm run automation:check
+
 # All commands for testing, and are test related
 npm run test:*
 
