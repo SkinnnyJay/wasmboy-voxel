@@ -211,6 +211,7 @@
 - 2026-02-13: Expanded changeset warning filter/wrapper coverage to ensure non-`@wasmboy/*` `file:` warnings are never suppressed while suppressed workspace warnings remain deterministically ordered in wrapper output.
 - 2026-02-13: Added `--help`/`-h` support to `changeset-status-ci` wrapper with automation tests for both help entrypoints.
 - 2026-02-13: Added CRLF-focused regression coverage for changeset warning filtering to validate cross-platform output parsing behavior.
+- 2026-02-13: Tightened `changeset-status-ci` argument handling to fail on unknown flags (with usage output), plus added automation coverage for the strict-arg error path.
 - 2026-02-13: Added diagnostics bundler negative-path tests for required CLI arguments (`--output`, `--pattern`), strengthening guardrail coverage for automation script misuse.
 - 2026-02-13: Expanded diagnostics bundler negative-path automation coverage for unknown flags and missing flag values, hardening script argument-validation guarantees.
 - 2026-02-13: Expanded diagnostics bundler negative-path coverage for missing `--output` and `--message` flag values to lock down strict argument parsing semantics.

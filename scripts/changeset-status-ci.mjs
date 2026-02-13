@@ -10,8 +10,33 @@ dependency warnings for @wasmboy/* packages against @wasmboy/api.
 Options:
   -h, --help   Show this help message`;
 
-const argv = process.argv.slice(2);
-if (argv.includes('--help') || argv.includes('-h')) {
+function parseArgs(argv) {
+  /** @type {{showHelp: boolean}} */
+  const parsed = { showHelp: false };
+
+  for (const token of argv) {
+    if (token === '--help' || token === '-h') {
+      parsed.showHelp = true;
+      continue;
+    }
+
+    throw new Error(`Unknown argument: ${token}`);
+  }
+
+  return parsed;
+}
+
+let parsedArgs;
+try {
+  parsedArgs = parseArgs(process.argv.slice(2));
+} catch (error) {
+  const errorMessage = error instanceof Error ? error.message : 'Invalid arguments.';
+  console.error(`[changeset:status:ci] ${errorMessage}`);
+  console.error(USAGE_TEXT);
+  process.exit(1);
+}
+
+if (parsedArgs.showHelp) {
   console.log(USAGE_TEXT);
   process.exit(0);
 }

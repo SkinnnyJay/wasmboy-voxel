@@ -108,6 +108,7 @@ Workflow hardening applied:
 - changeset filter/wrapper tests now assert non-`@wasmboy/*` `file:` warnings remain visible and that suppressed warning logs are emitted in deterministic order
 - changeset status wrapper now supports `--help` and `-h` usage output, with automation coverage for both help paths
 - changeset filter tests now cover CRLF output handling to ensure cross-platform warning parsing stability
+- changeset status wrapper now rejects unknown CLI arguments with usage guidance to keep automation invocation strict and predictable
 - automation coverage also validates diagnostics bundle CLI argument guards (missing `--output` and missing `--pattern`)
 - automation coverage also validates diagnostics bundle argument parsing errors (unknown flags and missing flag values)
 - diagnostics bundle tests now cover missing values for `--output` and `--message` flags to enforce strict CLI parsing behavior
