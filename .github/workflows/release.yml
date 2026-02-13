@@ -87,3 +87,5 @@ jobs:
           path: |
             release-build.log
             release-verify.log
+            test/core/save-state/*.png
+            test/integration/headless-simple*.png
