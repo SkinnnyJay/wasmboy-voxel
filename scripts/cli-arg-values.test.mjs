@@ -247,6 +247,18 @@ test('validateRequiredArgumentValue rejects missing allowDoubleDashValue options
   );
 });
 
+test('validateRequiredArgumentValue rejects null allowDoubleDashValue options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: null,
+      }),
+    /Invalid allowDoubleDashValue option for --output/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects non-boolean allowWhitespaceOnly options', () => {
   assert.throws(
     () =>
