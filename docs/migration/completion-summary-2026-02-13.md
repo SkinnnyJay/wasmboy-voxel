@@ -28,6 +28,10 @@ This executes:
 - headless throughput baseline
 - dependency audit check
 
+Stability hardening:
+
+- headless integration command now includes a single Mocha retry (`--retries 1`) to reduce intermittent golden-frame CI flakes while preserving strict golden comparison semantics.
+
 CI automation now runs the same gate in:
 
 - `ci.yml` (push/PR)
