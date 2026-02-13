@@ -7,7 +7,6 @@ on:
     paths:
       - 'package.json'
       - 'package-lock.json'
-      - 'pnpm-workspace.yaml'
       - 'packages/api/**'
       - 'packages/cli/**'
       - 'apps/debugger/package.json'
@@ -20,7 +19,6 @@ on:
     paths:
       - 'package.json'
       - 'package-lock.json'
-      - 'pnpm-workspace.yaml'
       - 'packages/api/**'
       - 'packages/cli/**'
       - 'apps/debugger/package.json'

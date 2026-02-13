@@ -39,6 +39,7 @@ CI and contract workflows now include:
 
 - `workflow_dispatch` manual trigger support
 - push/PR path filters so full CI runs only for relevant runtime/package/test/workflow changes
+- trigger path lists aligned to existing repo files (removed stale `pnpm-workspace.yaml` references)
 
 Release pipeline build uses:
 

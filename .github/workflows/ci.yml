@@ -7,7 +7,6 @@ on:
     paths:
       - 'package.json'
       - 'package-lock.json'
-      - 'pnpm-workspace.yaml'
       - 'core/**'
       - 'lib/**'
       - 'packages/**'
@@ -24,7 +23,6 @@ on:
     paths:
       - 'package.json'
       - 'package-lock.json'
-      - 'pnpm-workspace.yaml'
       - 'core/**'
       - 'lib/**'
       - 'packages/**'
