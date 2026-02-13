@@ -288,6 +288,7 @@ Workflow hardening applied:
 - shared timeout resolution coverage now explicitly asserts `null` environment raw-timeout rejection in composed env/CLI precedence helper paths
 - shared timeout helper coverage now explicitly asserts `null` default-timeout rejection and `null` composed CLI option-name rejection paths
 - shared CLI argument-value helper coverage now explicitly asserts `null` token rejection for both `knownArgs` and `allowedKnownValues` set entries
+- changeset status output-filter coverage now explicitly asserts `undefined` output rejection in addition to existing non-string/null/symbol/unprintable invalid-input checks
 
 ## Security posture at completion
 
