@@ -65,6 +65,22 @@ function readArchiveEntry(cwd, archivePath, entryPath) {
   return result.stdout;
 }
 
+function writeDelayedFakeTar(tempDirectory, delaySeconds = '0.2') {
+  const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
+  fs.mkdirSync(fakeBinDirectory, { recursive: true });
+  const fakeTarPath = path.join(fakeBinDirectory, 'tar');
+  fs.writeFileSync(
+    fakeTarPath,
+    `#!/usr/bin/env bash
+sleep ${delaySeconds}
+exit 0
+`,
+    'utf8',
+  );
+  fs.chmodSync(fakeTarPath, 0o755);
+  return fakeBinDirectory;
+}
+
 test('bundle-diagnostics archives matched files', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-match-'));
   const logsDirectory = path.join(tempDirectory, 'logs');
@@ -1614,18 +1630,7 @@ test('bundle-diagnostics treats empty timeout env value as default', () => {
 
 test('bundle-diagnostics reports tar timeout failures', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-'));
-  const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
-  fs.mkdirSync(fakeBinDirectory, { recursive: true });
-  const fakeTarPath = path.join(fakeBinDirectory, 'tar');
-  fs.writeFileSync(
-    fakeTarPath,
-    `#!/usr/bin/env bash
-sleep 0.2
-exit 0
-`,
-    'utf8',
-  );
-  fs.chmodSync(fakeTarPath, 0o755);
+  const fakeBinDirectory = writeDelayedFakeTar(tempDirectory);
 
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log'], {
     PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
@@ -1636,18 +1641,7 @@ exit 0
 
 test('bundle-diagnostics timeout CLI override takes precedence over timeout env', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-cli-override-'));
-  const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
-  fs.mkdirSync(fakeBinDirectory, { recursive: true });
-  const fakeTarPath = path.join(fakeBinDirectory, 'tar');
-  fs.writeFileSync(
-    fakeTarPath,
-    `#!/usr/bin/env bash
-sleep 0.2
-exit 0
-`,
-    'utf8',
-  );
-  fs.chmodSync(fakeTarPath, 0o755);
+  const fakeBinDirectory = writeDelayedFakeTar(tempDirectory);
 
   const output = runBundlerCommandExpectFailure(
     tempDirectory,
@@ -1662,18 +1656,7 @@ exit 0
 
 test('bundle-diagnostics inline timeout CLI override takes precedence over timeout env', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-cli-inline-override-'));
-  const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
-  fs.mkdirSync(fakeBinDirectory, { recursive: true });
-  const fakeTarPath = path.join(fakeBinDirectory, 'tar');
-  fs.writeFileSync(
-    fakeTarPath,
-    `#!/usr/bin/env bash
-sleep 0.2
-exit 0
-`,
-    'utf8',
-  );
-  fs.chmodSync(fakeTarPath, 0o755);
+  const fakeBinDirectory = writeDelayedFakeTar(tempDirectory);
 
   const output = runBundlerCommandExpectFailure(
     tempDirectory,
@@ -1688,18 +1671,7 @@ exit 0
 
 test('bundle-diagnostics accepts max split CLI timeout override', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-max-split-'));
-  const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
-  fs.mkdirSync(fakeBinDirectory, { recursive: true });
-  const fakeTarPath = path.join(fakeBinDirectory, 'tar');
-  fs.writeFileSync(
-    fakeTarPath,
-    `#!/usr/bin/env bash
-sleep 0.2
-exit 0
-`,
-    'utf8',
-  );
-  fs.chmodSync(fakeTarPath, 0o755);
+  const fakeBinDirectory = writeDelayedFakeTar(tempDirectory);
 
   const result = runBundlerCommandRaw(
     tempDirectory,
@@ -1715,18 +1687,7 @@ exit 0
 
 test('bundle-diagnostics accepts max inline CLI timeout override', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-max-inline-'));
-  const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
-  fs.mkdirSync(fakeBinDirectory, { recursive: true });
-  const fakeTarPath = path.join(fakeBinDirectory, 'tar');
-  fs.writeFileSync(
-    fakeTarPath,
-    `#!/usr/bin/env bash
-sleep 0.2
-exit 0
-`,
-    'utf8',
-  );
-  fs.chmodSync(fakeTarPath, 0o755);
+  const fakeBinDirectory = writeDelayedFakeTar(tempDirectory);
 
   const result = runBundlerCommandRaw(
     tempDirectory,
