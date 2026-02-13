@@ -9,6 +9,10 @@
 - Added regression safety coverage:
   - baseline golden/checksum regression test
   - integration compatibility test
+  - memory bounds regression test
+  - tick/frame-equivalence/delayed-input regression test
+  - core multi-instance isolation regression test
+  - headless throughput baseline regression test
   - debugger smoke tests
   - CLI regression tests
 - Added CI workflows:
@@ -22,6 +26,11 @@
   - troubleshooting FAQ
   - `gameboy-remix` migration notes
   - breaking change policy
+- Dependency hardening updates:
+  - replaced `pngjs-image` + deprecated `request` with direct `pngjs` usage in test helpers
+  - removed direct `np` dependency (use `npx np`)
+  - removed unused vulnerable `uglifyjs-webpack-plugin`
+  - `npm audit --omit=optional` now reports zero vulnerabilities
 
 ## Current
 
