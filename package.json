@@ -39,6 +39,7 @@
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
     "audit:check": "npm audit --omit=optional",
+    "ci:local": "npm run test:all:nobuild",
     "start": "concurrently --kill-others --names \"DEBUGGER,CORE,LIB\" -c \"bgBlue.bold,bgMagenta.bold,bgGreen.bold\" \"npm run debugger:watch\" \"npm run core:watch\" \"npm run lib:watch:wasm\"",
     "start:ts": "concurrently --kill-others --names \"DEBUGGER,LIBANDCORETS\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run debugger:watch\" \"npm run lib:watch:ts\"",
     "dev": "npm run start",
