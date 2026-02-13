@@ -317,6 +317,7 @@ Workflow hardening applied:
 - changeset-status output filtering coverage now explicitly asserts `bigint` output rejection in `filterChangesetStatusOutput`
 - timeout helper coverage now explicitly asserts `bigint` rejection for direct/composed default values and env/CLI raw timeout inputs
 - parser-helper argument-value coverage now explicitly asserts `bigint` rejection in direct and read-path value validation helpers
+- test-fixture helper coverage now explicitly asserts `bigint` rejection for temp-directory, executable-name, and executable-body inputs
 - timeout-helper coverage now explicitly asserts null/undefined direct option-name rejection for `resolveStrictPositiveIntegerEnv`
 - read-path parser-helper coverage now explicitly asserts undefined argument-index rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper coverage now explicitly asserts `NaN` argument-index rejection in `readRequiredArgumentValue` validation paths
