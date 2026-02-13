@@ -343,6 +343,7 @@ Workflow hardening applied:
 - parser-helper option-name coverage now explicitly asserts unprintable `flagName` rejection in `readRequiredArgumentValue`, locking `[unprintable]` error-format contract semantics in read-path parser validation
 - read-path index-contract coverage now explicitly asserts symbol index rejection in upper-bound cursor scenarios, locking invalid-index-type precedence before missing-value boundary handling
 - read-path value-token coverage now explicitly asserts empty-string following-token rejection for required flags, locking missing-value semantics for explicit empty argv payloads
+- read-path inline-equals parity coverage now asserts extracted `--flag=value` payload validation parity with split-form `readRequiredArgumentValue` reads, locking parser-helper consistency across inline/split argument styles
 
 ## Security posture at completion
 

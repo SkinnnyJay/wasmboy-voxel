@@ -845,6 +845,21 @@ test('readRequiredArgumentValue rejects empty-string following argument values f
   );
 });
 
+test('readRequiredArgumentValue remains inline-equals parser compatible for extracted values', () => {
+  const flagName = '--timeout-ms';
+  const inlineToken = '--timeout-ms=00050';
+  const inlineExtractedValue = inlineToken.slice('--timeout-ms='.length);
+  const options = {
+    flagName,
+    knownArgs: KNOWN_ARGS,
+    allowDoubleDashValue: false,
+    allowWhitespaceOnly: true,
+  };
+  assert.doesNotThrow(() => validateRequiredArgumentValue(inlineExtractedValue, options));
+  const readSplitValue = readRequiredArgumentValue(['--timeout-ms', '00050'], 0, options);
+  assert.equal(readSplitValue, inlineExtractedValue);
+});
+
 test('readRequiredArgumentValue rejects missing options objects', () => {
   assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, undefined), /Invalid required argument options\./u);
 });
