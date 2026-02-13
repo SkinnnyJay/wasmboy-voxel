@@ -157,3 +157,4 @@
 - 2026-02-13: Audited legacy test dependency surface and replaced `pngjs-image` + `request` usage with direct `pngjs` integration in test helpers, reducing audit pressure while preserving integration/core snapshot behavior.
 - 2026-02-13: Continued dependency hardening by removing direct `np` dependency, switching deploy publish script to `npx np`, and pinning mocha to `11.3.0`, reducing `npm audit --omit=optional` findings from 13 to 5 while keeping all workspace/integration/core checks passing.
 - 2026-02-13: Added PyBoy-rigor headless throughput baseline test (`test:performance:throughput`) with JSON-configured FPS threshold and validated runtime output (~834 FPS locally).
+- 2026-02-13: Added core multi-instance isolation regression (`test:core:isolation`) and wired it into `test:core` / `test:core:nobuild` to enforce no shared mutable memory between parallel core instances.
