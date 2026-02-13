@@ -201,6 +201,8 @@ Workflow hardening applied:
 - shared timeout parser helper coverage now includes non-numeric default-type rejection (string values) in both direct and composed timeout resolution tests, locking strict numeric default contract semantics
 - shared timeout parser now validates option-name inputs and rejects empty/non-string names, preventing ambiguous helper error labels for misconfigured timeout option metadata
 - shared timeout parser helper coverage now includes invalid option-name rejection (empty/non-string names and invalid composed env-name metadata) to lock timeout option-label input contract semantics
+- shared timeout parser now validates top-level env-resolution helper options object shape before destructuring, preventing opaque destructuring failures from malformed helper invocations
+- shared timeout parser helper coverage now includes missing/array env-resolution options rejection, locking top-level helper input contract semantics
 - shared timeout parser now rejects non-string raw timeout values before string normalization, preventing helper misuse from causing implicit type coercion or property-access failures
 - shared timeout parser helper coverage now includes non-string raw timeout rejection in direct and composed resolution paths, locking timeout raw-value input contract semantics
 - shared timeout precedence helper now validates composed options shape (`env`/`cli` objects) and emits explicit contract errors for missing option objects, preventing opaque property-access failures when wrappers misconfigure helper inputs

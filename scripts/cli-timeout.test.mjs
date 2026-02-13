@@ -12,6 +12,14 @@ test('resolveStrictPositiveIntegerEnv returns default for undefined values', () 
   assert.equal(timeout, 120000);
 });
 
+test('resolveStrictPositiveIntegerEnv rejects missing options objects', () => {
+  assert.throws(() => resolveStrictPositiveIntegerEnv(undefined), /Invalid timeout env resolution options\./u);
+});
+
+test('resolveStrictPositiveIntegerEnv rejects array options objects', () => {
+  assert.throws(() => resolveStrictPositiveIntegerEnv([]), /Invalid timeout env resolution options\./u);
+});
+
 test('resolveStrictPositiveIntegerEnv rejects empty option names', () => {
   assert.throws(
     () =>

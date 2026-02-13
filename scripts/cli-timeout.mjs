@@ -1,6 +1,15 @@
 const MAX_TIMEOUT_MS = 2_147_483_647;
 
 /**
+ * @param {{name: string; rawValue: string | undefined; defaultValue: number}} options
+ */
+function assertValidTimeoutEnvOptions(options) {
+  if (!options || typeof options !== 'object' || Array.isArray(options)) {
+    throw new Error('Invalid timeout env resolution options.');
+  }
+}
+
+/**
  * @param {string} name
  */
 function assertValidOptionName(name) {
@@ -46,6 +55,8 @@ function assertValidTimeoutResolutionOptions(options) {
  * @param {{name: string; rawValue: string | undefined; defaultValue: number}} options
  */
 export function resolveStrictPositiveIntegerEnv(options) {
+  assertValidTimeoutEnvOptions(options);
+
   const { name, rawValue, defaultValue } = options;
   assertValidDefaultValue(name, defaultValue);
 
