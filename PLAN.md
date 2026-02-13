@@ -400,3 +400,4 @@
 - 2026-02-13: Expanded shared timeout precedence-helper coverage with explicit `undefined` composed option-name rejection for both `env.name` and `cli.name`, locking undefined option-name contract semantics in composed timeout resolution.
 - 2026-02-13: Expanded shared `readRequiredArgumentValue` options-contract coverage with explicit missing `knownArgs` and missing `allowDoubleDashValue` rejection, locking required parser-option semantics across read-path helper validation.
 - 2026-02-13: Expanded shared `readRequiredArgumentValue` options-contract coverage with explicit null `knownArgs` and null `allowDoubleDashValue` rejection, locking null-option contract semantics on read-path parser helper entrypoints.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` allowed-known-token contract coverage with explicit invalid `allowedKnownValues` set-shape rejection and subset-enforcement rejection paths, further locking read-path option validation semantics.
