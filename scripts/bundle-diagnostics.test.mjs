@@ -132,6 +132,20 @@ test('bundle-diagnostics accepts custom messages that begin with double dashes',
   assert.equal(placeholderText, customMessage, 'placeholder file should preserve dash-prefixed message text');
 });
 
+test('bundle-diagnostics supports equals-form arguments for output pattern and message', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-equals-form-'));
+  const customMessage = 'equals syntax placeholder message';
+
+  runBundlerCommand(tempDirectory, ['--output=artifacts/equals.tar.gz', '--pattern=missing/*.log', `--message=${customMessage}`]);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/equals.tar.gz');
+  const placeholderEntry = archiveContents.find(entry => entry.endsWith('artifacts/equals.txt'));
+  assert.ok(placeholderEntry, 'archive should include placeholder entry for equals-form invocation');
+
+  const placeholderText = readArchiveEntry(tempDirectory, 'artifacts/equals.tar.gz', placeholderEntry).trim();
+  assert.equal(placeholderText, customMessage, 'placeholder file should contain equals-form message text');
+});
+
 test('bundle-diagnostics de-duplicates files matched by repeated patterns', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-dedupe-'));
   const logsDirectory = path.join(tempDirectory, 'logs');
@@ -351,6 +365,12 @@ test('bundle-diagnostics requires a value for output flag', () => {
   assert.match(output, /Missing value for --output argument/u);
 });
 
+test('bundle-diagnostics requires a value for equals-form output flag', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-missing-output-inline-value-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output=', '--pattern=logs/*.log']);
+  assert.match(output, /Missing value for --output argument/u);
+});
+
 test('bundle-diagnostics rejects unknown long-flag token as output value', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-output-value-token-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', '--unexpected', '--pattern', 'logs/*.log']);
@@ -377,11 +397,23 @@ test('bundle-diagnostics requires a value for message flag', () => {
   assert.match(output, /Missing value for --message argument/u);
 });
 
+test('bundle-diagnostics requires a value for equals-form message flag', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-missing-message-inline-value-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output=artifacts/out.tar.gz', '--pattern=missing/*.log', '--message=']);
+  assert.match(output, /Missing value for --message argument/u);
+});
+
 test('bundle-diagnostics rejects unknown long-flag token as pattern value', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-pattern-value-token-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', '--unexpected']);
   assert.match(output, /Missing value for --pattern argument/u);
   assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics requires a value for equals-form pattern flag', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-missing-pattern-inline-value-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output=artifacts/out.tar.gz', '--pattern=']);
+  assert.match(output, /Missing value for --pattern argument/u);
 });
 
 test('bundle-diagnostics rejects short-flag token as pattern value', () => {

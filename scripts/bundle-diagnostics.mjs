@@ -36,6 +36,16 @@ Environment:
  */
 function readRequiredValue(argv, index, flagName, options) {
   const value = argv[index + 1];
+  validateValue(value, flagName, options);
+  return value;
+}
+
+/**
+ * @param {string | undefined} value
+ * @param {string} flagName
+ * @param {{allowDoubleDashValue: boolean}} options
+ */
+function validateValue(value, flagName, options) {
   if (!value || KNOWN_ARGS.has(value)) {
     throw new Error(`Missing value for ${flagName} argument.`);
   }
@@ -47,8 +57,6 @@ function readRequiredValue(argv, index, flagName, options) {
   if (!options.allowDoubleDashValue && value.startsWith('--')) {
     throw new Error(`Missing value for ${flagName} argument.`);
   }
-
-  return value;
 }
 
 function parseArgs(argv) {
@@ -72,6 +80,35 @@ function parseArgs(argv) {
       }
       parsed.showHelp = true;
       helpConfigured = true;
+      continue;
+    }
+
+    if (token.startsWith('--output=')) {
+      if (outputConfigured) {
+        throw new Error('Duplicate --output argument provided.');
+      }
+      const value = token.slice('--output='.length);
+      validateValue(value, '--output', { allowDoubleDashValue: false });
+      parsed.output = value;
+      outputConfigured = true;
+      continue;
+    }
+
+    if (token.startsWith('--pattern=')) {
+      const value = token.slice('--pattern='.length);
+      validateValue(value, '--pattern', { allowDoubleDashValue: false });
+      parsed.patterns.push(value);
+      continue;
+    }
+
+    if (token.startsWith('--message=')) {
+      if (messageConfigured) {
+        throw new Error('Duplicate --message argument provided.');
+      }
+      const value = token.slice('--message='.length);
+      validateValue(value, '--message', { allowDoubleDashValue: true });
+      parsed.message = value;
+      messageConfigured = true;
       continue;
     }
 
