@@ -197,6 +197,8 @@ Workflow hardening applied:
 - shared timeout precedence helper now validates composed options shape (`env`/`cli` objects) and emits explicit contract errors for missing option objects, preventing opaque property-access failures when wrappers misconfigure helper inputs
 - shared timeout precedence helper coverage now includes missing `env`/`cli` option-object rejection, locking composed timeout-resolution input contract semantics
 - shared timeout precedence helper coverage now also includes missing top-level options and non-object `env`/`cli` option rejection, locking full options-shape contract semantics at helper entrypoint boundaries
+- shared timeout precedence helper now rejects array-shaped options objects (`options`, `env`, `cli`) in addition to missing/non-object values, tightening helper options-shape contracts against ambiguous container types
+- shared timeout precedence helper coverage now includes array-shaped `options`/`env`/`cli` rejection paths, locking strict object-shape semantics for composed timeout resolution inputs
 - shared timeout parser tests now cover whitespace-only env values as invalid, preventing accidental silent coercion in CI configuration
 - shared timeout parser tests now cover empty-string env values as default-fallback behavior, preserving predictable unset-env semantics
 - shared timeout parser tests now cover plus-prefixed and negative numeric inputs as invalid, tightening timeout-config input contract clarity

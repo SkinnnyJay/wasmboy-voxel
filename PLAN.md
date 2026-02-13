@@ -365,3 +365,4 @@
 - 2026-02-13: Hardened shared `cli-arg-values` top-level options-object contract validation (missing/non-object options rejection) and expanded helper unit coverage for direct/read-path invalid-options rejection.
 - 2026-02-13: Expanded shared timeout precedence helper options-shape coverage with missing top-level options and non-object `env`/`cli` option rejection paths.
 - 2026-02-13: Hardened shared `test-fixtures` script-payload sanitization by rejecting null-byte executable-body inputs and expanded helper unit coverage for null-byte body rejection.
+- 2026-02-13: Hardened shared timeout precedence helper options-shape validation by rejecting array-shaped `options`/`env`/`cli` containers and expanded helper unit coverage for array-shape rejection paths.

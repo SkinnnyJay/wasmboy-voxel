@@ -29,15 +29,15 @@ function assertValidDefaultValue(name, defaultValue) {
  * }} options
  */
 function assertValidTimeoutResolutionOptions(options) {
-  if (!options || typeof options !== 'object') {
+  if (!options || typeof options !== 'object' || Array.isArray(options)) {
     throw new Error('Invalid timeout resolution options.');
   }
 
-  if (!options.env || typeof options.env !== 'object') {
+  if (!options.env || typeof options.env !== 'object' || Array.isArray(options.env)) {
     throw new Error('Invalid timeout env options.');
   }
 
-  if (!options.cli || typeof options.cli !== 'object') {
+  if (!options.cli || typeof options.cli !== 'object' || Array.isArray(options.cli)) {
     throw new Error('Invalid timeout cli options.');
   }
 }
