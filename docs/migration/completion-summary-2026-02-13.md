@@ -205,6 +205,8 @@ Workflow hardening applied:
 - shared timeout parser helper coverage now includes missing/array env-resolution options rejection, locking top-level helper input contract semantics
 - shared timeout parser now rejects non-string raw timeout values before string normalization, preventing helper misuse from causing implicit type coercion or property-access failures
 - shared timeout parser helper coverage now includes non-string raw timeout rejection in direct and composed resolution paths, locking timeout raw-value input contract semantics
+- shared timeout parser now normalizes error-value rendering with safe string conversion, preventing Symbol/raw non-string helper inputs from throwing unexpected formatting TypeErrors during validation error construction
+- shared timeout parser helper coverage now includes Symbol-based invalid option-name/default/raw-value rejection paths, locking robust error-reporting behavior for non-string invalid inputs
 - shared timeout precedence helper now validates composed options shape (`env`/`cli` objects) and emits explicit contract errors for missing option objects, preventing opaque property-access failures when wrappers misconfigure helper inputs
 - shared timeout precedence helper coverage now includes missing `env`/`cli` option-object rejection, locking composed timeout-resolution input contract semantics
 - shared timeout precedence helper coverage now also includes missing top-level options and non-object `env`/`cli` option rejection, locking full options-shape contract semantics at helper entrypoint boundaries

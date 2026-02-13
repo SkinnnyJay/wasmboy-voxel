@@ -44,6 +44,18 @@ test('resolveStrictPositiveIntegerEnv rejects non-string option names', () => {
   );
 });
 
+test('resolveStrictPositiveIntegerEnv rejects symbol option names', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: Symbol('timeout'),
+        rawValue: undefined,
+        defaultValue: 120000,
+      }),
+    /Invalid timeout option name: Symbol\(timeout\)/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv rejects non-positive default values', () => {
   assert.throws(
     () =>
@@ -77,6 +89,18 @@ test('resolveStrictPositiveIntegerEnv rejects non-numeric default value types', 
         defaultValue: '120000',
       }),
     /Invalid default value for TEST_TIMEOUT: 120000/u,
+  );
+});
+
+test('resolveStrictPositiveIntegerEnv rejects symbol default value types', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: undefined,
+        defaultValue: Symbol('timeout-default'),
+      }),
+    /Invalid default value for TEST_TIMEOUT: Symbol\(timeout-default\)/u,
   );
 });
 
@@ -135,6 +159,18 @@ test('resolveStrictPositiveIntegerEnv rejects non-string raw values', () => {
         defaultValue: 120000,
       }),
     /Invalid TEST_TIMEOUT value: 5000/u,
+  );
+});
+
+test('resolveStrictPositiveIntegerEnv rejects symbol raw values', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: Symbol('timeout-raw'),
+        defaultValue: 120000,
+      }),
+    /Invalid TEST_TIMEOUT value: Symbol\(timeout-raw\)/u,
   );
 });
 

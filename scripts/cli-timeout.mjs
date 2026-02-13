@@ -1,6 +1,17 @@
 const MAX_TIMEOUT_MS = 2_147_483_647;
 
 /**
+ * @param {unknown} value
+ */
+function formatErrorValue(value) {
+  try {
+    return String(value);
+  } catch {
+    return '[unprintable]';
+  }
+}
+
+/**
  * @param {{name: string; rawValue: string | undefined; defaultValue: number}} options
  */
 function assertValidTimeoutEnvOptions(options) {
@@ -14,7 +25,7 @@ function assertValidTimeoutEnvOptions(options) {
  */
 function assertValidOptionName(name) {
   if (typeof name !== 'string' || name.trim().length === 0) {
-    throw new Error(`Invalid timeout option name: ${name}`);
+    throw new Error(`Invalid timeout option name: ${formatErrorValue(name)}`);
   }
 }
 
@@ -26,7 +37,7 @@ function assertValidDefaultValue(name, defaultValue) {
   assertValidOptionName(name);
 
   if (!Number.isFinite(defaultValue) || !Number.isSafeInteger(defaultValue) || defaultValue <= 0 || defaultValue > MAX_TIMEOUT_MS) {
-    throw new Error(`Invalid default value for ${name}: ${defaultValue}`);
+    throw new Error(`Invalid default value for ${name}: ${formatErrorValue(defaultValue)}`);
   }
 }
 
@@ -61,7 +72,7 @@ export function resolveStrictPositiveIntegerEnv(options) {
   assertValidDefaultValue(name, defaultValue);
 
   if (rawValue !== undefined && typeof rawValue !== 'string') {
-    throw new Error(`Invalid ${name} value: ${rawValue}`);
+    throw new Error(`Invalid ${name} value: ${formatErrorValue(rawValue)}`);
   }
 
   if (rawValue === undefined || rawValue.length === 0) {
@@ -70,16 +81,16 @@ export function resolveStrictPositiveIntegerEnv(options) {
 
   const normalizedTimeout = rawValue.trim();
   if (!/^\d+$/u.test(normalizedTimeout)) {
-    throw new Error(`Invalid ${name} value: ${rawValue}`);
+    throw new Error(`Invalid ${name} value: ${formatErrorValue(rawValue)}`);
   }
 
   const parsedTimeout = Number.parseInt(normalizedTimeout, 10);
   if (!Number.isFinite(parsedTimeout) || !Number.isSafeInteger(parsedTimeout) || parsedTimeout <= 0) {
-    throw new Error(`Invalid ${name} value: ${rawValue}`);
+    throw new Error(`Invalid ${name} value: ${formatErrorValue(rawValue)}`);
   }
 
   if (parsedTimeout > MAX_TIMEOUT_MS) {
-    throw new Error(`Invalid ${name} value: ${rawValue}`);
+    throw new Error(`Invalid ${name} value: ${formatErrorValue(rawValue)}`);
   }
 
   return parsedTimeout;
