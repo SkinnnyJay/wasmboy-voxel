@@ -343,3 +343,4 @@
 - 2026-02-13: Refactored shared `cli-arg-values` helper internals to centralize missing-value error creation, reducing repeated error-construction logic while preserving existing error text contracts and parser behavior.
 - 2026-02-13: Expanded `changeset-status-ci-lib` regression coverage with whitespace-padded warning suppression and passthrough blank-line preservation cases, locking output-format behavior for mixed warning/info streams.
 - 2026-02-13: Expanded `changeset-status-ci-lib` regression coverage with whitespace-variant warning deduplication and empty-output handling cases, locking normalization behavior for duplicate-heavy and sparse output streams.
+- 2026-02-13: Hardened shared `test-fixtures` helper with executable-name validation (reject empty and path-segment names) to prevent fake-bin escape paths; added focused unit coverage for invalid-name rejection.

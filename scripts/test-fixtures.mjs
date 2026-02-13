@@ -7,6 +7,10 @@ import path from 'node:path';
  * @param {string} body
  */
 export function writeFakeExecutable(tempDirectory, executableName, body) {
+  if (!executableName || path.basename(executableName) !== executableName) {
+    throw new Error(`Invalid executable name: ${executableName}`);
+  }
+
   const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
   fs.mkdirSync(fakeBinDirectory, { recursive: true });
   const executablePath = path.join(fakeBinDirectory, executableName);

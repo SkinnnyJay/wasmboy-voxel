@@ -27,3 +27,35 @@ echo 'fixture command executed'
   assert.equal(result.status, 0);
   assert.match(result.stdout, /fixture command executed/u);
 });
+
+test('writeFakeExecutable rejects empty executable names', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-empty-name-'));
+
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        tempDirectory,
+        '',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid executable name:/u,
+  );
+});
+
+test('writeFakeExecutable rejects executable names with path segments', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-path-name-'));
+
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        tempDirectory,
+        '../fixture-cmd',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid executable name: \.\.\/fixture-cmd/u,
+  );
+});
