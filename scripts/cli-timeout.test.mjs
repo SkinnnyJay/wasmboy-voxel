@@ -34,6 +34,18 @@ test('resolveStrictPositiveIntegerEnv rejects non-numeric suffix values', () => 
   );
 });
 
+test('resolveStrictPositiveIntegerEnv rejects whitespace-only values', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: '   ',
+        defaultValue: 120000,
+      }),
+    /Invalid TEST_TIMEOUT value:\s+/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv rejects zero values', () => {
   assert.throws(
     () =>
