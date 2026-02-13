@@ -34,3 +34,10 @@ build/
 node_modules
 /build
 /*.log
+
+*.gb
+*.gbc
+*.sav
+*.rtc
+*.sym
+*.sn1
