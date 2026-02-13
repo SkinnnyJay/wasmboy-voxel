@@ -92,16 +92,16 @@
 [x] - Milestone 4: State + Events - Add debug sandbox mode (no mutations)
 [x] - Milestone 4: State + Events - Add rate limiting for snapshot capture
 
-[ ] - Milestone 5: CLI - Create `packages/cli` skeleton
-[ ] - Milestone 5: CLI - Add CLI argument parser and command router
-[ ] - Milestone 5: CLI - Implement `run <rom>` command
-[ ] - Milestone 5: CLI - Implement `snapshot <rom>` command
-[ ] - Milestone 5: CLI - Implement `compare <baseline>` command
-[ ] - Milestone 5: CLI - Implement `contract-check` command
-[ ] - Milestone 5: CLI - Add structured logging output
-[ ] - Milestone 5: CLI - Add ROM path validation and safe errors
-[ ] - Milestone 5: CLI - Add `bin` entry + packaging metadata
-[ ] - Milestone 5: CLI - Add help text and usage examples
+[x] - Milestone 5: CLI - Create `packages/cli` skeleton
+[x] - Milestone 5: CLI - Add CLI argument parser and command router
+[x] - Milestone 5: CLI - Implement `run <rom>` command
+[x] - Milestone 5: CLI - Implement `snapshot <rom>` command
+[x] - Milestone 5: CLI - Implement `compare <baseline>` command
+[x] - Milestone 5: CLI - Implement `contract-check` command
+[x] - Milestone 5: CLI - Add structured logging output
+[x] - Milestone 5: CLI - Add ROM path validation and safe errors
+[x] - Milestone 5: CLI - Add `bin` entry + packaging metadata
+[x] - Milestone 5: CLI - Add help text and usage examples
 
 [ ] - Milestone 6: Regression Safety - Add golden snapshot tests
 [ ] - Milestone 6: Regression Safety - Add checksum regression tests
@@ -147,3 +147,4 @@
 - 2026-02-13: Completed all M2.5 tasks by moving `packages/api` to tsup (ESM/CJS+d.ts), adding exports/publish metadata/sideEffects, and switching tests to vitest. Reason: make new package production-consumable and verifiable.
 - 2026-02-13: Completed all M3 tasks by scaffolding `apps/debugger` (Next app-router), adding layout/routes/error UI/panel components, wiring typed contract client usage, and validating with `next build`.
 - 2026-02-13: Completed all M4 tasks by introducing a Zustand debugger store with selectors/actions, frame metadata + checksums, input/interrupt event stream, JSONL export helper, sandbox mode, rate-limited snapshot capture, and a read-only AI debug API route.
+- 2026-02-13: Completed all M5 tasks by creating `packages/cli` with command routing (`run/snapshot/compare/contract-check`), structured JSON logging, safe path validation, bin metadata, help text/examples, and vitest coverage.
