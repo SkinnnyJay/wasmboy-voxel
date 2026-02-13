@@ -145,6 +145,7 @@ Workflow hardening applied:
 - diagnostics timeout regression fixtures now use a shared delayed-fake-tar helper in automation tests, reducing fixture duplication while preserving timeout-path behavior and assertions
 - changeset timeout regression fixtures now use shared helper builders for delayed/no-bump fake changeset commands, reducing fixture duplication while preserving timeout and success-path behavior
 - timeout-override precedence coverage now includes empty-env fallback permutations where CLI timeout overrides still enforce configured timeout behavior (`... --timeout-ms 50` with empty timeout env) for both wrappers
+- timeout-override coverage now includes leading-zero CLI timeout permutations (`00050`) in split and inline forms for both wrappers, preserving numeric parsing semantics while enforcing configured timeout behavior
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity
