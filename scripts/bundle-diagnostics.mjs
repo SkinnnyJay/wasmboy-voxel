@@ -70,6 +70,9 @@ function parseArgs(argv) {
         throw new Error(`Duplicate ${OUTPUT_FLAG} argument provided.`);
       }
       const value = token.slice(`${OUTPUT_FLAG}=`.length);
+      if (value.startsWith('=')) {
+        throw new Error(`Malformed inline value for ${OUTPUT_FLAG} argument.`);
+      }
       validateRequiredArgumentValue(value, {
         flagName: OUTPUT_FLAG,
         knownArgs: KNOWN_ARGS,
@@ -82,6 +85,9 @@ function parseArgs(argv) {
 
     if (token.startsWith(`${PATTERN_FLAG}=`)) {
       const value = token.slice(`${PATTERN_FLAG}=`.length);
+      if (value.startsWith('=')) {
+        throw new Error(`Malformed inline value for ${PATTERN_FLAG} argument.`);
+      }
       validateRequiredArgumentValue(value, {
         flagName: PATTERN_FLAG,
         knownArgs: KNOWN_ARGS,
@@ -113,6 +119,9 @@ function parseArgs(argv) {
         throw new Error(`Duplicate ${CLI_TIMEOUT_FLAG} argument provided.`);
       }
       const value = token.slice(`${CLI_TIMEOUT_FLAG}=`.length);
+      if (value.startsWith('=')) {
+        throw new Error(`Malformed inline value for ${CLI_TIMEOUT_FLAG} argument.`);
+      }
       validateRequiredArgumentValue(value, {
         flagName: CLI_TIMEOUT_FLAG,
         knownArgs: KNOWN_ARGS,

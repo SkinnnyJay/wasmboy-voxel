@@ -452,3 +452,4 @@
 - 2026-02-13: Expanded timeout raw-value overflow coverage with max-safe-integer overflow string rejection (`9007199254740992`) across direct env parsing and composed env/cli precedence paths, locking overflow guard semantics beyond ceiling-only checks.
 - 2026-02-13: Expanded composed timeout precedence coverage with plus-prefixed raw-timeout rejection (`+5000`, `+50`) for env and CLI override paths, locking strict digit-only semantics in override resolution.
 - 2026-02-13: Expanded timeout Unicode-whitespace coverage by asserting trim behavior for padded numeric values and rejection behavior for Unicode-whitespace-only values across direct and composed env/cli timeout resolution helpers.
+- 2026-02-13: Hardened `bundle-diagnostics` equals-form argument parsing by rejecting malformed double-equals inline values for `--output`, `--pattern`, and `--tar-timeout-ms`, with dedicated parse-failure regression coverage and usage guidance assertions.

@@ -597,6 +597,19 @@ test('bundle-diagnostics rejects empty inline timeout values', () => {
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics rejects malformed inline timeout values with double equals', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-malformed-timeout-inline-double-equals-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms==50',
+  ]);
+  assert.match(output, /Malformed inline value for --tar-timeout-ms argument/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects help long-flag token as inline timeout value', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-timeout-inline-help-long-token-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, [
@@ -1034,6 +1047,13 @@ test('bundle-diagnostics requires a value for equals-form output flag', () => {
   assert.match(output, /Missing value for --output argument/u);
 });
 
+test('bundle-diagnostics rejects malformed equals-form output values with double equals', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-malformed-output-inline-double-equals-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output==artifacts/out.tar.gz', '--pattern=logs/*.log']);
+  assert.match(output, /Malformed inline value for --output argument/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects whitespace-only equals-form output flag value', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-whitespace-output-inline-value-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output=   ', '--pattern=logs/*.log']);
@@ -1222,6 +1242,13 @@ test('bundle-diagnostics requires a value for equals-form pattern flag', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-missing-pattern-inline-value-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output=artifacts/out.tar.gz', '--pattern=']);
   assert.match(output, /Missing value for --pattern argument/u);
+});
+
+test('bundle-diagnostics rejects malformed equals-form pattern values with double equals', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-malformed-pattern-inline-double-equals-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output=artifacts/out.tar.gz', '--pattern==logs/*.log']);
+  assert.match(output, /Malformed inline value for --pattern argument/u);
+  assert.match(output, /Usage:/u);
 });
 
 test('bundle-diagnostics rejects help long-flag token as equals-form pattern value', () => {
