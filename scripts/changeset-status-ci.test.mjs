@@ -51,6 +51,33 @@ exit 0
   assert.match(result.stdout, /🦋  info NO packages to be bumped at patch/u);
 });
 
+test('changeset-status-ci sorts suppressed warnings and preserves non-workspace warnings', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-sort-'));
+  const cliWarning = 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "1.2.3" vs "file:../api"';
+  const debuggerWarning =
+    'Package "@wasmboy/debugger-app" must depend on the current version of "@wasmboy/api": "1.2.3" vs "file:../../packages/api"';
+  const nonWorkspaceWarning = 'Package "@external/consumer" must depend on the current version of "@wasmboy/api": "1.2.3" vs "file:../api"';
+  const fakeBinDirectory = writeFakeChangeset(
+    tempDirectory,
+    `#!/usr/bin/env bash
+echo '${cliWarning}'
+echo '${nonWorkspaceWarning}'
+echo '${debuggerWarning}'
+exit 0
+`,
+  );
+
+  const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`);
+  const cliWarningIndex = result.stdout.indexOf(`- ${cliWarning}`);
+  const debuggerWarningIndex = result.stdout.indexOf(`- ${debuggerWarning}`);
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Suppressed 2 expected workspace file-dependency notices/u);
+  assert.ok(cliWarningIndex >= 0 && debuggerWarningIndex >= 0, 'suppressed warning lines should be printed');
+  assert.ok(cliWarningIndex < debuggerWarningIndex, 'suppressed warning lines should be printed in lexicographic order');
+  assert.match(result.stdout, new RegExp(nonWorkspaceWarning.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&'), 'u'));
+});
+
 test('changeset-status-ci preserves non-zero changeset exit code', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-fail-'));
   const fakeBinDirectory = writeFakeChangeset(

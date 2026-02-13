@@ -208,6 +208,7 @@
 - 2026-02-13: Generalized `changeset:status:ci` suppression matching to support future `@wasmboy/*` workspace package names and non-`0.0.0` expected versions while still only filtering `file:`-based notices.
 - 2026-02-13: Added direct automation tests for `changeset-status-ci.mjs` wrapper behavior, covering filtered output reporting, non-zero exit pass-through, and missing-command error handling.
 - 2026-02-13: Stabilized `changeset:status:ci` warning reporting by sorting suppressed warnings lexicographically, plus added deterministic-order assertions in library tests.
+- 2026-02-13: Expanded changeset warning filter/wrapper coverage to ensure non-`@wasmboy/*` `file:` warnings are never suppressed while suppressed workspace warnings remain deterministically ordered in wrapper output.
 - 2026-02-13: Added diagnostics bundler negative-path tests for required CLI arguments (`--output`, `--pattern`), strengthening guardrail coverage for automation script misuse.
 - 2026-02-13: Expanded diagnostics bundler negative-path automation coverage for unknown flags and missing flag values, hardening script argument-validation guarantees.
 - 2026-02-13: Expanded diagnostics bundler negative-path coverage for missing `--output` and `--message` flag values to lock down strict argument parsing semantics.

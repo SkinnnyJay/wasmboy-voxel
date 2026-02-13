@@ -36,6 +36,16 @@ test('filterChangesetStatusOutput keeps non-file dependency warnings', () => {
   assert.equal(result.passthroughOutput, input);
 });
 
+test('filterChangesetStatusOutput keeps non-wasmboy file dependency warnings', () => {
+  const nonWorkspaceWarning = 'Package "@external/consumer" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api"';
+  const input = [nonWorkspaceWarning, '🦋  info NO packages to be bumped at patch'].join('\n');
+
+  const result = filterChangesetStatusOutput(input);
+
+  assert.deepEqual(result.suppressedWarnings, []);
+  assert.equal(result.passthroughOutput, input);
+});
+
 test('filterChangesetStatusOutput returns suppressed warnings in deterministic order', () => {
   const cliWarning = 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api"';
   const debuggerWarning =
