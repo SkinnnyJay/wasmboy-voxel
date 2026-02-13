@@ -234,6 +234,7 @@
 - 2026-02-13: Extended diagnostics value guards to reject short-flag-like tokens (e.g. `-x`) for `--output` / `--pattern`, with regression coverage to prevent accidental option-token capture in path-value slots.
 - 2026-02-13: Added wrapper-level regression coverage for empty-string timeout env behavior in both helpers, verifying default-timeout fallback semantics at CLI boundaries.
 - 2026-02-13: Added equals-form argument support for diagnostics helper (`--output=`, `--pattern=`, `--message=`), with regression coverage for valid equals flows and empty inline-value guardrails.
+- 2026-02-13: Added mixed split/equals duplicate-flag regression coverage (`--output`, `--message`) to ensure duplicate detection semantics remain consistent across argument styles.
 - 2026-02-13: Refactored `changeset:status:ci` filtering into a reusable module and added automation tests for warning suppression/dedup behavior, improving confidence in CI log-sanitization correctness.
 - 2026-02-13: Generalized `changeset:status:ci` suppression matching to support future `@wasmboy/*` workspace package names and non-`0.0.0` expected versions while still only filtering `file:`-based notices.
 - 2026-02-13: Added direct automation tests for `changeset-status-ci.mjs` wrapper behavior, covering filtered output reporting, non-zero exit pass-through, and missing-command error handling.

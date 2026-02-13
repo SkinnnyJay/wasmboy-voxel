@@ -129,6 +129,7 @@ Workflow hardening applied:
 - bundle parser now rejects short-flag-like tokens (e.g. `-x`) in `--output` / `--pattern` value positions to reduce accidental option-token capture
 - wrapper-level timeout coverage now includes empty-string env behavior for both helpers, confirming default-timeout fallback semantics remain stable at CLI entrypoints
 - bundle helper now supports equals-form long options (`--output=...`, `--pattern=...`, `--message=...`) with dedicated empty-value validation coverage
+- diagnostics helper regression coverage now includes mixed split/equals duplicate detection for `--output` and `--message` to keep duplicate-flag semantics stable across syntax styles
 - automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)
 - changeset status warning filter now tolerates version bumps by suppressing only `file:` workspace warnings from `@wasmboy/*` packages against `@wasmboy/api`
 - suppressed changeset workspace warnings are now lexicographically sorted before reporting for deterministic CI log output
