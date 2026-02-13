@@ -43,6 +43,7 @@ Workflow hardening applied:
 - deterministic lockfile install command (`npm run install:stack:ci`) now used across all workflows
 - CI install command uses `--ignore-scripts` to avoid redundant prepare builds during dependency bootstrap
 - setup-node cache dependency paths include all workspace lockfiles for stable multi-package npm cache keys
+- release workflow now also caches Next.js build artifacts for debugger app builds
 
 ## Security posture at completion
 

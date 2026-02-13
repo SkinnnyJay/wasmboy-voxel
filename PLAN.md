@@ -180,3 +180,4 @@
 - 2026-02-13: Improved workflow cache determinism by configuring `setup-node` cache dependency paths with all workspace lockfiles across CI, contract, nightly, and release pipelines.
 - 2026-02-13: Migrated all workflows from install to lockfile-driven `install:stack:ci` for deterministic dependency resolution while preserving existing build/test behavior.
 - 2026-02-13: Optimized CI dependency bootstrap by running lockfile installs with `--ignore-scripts`, removing redundant prepare-time builds while keeping explicit quality/build stages authoritative.
+- 2026-02-13: Added Next.js cache step to release workflow to speed repeated debugger app builds during release validations.

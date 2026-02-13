@@ -34,6 +34,15 @@ jobs:
             packages/cli/package-lock.json
             apps/debugger/package-lock.json
 
+      - name: Cache Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            apps/debugger/.next/cache
+          key: ${{ runner.os }}-next-release-cache-${{ hashFiles('apps/debugger/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-next-release-cache-
+
       - name: Install workspace dependencies
         run: npm run install:stack:ci
 
