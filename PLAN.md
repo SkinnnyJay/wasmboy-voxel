@@ -342,3 +342,4 @@
 - 2026-02-13: Expanded shared `resolveTimeoutFromCliAndEnv` helper unit coverage with empty-env+CLI override resolution, whitespace-padded max-int CLI override acceptance, and whitespace-only CLI rejection with valid env fallback, further locking timeout-precedence semantics used by both wrappers.
 - 2026-02-13: Refactored shared `cli-arg-values` helper internals to centralize missing-value error creation, reducing repeated error-construction logic while preserving existing error text contracts and parser behavior.
 - 2026-02-13: Expanded `changeset-status-ci-lib` regression coverage with whitespace-padded warning suppression and passthrough blank-line preservation cases, locking output-format behavior for mixed warning/info streams.
+- 2026-02-13: Expanded `changeset-status-ci-lib` regression coverage with whitespace-variant warning deduplication and empty-output handling cases, locking normalization behavior for duplicate-heavy and sparse output streams.

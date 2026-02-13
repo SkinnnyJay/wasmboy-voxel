@@ -89,3 +89,22 @@ test('filterChangesetStatusOutput preserves internal blank lines in passthrough 
   assert.deepEqual(result.suppressedWarnings, [workspaceWarning]);
   assert.equal(result.passthroughOutput, ['🦋  info header', '', '🦋  info footer'].join('\n'));
 });
+
+test('filterChangesetStatusOutput de-duplicates warnings across whitespace variants', () => {
+  const workspaceWarning = 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api"';
+  const input = [` ${workspaceWarning}`, workspaceWarning, `${workspaceWarning}   `, '🦋  info NO packages to be bumped at patch'].join(
+    '\n',
+  );
+
+  const result = filterChangesetStatusOutput(input);
+
+  assert.deepEqual(result.suppressedWarnings, [workspaceWarning]);
+  assert.equal(result.passthroughOutput, '🦋  info NO packages to be bumped at patch');
+});
+
+test('filterChangesetStatusOutput handles empty output', () => {
+  const result = filterChangesetStatusOutput('');
+
+  assert.deepEqual(result.suppressedWarnings, []);
+  assert.equal(result.passthroughOutput, '');
+});
