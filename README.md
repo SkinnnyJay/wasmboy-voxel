@@ -370,6 +370,9 @@ npm run audit:check
 # Check GitHub workflow formatting locally
 npm run workflow:lint
 
+# Run all automation formatting checks (workflow + scripts)
+npm run workflow:check
+
 # Auto-format GitHub workflow files
 npm run workflow:format
 

@@ -194,6 +194,7 @@
 - 2026-02-13: Added `workflow:lint` and wired it into `test:all:nobuild` so GitHub Actions YAML formatting is validated as part of the standard quality gate.
 - 2026-02-13: Added `workflow:format` helper command for local auto-fix of workflow YAML formatting, complementing required `workflow:lint` checks.
 - 2026-02-13: Added `scripts:lint`/`scripts:format` for automation helpers and wired `scripts:lint` into `test:all:nobuild` to keep CI helper scripts formatting-gated alongside workflows.
+- 2026-02-13: Added `workflow:check` to compose workflow/script format checks and reused it in `test:all:nobuild` + `contract:ci`, reducing duplicated script chains while preserving gate coverage.
 - 2026-02-13: Added failure-diagnostics artifact uploads (quality logs + generated screenshots) to CI and nightly workflows to improve regression triage speed when quality gates fail.
 - 2026-02-13: Extended failure-diagnostics artifact support to contract and release workflows by teeing gate logs and uploading them on failure for consistent cross-pipeline observability.
 - 2026-02-13: Expanded release failure artifact payloads to include generated core/headless screenshots from verification failures, aligning triage depth with CI/nightly diagnostics.
