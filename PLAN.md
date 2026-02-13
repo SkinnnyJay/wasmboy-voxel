@@ -217,6 +217,7 @@
 - 2026-02-13: Expanded bundle CLI regression assertions so missing/unknown argument failures must include usage text, preserving operator guidance quality in error output.
 - 2026-02-13: Tightened diagnostics helper CLI semantics by rejecting mixed help + operational argument combinations, reducing ambiguous invocation modes.
 - 2026-02-13: Added regression coverage ensuring `changeset-status-ci` rejects unknown arguments even when mixed with help flags, aligning strict invocation guarantees across both automation helpers.
+- 2026-02-13: Expanded `changeset-status-ci` timeout-suffix regression assertions to require usage-text output for timeout-config failures, preserving operator guidance guarantees.
 - 2026-02-13: Extracted shared strict timeout env parsing into `scripts/cli-timeout.mjs` and wired both automation wrappers to it, with dedicated helper unit coverage to reduce duplicated parsing logic.
 - 2026-02-13: Added timeout upper-bound validation (`<= 2147483647ms`) in shared timeout parsing helper, with regression coverage to prevent out-of-range process timeout configuration.
 - 2026-02-13: Expanded shared timeout helper coverage to reject whitespace-only env values, ensuring invalid CI timeout config is surfaced explicitly.
@@ -224,6 +225,7 @@
 - 2026-02-13: Updated README helper usage examples to explicitly document timeout env bounds (`1..2147483647`) for both automation wrappers.
 - 2026-02-13: Refined diagnostics argument parsing so values starting with `--` are accepted when valid (e.g. custom message text) while true flag-missing cases still fail reliably.
 - 2026-02-13: Tightened diagnostics value parsing for `--output` / `--pattern` so unknown long-flag tokens are treated as missing values (while `--message` still allows dash-prefixed content), reducing accidental argument-swallowing risk.
+- 2026-02-13: Expanded diagnostics parser regression coverage around dash-prefixed tokens to explicitly lock intended boundary behavior (accepted for message payloads, rejected for path-value positions).
 - 2026-02-13: Refactored `changeset:status:ci` filtering into a reusable module and added automation tests for warning suppression/dedup behavior, improving confidence in CI log-sanitization correctness.
 - 2026-02-13: Generalized `changeset:status:ci` suppression matching to support future `@wasmboy/*` workspace package names and non-`0.0.0` expected versions while still only filtering `file:`-based notices.
 - 2026-02-13: Added direct automation tests for `changeset-status-ci.mjs` wrapper behavior, covering filtered output reporting, non-zero exit pass-through, and missing-command error handling.

@@ -165,6 +165,7 @@ test('changeset-status-ci rejects timeout values with non-numeric suffixes', () 
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Invalid CHANGESET_STATUS_CI_TIMEOUT_MS value/u);
+  assert.match(result.stderr, /Usage:/u);
 });
 
 test('changeset-status-ci reports timeout errors with configured value', () => {

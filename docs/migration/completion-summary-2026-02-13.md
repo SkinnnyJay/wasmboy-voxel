@@ -117,8 +117,10 @@ Workflow hardening applied:
 - automation tests now also assert usage-text presence for key bundle argument/config failures, protecting CLI guidance output in error paths
 - diagnostics helper now rejects mixed help + operational arguments to keep CLI intent explicit and avoid ambiguous invocation behavior
 - changeset helper now also has regression coverage for `--help` mixed with unknown arguments, preserving strict invocation semantics across both wrappers
+- changeset timeout-suffix failure tests now assert usage-text output, locking guidance quality for timeout-config error paths
 - diagnostics helper argument parsing now allows dash-prefixed message values (e.g. `--message "--custom note"`) while still treating known flags as missing-value sentinels
 - diagnostics helper now treats unknown long-flag tokens as missing-value errors for `--output` / `--pattern`, preventing accidental flag-token capture as path values
+- bundle argument parsing now tests both accepted dash-prefixed message payloads and rejected long-flag token capture for path-oriented args, documenting the intended parsing boundary
 - automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)
 - changeset status warning filter now tolerates version bumps by suppressing only `file:` workspace warnings from `@wasmboy/*` packages against `@wasmboy/api`
 - suppressed changeset workspace warnings are now lexicographically sorted before reporting for deterministic CI log output
