@@ -28,9 +28,19 @@ Options:
 Environment:
   ${TAR_TIMEOUT_ENV_VARIABLE}=<ms>  tar timeout in milliseconds (default: ${DEFAULT_TAR_TIMEOUT_MS})`;
 
-function readRequiredValue(argv, index, flagName) {
+/**
+ * @param {string[]} argv
+ * @param {number} index
+ * @param {string} flagName
+ * @param {{allowDoubleDashValue: boolean}} options
+ */
+function readRequiredValue(argv, index, flagName, options) {
   const value = argv[index + 1];
   if (!value || KNOWN_ARGS.has(value)) {
+    throw new Error(`Missing value for ${flagName} argument.`);
+  }
+
+  if (!options.allowDoubleDashValue && value.startsWith('--')) {
     throw new Error(`Missing value for ${flagName} argument.`);
   }
 
@@ -60,14 +70,14 @@ function parseArgs(argv) {
       if (outputConfigured) {
         throw new Error('Duplicate --output argument provided.');
       }
-      parsed.output = readRequiredValue(argv, i, '--output');
+      parsed.output = readRequiredValue(argv, i, '--output', { allowDoubleDashValue: false });
       outputConfigured = true;
       i += 1;
       continue;
     }
 
     if (token === '--pattern') {
-      parsed.patterns.push(readRequiredValue(argv, i, '--pattern'));
+      parsed.patterns.push(readRequiredValue(argv, i, '--pattern', { allowDoubleDashValue: false }));
       i += 1;
       continue;
     }
@@ -76,7 +86,7 @@ function parseArgs(argv) {
       if (messageConfigured) {
         throw new Error('Duplicate --message argument provided.');
       }
-      parsed.message = readRequiredValue(argv, i, '--message');
+      parsed.message = readRequiredValue(argv, i, '--message', { allowDoubleDashValue: true });
       messageConfigured = true;
       i += 1;
       continue;

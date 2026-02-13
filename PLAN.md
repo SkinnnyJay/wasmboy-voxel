@@ -223,6 +223,7 @@
 - 2026-02-13: Added shared timeout helper coverage for empty-string env values to confirm default-timeout fallback semantics remain stable.
 - 2026-02-13: Updated README helper usage examples to explicitly document timeout env bounds (`1..2147483647`) for both automation wrappers.
 - 2026-02-13: Refined diagnostics argument parsing so values starting with `--` are accepted when valid (e.g. custom message text) while true flag-missing cases still fail reliably.
+- 2026-02-13: Tightened diagnostics value parsing for `--output` / `--pattern` so unknown long-flag tokens are treated as missing values (while `--message` still allows dash-prefixed content), reducing accidental argument-swallowing risk.
 - 2026-02-13: Refactored `changeset:status:ci` filtering into a reusable module and added automation tests for warning suppression/dedup behavior, improving confidence in CI log-sanitization correctness.
 - 2026-02-13: Generalized `changeset:status:ci` suppression matching to support future `@wasmboy/*` workspace package names and non-`0.0.0` expected versions while still only filtering `file:`-based notices.
 - 2026-02-13: Added direct automation tests for `changeset-status-ci.mjs` wrapper behavior, covering filtered output reporting, non-zero exit pass-through, and missing-command error handling.
