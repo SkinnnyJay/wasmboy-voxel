@@ -35,3 +35,17 @@ test('filterChangesetStatusOutput keeps non-file dependency warnings', () => {
   assert.deepEqual(result.suppressedWarnings, []);
   assert.equal(result.passthroughOutput, input);
 });
+
+test('filterChangesetStatusOutput returns suppressed warnings in deterministic order', () => {
+  const cliWarning = 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api"';
+  const debuggerWarning =
+    'Package "@wasmboy/debugger-app" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../../packages/api"';
+  const input = [cliWarning, debuggerWarning].join('\n');
+
+  const result = filterChangesetStatusOutput(input);
+
+  assert.deepEqual(
+    result.suppressedWarnings,
+    [cliWarning, debuggerWarning].sort((left, right) => left.localeCompare(right)),
+  );
+});

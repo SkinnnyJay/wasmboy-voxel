@@ -20,7 +20,7 @@ export function filterChangesetStatusOutput(rawOutput) {
   }
 
   return {
-    suppressedWarnings: [...suppressedWarnings],
+    suppressedWarnings: [...suppressedWarnings].sort((left, right) => left.localeCompare(right)),
     passthroughOutput: passthroughLines.join('\n').trimEnd(),
   };
 }

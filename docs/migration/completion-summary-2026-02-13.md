@@ -99,6 +99,7 @@ Workflow hardening applied:
 - diagnostics archive file collection now sorts matches lexicographically for deterministic artifact structure across runs
 - automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)
 - changeset status warning filter now tolerates version bumps by suppressing only `file:` workspace warnings from `@wasmboy/*` packages against `@wasmboy/api`
+- suppressed changeset workspace warnings are now lexicographically sorted before reporting for deterministic CI log output
 - automation coverage now includes `changeset-status-ci.mjs` wrapper behavior (filtered output passthrough, exit-code passthrough, and missing-command failure handling)
 - automation coverage also validates diagnostics bundle CLI argument guards (missing `--output` and missing `--pattern`)
 - automation coverage also validates diagnostics bundle argument parsing errors (unknown flags and missing flag values)
