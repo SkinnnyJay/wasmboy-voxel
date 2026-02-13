@@ -4,6 +4,18 @@ on:
   workflow_dispatch:
   push:
     branches: ['master']
+    paths:
+      - '.changeset/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'core/**'
+      - 'lib/**'
+      - 'packages/**'
+      - 'contracts/**'
+      - 'index.ts'
+      - 'voxel-wrapper.ts'
+      - 'fork-api-spec.ts'
+      - '.github/workflows/release.yml'
 
 permissions:
   contents: write
