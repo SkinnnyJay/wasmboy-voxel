@@ -296,7 +296,7 @@ are extended hardening work (dependency audit + PyBoy-rigor add-ons).
 [x] - Phase 8: Tooling - Add CI workflow for lint/typecheck/tests
 [x] - Phase 8: Tooling - Add build caching for workspace tasks
 [x] - Phase 8: Tooling - Add release automation (changesets)
-[ ] - Phase 8: Tooling - Audit and replace vulnerable/deprecated packages (ongoing; see `docs/migration/dependency-audit-2026-02-13.md`)
+[x] - Phase 8: Tooling - Audit and replace vulnerable/deprecated packages (see `docs/migration/dependency-audit-2026-02-13.md`)
 
 [x] - Phase 9: Documentation - Update `MIGRATE_TO_TYPESCRIPT.md` progress links
 [x] - Phase 9: Documentation - Add `packages/api` usage guide

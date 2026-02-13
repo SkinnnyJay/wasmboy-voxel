@@ -62,3 +62,12 @@ Current `npm audit --omit=optional` result:
 Remaining advisories are still tied to legacy webpack-era minification tooling
 (`uglifyjs-webpack-plugin`/`cacache`/`serialize-javascript` chain), which
 requires a larger toolchain migration to eliminate cleanly.
+
+## Final follow-up (toolchain cleanup)
+
+- Removed unused `uglifyjs-webpack-plugin` from root devDependencies.
+- Reinstalled lockfile and reran full workspace + integration + core suites.
+
+Final `npm audit --omit=optional` result:
+
+- **0 vulnerabilities**
