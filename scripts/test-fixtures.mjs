@@ -9,6 +9,7 @@ import path from 'node:path';
 export function writeFakeExecutable(tempDirectory, executableName, body) {
   if (
     !executableName ||
+    /\s/u.test(executableName) ||
     executableName === '.' ||
     executableName === '..' ||
     /[\\/]/u.test(executableName) ||

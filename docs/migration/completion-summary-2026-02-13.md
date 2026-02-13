@@ -158,6 +158,7 @@ Workflow hardening applied:
 - shared fake-executable fixture helper now rejects empty/path-segment executable names, hardening fixture path safety and preventing fake-bin escape via invalid command identifiers
 - shared fake-executable fixture helper now also rejects backslash-separated names, enforcing cross-platform separator safety for fixture command identifiers
 - shared fake-executable fixture helper now also rejects dot-segment names (`.` / `..`), preventing invalid directory-like executable identifiers in fake-bin setup
+- shared fake-executable fixture helper now rejects whitespace-containing executable names, hardening fixture command identifier safety against ambiguous shell-token names
 - `changeset-status-ci` output-filter helper coverage now includes whitespace-padded warning suppression and passthrough internal-blank-line preservation, locking output-formatting behavior under mixed warning/info streams
 - `changeset-status-ci` output-filter helper coverage now also includes whitespace-variant warning deduplication and empty-output handling, locking normalization behavior for sparse and duplicate-heavy output streams
 - timeout argument-value validation now uses a shared helper module (`cli-arg-values`) across both wrappers, reducing parser duplication while preserving split/equals token-guard semantics

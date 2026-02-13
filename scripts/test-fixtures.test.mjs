@@ -44,6 +44,22 @@ echo 'should not run'
   );
 });
 
+test('writeFakeExecutable rejects whitespace-only executable names', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-whitespace-name-'));
+
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        tempDirectory,
+        '   ',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid executable name:/u,
+  );
+});
+
 test('writeFakeExecutable rejects executable names with path segments', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-path-name-'));
 
@@ -101,5 +117,21 @@ echo 'should not run'
 `,
       ),
     /Invalid executable name: \.\./u,
+  );
+});
+
+test('writeFakeExecutable rejects executable names containing spaces', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-space-name-'));
+
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        tempDirectory,
+        'fixture cmd',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid executable name: fixture cmd/u,
   );
 });
