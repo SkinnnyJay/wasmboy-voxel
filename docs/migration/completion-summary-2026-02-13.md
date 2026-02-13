@@ -50,6 +50,7 @@ CI and contract workflows now include:
 - trigger path lists aligned to existing repo files (removed stale `pnpm-workspace.yaml` references)
 - CI workflow path filters include `.github/workflows/*.yml` so workflow-only changes still get full quality-gate validation
 - workflow trigger paths include `scripts/**` where scripts are used by CI/contract/release gates (e.g. `changeset:status:ci`)
+- CI and nightly manual dispatch include `strict` input support to run no-retry full-gate verification on demand
 
 Release pipeline build uses:
 

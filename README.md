@@ -411,6 +411,7 @@ Workflow notes:
 
 - CI/contract/release pipelines use path filters and manual dispatch triggers for better signal-to-noise.
 - Quality-gate workflows upload diagnostic artifacts on failure (logs and key generated screenshots).
+- CI and nightly manual dispatch support a `strict` boolean input to run `ci:local:strict` (no retry wrappers).
 
 For local parity with CI, run:
 

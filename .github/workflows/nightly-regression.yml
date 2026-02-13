@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: '0 4 * * *'
   workflow_dispatch:
+    inputs:
+      strict:
+        description: 'Run strict no-retry quality gate variant'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -47,7 +53,13 @@ jobs:
         run: npm run install:stack:ci
 
       - name: Run full no-build quality suite
-        run: set -o pipefail && npm run ci:local 2>&1 | tee nightly-quality.log
+        run: |
+          set -o pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.strict }}" == "true" ]]; then
+            npm run ci:local:strict 2>&1 | tee nightly-quality.log
+          else
+            npm run ci:local 2>&1 | tee nightly-quality.log
+          fi
 
       - name: Compress diagnostics payload
         if: ${{ failure() || cancelled() }}
