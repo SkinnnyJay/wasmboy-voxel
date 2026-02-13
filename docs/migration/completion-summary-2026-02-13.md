@@ -320,6 +320,7 @@ Workflow hardening applied:
 - test-fixture helper coverage now explicitly asserts `bigint` rejection for temp-directory, executable-name, and executable-body inputs
 - timeout-helper coverage now explicitly asserts null/undefined direct option-name rejection for `resolveStrictPositiveIntegerEnv`
 - read-path parser-helper coverage now explicitly asserts undefined argument-index rejection in `readRequiredArgumentValue` validation paths
+- read-path parser-helper coverage now explicitly asserts `bigint` argument-index rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper coverage now explicitly asserts `NaN` argument-index rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper coverage now explicitly asserts `Infinity` argument-index rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper coverage now explicitly asserts `-Infinity` argument-index rejection in `readRequiredArgumentValue` validation paths
