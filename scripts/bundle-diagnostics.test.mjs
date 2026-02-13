@@ -1641,6 +1641,17 @@ test('bundle-diagnostics accepts max tar timeout environment value', () => {
   );
 });
 
+test('bundle-diagnostics accepts leading-zero tar timeout environment values', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-timeout-env-leading-zero-'));
+  const fakeBinDirectory = writeDelayedFakeTar(tempDirectory);
+
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log'], {
+    PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+    BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '00050',
+  });
+  assert.match(output, /tar timed out after 50ms/u);
+});
+
 test('bundle-diagnostics treats empty timeout env value as default', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-empty-timeout-env-'));
   runBundlerCommand(tempDirectory, ['--output', 'artifacts/empty-timeout.tar.gz', '--pattern', 'missing/*.log'], {

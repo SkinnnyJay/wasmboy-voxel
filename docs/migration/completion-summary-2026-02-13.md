@@ -148,6 +148,7 @@ Workflow hardening applied:
 - timeout-override coverage now includes leading-zero CLI timeout permutations (`00050`) in split and inline forms for both wrappers, preserving numeric parsing semantics while enforcing configured timeout behavior
 - timeout-override coverage now includes whitespace-padded timeout values (`' 50 '`) across environment and CLI override paths (split and inline) for both wrappers, preserving trimmed numeric parsing semantics while enforcing configured timeout behavior
 - timeout-override precedence coverage now includes invalid-env/valid-CLI failure-path assertions (split and inline forms) for both wrappers, preserving current env-first timeout resolution semantics
+- timeout-environment coverage now includes leading-zero acceptance (`00050`) for both wrappers, preserving trimmed numeric parsing semantics and timeout behavior for canonicalizable integer env inputs
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity
