@@ -291,6 +291,7 @@ Workflow hardening applied:
 - changeset status output-filter coverage now explicitly asserts `undefined` output rejection in addition to existing non-string/null/symbol/unprintable invalid-input checks
 - shared timeout precedence-helper coverage now explicitly asserts Symbol raw-timeout rejection for both composed env and CLI raw timeout inputs
 - shared timeout precedence-helper coverage now explicitly asserts unprintable raw-timeout rejection for both composed env and CLI raw timeout inputs, preserving `[unprintable]` error formatting semantics
+- shared test-fixture helper coverage now explicitly asserts `undefined` rejection for temp-directory, executable-name, and executable-body inputs
 
 ## Security posture at completion
 

@@ -48,6 +48,20 @@ echo 'should not run'
   );
 });
 
+test('writeFakeExecutable rejects undefined temp directories', () => {
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        undefined,
+        'fixture-cmd',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid temp directory: undefined/u,
+  );
+});
+
 test('writeFakeExecutable rejects null temp directories', () => {
   assert.throws(
     () =>
@@ -242,6 +256,22 @@ echo 'should not run'
   );
 });
 
+test('writeFakeExecutable rejects undefined executable names', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-undefined-name-'));
+
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        tempDirectory,
+        undefined,
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid executable name: undefined/u,
+  );
+});
+
 test('writeFakeExecutable rejects null executable names', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-null-name-'));
 
@@ -322,6 +352,12 @@ test('writeFakeExecutable rejects non-string executable bodies', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-non-string-body-'));
 
   assert.throws(() => writeFakeExecutable(tempDirectory, 'fixture-cmd', 42), /Invalid executable body for fixture-cmd/u);
+});
+
+test('writeFakeExecutable rejects undefined executable bodies', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-undefined-body-'));
+
+  assert.throws(() => writeFakeExecutable(tempDirectory, 'fixture-cmd', undefined), /Invalid executable body for fixture-cmd/u);
 });
 
 test('writeFakeExecutable rejects null executable bodies', () => {
