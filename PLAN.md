@@ -334,3 +334,4 @@
 - 2026-02-13: Expanded timeout-environment regression coverage with leading-zero acceptance cases (`00050`) across both wrappers, preserving trimmed numeric parsing semantics for canonicalizable integer env inputs.
 - 2026-02-13: Reduced delayed-timeout fixture defaults in automation tests from `0.2s` to `0.1s` for both wrapper harness helpers, preserving timeout assertions while improving automation runtime.
 - 2026-02-13: Expanded timeout-environment boundary regression coverage with whitespace-padded max-int acceptance cases (`' 2147483647 '`) across both wrappers, preserving trim semantics at the upper supported timeout boundary.
+- 2026-02-13: Refactored wrapper argument-value parsing internals to use a shared `cli-arg-values` helper (`validateRequiredArgumentValue` / `readRequiredArgumentValue`) across both wrappers, reducing duplicate parser logic while preserving existing token-guard semantics; added focused helper unit tests.

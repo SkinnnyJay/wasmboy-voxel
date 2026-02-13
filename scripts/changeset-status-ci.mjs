@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import { filterChangesetStatusOutput } from './changeset-status-ci-lib.mjs';
 import { resolveStrictPositiveIntegerEnv } from './cli-timeout.mjs';
+import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
 
 const DEFAULT_TIMEOUT_MS = 120000;
 const TIMEOUT_ENV_VARIABLE = 'CHANGESET_STATUS_CI_TIMEOUT_MS';
@@ -22,41 +23,6 @@ Options:
 
 Environment:
   ${TIMEOUT_ENV_VARIABLE}=<ms>  changeset timeout in milliseconds (default: ${DEFAULT_TIMEOUT_MS})`;
-
-/**
- * @param {string | undefined} value
- * @param {string} flagName
- * @param {{allowDoubleDashValue: boolean; allowWhitespaceOnly?: boolean}} options
- */
-function validateValue(value, flagName, options) {
-  if (!value || KNOWN_ARGS.has(value)) {
-    throw new Error(`Missing value for ${flagName} argument.`);
-  }
-
-  if (!options.allowWhitespaceOnly && value.trim().length === 0) {
-    throw new Error(`Missing value for ${flagName} argument.`);
-  }
-
-  if (!options.allowDoubleDashValue && value.startsWith('--')) {
-    throw new Error(`Missing value for ${flagName} argument.`);
-  }
-
-  if (/^-[a-zA-Z]$/u.test(value)) {
-    throw new Error(`Missing value for ${flagName} argument.`);
-  }
-}
-
-/**
- * @param {string[]} argv
- * @param {number} index
- * @param {string} flagName
- * @param {{allowDoubleDashValue: boolean; allowWhitespaceOnly?: boolean}} options
- */
-function readRequiredValue(argv, index, flagName, options) {
-  const value = argv[index + 1];
-  validateValue(value, flagName, options);
-  return value;
-}
 
 function parseArgs(argv) {
   /** @type {{showHelp: boolean; timeoutMsOverride: string}} */
@@ -81,7 +47,9 @@ function parseArgs(argv) {
         throw new Error(`Duplicate ${CLI_TIMEOUT_FLAG} argument provided.`);
       }
 
-      parsed.timeoutMsOverride = readRequiredValue(argv, i, CLI_TIMEOUT_FLAG, {
+      parsed.timeoutMsOverride = readRequiredArgumentValue(argv, i, {
+        flagName: CLI_TIMEOUT_FLAG,
+        knownArgs: KNOWN_ARGS,
         allowDoubleDashValue: false,
         allowWhitespaceOnly: true,
       });
@@ -96,7 +64,12 @@ function parseArgs(argv) {
       }
 
       const value = token.slice(`${CLI_TIMEOUT_FLAG}=`.length);
-      validateValue(value, CLI_TIMEOUT_FLAG, { allowDoubleDashValue: false, allowWhitespaceOnly: true });
+      validateRequiredArgumentValue(value, {
+        flagName: CLI_TIMEOUT_FLAG,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      });
 
       parsed.timeoutMsOverride = value;
       timeoutConfigured = true;

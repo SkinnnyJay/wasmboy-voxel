@@ -152,6 +152,8 @@ Workflow hardening applied:
 - timeout-environment boundary coverage now includes whitespace-padded max-int acceptance (`' 2147483647 '`) for both wrappers, preserving trim semantics at the upper supported timeout boundary
 - timeout fixture defaults in automation tests now use shorter delayed-command sleeps (`0.1s`), reducing automation runtime while preserving timeout-path behavior and assertions
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
+- timeout argument-value validation now uses a shared helper module (`cli-arg-values`) across both wrappers, reducing parser duplication while preserving split/equals token-guard semantics
+- shared argument-value helper now has focused unit coverage for missing/known-token/whitespace/flag-like value validation and required-following-token reads
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity
 - shared timeout parser tests now cover whitespace-only env values as invalid, preventing accidental silent coercion in CI configuration

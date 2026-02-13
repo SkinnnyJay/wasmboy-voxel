@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { resolveStrictPositiveIntegerEnv } from './cli-timeout.mjs';
+import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
 
 /**
  * Usage:
@@ -38,44 +39,6 @@ Options:
 Environment:
   ${TAR_TIMEOUT_ENV_VARIABLE}=<ms>  tar timeout in milliseconds (default: ${DEFAULT_TAR_TIMEOUT_MS})`;
 
-/**
- * @param {string[]} argv
- * @param {number} index
- * @param {string} flagName
- * @param {{allowDoubleDashValue: boolean; allowWhitespaceOnly?: boolean; allowedKnownValues?: Set<string>}} options
- */
-function readRequiredValue(argv, index, flagName, options) {
-  const value = argv[index + 1];
-  validateValue(value, flagName, options);
-  return value;
-}
-
-/**
- * @param {string | undefined} value
- * @param {string} flagName
- * @param {{allowDoubleDashValue: boolean; allowWhitespaceOnly?: boolean; allowedKnownValues?: Set<string>}} options
- */
-function validateValue(value, flagName, options) {
-  const isKnownToken = value ? KNOWN_ARGS.has(value) : false;
-  const isAllowedKnownValue = Boolean(value && options.allowedKnownValues?.has(value));
-
-  if (!value || (isKnownToken && !isAllowedKnownValue)) {
-    throw new Error(`Missing value for ${flagName} argument.`);
-  }
-
-  if (!options.allowWhitespaceOnly && value.trim().length === 0) {
-    throw new Error(`Missing value for ${flagName} argument.`);
-  }
-
-  if (!options.allowDoubleDashValue && /^-[a-zA-Z]$/u.test(value)) {
-    throw new Error(`Missing value for ${flagName} argument.`);
-  }
-
-  if (!options.allowDoubleDashValue && value.startsWith('--')) {
-    throw new Error(`Missing value for ${flagName} argument.`);
-  }
-}
-
 function parseArgs(argv) {
   /** @type {{output: string; patterns: string[]; message: string; showHelp: boolean; tarTimeoutMsOverride: string}} */
   const parsed = {
@@ -107,7 +70,11 @@ function parseArgs(argv) {
         throw new Error(`Duplicate ${OUTPUT_FLAG} argument provided.`);
       }
       const value = token.slice(`${OUTPUT_FLAG}=`.length);
-      validateValue(value, OUTPUT_FLAG, { allowDoubleDashValue: false });
+      validateRequiredArgumentValue(value, {
+        flagName: OUTPUT_FLAG,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      });
       parsed.output = value;
       outputConfigured = true;
       continue;
@@ -115,7 +82,11 @@ function parseArgs(argv) {
 
     if (token.startsWith(`${PATTERN_FLAG}=`)) {
       const value = token.slice(`${PATTERN_FLAG}=`.length);
-      validateValue(value, PATTERN_FLAG, { allowDoubleDashValue: false });
+      validateRequiredArgumentValue(value, {
+        flagName: PATTERN_FLAG,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      });
       parsed.patterns.push(value);
       continue;
     }
@@ -125,7 +96,9 @@ function parseArgs(argv) {
         throw new Error(`Duplicate ${MESSAGE_FLAG} argument provided.`);
       }
       const value = token.slice(`${MESSAGE_FLAG}=`.length);
-      validateValue(value, MESSAGE_FLAG, {
+      validateRequiredArgumentValue(value, {
+        flagName: MESSAGE_FLAG,
+        knownArgs: KNOWN_ARGS,
         allowDoubleDashValue: true,
         allowWhitespaceOnly: true,
         allowedKnownValues: HELP_ARGS,
@@ -140,7 +113,12 @@ function parseArgs(argv) {
         throw new Error(`Duplicate ${CLI_TIMEOUT_FLAG} argument provided.`);
       }
       const value = token.slice(`${CLI_TIMEOUT_FLAG}=`.length);
-      validateValue(value, CLI_TIMEOUT_FLAG, { allowDoubleDashValue: false, allowWhitespaceOnly: true });
+      validateRequiredArgumentValue(value, {
+        flagName: CLI_TIMEOUT_FLAG,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      });
       parsed.tarTimeoutMsOverride = value;
       timeoutConfigured = true;
       continue;
@@ -150,14 +128,24 @@ function parseArgs(argv) {
       if (outputConfigured) {
         throw new Error(`Duplicate ${OUTPUT_FLAG} argument provided.`);
       }
-      parsed.output = readRequiredValue(argv, i, OUTPUT_FLAG, { allowDoubleDashValue: false });
+      parsed.output = readRequiredArgumentValue(argv, i, {
+        flagName: OUTPUT_FLAG,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      });
       outputConfigured = true;
       i += 1;
       continue;
     }
 
     if (token === PATTERN_FLAG) {
-      parsed.patterns.push(readRequiredValue(argv, i, PATTERN_FLAG, { allowDoubleDashValue: false }));
+      parsed.patterns.push(
+        readRequiredArgumentValue(argv, i, {
+          flagName: PATTERN_FLAG,
+          knownArgs: KNOWN_ARGS,
+          allowDoubleDashValue: false,
+        }),
+      );
       i += 1;
       continue;
     }
@@ -166,7 +154,9 @@ function parseArgs(argv) {
       if (messageConfigured) {
         throw new Error(`Duplicate ${MESSAGE_FLAG} argument provided.`);
       }
-      parsed.message = readRequiredValue(argv, i, MESSAGE_FLAG, {
+      parsed.message = readRequiredArgumentValue(argv, i, {
+        flagName: MESSAGE_FLAG,
+        knownArgs: KNOWN_ARGS,
         allowDoubleDashValue: true,
         allowWhitespaceOnly: true,
         allowedKnownValues: HELP_ARGS,
@@ -180,7 +170,9 @@ function parseArgs(argv) {
       if (timeoutConfigured) {
         throw new Error(`Duplicate ${CLI_TIMEOUT_FLAG} argument provided.`);
       }
-      parsed.tarTimeoutMsOverride = readRequiredValue(argv, i, CLI_TIMEOUT_FLAG, {
+      parsed.tarTimeoutMsOverride = readRequiredArgumentValue(argv, i, {
+        flagName: CLI_TIMEOUT_FLAG,
+        knownArgs: KNOWN_ARGS,
         allowDoubleDashValue: false,
         allowWhitespaceOnly: true,
       });
