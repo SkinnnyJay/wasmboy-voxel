@@ -218,6 +218,7 @@
 - 2026-02-13: Tightened diagnostics helper CLI semantics by rejecting mixed help + operational argument combinations, reducing ambiguous invocation modes.
 - 2026-02-13: Added regression coverage ensuring `changeset-status-ci` rejects unknown arguments even when mixed with help flags, aligning strict invocation guarantees across both automation helpers.
 - 2026-02-13: Extracted shared strict timeout env parsing into `scripts/cli-timeout.mjs` and wired both automation wrappers to it, with dedicated helper unit coverage to reduce duplicated parsing logic.
+- 2026-02-13: Added timeout upper-bound validation (`<= 2147483647ms`) in shared timeout parsing helper, with regression coverage to prevent out-of-range process timeout configuration.
 - 2026-02-13: Refined diagnostics argument parsing so values starting with `--` are accepted when valid (e.g. custom message text) while true flag-missing cases still fail reliably.
 - 2026-02-13: Refactored `changeset:status:ci` filtering into a reusable module and added automation tests for warning suppression/dedup behavior, improving confidence in CI log-sanitization correctness.
 - 2026-02-13: Generalized `changeset:status:ci` suppression matching to support future `@wasmboy/*` workspace package names and non-`0.0.0` expected versions while still only filtering `file:`-based notices.

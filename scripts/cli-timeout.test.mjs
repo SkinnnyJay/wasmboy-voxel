@@ -45,3 +45,15 @@ test('resolveStrictPositiveIntegerEnv rejects zero values', () => {
     /Invalid TEST_TIMEOUT value: 0/u,
   );
 });
+
+test('resolveStrictPositiveIntegerEnv rejects values above supported timeout ceiling', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: '2147483648',
+        defaultValue: 120000,
+      }),
+    /Invalid TEST_TIMEOUT value: 2147483648/u,
+  );
+});

@@ -1,3 +1,5 @@
+const MAX_TIMEOUT_MS = 2_147_483_647;
+
 /**
  * @param {{name: string; rawValue: string | undefined; defaultValue: number}} options
  */
@@ -13,7 +15,11 @@ export function resolveStrictPositiveIntegerEnv(options) {
   }
 
   const parsedTimeout = Number.parseInt(normalizedTimeout, 10);
-  if (!Number.isFinite(parsedTimeout) || parsedTimeout <= 0) {
+  if (!Number.isFinite(parsedTimeout) || !Number.isSafeInteger(parsedTimeout) || parsedTimeout <= 0) {
+    throw new Error(`Invalid ${name} value: ${rawValue}`);
+  }
+
+  if (parsedTimeout > MAX_TIMEOUT_MS) {
     throw new Error(`Invalid ${name} value: ${rawValue}`);
   }
 
