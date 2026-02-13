@@ -213,3 +213,4 @@
 - 2026-02-13: Refined contract workflow npm cache inputs to package-only lockfiles, improving cache relevance after adopting package-only deterministic installs.
 - 2026-02-13: Switched CI and nightly workflows to execute the shared `ci:local` alias directly, tightening local/remote command parity for the no-build quality gate.
 - 2026-02-13: Added a single retry to `test:integration:headless` (`--retries 1`) to mitigate occasional golden-frame flake in CI while retaining strict pixel-diff assertions.
+- 2026-02-13: Added a single retry to `test:core:savestate` (`--retries 1`) to reduce occasional screenshot-timing flakes while preserving strict save-state golden comparisons.

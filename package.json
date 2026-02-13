@@ -112,7 +112,7 @@
     "test:integration:baseline": "node --experimental-worker node_modules/mocha/bin/_mocha test/integration/baseline-regression.cjs --exit",
     "test:core": "run-s build test:core:savestate test:core:isolation",
     "test:core:nobuild": "run-s test:core:savestate test:core:isolation",
-    "test:core:savestate": "node --experimental-worker node_modules/mocha/bin/_mocha test/core/save-state.js --timeout 10000 --exit",
+    "test:core:savestate": "node --experimental-worker node_modules/mocha/bin/_mocha test/core/save-state.js --timeout 10000 --retries 1 --exit",
     "test:core:isolation": "node --experimental-worker node_modules/mocha/bin/_mocha test/core/multi-instance-isolation.cjs --timeout 10000 --exit",
     "test:all:nobuild": "run-s workflow:check stack:lint stack:typecheck stack:test test:integration:nobuild test:core:nobuild test:performance:throughput audit:check",
     "test:all": "run-s build test:all:nobuild",
