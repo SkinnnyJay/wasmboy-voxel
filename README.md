@@ -339,6 +339,8 @@ npm run contract:ci:full:strict
 
 # CI-friendly changeset status (suppresses known file-dependency noise)
 npm run changeset:status:ci
+# Show helper usage/flags for the changeset wrapper
+node scripts/changeset-status-ci.mjs --help
 
 # Linting commands used during precommit an tests
 npm run prettier:*
@@ -399,6 +401,9 @@ npm run automation:test
 
 # Run automation formatting + helper unit tests together
 npm run automation:check
+
+# Show helper usage/flags for diagnostics archive bundling
+node scripts/bundle-diagnostics.mjs --help
 
 # All commands for testing, and are test related
 npm run test:*

@@ -116,6 +116,7 @@ Workflow hardening applied:
 - diagnostics bundle parser now rejects duplicate `--output` / `--message` flags, with automation coverage for both error paths
 - diagnostics bundler now supports `--help` usage output (covered by automation tests) for easier local debugging/tooling introspection
 - diagnostics bundler also supports `-h` short-help alias for standard CLI ergonomics
+- README command reference now includes direct helper usage examples for both automation scripts (`changeset-status-ci` and `bundle-diagnostics`)
 - CI and nightly workflows now capture full quality-gate logs and relevant screenshot outputs as artifacts on failure for faster triage
 - contract and release workflows now capture gate logs as failure artifacts to support post-failure debugging without reruns
 - release workflow failure artifacts now also include core/headless generated screenshots from release verification test failures
