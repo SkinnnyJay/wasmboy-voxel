@@ -27,4 +27,4 @@ When the worker is not initialized (e.g. before `config()`/`loadROM()` or when u
 ## Unsupported usage
 
 - Calling the public API from a different Web Worker (i.e. not the main thread) is not supported; the WasmBoy singleton and worker are created on the main thread.
-- Iframe embed: the demo iframe runs the full WasmBoy bundle in the iframe document; the parent communicates via `postMessage` (see `lib/iframe/constants.js` and the iframe message handlers in `demo/iframe`).
+- Iframe embed: the demo iframe runs the full WasmBoy bundle in the iframe document; the parent communicates via `postMessage`. See [docs/IFRAME_PORT_API.md](IFRAME_PORT_API.md) for the parent–iframe protocol and `lib/iframe/constants.js` and `demo/iframe` for implementation.

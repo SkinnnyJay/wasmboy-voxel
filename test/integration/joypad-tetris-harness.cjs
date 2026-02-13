@@ -13,7 +13,7 @@
  * Run: npm run test:integration:joypad (or test:integration).
  */
 
-const commonTest = require('../common-test');
+const commonTest = require('../common-test.cjs');
 const WasmBoy = require('../../dist/wasmboy.wasm.cjs.cjs').WasmBoy;
 const fs = require('fs');
 const path = require('path');

@@ -190,7 +190,8 @@ baseLibBundles.forEach(baseLibBundle => {
     }
     wasmBundle.plugins.push(bundleSize());
 
-    wasmBundle.output.file = `dist/wasmboy.wasm.${baseLibBundle.output.format}.js`;
+    wasmBundle.output.file =
+      baseLibBundle.output.format === 'cjs' ? 'dist/wasmboy.wasm.cjs.cjs' : `dist/wasmboy.wasm.${baseLibBundle.output.format}.js`;
     libBundles.push(wasmBundle);
   }
 });

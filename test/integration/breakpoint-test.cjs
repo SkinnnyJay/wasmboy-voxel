@@ -3,7 +3,6 @@
  * clearMemoryBreakpoint, clearAllMemoryBreakpoints.
  * Requires built lib and a ROM (same as lib-test).
  */
-const commonTest = require('../common-test');
 const WasmBoy = require('../../dist/wasmboy.wasm.cjs.cjs').WasmBoy;
 const fs = require('fs');
 const path = require('path');

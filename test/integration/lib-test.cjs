@@ -1,7 +1,7 @@
 // Test the general WasmBoy Library
 
 // Common test functions
-const commonTest = require('../common-test');
+const commonTest = require('../common-test.cjs');
 
 // Wasm Boy library
 const WasmBoy = require('../../dist/wasmboy.wasm.cjs.cjs').WasmBoy;
