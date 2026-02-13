@@ -47,6 +47,7 @@
     "changeset:publish": "changeset publish",
     "audit:check": "npm audit --omit=optional",
     "workflow:lint": "npx prettier --check \".github/workflows/*.yml\"",
+    "workflow:format": "npx prettier --write \".github/workflows/*.yml\"",
     "install:stack": "npm install --legacy-peer-deps && npm --prefix packages/api install && npm --prefix packages/cli install && npm --prefix apps/debugger install",
     "install:stack:ci": "npm ci --legacy-peer-deps --ignore-scripts --no-audit --fund=false && npm --prefix packages/api ci --ignore-scripts --no-audit --fund=false && npm --prefix packages/cli ci --ignore-scripts --no-audit --fund=false && npm --prefix apps/debugger ci --ignore-scripts --no-audit --fund=false",
     "ci:local": "npm run test:all:nobuild",

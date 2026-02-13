@@ -364,6 +364,9 @@ npm run audit:check
 # Check GitHub workflow formatting locally
 npm run workflow:lint
 
+# Auto-format GitHub workflow files
+npm run workflow:format
+
 # All commands for testing, and are test related
 npm run test:*
 
