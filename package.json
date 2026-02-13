@@ -50,6 +50,7 @@
     "workflow:lint": "npx prettier --check \".github/workflows/*.yml\"",
     "workflow:format": "npx prettier --write \".github/workflows/*.yml\"",
     "install:stack": "npm install --legacy-peer-deps && npm --prefix packages/api install && npm --prefix packages/cli install && npm --prefix apps/debugger install",
+    "install:packages:ci": "npm ci --legacy-peer-deps --ignore-scripts --no-audit --fund=false && npm --prefix packages/api ci --ignore-scripts --no-audit --fund=false && npm --prefix packages/cli ci --ignore-scripts --no-audit --fund=false",
     "install:stack:ci": "npm ci --legacy-peer-deps --ignore-scripts --no-audit --fund=false && npm --prefix packages/api ci --ignore-scripts --no-audit --fund=false && npm --prefix packages/cli ci --ignore-scripts --no-audit --fund=false && npm --prefix apps/debugger ci --ignore-scripts --no-audit --fund=false",
     "ci:local": "npm run test:all:nobuild",
     "contract:sample:registers": "node packages/cli/dist/index.js contract-check --contract registers --file test/fixtures/contracts/registers.valid.json",

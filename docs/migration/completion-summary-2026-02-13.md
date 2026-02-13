@@ -65,6 +65,7 @@ Workflow hardening applied:
 - deterministic lockfile install command (`npm run install:stack:ci`) now used across all workflows
 - CI install command uses `--ignore-scripts` to avoid redundant prepare builds during dependency bootstrap
 - CI install command disables install-time audit/fund output (`--no-audit --fund=false`) since audit is enforced in the dedicated quality gate
+- package-focused deterministic install command (`npm run install:packages:ci`) used by contract workflow to avoid unnecessary app dependency bootstrap
 - setup-node cache dependency paths include all workspace lockfiles for stable multi-package npm cache keys
 - release workflow now also caches Next.js build artifacts for debugger app builds
 - workflow formatting checks are enforced via `workflow:lint` and included in the unified quality gate

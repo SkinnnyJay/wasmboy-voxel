@@ -355,6 +355,9 @@ npm run test:all:nobuild
 # Install all workspace dependencies used by CI/release workflows
 npm run install:stack
 
+# Install dependencies required for package/contract CI workflows
+npm run install:packages:ci
+
 # Deterministic lockfile install used by CI/release workflows (no install-time audit/fund noise)
 npm run install:stack:ci
 
