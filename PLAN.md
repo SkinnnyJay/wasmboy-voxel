@@ -361,3 +361,4 @@
 - 2026-02-13: Hardened shared timeout parser raw-value input contract by rejecting non-string timeout values before normalization and expanded helper unit coverage for direct/composed non-string raw-value rejection.
 - 2026-02-13: Hardened shared timeout precedence helper composed-options contract validation (required `env`/`cli` option objects) and expanded helper unit coverage for missing option-object rejection paths.
 - 2026-02-13: Hardened `readRequiredArgumentValue` call-site contract validation in shared `cli-arg-values` helper (`argv` array + non-negative integer index) and expanded helper unit coverage for invalid argv/index rejection paths.
+- 2026-02-13: Hardened shared `test-fixtures` path-token sanitization by rejecting null-byte temp-directory/executable-name inputs and expanded helper unit coverage for null-byte rejection paths.

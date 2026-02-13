@@ -7,7 +7,7 @@ import path from 'node:path';
  * @param {string} body
  */
 export function writeFakeExecutable(tempDirectory, executableName, body) {
-  if (typeof tempDirectory !== 'string' || tempDirectory.trim().length === 0) {
+  if (typeof tempDirectory !== 'string' || tempDirectory.trim().length === 0 || tempDirectory.includes('\0')) {
     throw new Error(`Invalid temp directory: ${tempDirectory}`);
   }
 
@@ -21,6 +21,7 @@ export function writeFakeExecutable(tempDirectory, executableName, body) {
 
   if (
     !executableName ||
+    executableName.includes('\0') ||
     /\s/u.test(executableName) ||
     executableName === '.' ||
     executableName === '..' ||

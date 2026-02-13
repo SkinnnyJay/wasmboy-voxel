@@ -56,6 +56,20 @@ echo 'should not run'
   );
 });
 
+test('writeFakeExecutable rejects temp directories containing null bytes', () => {
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        'bad\0temp',
+        'fixture-cmd',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid temp directory:/u,
+  );
+});
+
 test('writeFakeExecutable rejects empty executable names', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-empty-name-'));
 
@@ -177,6 +191,22 @@ echo 'should not run'
 `,
       ),
     /Invalid executable name: 42/u,
+  );
+});
+
+test('writeFakeExecutable rejects executable names containing null bytes', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-null-byte-name-'));
+
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        tempDirectory,
+        'fixture\0cmd',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid executable name:/u,
   );
 });
 
