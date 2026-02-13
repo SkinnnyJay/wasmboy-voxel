@@ -111,6 +111,27 @@ test('bundle-diagnostics writes custom placeholder message when provided', () =>
   assert.equal(placeholderText, customMessage, 'placeholder file should contain the custom message text');
 });
 
+test('bundle-diagnostics preserves whitespace-only custom placeholder message', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-empty-message-whitespace-'));
+  const whitespaceMessage = '   ';
+
+  runBundlerCommand(tempDirectory, [
+    '--output',
+    'artifacts/custom-whitespace-empty.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--message',
+    whitespaceMessage,
+  ]);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/custom-whitespace-empty.tar.gz');
+  const placeholderEntry = archiveContents.find(entry => entry.endsWith('artifacts/custom-whitespace-empty.txt'));
+  assert.ok(placeholderEntry, 'archive should include placeholder entry');
+
+  const placeholderText = readArchiveEntry(tempDirectory, 'artifacts/custom-whitespace-empty.tar.gz', placeholderEntry);
+  assert.equal(placeholderText, `${whitespaceMessage}\n`, 'placeholder file should preserve whitespace-only message content');
+});
+
 test('bundle-diagnostics accepts custom messages that begin with double dashes', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-empty-message-dash-prefix-'));
   const customMessage = '--custom placeholder message';
@@ -144,6 +165,24 @@ test('bundle-diagnostics supports equals-form arguments for output pattern and m
 
   const placeholderText = readArchiveEntry(tempDirectory, 'artifacts/equals.tar.gz', placeholderEntry).trim();
   assert.equal(placeholderText, customMessage, 'placeholder file should contain equals-form message text');
+});
+
+test('bundle-diagnostics preserves whitespace-only equals-form message values', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-equals-form-whitespace-message-'));
+  const whitespaceMessage = '   ';
+
+  runBundlerCommand(tempDirectory, [
+    '--output=artifacts/equals-whitespace.tar.gz',
+    '--pattern=missing/*.log',
+    `--message=${whitespaceMessage}`,
+  ]);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/equals-whitespace.tar.gz');
+  const placeholderEntry = archiveContents.find(entry => entry.endsWith('artifacts/equals-whitespace.txt'));
+  assert.ok(placeholderEntry, 'archive should include placeholder entry for equals-form whitespace invocation');
+
+  const placeholderText = readArchiveEntry(tempDirectory, 'artifacts/equals-whitespace.tar.gz', placeholderEntry);
+  assert.equal(placeholderText, `${whitespaceMessage}\n`, 'placeholder file should preserve equals-form whitespace-only message content');
 });
 
 test('bundle-diagnostics de-duplicates files matched by repeated patterns', () => {
