@@ -423,6 +423,16 @@ test('changeset-status-ci fails fast for invalid timeout configuration', () => {
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci rejects zero timeout environment values', () => {
+  const result = runStatusScript(createNodeOnlyPath(), {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '0',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid CHANGESET_STATUS_CI_TIMEOUT_MS value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci rejects whitespace-only CLI timeout override', () => {
   const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '   ']);
 

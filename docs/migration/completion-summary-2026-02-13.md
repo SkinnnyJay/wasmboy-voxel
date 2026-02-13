@@ -137,6 +137,7 @@ Workflow hardening applied:
 - duplicate-help regression coverage now includes same-alias duplicates (`--help --help` and `-h -h`) for both helper wrappers, preserving duplicate-help failure semantics independent of alias mixing order
 - `changeset-status-ci` parser now uses a shared `readRequiredValue` helper for split-form timeout parsing, aligning parser structure with diagnostics helper internals while preserving existing CLI behavior and timeout validation semantics
 - wrapper-level CLI timeout boundary coverage now explicitly includes zero, non-numeric suffix (`50ms`), and above-ceiling (`2147483648`) overrides in split and inline forms for both `changeset-status-ci` and `bundle-diagnostics`
+- wrapper-level timeout-environment boundary coverage now explicitly includes zero-value env rejection for both helpers (`CHANGESET_STATUS_CI_TIMEOUT_MS=0`, `BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS=0`), preserving strict positive-timeout semantics at wrapper entry points
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity

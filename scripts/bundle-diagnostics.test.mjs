@@ -1340,6 +1340,15 @@ test('bundle-diagnostics rejects invalid tar timeout configuration', () => {
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics rejects zero tar timeout environment values', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-timeout-zero-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log'], {
+    BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '0',
+  });
+  assert.match(output, /Invalid BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS value/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects invalid CLI timeout configuration', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-cli-timeout-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, [
