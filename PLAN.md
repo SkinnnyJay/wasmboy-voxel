@@ -419,6 +419,7 @@
 - 2026-02-13: Expanded shared `changeset-status` output-type coverage with explicit `bigint` rejection assertions, locking non-string primitive output contract semantics and error formatting.
 - 2026-02-13: Expanded shared timeout helper type-guard coverage with explicit `bigint` rejection for direct/composed default values and env/CLI raw timeout inputs, locking non-string/non-number primitive contract semantics.
 - 2026-02-13: Expanded shared timeout option-name coverage with explicit `bigint` name rejection across direct/composed helpers (`name`, `env.name`, `cli.name`), locking non-string primitive option-name semantics.
+- 2026-02-13: Expanded shared timeout options-shape coverage with explicit `Symbol` options-container rejection across direct/composed helper entrypoints (`options`, composed `env`, composed `cli`), locking primitive symbol container semantics.
 - 2026-02-13: Expanded shared argument-value type-guard coverage with explicit `bigint` rejection for direct and read-path value validation, locking non-string primitive argument contract semantics.
 - 2026-02-13: Expanded shared test-fixture input-type coverage with explicit `bigint` rejection for temp-directory, executable-name, and executable-body parameters, locking non-string primitive fixture-input semantics.
 - 2026-02-13: Expanded shared set-entry type-guard coverage with explicit `bigint` entry rejection for `knownArgs` and `allowedKnownValues` across direct/read parser entrypoints, locking non-string token-entry semantics.
