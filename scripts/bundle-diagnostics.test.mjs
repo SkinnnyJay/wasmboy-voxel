@@ -331,6 +331,14 @@ test('bundle-diagnostics fails for unknown arguments', () => {
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics fails for unknown short arguments', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-unknown-short-arg-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '-x']);
+  assert.match(output, /\[bundle-diagnostics\]/u);
+  assert.match(output, /Unknown argument: -x/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics requires values for known flags', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-missing-flag-value-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', '--message']);
