@@ -292,6 +292,7 @@ test('bundle-diagnostics requires at least one pattern argument', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-pattern-required-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz']);
   assert.match(output, /Provide at least one --pattern argument/u);
+  assert.match(output, /Usage:/u);
 });
 
 test('bundle-diagnostics fails for unknown arguments', () => {
@@ -299,6 +300,7 @@ test('bundle-diagnostics fails for unknown arguments', () => {
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--unknown', 'value']);
   assert.match(output, /\[bundle-diagnostics\]/u);
   assert.match(output, /Unknown argument: --unknown/u);
+  assert.match(output, /Usage:/u);
 });
 
 test('bundle-diagnostics requires values for known flags', () => {

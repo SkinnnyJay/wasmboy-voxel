@@ -110,6 +110,7 @@ Workflow hardening applied:
 - diagnostics bundler now emits consistent `[bundle-diagnostics] ...` prefixed CLI errors (with usage output on parse errors), improving CI log readability
 - diagnostics/changeset wrappers now include usage text for invalid timeout configuration failures, improving remediation context in CI logs
 - automation tests now explicitly assert helper-specific error prefixes (`[bundle-diagnostics]`, `[changeset:status:ci]`) for stable troubleshooting output contracts
+- automation tests now also assert usage-text presence for key bundle argument/config failures, protecting CLI guidance output in error paths
 - diagnostics helper now rejects mixed help + operational arguments to keep CLI intent explicit and avoid ambiguous invocation behavior
 - changeset helper now also has regression coverage for `--help` mixed with unknown arguments, preserving strict invocation semantics across both wrappers
 - automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)
