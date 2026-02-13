@@ -22,6 +22,27 @@ function assertValidDefaultValue(name, defaultValue) {
 }
 
 /**
+ * @param {{
+ *   defaultValue: number;
+ *   env: {name: string; rawValue: string | undefined};
+ *   cli: {name: string; rawValue: string | undefined};
+ * }} options
+ */
+function assertValidTimeoutResolutionOptions(options) {
+  if (!options || typeof options !== 'object') {
+    throw new Error('Invalid timeout resolution options.');
+  }
+
+  if (!options.env || typeof options.env !== 'object') {
+    throw new Error('Invalid timeout env options.');
+  }
+
+  if (!options.cli || typeof options.cli !== 'object') {
+    throw new Error('Invalid timeout cli options.');
+  }
+}
+
+/**
  * @param {{name: string; rawValue: string | undefined; defaultValue: number}} options
  */
 export function resolveStrictPositiveIntegerEnv(options) {
@@ -61,6 +82,8 @@ export function resolveStrictPositiveIntegerEnv(options) {
  * }} options
  */
 export function resolveTimeoutFromCliAndEnv(options) {
+  assertValidTimeoutResolutionOptions(options);
+
   const envTimeout = resolveStrictPositiveIntegerEnv({
     name: options.env.name,
     rawValue: options.env.rawValue,
