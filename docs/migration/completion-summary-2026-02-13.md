@@ -42,7 +42,7 @@ Release pipeline build uses:
 
 Contract workflow uses:
 
-- `npm run contract:ci` (package build + quality gate + changeset status + sample contract validation)
+- `npm run contract:ci` (package build + package typecheck/tests + changeset status + sample contract validation)
 
 Workflow hardening applied:
 
