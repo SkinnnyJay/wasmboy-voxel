@@ -142,6 +142,7 @@ Workflow hardening applied:
 - changeset status wrapper now enforces a configurable execution timeout (`CHANGESET_STATUS_CI_TIMEOUT_MS`, default 120000ms) with explicit timeout/invalid-config failures
 - changeset status wrapper now supports per-invocation timeout overrides (`--timeout-ms`, `--timeout-ms=<ms>`) with strict duplicate/missing-value guards and precedence over env defaults
 - changeset timeout split-arg parsing now treats unknown/short flag tokens as missing timeout values, avoiding accidental flag-token capture in timeout value positions
+- changeset timeout inline-equals parsing now also treats unknown/short flag tokens as missing timeout values, aligning malformed-value handling with split-arg parsing
 - helper command docs now include timeout override examples for both automation wrappers (`CHANGESET_STATUS_CI_TIMEOUT_MS`, `BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS`)
 - timeout parsing logic is now centralized in a shared automation helper (`scripts/cli-timeout.mjs`) with dedicated unit coverage, reducing duplication between wrappers
 - automation coverage also validates diagnostics bundle CLI argument guards (missing `--output` and missing `--pattern`)

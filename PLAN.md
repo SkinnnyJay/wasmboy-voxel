@@ -287,3 +287,4 @@
 - 2026-02-13: Added per-invocation timeout override support to `changeset-status-ci` (`--timeout-ms` / `--timeout-ms=<ms>`) with strict parse guards (duplicate/missing/help-mixed) and regression coverage for CLI-over-env precedence.
 - 2026-02-13: Added per-invocation tar-timeout override support to `bundle-diagnostics` (`--tar-timeout-ms` / `--tar-timeout-ms=<ms>`) with strict parse guards and regression coverage for CLI-over-env timeout precedence.
 - 2026-02-13: Hardened `changeset-status-ci` timeout argument parsing to treat unknown/short flag tokens as missing timeout values (instead of swallowing them), with regression coverage for those malformed-value paths.
+- 2026-02-13: Extended `changeset-status-ci` timeout hardening so inline-equals timeout values (`--timeout-ms=...`) also reject unknown/short flag tokens as missing values, matching split-arg guard behavior.

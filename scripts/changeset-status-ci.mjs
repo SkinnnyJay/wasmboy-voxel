@@ -74,7 +74,7 @@ function parseArgs(argv) {
       }
 
       const value = token.slice(`${CLI_TIMEOUT_FLAG}=`.length);
-      if (value.length === 0) {
+      if (isMissingTimeoutValue(value)) {
         throw new Error(`Missing value for ${CLI_TIMEOUT_FLAG} argument.`);
       }
 

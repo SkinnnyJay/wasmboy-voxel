@@ -164,6 +164,22 @@ test('changeset-status-ci rejects empty inline timeout values', () => {
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci rejects unknown long-flag token as inline timeout value', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=--unexpected']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects short-flag token as inline timeout value', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=-x']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci rejects unknown long-flag token as timeout value', () => {
   const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '--unexpected']);
 
