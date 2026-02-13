@@ -16,17 +16,18 @@
   "homepage": "https://wasmboy.app",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/torch2424/wasmBoy.git"
+    "url": "git+https://github.com/SkinnnyJay/wasmboy-voxel.git"
   },
   "bugs": {
-    "url": "https://github.com/torch2424/wasmBoy/issues"
+    "url": "https://github.com/SkinnnyJay/wasmboy-voxel/issues"
   },
-  "main": "dist/wasmboy.wasm.cjs.js",
+  "main": "index.ts",
+  "types": "index.ts",
   "module": "dist/wasmboy.wasm.esm.js",
   "browser": "dist/wasmboy.wasm.umd.js",
   "iife": "dist/wasmboy.wasm.iife.js",
   "scripts": {
-    "prepare": "run-s core:build lib:build",
+    "prepare": "run-s core:build lib:build:wasm",
     "start": "concurrently --kill-others --names \"DEBUGGER,CORE,LIB\" -c \"bgBlue.bold,bgMagenta.bold,bgGreen.bold\" \"npm run debugger:watch\" \"npm run core:watch\" \"npm run lib:watch:wasm\"",
     "start:ts": "concurrently --kill-others --names \"DEBUGGER,LIBANDCORETS\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run debugger:watch\" \"npm run lib:watch:ts\"",
     "dev": "npm run start",
@@ -53,7 +54,7 @@
     "core:build:done": "echo \"Built Core!\"",
     "lib:build": "run-s lib:build:wasm lib:build:ts lib:build:ts:getcoreclosure",
     "lib:watch:wasm": "rollup -c -w --environment WASM",
-    "lib:build:wasm": "rollup -c --environment PROD,WASM",
+    "lib:build:wasm": "rollup -c rollup.config.libonly.js --environment WASM",
     "lib:watch:ts": "rollup -c -w --environment TS",
     "lib:build:ts": "rollup -c --environment PROD,TS",
     "lib:build:ts:esnext": "rollup -c --environment PROD,TS,ES_NEXT",
