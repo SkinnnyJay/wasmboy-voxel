@@ -833,6 +833,18 @@ test('readRequiredArgumentValue safely formats unprintable following argument va
   );
 });
 
+test('readRequiredArgumentValue rejects empty-string following argument values for required flags', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', ''], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Missing value for --timeout-ms argument\./u,
+  );
+});
+
 test('readRequiredArgumentValue rejects missing options objects', () => {
   assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, undefined), /Invalid required argument options\./u);
 });

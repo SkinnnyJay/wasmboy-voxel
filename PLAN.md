@@ -444,3 +444,4 @@
 - 2026-02-13: Expanded shared parser-helper option-name coverage with explicit `number` `flagName` rejection in `readRequiredArgumentValue`, locking numeric primitive flag-name contract semantics in read-path parser validation.
 - 2026-02-13: Expanded shared parser-helper option-name coverage with explicit unprintable `flagName` rejection in `readRequiredArgumentValue`, locking `[unprintable]` error-format contract semantics in read-path parser validation.
 - 2026-02-13: Expanded shared read-path index-contract coverage with symbol index rejection in upper-bound cursor scenarios (`argv.length - 1`), locking invalid-index-type precedence before missing-value boundary handling.
+- 2026-02-13: Expanded shared read-path value-token coverage with empty-string following-token rejection for required flags, locking missing-value semantics for explicit empty argv payloads.
