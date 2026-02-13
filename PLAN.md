@@ -25,16 +25,16 @@
 [x] - Milestone 0: Baseline - Record baseline timing/accuracy metrics (see `test/baseline/snapshots/summary.json`)
 [x] - Milestone 0: Baseline - Write initial contract table (function → payload) (see `docs/migration/milestone-0-baseline-api-inventory.md`)
 
-[ ] - Milestone 0.5: Repo Scaffolding - Decide workspace tool (pnpm vs turborepo)
-[ ] - Milestone 0.5: Repo Scaffolding - Add workspace config file(s)
-[ ] - Milestone 0.5: Repo Scaffolding - Add root `tsconfig.base.json` (strict)
-[ ] - Milestone 0.5: Repo Scaffolding - Add root TS project references
-[ ] - Milestone 0.5: Repo Scaffolding - Add root ESLint config (TS + React)
-[ ] - Milestone 0.5: Repo Scaffolding - Add root Prettier config for new packages
-[ ] - Milestone 0.5: Repo Scaffolding - Add `.editorconfig` for whitespace rules
-[ ] - Milestone 0.5: Repo Scaffolding - Add Node version pin (`.nvmrc` or `engines`)
-[ ] - Milestone 0.5: Repo Scaffolding - Add root scripts for new stack tasks
-[ ] - Milestone 0.5: Repo Scaffolding - Add `changeset` config (if publishing)
+[x] - Milestone 0.5: Repo Scaffolding - Decide workspace tool (pnpm vs turborepo) (see `docs/migration/milestone-0.5-scaffolding.md`)
+[x] - Milestone 0.5: Repo Scaffolding - Add workspace config file(s) (`pnpm-workspace.yaml`)
+[x] - Milestone 0.5: Repo Scaffolding - Add root `tsconfig.base.json` (strict)
+[x] - Milestone 0.5: Repo Scaffolding - Add root TS project references (`tsconfig.json`)
+[x] - Milestone 0.5: Repo Scaffolding - Add root ESLint config (TS + React) (`.eslintrc.cjs`)
+[x] - Milestone 0.5: Repo Scaffolding - Add root Prettier config for new packages (`.prettierrc` update)
+[x] - Milestone 0.5: Repo Scaffolding - Add `.editorconfig` for whitespace rules
+[x] - Milestone 0.5: Repo Scaffolding - Add Node version pin (`.nvmrc` or `engines`) (`.nvmrc`)
+[x] - Milestone 0.5: Repo Scaffolding - Add root scripts for new stack tasks (`package.json` scripts)
+[x] - Milestone 0.5: Repo Scaffolding - Add `changeset` config (if publishing) (`.changeset/config.json`)
 
 [ ] - Milestone 1: Contracts + Types - Create `packages/api` skeleton
 [ ] - Milestone 1: Contracts + Types - Add `contracts/v1` directory
@@ -141,3 +141,4 @@
 - 2026-02-13: Completed M0-07 by cataloging ROMs used in tests/demos (including optional fixtures and derived accuracy identifiers). Reason: establish reproducible baseline ROM coverage.
 - 2026-02-13: Completed M0-08, M0-09, M0-10 by adding a snapshot-capture script and committed JSON/checksum/timing artifacts for local test ROMs. Reason: create executable baseline evidence for migration regression checks.
 - 2026-02-13: Completed M0-11 with initial function-to-payload contract table for snapshot/debug APIs. Reason: establish explicit migration contract targets before adding Zod schemas.
+- 2026-02-13: Completed all M0.5 scaffolding tasks (workspace, strict TS base, lint/format/editor configs, node pin, stack scripts, changeset config). Reason: establish monorepo-ready foundations before adding new packages.
