@@ -69,7 +69,12 @@ jobs:
         if: ${{ failure() || cancelled() }}
         run: |
           mkdir -p artifacts
-          tar --ignore-failed-read -czf artifacts/contract-diagnostics.tar.gz contract-ci.log
+          if [[ -f contract-ci.log ]]; then
+            tar -czf artifacts/contract-diagnostics.tar.gz contract-ci.log
+          else
+            echo "No diagnostics files were produced for this run." > artifacts/contract-diagnostics.txt
+            tar -czf artifacts/contract-diagnostics.tar.gz artifacts/contract-diagnostics.txt
+          fi
 
       - name: Upload failure diagnostics
         if: ${{ failure() || cancelled() }}

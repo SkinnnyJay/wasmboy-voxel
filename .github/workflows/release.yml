@@ -84,11 +84,21 @@ jobs:
         if: ${{ failure() || cancelled() }}
         run: |
           mkdir -p artifacts
-          tar --ignore-failed-read -czf artifacts/release-diagnostics.tar.gz \
-            release-build.log \
-            release-verify.log \
-            test/core/save-state/*.png \
-            test/integration/headless-simple*.png
+          diagnostic_files=()
+          shopt -s nullglob
+          for file in release-build.log release-verify.log test/core/save-state/*.png test/integration/headless-simple*.png; do
+            if [[ -f "$file" ]]; then
+              diagnostic_files+=("$file")
+            fi
+          done
+          shopt -u nullglob
+
+          if (( ${#diagnostic_files[@]} > 0 )); then
+            tar -czf artifacts/release-diagnostics.tar.gz "${diagnostic_files[@]}"
+          else
+            echo "No diagnostics files were produced for this run." > artifacts/release-diagnostics.txt
+            tar -czf artifacts/release-diagnostics.tar.gz artifacts/release-diagnostics.txt
+          fi
 
       - name: Create release PR or publish
         uses: changesets/action@v1

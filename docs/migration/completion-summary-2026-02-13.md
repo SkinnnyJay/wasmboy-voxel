@@ -95,6 +95,7 @@ Workflow hardening applied:
 - diagnostics upload steps now run on both failure and cancellation, preserving partial logs from interrupted pipelines
 - workflows now set job-level `defaults.run.shell: bash` so bash semantics are consistently applied across all run steps
 - diagnostics are archived into per-workflow tarballs before upload to keep artifacts compact and grouped for easier download/inspection
+- diagnostics bundling now collects only existing files (with placeholder manifests when empty), avoiding noisy tar missing-file warnings on early-fail/early-cancel paths
 
 ## Security posture at completion
 

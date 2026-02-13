@@ -65,10 +65,21 @@ jobs:
         if: ${{ failure() || cancelled() }}
         run: |
           mkdir -p artifacts
-          tar --ignore-failed-read -czf artifacts/nightly-diagnostics.tar.gz \
-            nightly-quality.log \
-            test/core/save-state/*.png \
-            test/integration/headless-simple*.png
+          diagnostic_files=()
+          shopt -s nullglob
+          for file in nightly-quality.log test/core/save-state/*.png test/integration/headless-simple*.png; do
+            if [[ -f "$file" ]]; then
+              diagnostic_files+=("$file")
+            fi
+          done
+          shopt -u nullglob
+
+          if (( ${#diagnostic_files[@]} > 0 )); then
+            tar -czf artifacts/nightly-diagnostics.tar.gz "${diagnostic_files[@]}"
+          else
+            echo "No diagnostics files were produced for this run." > artifacts/nightly-diagnostics.txt
+            tar -czf artifacts/nightly-diagnostics.tar.gz artifacts/nightly-diagnostics.txt
+          fi
 
       - name: Upload failure diagnostics
         if: ${{ failure() || cancelled() }}
