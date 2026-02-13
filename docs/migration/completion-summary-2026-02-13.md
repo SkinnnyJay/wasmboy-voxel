@@ -290,6 +290,7 @@ Workflow hardening applied:
 - shared CLI argument-value helper coverage now explicitly asserts `null` token rejection for both `knownArgs` and `allowedKnownValues` set entries
 - changeset status output-filter coverage now explicitly asserts `undefined` output rejection in addition to existing non-string/null/symbol/unprintable invalid-input checks
 - shared timeout precedence-helper coverage now explicitly asserts Symbol raw-timeout rejection for both composed env and CLI raw timeout inputs
+- shared timeout precedence-helper coverage now explicitly asserts unprintable raw-timeout rejection for both composed env and CLI raw timeout inputs, preserving `[unprintable]` error formatting semantics
 
 ## Security posture at completion
 

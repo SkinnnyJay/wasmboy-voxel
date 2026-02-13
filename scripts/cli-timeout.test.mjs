@@ -628,6 +628,18 @@ test('resolveTimeoutFromCliAndEnv rejects symbol env timeout values', () => {
   );
 });
 
+test('resolveTimeoutFromCliAndEnv safely formats unprintable env timeout values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: UNPRINTABLE_VALUE },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid TEST_TIMEOUT_ENV value: \[unprintable\]/u,
+  );
+});
+
 test('resolveTimeoutFromCliAndEnv rejects null cli timeout values', () => {
   assert.throws(
     () =>
@@ -649,6 +661,18 @@ test('resolveTimeoutFromCliAndEnv rejects symbol cli timeout values', () => {
         cli: { name: '--test-timeout', rawValue: Symbol('cli-timeout-raw') },
       }),
     /Invalid --test-timeout value: Symbol\(cli-timeout-raw\)/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv safely formats unprintable cli timeout values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: { name: '--test-timeout', rawValue: UNPRINTABLE_VALUE },
+      }),
+    /Invalid --test-timeout value: \[unprintable\]/u,
   );
 });
 
