@@ -69,3 +69,23 @@ test('filterChangesetStatusOutput handles CRLF output safely', () => {
   assert.deepEqual(result.suppressedWarnings, [workspaceWarning]);
   assert.equal(result.passthroughOutput, '🦋  info NO packages to be bumped at patch');
 });
+
+test('filterChangesetStatusOutput suppresses warnings with surrounding whitespace', () => {
+  const workspaceWarning = 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api"';
+  const input = `  ${workspaceWarning}  \n🦋  info NO packages to be bumped at patch`;
+
+  const result = filterChangesetStatusOutput(input);
+
+  assert.deepEqual(result.suppressedWarnings, [workspaceWarning]);
+  assert.equal(result.passthroughOutput, '🦋  info NO packages to be bumped at patch');
+});
+
+test('filterChangesetStatusOutput preserves internal blank lines in passthrough output', () => {
+  const workspaceWarning = 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api"';
+  const input = [workspaceWarning, '🦋  info header', '', '🦋  info footer', '', ''].join('\n');
+
+  const result = filterChangesetStatusOutput(input);
+
+  assert.deepEqual(result.suppressedWarnings, [workspaceWarning]);
+  assert.equal(result.passthroughOutput, ['🦋  info header', '', '🦋  info footer'].join('\n'));
+});

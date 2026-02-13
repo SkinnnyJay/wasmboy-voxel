@@ -155,6 +155,7 @@ Workflow hardening applied:
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - automation timeout-wrapper tests now share a reusable fake-executable fixture helper (`test-fixtures`), reducing duplicated executable setup logic across changeset and diagnostics harnesses
 - shared fake-executable fixture helper now has focused unit coverage validating runnable command creation in fake-bin paths
+- `changeset-status-ci` output-filter helper coverage now includes whitespace-padded warning suppression and passthrough internal-blank-line preservation, locking output-formatting behavior under mixed warning/info streams
 - timeout argument-value validation now uses a shared helper module (`cli-arg-values`) across both wrappers, reducing parser duplication while preserving split/equals token-guard semantics
 - shared argument-value helper now has focused unit coverage for missing/known-token/whitespace/flag-like value validation and required-following-token reads
 - shared argument-value helper coverage now includes unknown long-flag token rejection under double-dash-disallowed settings, explicit whitespace-only acceptance when enabled, and allowed-known-token read behavior (`--message --help`)
