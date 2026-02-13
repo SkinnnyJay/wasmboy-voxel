@@ -12,6 +12,16 @@ test('resolveStrictPositiveIntegerEnv returns default for undefined values', () 
   assert.equal(timeout, 120000);
 });
 
+test('resolveStrictPositiveIntegerEnv returns default for empty-string values', () => {
+  const timeout = resolveStrictPositiveIntegerEnv({
+    name: 'TEST_TIMEOUT',
+    rawValue: '',
+    defaultValue: 120000,
+  });
+
+  assert.equal(timeout, 120000);
+});
+
 test('resolveStrictPositiveIntegerEnv parses numeric string values', () => {
   const timeout = resolveStrictPositiveIntegerEnv({
     name: 'TEST_TIMEOUT',
