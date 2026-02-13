@@ -67,18 +67,20 @@ function assertRequiredConfig(output, patterns) {
 }
 
 function collectFiles(patterns) {
-  const files = new Set();
+  const filesByResolvedPath = new Map();
 
   for (const pattern of patterns) {
     const matches = fs.globSync(pattern, { withFileTypes: false });
     for (const file of matches) {
-      if (fs.existsSync(file) && fs.statSync(file).isFile()) {
-        files.add(file);
+      const resolvedFilePath = path.resolve(file);
+      if (fs.existsSync(resolvedFilePath) && fs.statSync(resolvedFilePath).isFile()) {
+        const normalizedArchivePath = path.normalize(file);
+        filesByResolvedPath.set(resolvedFilePath, normalizedArchivePath);
       }
     }
   }
 
-  return [...files].sort((left, right) => left.localeCompare(right));
+  return [...filesByResolvedPath.values()].sort((left, right) => left.localeCompare(right));
 }
 
 function createPlaceholderFile(outputPath, message) {

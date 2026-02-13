@@ -120,6 +120,28 @@ test('bundle-diagnostics de-duplicates files matched by repeated patterns', () =
   assert.equal(duplicateEntries.length, 1, 'archive should only include duplicate log once');
 });
 
+test('bundle-diagnostics de-duplicates equivalent relative and absolute matches', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-canonical-dedupe-'));
+  const logsDirectory = path.join(tempDirectory, 'logs');
+  const duplicatePath = path.join(logsDirectory, 'duplicate.log');
+  fs.mkdirSync(logsDirectory, { recursive: true });
+  fs.writeFileSync(duplicatePath, 'duplicate entry\n', 'utf8');
+
+  runBundlerCommand(tempDirectory, [
+    '--output',
+    'artifacts/canonical-dedupe.tar.gz',
+    '--pattern',
+    'logs/*.log',
+    '--pattern',
+    duplicatePath,
+  ]);
+
+  const duplicateEntries = listArchiveContents(tempDirectory, 'artifacts/canonical-dedupe.tar.gz').filter(entry =>
+    entry.endsWith('logs/duplicate.log'),
+  );
+  assert.equal(duplicateEntries.length, 1, 'archive should only include canonical duplicate path once');
+});
+
 test('bundle-diagnostics ignores directories matched by patterns', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-dir-match-'));
   const logsDirectory = path.join(tempDirectory, 'logs');
