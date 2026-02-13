@@ -36,7 +36,7 @@
     "stack:test:packages": "pnpm -r --if-present --filter \"./packages/**\" test",
     "ci:packages": "run-s stack:build:packages stack:typecheck:packages stack:test:packages",
     "release:build": "run-s build stack:build:packages",
-    "release:verify": "run-s test:all:nobuild changeset:status:ci",
+    "release:verify": "run-s ci:local changeset:status:ci",
     "contract:ci": "run-s workflow:check ci:packages changeset:status:ci contract:sample:registers",
     "stack:test": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" test",
     "stack:typecheck": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" typecheck",

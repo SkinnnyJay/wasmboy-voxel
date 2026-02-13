@@ -212,6 +212,7 @@
 - 2026-02-13: Added `install:packages:ci` and switched contract workflow to package-only deterministic installs, reducing unnecessary debugger app dependency bootstrap during contract CI.
 - 2026-02-13: Refined contract workflow npm cache inputs to package-only lockfiles, improving cache relevance after adopting package-only deterministic installs.
 - 2026-02-13: Switched CI and nightly workflows to execute the shared `ci:local` alias directly, tightening local/remote command parity for the no-build quality gate.
+- 2026-02-13: Updated `release:verify` to compose `ci:local + changeset:status:ci`, aligning release verification command flow with the same shared quality gate used by CI/nightly.
 - 2026-02-13: Added a single retry to `test:integration:headless` (`--retries 1`) to mitigate occasional golden-frame flake in CI while retaining strict pixel-diff assertions.
 - 2026-02-13: Added a single retry to `test:core:savestate` (`--retries 1`) to reduce occasional screenshot-timing flakes while preserving strict save-state golden comparisons.
 - 2026-02-13: Refined retry strategy by restoring strict default local headless/save-state commands and introducing CI-specific retry scripts (`test:integration:headless:ci`, `test:core:savestate:ci`) used by `test:all:nobuild`.
