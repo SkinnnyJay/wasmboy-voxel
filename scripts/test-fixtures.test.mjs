@@ -28,6 +28,34 @@ echo 'fixture command executed'
   assert.match(result.stdout, /fixture command executed/u);
 });
 
+test('writeFakeExecutable rejects non-string temp directories', () => {
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        42,
+        'fixture-cmd',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid temp directory: 42/u,
+  );
+});
+
+test('writeFakeExecutable rejects empty temp directories', () => {
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        '   ',
+        'fixture-cmd',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid temp directory:\s+/u,
+  );
+});
+
 test('writeFakeExecutable rejects empty executable names', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-empty-name-'));
 
