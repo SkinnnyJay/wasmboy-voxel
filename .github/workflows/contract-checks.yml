@@ -2,6 +2,12 @@ name: contract-checks
 
 on:
   workflow_dispatch:
+    inputs:
+      full_gate:
+        description: 'Run full ci:local quality gate before contract checks'
+        required: false
+        type: boolean
+        default: false
   push:
     branches: ['master', 'cursor/**']
     paths:
@@ -63,7 +69,13 @@ jobs:
         run: npm run install:packages:ci
 
       - name: Run contract CI gate
-        run: set -o pipefail && npm run contract:ci 2>&1 | tee contract-ci.log
+        run: |
+          set -o pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.full_gate }}" == "true" ]]; then
+            npm run contract:ci:full 2>&1 | tee contract-ci.log
+          else
+            npm run contract:ci 2>&1 | tee contract-ci.log
+          fi
 
       - name: Compress diagnostics payload
         if: ${{ failure() || cancelled() }}

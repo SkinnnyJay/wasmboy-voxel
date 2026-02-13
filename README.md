@@ -331,6 +331,9 @@ npm run release:verify
 # Run focused contract-check workflow gate locally
 npm run contract:ci
 
+# Run full contract gate variant (full ci gate + contract checks)
+npm run contract:ci:full
+
 # CI-friendly changeset status (suppresses known file-dependency noise)
 npm run changeset:status:ci
 
