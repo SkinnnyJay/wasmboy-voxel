@@ -21,6 +21,16 @@ function runBundlerCommand(cwd, args) {
   }
 }
 
+function runBundlerCommandExpectFailure(cwd, args) {
+  const result = spawnSync('node', [bundlerScriptPath, ...args], {
+    cwd,
+    encoding: 'utf8',
+  });
+
+  assert.notEqual(result.status, 0, 'bundle-diagnostics command should fail');
+  return `${result.stdout ?? ''}${result.stderr ?? ''}`;
+}
+
 function listArchiveContents(cwd, archivePath) {
   const result = spawnSync('tar', ['-tzf', archivePath], {
     cwd,
@@ -75,4 +85,16 @@ test('bundle-diagnostics de-duplicates files matched by repeated patterns', () =
     entry.endsWith('logs/duplicate.log'),
   );
   assert.equal(duplicateEntries.length, 1, 'archive should only include duplicate log once');
+});
+
+test('bundle-diagnostics requires output argument', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-output-required-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--pattern', 'logs/*.log']);
+  assert.match(output, /Missing required --output argument/u);
+});
+
+test('bundle-diagnostics requires at least one pattern argument', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-pattern-required-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz']);
+  assert.match(output, /Provide at least one --pattern argument/u);
 });
