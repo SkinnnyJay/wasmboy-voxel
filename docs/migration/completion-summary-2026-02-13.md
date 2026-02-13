@@ -73,6 +73,7 @@ Workflow hardening applied:
 - failure diagnostics artifacts use a 14-day retention window to balance triage utility with storage footprint
 - log-capturing workflow steps explicitly use `shell: bash` to guarantee `set -o pipefail` behavior
 - failure artifact names include run id/attempt for clearer traceability in repeated or retried runs
+- diagnostics upload steps now run on both failure and cancellation, preserving partial logs from interrupted pipelines
 
 ## Security posture at completion
 

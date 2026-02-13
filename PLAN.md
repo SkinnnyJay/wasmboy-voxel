@@ -203,3 +203,4 @@
 - 2026-02-13: Updated diagnostic artifact names to include GitHub run id/attempt, improving failure-trace disambiguation across reruns and repeated pipeline executions.
 - 2026-02-13: Added `changeset:status:ci` wrapper to suppress repeated known workspace file-dependency notices and switched release/contract verification scripts to use cleaner CI status output.
 - 2026-02-13: Updated CI/contract/release path filters to include `scripts/**`, ensuring workflow runs are triggered when shared automation scripts (including changeset CI wrappers) are modified.
+- 2026-02-13: Expanded diagnostics artifact upload conditions to run on cancellations as well as failures, preserving partial logs/screenshots from interrupted CI runs.

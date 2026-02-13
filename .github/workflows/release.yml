@@ -77,7 +77,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Upload failure diagnostics
-        if: failure()
+        if: ${{ failure() || cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: release-failure-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
