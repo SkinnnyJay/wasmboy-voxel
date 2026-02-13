@@ -62,3 +62,17 @@ test('bundle-diagnostics emits placeholder when no files match', () => {
     'archive should include placeholder file when no diagnostics are present',
   );
 });
+
+test('bundle-diagnostics de-duplicates files matched by repeated patterns', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-dedupe-'));
+  const logsDirectory = path.join(tempDirectory, 'logs');
+  fs.mkdirSync(logsDirectory, { recursive: true });
+  fs.writeFileSync(path.join(logsDirectory, 'duplicate.log'), 'duplicate entry\n', 'utf8');
+
+  runBundlerCommand(tempDirectory, ['--output', 'artifacts/dedupe.tar.gz', '--pattern', 'logs/*.log', '--pattern', 'logs/duplicate.log']);
+
+  const duplicateEntries = listArchiveContents(tempDirectory, 'artifacts/dedupe.tar.gz').filter(entry =>
+    entry.endsWith('logs/duplicate.log'),
+  );
+  assert.equal(duplicateEntries.length, 1, 'archive should only include duplicate log once');
+});
