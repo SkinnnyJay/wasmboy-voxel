@@ -212,6 +212,18 @@ test('validateRequiredArgumentValue rejects non-string known-args entries', () =
   );
 });
 
+test('validateRequiredArgumentValue rejects bigint known-args entries', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: new Set([42n]),
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args entries for --output/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects null known-args entries', () => {
   assert.throws(
     () =>
@@ -370,6 +382,20 @@ test('validateRequiredArgumentValue rejects non-string allowedKnownValues entrie
         allowDoubleDashValue: true,
         allowWhitespaceOnly: true,
         allowedKnownValues: new Set([42]),
+      }),
+    /Invalid allowedKnownValues entries for --message/u,
+  );
+});
+
+test('validateRequiredArgumentValue rejects bigint allowedKnownValues entries', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('--help', {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: new Set([42n]),
       }),
     /Invalid allowedKnownValues entries for --message/u,
   );
@@ -658,6 +684,18 @@ test('readRequiredArgumentValue rejects non-string known-args entries', () => {
   );
 });
 
+test('readRequiredArgumentValue rejects bigint known-args entries', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: new Set([42n]),
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args entries for --timeout-ms/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects whitespace-only known-args entries', () => {
   assert.throws(
     () =>
@@ -820,6 +858,20 @@ test('readRequiredArgumentValue rejects non-string allowedKnownValues entries', 
         allowDoubleDashValue: true,
         allowWhitespaceOnly: true,
         allowedKnownValues: new Set([42]),
+      }),
+    /Invalid allowedKnownValues entries for --message/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects bigint allowedKnownValues entries', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--message', '--help'], 0, {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: new Set([42n]),
       }),
     /Invalid allowedKnownValues entries for --message/u,
   );
