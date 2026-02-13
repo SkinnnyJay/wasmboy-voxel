@@ -379,3 +379,4 @@
 - 2026-02-13: Expanded shared timeout parser error-format coverage with unprintable (`toString`-throwing) option-name/default/raw-value inputs, locking `[unprintable]` fallback semantics.
 - 2026-02-13: Expanded shared `cli-arg-values` error-format coverage with unprintable (`toString`-throwing) value/flag-name/index inputs, locking `[unprintable]` fallback semantics.
 - 2026-02-13: Expanded shared `test-fixtures` error-format coverage with unprintable (`toString`-throwing) temp-directory/executable-name/body inputs, locking `[unprintable]` fallback semantics.
+- 2026-02-13: Expanded shared timeout precedence helper coverage with unprintable (`toString`-throwing) composed `env.name`/`cli.name` option-name rejection paths.

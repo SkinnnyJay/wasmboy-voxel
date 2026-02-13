@@ -215,6 +215,7 @@ Workflow hardening applied:
 - shared timeout parser helper coverage now includes Symbol-based invalid option-name/default/raw-value rejection paths, locking robust error-reporting behavior for non-string invalid inputs
 - shared timeout parser helper coverage now includes unprintable-value fallback assertions (`toString`-throwing option-name/default/raw-value inputs), locking `[unprintable]` fallback error-format semantics under hostile invalid-input shapes
 - shared timeout precedence helper coverage now includes composed Symbol option-name rejection (`env.name` and `cli.name`), locking Symbol-safe error-reporting semantics across composed env/CLI timeout resolution entrypoints
+- shared timeout precedence helper coverage now includes unprintable-value fallback assertions (`toString`-throwing `env.name` / `cli.name`), locking `[unprintable]` fallback error-format semantics across composed env/CLI timeout resolution paths
 - shared timeout precedence helper now validates composed options shape (`env`/`cli` objects) and emits explicit contract errors for missing option objects, preventing opaque property-access failures when wrappers misconfigure helper inputs
 - shared timeout precedence helper coverage now includes missing `env`/`cli` option-object rejection, locking composed timeout-resolution input contract semantics
 - shared timeout precedence helper coverage now also includes missing top-level options and non-object `env`/`cli` option rejection, locking full options-shape contract semantics at helper entrypoint boundaries
