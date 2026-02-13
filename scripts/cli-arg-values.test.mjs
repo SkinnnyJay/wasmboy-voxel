@@ -236,6 +236,18 @@ test('validateRequiredArgumentValue rejects symbol known-args entries', () => {
   );
 });
 
+test('validateRequiredArgumentValue rejects unprintable known-args entries', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: new Set([UNPRINTABLE_VALUE]),
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args entries for --output/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects null known-args entries', () => {
   assert.throws(
     () =>
@@ -422,6 +434,20 @@ test('validateRequiredArgumentValue rejects symbol allowedKnownValues entries', 
         allowDoubleDashValue: true,
         allowWhitespaceOnly: true,
         allowedKnownValues: new Set([Symbol('allowed-known-value')]),
+      }),
+    /Invalid allowedKnownValues entries for --message/u,
+  );
+});
+
+test('validateRequiredArgumentValue rejects unprintable allowedKnownValues entries', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('--help', {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: new Set([UNPRINTABLE_VALUE]),
       }),
     /Invalid allowedKnownValues entries for --message/u,
   );
@@ -734,6 +760,18 @@ test('readRequiredArgumentValue rejects symbol known-args entries', () => {
   );
 });
 
+test('readRequiredArgumentValue rejects unprintable known-args entries', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: new Set([UNPRINTABLE_VALUE]),
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args entries for --timeout-ms/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects whitespace-only known-args entries', () => {
   assert.throws(
     () =>
@@ -924,6 +962,20 @@ test('readRequiredArgumentValue rejects symbol allowedKnownValues entries', () =
         allowDoubleDashValue: true,
         allowWhitespaceOnly: true,
         allowedKnownValues: new Set([Symbol('allowed-known-value')]),
+      }),
+    /Invalid allowedKnownValues entries for --message/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects unprintable allowedKnownValues entries', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--message', '--help'], 0, {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: new Set([UNPRINTABLE_VALUE]),
       }),
     /Invalid allowedKnownValues entries for --message/u,
   );
