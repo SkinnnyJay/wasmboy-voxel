@@ -51,6 +51,8 @@ CI and contract workflows now include:
 - CI workflow path filters include `.github/workflows/*.yml` so workflow-only changes still get full quality-gate validation
 - workflow trigger paths include `scripts/**` where scripts are used by CI/contract/release gates (e.g. `changeset:status:ci`)
 - CI and nightly manual dispatch include `strict` input support to run no-retry full-gate verification on demand
+- release manual dispatch supports `strict=true` for no-retry release verification
+- contract manual dispatch supports `full_gate=true` with optional `strict=true` for strict full-gate contract verification
 
 Release pipeline build uses:
 

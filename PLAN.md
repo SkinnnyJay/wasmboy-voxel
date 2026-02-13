@@ -225,6 +225,7 @@
 - 2026-02-13: Added `automation:test` into default `contract:ci` path so contract workflow validates helper-script behavior in addition to workflow/script formatting and package contract checks.
 - 2026-02-13: Added `contract:ci:full:strict` and contract workflow `strict` manual input (when `full_gate=true`) to support optional no-retry full-gate contract verification.
 - 2026-02-13: Added fast-fail validation for contract workflow dispatch input combinations so `strict=true` without `full_gate=true` exits with a clear configuration error.
+- 2026-02-13: Updated contributor docs to explicitly map manual dispatch input options across CI/nightly (`strict`), release (`strict`), and contract (`full_gate`, optional `strict`) workflows.
 - 2026-02-13: Added a single retry to `test:integration:headless` (`--retries 1`) to mitigate occasional golden-frame flake in CI while retaining strict pixel-diff assertions.
 - 2026-02-13: Added a single retry to `test:core:savestate` (`--retries 1`) to reduce occasional screenshot-timing flakes while preserving strict save-state golden comparisons.
 - 2026-02-13: Refined retry strategy by restoring strict default local headless/save-state commands and introducing CI-specific retry scripts (`test:integration:headless:ci`, `test:core:savestate:ci`) used by `test:all:nobuild`.
