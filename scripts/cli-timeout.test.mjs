@@ -30,6 +30,10 @@ test('resolveStrictPositiveIntegerEnv rejects array options objects', () => {
   assert.throws(() => resolveStrictPositiveIntegerEnv([]), /Invalid timeout env resolution options\./u);
 });
 
+test('resolveStrictPositiveIntegerEnv rejects non-object options objects', () => {
+  assert.throws(() => resolveStrictPositiveIntegerEnv(42), /Invalid timeout env resolution options\./u);
+});
+
 test('resolveStrictPositiveIntegerEnv rejects empty option names', () => {
   assert.throws(
     () =>
@@ -402,6 +406,10 @@ test('resolveTimeoutFromCliAndEnv rejects null top-level options', () => {
 
 test('resolveTimeoutFromCliAndEnv rejects array top-level options', () => {
   assert.throws(() => resolveTimeoutFromCliAndEnv([]), /Invalid timeout resolution options\./u);
+});
+
+test('resolveTimeoutFromCliAndEnv rejects non-object top-level options', () => {
+  assert.throws(() => resolveTimeoutFromCliAndEnv(42), /Invalid timeout resolution options\./u);
 });
 
 test('resolveTimeoutFromCliAndEnv rejects missing env option objects', () => {
