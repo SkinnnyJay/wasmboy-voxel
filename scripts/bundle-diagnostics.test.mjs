@@ -235,3 +235,31 @@ test('bundle-diagnostics requires a value for message flag', () => {
   ]);
   assert.match(output, /Missing value for --message argument/u);
 });
+
+test('bundle-diagnostics rejects duplicate output flags', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-output-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/one.tar.gz',
+    '--output',
+    'artifacts/two.tar.gz',
+    '--pattern',
+    'missing/*.log',
+  ]);
+  assert.match(output, /Duplicate --output argument provided/u);
+});
+
+test('bundle-diagnostics rejects duplicate message flags', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-message-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--message',
+    'first',
+    '--message',
+    'second',
+  ]);
+  assert.match(output, /Duplicate --message argument provided/u);
+});

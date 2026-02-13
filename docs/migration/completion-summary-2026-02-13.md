@@ -109,6 +109,7 @@ Workflow hardening applied:
 - automation coverage also validates diagnostics bundle CLI argument guards (missing `--output` and missing `--pattern`)
 - automation coverage also validates diagnostics bundle argument parsing errors (unknown flags and missing flag values)
 - diagnostics bundle tests now cover missing values for `--output` and `--message` flags to enforce strict CLI parsing behavior
+- diagnostics bundle parser now rejects duplicate `--output` / `--message` flags, with automation coverage for both error paths
 - CI and nightly workflows now capture full quality-gate logs and relevant screenshot outputs as artifacts on failure for faster triage
 - contract and release workflows now capture gate logs as failure artifacts to support post-failure debugging without reruns
 - release workflow failure artifacts now also include core/headless generated screenshots from release verification test failures

@@ -28,12 +28,18 @@ function parseArgs(argv) {
     patterns: [],
     message: DEFAULT_EMPTY_MESSAGE,
   };
+  let outputConfigured = false;
+  let messageConfigured = false;
 
   for (let i = 0; i < argv.length; i += 1) {
     const token = argv[i];
 
     if (token === '--output') {
+      if (outputConfigured) {
+        throw new Error('Duplicate --output argument provided.');
+      }
       parsed.output = readRequiredValue(argv, i, '--output');
+      outputConfigured = true;
       i += 1;
       continue;
     }
@@ -45,7 +51,11 @@ function parseArgs(argv) {
     }
 
     if (token === '--message') {
+      if (messageConfigured) {
+        throw new Error('Duplicate --message argument provided.');
+      }
       parsed.message = readRequiredValue(argv, i, '--message');
+      messageConfigured = true;
       i += 1;
       continue;
     }
