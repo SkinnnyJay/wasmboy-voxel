@@ -79,14 +79,10 @@ jobs:
 
       - name: Compress diagnostics payload
         if: ${{ failure() || cancelled() }}
-        run: |
-          mkdir -p artifacts
-          if [[ -f contract-ci.log ]]; then
-            tar -czf artifacts/contract-diagnostics.tar.gz contract-ci.log
-          else
-            echo "No diagnostics files were produced for this run." > artifacts/contract-diagnostics.txt
-            tar -czf artifacts/contract-diagnostics.tar.gz artifacts/contract-diagnostics.txt
-          fi
+        run: >
+          node scripts/bundle-diagnostics.mjs
+          --output artifacts/contract-diagnostics.tar.gz
+          --pattern 'contract-ci.log'
 
       - name: Upload failure diagnostics
         if: ${{ failure() || cancelled() }}

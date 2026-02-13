@@ -98,6 +98,7 @@ Workflow hardening applied:
 - workflows now set job-level `defaults.run.shell: bash` so bash semantics are consistently applied across all run steps
 - diagnostics are archived into per-workflow tarballs before upload to keep artifacts compact and grouped for easier download/inspection
 - diagnostics bundling now collects only existing files (with placeholder manifests when empty), avoiding noisy tar missing-file warnings on early-fail/early-cancel paths
+- diagnostics bundling is centralized via `scripts/bundle-diagnostics.mjs`, reducing duplicated workflow shell logic across CI/contract/nightly/release pipelines
 
 ## Security posture at completion
 

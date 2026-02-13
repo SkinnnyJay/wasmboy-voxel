@@ -1,0 +1,110 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+
+/**
+ * Usage:
+ * node scripts/bundle-diagnostics.mjs \
+ *   --output artifacts/ci-diagnostics.tar.gz \
+ *   --pattern 'ci-quality.log' \
+ *   --pattern 'test/core/save-state/*.png'
+ */
+
+const DEFAULT_EMPTY_MESSAGE = 'No diagnostics files were produced for this run.';
+
+function parseArgs(argv) {
+  /** @type {{output: string; patterns: string[]; message: string}} */
+  const parsed = {
+    output: '',
+    patterns: [],
+    message: DEFAULT_EMPTY_MESSAGE,
+  };
+
+  for (let i = 0; i < argv.length; i += 1) {
+    const token = argv[i];
+
+    if (token === '--output') {
+      parsed.output = argv[i + 1] ?? '';
+      i += 1;
+      continue;
+    }
+
+    if (token === '--pattern') {
+      const pattern = argv[i + 1] ?? '';
+      if (pattern.length > 0) {
+        parsed.patterns.push(pattern);
+      }
+      i += 1;
+      continue;
+    }
+
+    if (token === '--message') {
+      parsed.message = argv[i + 1] ?? DEFAULT_EMPTY_MESSAGE;
+      i += 1;
+      continue;
+    }
+  }
+
+  return parsed;
+}
+
+function assertRequiredConfig(output, patterns) {
+  if (output.length === 0) {
+    throw new Error('Missing required --output argument.');
+  }
+
+  if (patterns.length === 0) {
+    throw new Error('Provide at least one --pattern argument.');
+  }
+}
+
+function collectFiles(patterns) {
+  const files = new Set();
+
+  for (const pattern of patterns) {
+    const matches = fs.globSync(pattern, { withFileTypes: false });
+    for (const file of matches) {
+      if (fs.existsSync(file) && fs.statSync(file).isFile()) {
+        files.add(file);
+      }
+    }
+  }
+
+  return [...files];
+}
+
+function createPlaceholderFile(outputPath, message) {
+  const outputDirectory = path.dirname(outputPath);
+  const outputName = path.basename(outputPath).replace(/\.tar\.gz$/u, '');
+  const placeholderPath = path.join(outputDirectory, `${outputName}.txt`);
+  fs.writeFileSync(placeholderPath, `${message}\n`, 'utf8');
+  return placeholderPath;
+}
+
+function createArchive(outputPath, files) {
+  const archiveResult = spawnSync('tar', ['-czf', outputPath, ...files], {
+    stdio: 'inherit',
+  });
+
+  if (archiveResult.error) {
+    throw archiveResult.error;
+  }
+
+  if (archiveResult.status !== 0) {
+    throw new Error(`tar exited with status ${archiveResult.status ?? 'unknown'}`);
+  }
+}
+
+function main() {
+  const args = parseArgs(process.argv.slice(2));
+  assertRequiredConfig(args.output, args.patterns);
+
+  fs.mkdirSync(path.dirname(args.output), { recursive: true });
+
+  const matchedFiles = collectFiles(args.patterns);
+  const filesToArchive = matchedFiles.length > 0 ? matchedFiles : [createPlaceholderFile(args.output, args.message)];
+
+  createArchive(args.output, filesToArchive);
+}
+
+main();

@@ -222,4 +222,5 @@
 - 2026-02-13: Added compression steps for CI/contract/nightly/release diagnostics and upload archived tarballs, keeping failure artifacts compact and easier to fetch/inspect while retaining log+screenshot coverage.
 - 2026-02-13: Added `ci:local:strict` and `test:all:nobuild:strict` for full-gate strict single-run verification, while keeping `ci:local` aligned with CI retry-scoped commands.
 - 2026-02-13: Hardened diagnostics bundling steps to archive only existing files (and emit placeholder manifests when none exist), reducing tar warning noise on early-cancel/early-fail workflow exits.
+- 2026-02-13: Introduced shared `scripts/bundle-diagnostics.mjs` and switched all workflows to use it for diagnostics archive creation, eliminating duplicated bash bundling logic and keeping behavior consistent across pipelines.
 - 2026-02-13: Added `strict` manual-dispatch inputs to CI and nightly workflows so maintainers can optionally run strict no-retry quality-gate variants directly in GitHub Actions.
