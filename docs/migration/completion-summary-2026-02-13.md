@@ -108,6 +108,7 @@ Workflow hardening applied:
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - diagnostics bundler help handling now remains strict about unknown flags (`--help --unknown` fails), matching stricter wrapper argument-guard behavior
 - diagnostics bundler now emits consistent `[bundle-diagnostics] ...` prefixed CLI errors (with usage output on parse errors), improving CI log readability
+- automation tests now explicitly assert helper-specific error prefixes (`[bundle-diagnostics]`, `[changeset:status:ci]`) for stable troubleshooting output contracts
 - automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)
 - changeset status warning filter now tolerates version bumps by suppressing only `file:` workspace warnings from `@wasmboy/*` packages against `@wasmboy/api`
 - suppressed changeset workspace warnings are now lexicographically sorted before reporting for deterministic CI log output

@@ -134,6 +134,7 @@ test('changeset-status-ci rejects unknown arguments', () => {
   const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--unknown']);
 
   assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[changeset:status:ci\]/u);
   assert.match(result.stderr, /Unknown argument: --unknown/u);
   assert.match(result.stderr, /Usage:/u);
 });

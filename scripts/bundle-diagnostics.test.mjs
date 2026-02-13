@@ -251,6 +251,7 @@ test('bundle-diagnostics normalizes absolute file matches to relative archive pa
 test('bundle-diagnostics requires output argument', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-output-required-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--pattern', 'logs/*.log']);
+  assert.match(output, /\[bundle-diagnostics\]/u);
   assert.match(output, /Missing required --output argument/u);
 });
 
@@ -289,6 +290,7 @@ test('bundle-diagnostics requires at least one pattern argument', () => {
 test('bundle-diagnostics fails for unknown arguments', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-unknown-arg-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--unknown', 'value']);
+  assert.match(output, /\[bundle-diagnostics\]/u);
   assert.match(output, /Unknown argument: --unknown/u);
 });
 
