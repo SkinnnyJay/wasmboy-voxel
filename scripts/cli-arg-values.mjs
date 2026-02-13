@@ -49,6 +49,7 @@ function assertValidRequiredArgumentValueOptions(options) {
 
   if (options.allowedKnownValues) {
     assertStringSetValues('allowedKnownValues', options.allowedKnownValues, options.flagName);
+    assertAllowedKnownValuesSubset(options.allowedKnownValues, options.knownArgs, options.flagName);
   }
 }
 
@@ -61,6 +62,19 @@ function assertStringSetValues(optionName, values, flagName) {
   for (const value of values) {
     if (typeof value !== 'string' || value.trim().length === 0) {
       throw new Error(`Invalid ${optionName} entries for ${formatErrorValue(flagName)}`);
+    }
+  }
+}
+
+/**
+ * @param {Set<string>} allowedKnownValues
+ * @param {Set<string>} knownArgs
+ * @param {string} flagName
+ */
+function assertAllowedKnownValuesSubset(allowedKnownValues, knownArgs, flagName) {
+  for (const allowedValue of allowedKnownValues) {
+    if (!knownArgs.has(allowedValue)) {
+      throw new Error(`Invalid allowedKnownValues entries for ${formatErrorValue(flagName)}`);
     }
   }
 }

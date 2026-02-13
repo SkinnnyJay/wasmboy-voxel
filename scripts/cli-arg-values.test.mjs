@@ -217,6 +217,20 @@ test('validateRequiredArgumentValue rejects non-string allowedKnownValues entrie
   );
 });
 
+test('validateRequiredArgumentValue rejects allowedKnownValues entries absent from knownArgs', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('--help', {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: new Set(['--not-known']),
+      }),
+    /Invalid allowedKnownValues entries for --message/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects whitespace-only allowedKnownValues entries', () => {
   assert.throws(
     () =>

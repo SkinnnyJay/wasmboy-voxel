@@ -386,3 +386,4 @@
 - 2026-02-13: Expanded shared `cli-arg-values` coverage with explicit `null` invalid-input rejection paths (value token, `flagName`, options object, argument index).
 - 2026-02-13: Expanded shared `test-fixtures` coverage with explicit `null` invalid-input rejection paths (`tempDirectory`, executable name, executable body).
 - 2026-02-13: Expanded `changeset-status-ci-lib` coverage with explicit `null` output rejection, locking null-input contract semantics for filter helper entrypoints.
+- 2026-02-13: Hardened shared `cli-arg-values` option-contract validation by requiring `allowedKnownValues` entries to be a subset of `knownArgs`, with focused helper unit coverage for mismatched token-set rejection paths.

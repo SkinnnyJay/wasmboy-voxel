@@ -284,6 +284,7 @@ Workflow hardening applied:
 - diagnostics are archived into per-workflow tarballs before upload to keep artifacts compact and grouped for easier download/inspection
 - diagnostics bundling now collects only existing files (with placeholder manifests when empty), avoiding noisy tar missing-file warnings on early-fail/early-cancel paths
 - diagnostics bundling is centralized via `scripts/bundle-diagnostics.mjs`, reducing duplicated workflow shell logic across CI/contract/nightly/release pipelines
+- shared CLI argument-value parsing now enforces that `allowedKnownValues` is a subset of `knownArgs`, preventing misconfigured token whitelists in helper callers
 
 ## Security posture at completion
 
