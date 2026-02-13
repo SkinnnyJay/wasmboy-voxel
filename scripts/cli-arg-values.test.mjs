@@ -452,12 +452,36 @@ test('readRequiredArgumentValue rejects missing known-args options', () => {
   );
 });
 
+test('readRequiredArgumentValue rejects null known-args options', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: null,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args set for --timeout-ms/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects missing allowDoubleDashValue options', () => {
   assert.throws(
     () =>
       readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
         flagName: '--timeout-ms',
         knownArgs: KNOWN_ARGS,
+      }),
+    /Invalid allowDoubleDashValue option for --timeout-ms/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects null allowDoubleDashValue options', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: null,
       }),
     /Invalid allowDoubleDashValue option for --timeout-ms/u,
   );

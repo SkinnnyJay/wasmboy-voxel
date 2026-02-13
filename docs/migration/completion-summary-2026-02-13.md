@@ -297,6 +297,7 @@ Workflow hardening applied:
 - shared CLI argument-value helper coverage now explicitly asserts missing/null `knownArgs` set rejection in required-argument option validation
 - shared timeout precedence-helper coverage now explicitly asserts undefined option-name rejection for both composed env and CLI option metadata
 - read-path CLI argument parsing coverage now explicitly asserts missing `knownArgs` and missing `allowDoubleDashValue` option rejection in `readRequiredArgumentValue` validation paths
+- read-path CLI argument parsing coverage now explicitly asserts null `knownArgs` and null `allowDoubleDashValue` option rejection in `readRequiredArgumentValue` validation paths
 
 ## Security posture at completion
 
