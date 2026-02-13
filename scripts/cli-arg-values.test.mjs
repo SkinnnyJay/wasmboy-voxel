@@ -717,6 +717,20 @@ test('readRequiredArgumentValue rejects NaN argument indexes', () => {
   );
 });
 
+test('readRequiredArgumentValue rejects infinite argument indexes', () => {
+  const args = ['--timeout-ms', '00050'];
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(args, Number.POSITIVE_INFINITY, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid argument index for --timeout-ms: Infinity/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects symbol argument indexes', () => {
   const args = ['--timeout-ms', '00050'];
   assert.throws(
