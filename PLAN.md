@@ -304,3 +304,4 @@
 - 2026-02-13: Expanded timeout-override precedence regression coverage with inline CLI override forms for both helpers, preserving env-override precedence parity between split (`--flag value`) and equals (`--flag=value`) styles.
 - 2026-02-13: Expanded diagnostics placeholder-message regression coverage with whitespace-only message values in split and equals forms, preserving intended whitespace payload semantics for custom empty-artifact notes.
 - 2026-02-13: Updated `bundle-diagnostics` message parsing to allow help-token literals (`--help`, `-h`) as intentional message payloads (split and equals forms), with regression coverage for both literal cases.
+- 2026-02-13: Expanded diagnostics help-token message regression coverage to full split/equals parity (`--message --help`, `--message -h`, `--message=--help`, `--message=-h`) so intentional help-literal placeholder text remains stable across argument styles.

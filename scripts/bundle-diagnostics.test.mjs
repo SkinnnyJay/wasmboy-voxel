@@ -174,6 +174,27 @@ test('bundle-diagnostics accepts custom messages equal to --help', () => {
   assert.equal(placeholderText, customMessage, 'placeholder file should preserve help-token message text');
 });
 
+test('bundle-diagnostics accepts custom messages equal to -h', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-empty-message-short-help-token-'));
+  const customMessage = '-h';
+
+  runBundlerCommand(tempDirectory, [
+    '--output',
+    'artifacts/custom-short-help-token.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--message',
+    customMessage,
+  ]);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/custom-short-help-token.tar.gz');
+  const placeholderEntry = archiveContents.find(entry => entry.endsWith('artifacts/custom-short-help-token.txt'));
+  assert.ok(placeholderEntry, 'archive should include placeholder entry');
+
+  const placeholderText = readArchiveEntry(tempDirectory, 'artifacts/custom-short-help-token.tar.gz', placeholderEntry).trim();
+  assert.equal(placeholderText, customMessage, 'placeholder file should preserve short-help token message text');
+});
+
 test('bundle-diagnostics supports equals-form arguments for output pattern and message', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-equals-form-'));
   const customMessage = 'equals syntax placeholder message';
@@ -222,6 +243,24 @@ test('bundle-diagnostics accepts equals-form custom messages equal to -h', () =>
 
   const placeholderText = readArchiveEntry(tempDirectory, 'artifacts/equals-short-help-token.tar.gz', placeholderEntry).trim();
   assert.equal(placeholderText, customMessage, 'placeholder file should preserve equals-form short-help token message text');
+});
+
+test('bundle-diagnostics accepts equals-form custom messages equal to --help', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-equals-form-help-token-message-'));
+  const customMessage = '--help';
+
+  runBundlerCommand(tempDirectory, [
+    '--output=artifacts/equals-help-token.tar.gz',
+    '--pattern=missing/*.log',
+    `--message=${customMessage}`,
+  ]);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/equals-help-token.tar.gz');
+  const placeholderEntry = archiveContents.find(entry => entry.endsWith('artifacts/equals-help-token.txt'));
+  assert.ok(placeholderEntry, 'archive should include placeholder entry for equals-form help-token message');
+
+  const placeholderText = readArchiveEntry(tempDirectory, 'artifacts/equals-help-token.tar.gz', placeholderEntry).trim();
+  assert.equal(placeholderText, customMessage, 'placeholder file should preserve equals-form help-token message text');
 });
 
 test('bundle-diagnostics de-duplicates files matched by repeated patterns', () => {

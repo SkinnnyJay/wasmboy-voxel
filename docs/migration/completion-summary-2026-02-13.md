@@ -121,6 +121,7 @@ Workflow hardening applied:
 - timeout-override precedence coverage now includes inline CLI override variants for both wrappers, ensuring `--flag=<ms>` overrides timeout env defaults just like split-form overrides
 - diagnostics placeholder-message coverage now includes whitespace-only custom message values (split and equals forms), preserving intentional whitespace payload behavior for operator-supplied placeholder text
 - diagnostics message parsing now explicitly allows help-token literals (`--help`, `-h`) for `--message` values (split and equals forms), with regression coverage to keep those literals available as intentional placeholder text
+- diagnostics help-token message coverage now includes full split/equals parity for both literals (`--message --help`, `--message -h`, `--message=--help`, `--message=-h`) to lock intentional-literal behavior across argument styles
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity
