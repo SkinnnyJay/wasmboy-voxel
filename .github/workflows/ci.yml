@@ -36,17 +36,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-next-cache-
 
-      - name: Install root dependencies
-        run: npm install --legacy-peer-deps
-
-      - name: Install API package dependencies
-        run: npm --prefix packages/api install
-
-      - name: Install CLI package dependencies
-        run: npm --prefix packages/cli install
-
-      - name: Install debugger app dependencies
-        run: npm --prefix apps/debugger install
+      - name: Install workspace dependencies
+        run: npm run install:stack
 
       - name: Run full no-build quality suite
         run: npm run test:all:nobuild

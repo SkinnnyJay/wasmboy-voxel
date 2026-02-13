@@ -334,6 +334,9 @@ npm run test:performance
 # Run migration-era full quality gate (lint/typecheck/tests/integration/core/perf/audit)
 npm run test:all:nobuild
 
+# Install all workspace dependencies used by CI/release workflows
+npm run install:stack
+
 # Shortcut for running the same gate used in CI
 npm run ci:local
 

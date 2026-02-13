@@ -39,6 +39,7 @@
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
     "audit:check": "npm audit --omit=optional",
+    "install:stack": "npm install --legacy-peer-deps && npm --prefix packages/api install && npm --prefix packages/cli install && npm --prefix apps/debugger install",
     "ci:local": "npm run test:all:nobuild",
     "contract:sample:registers": "node packages/cli/dist/index.js contract-check --contract registers --file test/fixtures/contracts/registers.valid.json",
     "start": "concurrently --kill-others --names \"DEBUGGER,CORE,LIB\" -c \"bgBlue.bold,bgMagenta.bold,bgGreen.bold\" \"npm run debugger:watch\" \"npm run core:watch\" \"npm run lib:watch:wasm\"",

@@ -29,12 +29,8 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: |
-          npm install --legacy-peer-deps
-          npm --prefix packages/api install
-          npm --prefix packages/cli install
-          npm --prefix apps/debugger install
+      - name: Install workspace dependencies
+        run: npm run install:stack
 
       - name: Build workspace stack
         run: npm run stack:build

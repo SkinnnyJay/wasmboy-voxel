@@ -38,6 +38,7 @@ Workflow hardening applied:
 
 - explicit workflow permissions (least privilege defaults)
 - concurrency groups with `cancel-in-progress` to avoid duplicate CI spend
+- shared install command (`npm run install:stack`) to keep CI/release dependency setup consistent across workflows
 
 ## Security posture at completion
 

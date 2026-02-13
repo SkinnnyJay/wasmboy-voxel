@@ -174,3 +174,4 @@
 - 2026-02-13: Hardened GitHub Actions workflows with explicit least-privilege permissions and concurrency cancellation guards across CI, contract-check, nightly, and release pipelines.
 - 2026-02-13: Updated README and completion summary with explicit CI workflow map + hardening notes so contributors can mirror and reason about automation behavior locally.
 - 2026-02-13: Added explicit job timeouts to CI, contract-check, and release workflows to prevent runaway minutes and align pipeline reliability with nightly timeout behavior.
+- 2026-02-13: Added root `install:stack` script and migrated all workflows to it, reducing duplicated dependency install logic and keeping CI/release setup behavior aligned.
