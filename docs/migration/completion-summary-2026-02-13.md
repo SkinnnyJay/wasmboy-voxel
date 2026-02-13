@@ -32,6 +32,7 @@ Stability hardening:
 
 - headless integration command now includes a single Mocha retry (`--retries 1`) to reduce intermittent golden-frame CI flakes while preserving strict golden comparison semantics.
 - core save-state command now includes a single Mocha retry (`--retries 1`) to reduce intermittent screenshot-timing flakes while preserving golden-state assertions.
+- retries are scoped to CI-specific commands (`test:integration:headless:ci`, `test:core:savestate:ci`), while default local commands remain strict single-run checks.
 
 CI automation now runs the same gate in:
 
