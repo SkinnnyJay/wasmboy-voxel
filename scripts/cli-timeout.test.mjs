@@ -2,6 +2,12 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { resolveStrictPositiveIntegerEnv, resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
 
+const UNPRINTABLE_VALUE = {
+  toString() {
+    throw new Error('cannot stringify');
+  },
+};
+
 test('resolveStrictPositiveIntegerEnv returns default for undefined values', () => {
   const timeout = resolveStrictPositiveIntegerEnv({
     name: 'TEST_TIMEOUT',
@@ -56,6 +62,18 @@ test('resolveStrictPositiveIntegerEnv rejects symbol option names', () => {
   );
 });
 
+test('resolveStrictPositiveIntegerEnv safely formats unprintable option names', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: UNPRINTABLE_VALUE,
+        rawValue: undefined,
+        defaultValue: 120000,
+      }),
+    /Invalid timeout option name: \[unprintable\]/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv rejects non-positive default values', () => {
   assert.throws(
     () =>
@@ -101,6 +119,18 @@ test('resolveStrictPositiveIntegerEnv rejects symbol default value types', () =>
         defaultValue: Symbol('timeout-default'),
       }),
     /Invalid default value for TEST_TIMEOUT: Symbol\(timeout-default\)/u,
+  );
+});
+
+test('resolveStrictPositiveIntegerEnv safely formats unprintable default values', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: undefined,
+        defaultValue: UNPRINTABLE_VALUE,
+      }),
+    /Invalid default value for TEST_TIMEOUT: \[unprintable\]/u,
   );
 });
 
@@ -171,6 +201,18 @@ test('resolveStrictPositiveIntegerEnv rejects symbol raw values', () => {
         defaultValue: 120000,
       }),
     /Invalid TEST_TIMEOUT value: Symbol\(timeout-raw\)/u,
+  );
+});
+
+test('resolveStrictPositiveIntegerEnv safely formats unprintable raw values', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: UNPRINTABLE_VALUE,
+        defaultValue: 120000,
+      }),
+    /Invalid TEST_TIMEOUT value: \[unprintable\]/u,
   );
 });
 
