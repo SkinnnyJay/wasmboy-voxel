@@ -41,6 +41,7 @@ Workflow hardening applied:
 - concurrency groups with `cancel-in-progress` to avoid duplicate CI spend
 - shared install command (`npm run install:stack`) to keep CI/release dependency setup consistent across workflows
 - deterministic lockfile install command (`npm run install:stack:ci`) now used across all workflows
+- CI install command uses `--ignore-scripts` to avoid redundant prepare builds during dependency bootstrap
 - setup-node cache dependency paths include all workspace lockfiles for stable multi-package npm cache keys
 
 ## Security posture at completion
