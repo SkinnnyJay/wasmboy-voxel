@@ -638,6 +638,48 @@ test('bundle-diagnostics rejects self timeout-flag token as timeout value', () =
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics rejects output-flag token as timeout value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-timeout-output-token-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms',
+    '--output',
+  ]);
+  assert.match(output, /Missing value for --tar-timeout-ms argument/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics rejects pattern-flag token as timeout value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-timeout-pattern-token-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms',
+    '--pattern',
+  ]);
+  assert.match(output, /Missing value for --tar-timeout-ms argument/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics rejects message-flag token as timeout value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-timeout-message-token-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms',
+    '--message',
+  ]);
+  assert.match(output, /Missing value for --tar-timeout-ms argument/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects unknown long-flag token as inline timeout value', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-timeout-inline-long-token-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, [
@@ -659,6 +701,45 @@ test('bundle-diagnostics rejects short-flag token as inline timeout value', () =
     '--pattern',
     'missing/*.log',
     '--tar-timeout-ms=-x',
+  ]);
+  assert.match(output, /Missing value for --tar-timeout-ms argument/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics rejects output-flag token as inline timeout value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-timeout-inline-output-token-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms=--output',
+  ]);
+  assert.match(output, /Missing value for --tar-timeout-ms argument/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics rejects pattern-flag token as inline timeout value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-timeout-inline-pattern-token-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms=--pattern',
+  ]);
+  assert.match(output, /Missing value for --tar-timeout-ms argument/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics rejects message-flag token as inline timeout value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-timeout-inline-message-token-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms=--message',
   ]);
   assert.match(output, /Missing value for --tar-timeout-ms argument/u);
   assert.match(output, /Usage:/u);
