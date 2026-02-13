@@ -274,6 +274,12 @@ test('bundle-diagnostics prints usage with -h alias', () => {
   assert.match(result.stdout, /-h, --help/u);
 });
 
+test('bundle-diagnostics rejects unknown args even when help is present', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-help-unknown-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--help', '--unknown']);
+  assert.match(output, /Unknown argument: --unknown/u);
+});
+
 test('bundle-diagnostics requires at least one pattern argument', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-pattern-required-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz']);

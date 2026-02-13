@@ -54,17 +54,23 @@ function readRequiredValue(argv, index, flagName) {
 }
 
 function parseArgs(argv) {
-  /** @type {{output: string; patterns: string[]; message: string}} */
+  /** @type {{output: string; patterns: string[]; message: string; showHelp: boolean}} */
   const parsed = {
     output: '',
     patterns: [],
     message: DEFAULT_EMPTY_MESSAGE,
+    showHelp: false,
   };
   let outputConfigured = false;
   let messageConfigured = false;
 
   for (let i = 0; i < argv.length; i += 1) {
     const token = argv[i];
+
+    if (token === '--help' || token === '-h') {
+      parsed.showHelp = true;
+      continue;
+    }
 
     if (token === '--output') {
       if (outputConfigured) {
@@ -192,13 +198,12 @@ function createArchive(outputPath, files, timeoutMs) {
 }
 
 function main() {
-  const argv = process.argv.slice(2);
-  if (argv.includes('--help') || argv.includes('-h')) {
+  const args = parseArgs(process.argv.slice(2));
+  if (args.showHelp) {
     console.log(USAGE_TEXT);
     return;
   }
 
-  const args = parseArgs(argv);
   assertRequiredConfig(args.output, args.patterns);
   const tarTimeoutMs = resolveTarTimeoutMs(process.env[TAR_TIMEOUT_ENV_VARIABLE]);
 

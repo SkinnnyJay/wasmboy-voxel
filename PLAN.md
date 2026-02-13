@@ -210,6 +210,7 @@
 - 2026-02-13: Reduced timeout-fixture sleep durations in automation tests to keep suite runtime lower while retaining timeout-path validation for both diagnostics and changeset wrappers.
 - 2026-02-13: Tightened timeout env parsing to strict numeric-only values for both automation wrappers, adding regression coverage for suffix-style invalid values (e.g. `50ms`).
 - 2026-02-13: Extended README helper references with timeout override examples for both automation wrappers to improve operational discoverability during CI triage.
+- 2026-02-13: Tightened diagnostics helper argument handling so unknown flags still fail even when help is requested, preserving strict invocation semantics across automation scripts.
 - 2026-02-13: Refactored `changeset:status:ci` filtering into a reusable module and added automation tests for warning suppression/dedup behavior, improving confidence in CI log-sanitization correctness.
 - 2026-02-13: Generalized `changeset:status:ci` suppression matching to support future `@wasmboy/*` workspace package names and non-`0.0.0` expected versions while still only filtering `file:`-based notices.
 - 2026-02-13: Added direct automation tests for `changeset-status-ci.mjs` wrapper behavior, covering filtered output reporting, non-zero exit pass-through, and missing-command error handling.
