@@ -340,6 +340,7 @@ Workflow hardening applied:
 - parser-helper option-name coverage now explicitly asserts `bigint` `flagName` rejection in `readRequiredArgumentValue`, locking non-string primitive flag-name contract semantics in read-path parser validation
 - parser-helper option-name coverage now explicitly asserts `number` `flagName` rejection in `validateRequiredArgumentValue`, locking numeric primitive flag-name contract semantics in direct parser validation
 - parser-helper option-name coverage now explicitly asserts `number` `flagName` rejection in `readRequiredArgumentValue`, locking numeric primitive flag-name contract semantics in read-path parser validation
+- parser-helper option-name coverage now explicitly asserts unprintable `flagName` rejection in `readRequiredArgumentValue`, locking `[unprintable]` error-format contract semantics in read-path parser validation
 
 ## Security posture at completion
 

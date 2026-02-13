@@ -442,3 +442,4 @@
 - 2026-02-13: Expanded shared parser-helper option-name coverage with explicit `bigint` `flagName` rejection in `readRequiredArgumentValue`, locking non-string primitive flag-name contract semantics in read-path parser validation.
 - 2026-02-13: Expanded shared parser-helper option-name coverage with explicit `number` `flagName` rejection in `validateRequiredArgumentValue`, locking numeric primitive flag-name contract semantics in direct parser validation.
 - 2026-02-13: Expanded shared parser-helper option-name coverage with explicit `number` `flagName` rejection in `readRequiredArgumentValue`, locking numeric primitive flag-name contract semantics in read-path parser validation.
+- 2026-02-13: Expanded shared parser-helper option-name coverage with explicit unprintable `flagName` rejection in `readRequiredArgumentValue`, locking `[unprintable]` error-format contract semantics in read-path parser validation.

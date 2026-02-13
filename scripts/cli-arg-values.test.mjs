@@ -884,6 +884,18 @@ test('readRequiredArgumentValue rejects numeric flag names', () => {
   );
 });
 
+test('readRequiredArgumentValue safely formats unprintable flag names', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: UNPRINTABLE_VALUE,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid flag name: \[unprintable\]/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects missing known-args options', () => {
   assert.throws(
     () =>
