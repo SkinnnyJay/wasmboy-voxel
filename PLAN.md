@@ -197,6 +197,7 @@
 - 2026-02-13: Added `workflow:check` to compose workflow/script format checks and reused it in `test:all:nobuild` + `contract:ci`, reducing duplicated script chains while preserving gate coverage.
 - 2026-02-13: Added `automation:test` with Node-based tests for CI helper scripts (including diagnostics bundling), and wired it into both strict and CI-flavored full quality gates.
 - 2026-02-13: Expanded diagnostics bundler automation tests with duplicate-pattern deduplication coverage, complementing existing matched-file and empty-placeholder assertions.
+- 2026-02-13: Expanded diagnostics bundler automation coverage for custom placeholder message handling when no diagnostics files are present.
 - 2026-02-13: Refactored `changeset:status:ci` filtering into a reusable module and added automation tests for warning suppression/dedup behavior, improving confidence in CI log-sanitization correctness.
 - 2026-02-13: Added diagnostics bundler negative-path tests for required CLI arguments (`--output`, `--pattern`), strengthening guardrail coverage for automation script misuse.
 - 2026-02-13: Expanded diagnostics bundler negative-path automation coverage for unknown flags and missing flag values, hardening script argument-validation guarantees.

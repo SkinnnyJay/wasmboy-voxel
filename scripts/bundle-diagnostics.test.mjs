@@ -73,6 +73,17 @@ test('bundle-diagnostics emits placeholder when no files match', () => {
   );
 });
 
+test('bundle-diagnostics writes custom placeholder message when provided', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-empty-message-'));
+  const customMessage = 'custom placeholder message';
+
+  runBundlerCommand(tempDirectory, ['--output', 'artifacts/custom-empty.tar.gz', '--pattern', 'missing/*.log', '--message', customMessage]);
+
+  const placeholderPath = path.join(tempDirectory, 'artifacts/custom-empty.txt');
+  const placeholderText = fs.readFileSync(placeholderPath, 'utf8').trim();
+  assert.equal(placeholderText, customMessage, 'placeholder file should contain the custom message text');
+});
+
 test('bundle-diagnostics de-duplicates files matched by repeated patterns', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-dedupe-'));
   const logsDirectory = path.join(tempDirectory, 'logs');

@@ -92,6 +92,7 @@ Workflow hardening applied:
 - `workflow:check` consolidates workflow + automation script format checks for reuse in CI scripts
 - automation helper scripts are covered by `automation:test` (Node test runner), and this test step is included in the unified quality gate
 - automation coverage includes diagnostics bundle behavior checks (matched files, empty-placeholder fallback, duplicate-pattern deduplication)
+- automation coverage includes custom placeholder message behavior for empty diagnostics archives
 - automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)
 - automation coverage also validates diagnostics bundle CLI argument guards (missing `--output` and missing `--pattern`)
 - automation coverage also validates diagnostics bundle argument parsing errors (unknown flags and missing flag values)
