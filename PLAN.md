@@ -213,6 +213,7 @@
 - 2026-02-13: Expanded diagnostics bundler negative-path automation coverage for unknown flags and missing flag values, hardening script argument-validation guarantees.
 - 2026-02-13: Expanded diagnostics bundler negative-path coverage for missing `--output` and `--message` flag values to lock down strict argument parsing semantics.
 - 2026-02-13: Hardened diagnostics bundler argument parsing against duplicate `--output` / `--message` flags, with regression tests for both duplicate-flag failure paths.
+- 2026-02-13: Added `--help` usage output support to diagnostics bundler and covered it via automation tests for CLI discoverability.
 - 2026-02-13: Added failure-diagnostics artifact uploads (quality logs + generated screenshots) to CI and nightly workflows to improve regression triage speed when quality gates fail.
 - 2026-02-13: Extended failure-diagnostics artifact support to contract and release workflows by teeing gate logs and uploading them on failure for consistent cross-pipeline observability.
 - 2026-02-13: Expanded release failure artifact payloads to include generated core/headless screenshots from verification failures, aligning triage depth with CI/nightly diagnostics.

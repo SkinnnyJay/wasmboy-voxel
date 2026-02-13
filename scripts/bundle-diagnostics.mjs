@@ -11,6 +11,12 @@ import { spawnSync } from 'node:child_process';
  */
 
 const DEFAULT_EMPTY_MESSAGE = 'No diagnostics files were produced for this run.';
+const USAGE_TEXT = `Usage:
+node scripts/bundle-diagnostics.mjs \\
+  --output artifacts/ci-diagnostics.tar.gz \\
+  --pattern 'ci-quality.log' \\
+  --pattern 'test/core/save-state/*.png' \\
+  [--message 'No diagnostics files were produced for this run.']`;
 
 function readRequiredValue(argv, index, flagName) {
   const value = argv[index + 1];
@@ -116,7 +122,13 @@ function createArchive(outputPath, files) {
 }
 
 function main() {
-  const args = parseArgs(process.argv.slice(2));
+  const argv = process.argv.slice(2);
+  if (argv.includes('--help')) {
+    console.log(USAGE_TEXT);
+    return;
+  }
+
+  const args = parseArgs(argv);
   assertRequiredConfig(args.output, args.patterns);
 
   fs.mkdirSync(path.dirname(args.output), { recursive: true });

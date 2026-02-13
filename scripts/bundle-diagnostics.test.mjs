@@ -11,14 +11,18 @@ const currentDirectory = path.dirname(currentFilePath);
 const bundlerScriptPath = path.join(currentDirectory, 'bundle-diagnostics.mjs');
 
 function runBundlerCommand(cwd, args) {
-  const result = spawnSync('node', [bundlerScriptPath, ...args], {
-    cwd,
-    encoding: 'utf8',
-  });
+  const result = runBundlerCommandRaw(cwd, args);
 
   if (result.status !== 0) {
     throw new Error(`bundle-diagnostics command failed: ${result.stderr || result.stdout || 'unknown error'}`);
   }
+}
+
+function runBundlerCommandRaw(cwd, args) {
+  return spawnSync('node', [bundlerScriptPath, ...args], {
+    cwd,
+    encoding: 'utf8',
+  });
 }
 
 function runBundlerCommandExpectFailure(cwd, args) {
@@ -198,6 +202,16 @@ test('bundle-diagnostics requires output argument', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-output-required-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--pattern', 'logs/*.log']);
   assert.match(output, /Missing required --output argument/u);
+});
+
+test('bundle-diagnostics prints usage with --help', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-help-'));
+  const result = runBundlerCommandRaw(tempDirectory, ['--help']);
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Usage:/u);
+  assert.match(result.stdout, /--output/u);
+  assert.match(result.stdout, /--pattern/u);
 });
 
 test('bundle-diagnostics requires at least one pattern argument', () => {
