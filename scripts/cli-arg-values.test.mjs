@@ -515,6 +515,34 @@ test('readRequiredArgumentValue rejects allowedKnownValues entries absent from k
   );
 });
 
+test('readRequiredArgumentValue rejects null allowedKnownValues entries', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--message', '--help'], 0, {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: new Set([null]),
+      }),
+    /Invalid allowedKnownValues entries for --message/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects whitespace-only allowedKnownValues entries', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--message', '--help'], 0, {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: new Set(['  ']),
+      }),
+    /Invalid allowedKnownValues entries for --message/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects invalid argument indexes', () => {
   const args = ['--timeout-ms', '00050'];
   assert.throws(
