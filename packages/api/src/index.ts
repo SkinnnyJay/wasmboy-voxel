@@ -17,3 +17,4 @@ export type {
 export { ContractRegistry } from './registry.js';
 export type { ContractVersion } from './registry.js';
 export { validateContractPayload, validateRegistryPayload } from './validate.js';
+export type { ValidationResult } from './validate.js';

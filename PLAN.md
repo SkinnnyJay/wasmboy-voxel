@@ -67,20 +67,20 @@
 [x] - Milestone 2.5: Build + Packaging - Add `sideEffects` metadata if needed
 [x] - Milestone 2.5: Build + Packaging - Add `tsconfig.build.json` per package
 
-[ ] - Milestone 3: Next.js Debugger - Create `apps/debugger` skeleton
-[ ] - Milestone 3: Next.js Debugger - Configure Next.js (app router)
-[ ] - Milestone 3: Next.js Debugger - Add global styles and layout
-[ ] - Milestone 3: Next.js Debugger - Add top-level routing and nav
-[ ] - Milestone 3: Next.js Debugger - Add error boundary and fallback UI
-[ ] - Milestone 3: Next.js Debugger - Configure WASM asset handling
-[ ] - Milestone 3: Next.js Debugger - Configure worker loading strategy
-[ ] - Milestone 3: Next.js Debugger - Add ROM loader UI
-[ ] - Milestone 3: Next.js Debugger - Add emulator view panel component
-[ ] - Milestone 3: Next.js Debugger - Add registers panel component
-[ ] - Milestone 3: Next.js Debugger - Add memory viewer component
-[ ] - Milestone 3: Next.js Debugger - Add snapshot timeline component
-[ ] - Milestone 3: Next.js Debugger - Add event log panel component
-[ ] - Milestone 3: Next.js Debugger - Wire typed client to `packages/api`
+[x] - Milestone 3: Next.js Debugger - Create `apps/debugger` skeleton
+[x] - Milestone 3: Next.js Debugger - Configure Next.js (app router)
+[x] - Milestone 3: Next.js Debugger - Add global styles and layout
+[x] - Milestone 3: Next.js Debugger - Add top-level routing and nav
+[x] - Milestone 3: Next.js Debugger - Add error boundary and fallback UI
+[x] - Milestone 3: Next.js Debugger - Configure WASM asset handling
+[x] - Milestone 3: Next.js Debugger - Configure worker loading strategy
+[x] - Milestone 3: Next.js Debugger - Add ROM loader UI
+[x] - Milestone 3: Next.js Debugger - Add emulator view panel component
+[x] - Milestone 3: Next.js Debugger - Add registers panel component
+[x] - Milestone 3: Next.js Debugger - Add memory viewer component
+[x] - Milestone 3: Next.js Debugger - Add snapshot timeline component
+[x] - Milestone 3: Next.js Debugger - Add event log panel component
+[x] - Milestone 3: Next.js Debugger - Wire typed client to `packages/api`
 
 [ ] - Milestone 4: State + Events - Add Zustand store for debugger state
 [ ] - Milestone 4: State + Events - Add selectors and actions for UI panels
@@ -145,3 +145,4 @@
 - 2026-02-13: Completed all M1 tasks by creating `packages/api` + `contracts/v1`, implementing Zod schemas/metadata/registry/validation helpers, and adding contract tests plus usage docs. Reason: establish typed runtime contracts before wrapper integration.
 - 2026-02-13: Completed all M2 tasks by adding snapshot/register/memory contract gates, debug event validation, explicit support guards, dev-toggle validation controls, and `WasmBoyCompat` export. Reason: preserve compatibility while introducing contract-first wrapper behavior.
 - 2026-02-13: Completed all M2.5 tasks by moving `packages/api` to tsup (ESM/CJS+d.ts), adding exports/publish metadata/sideEffects, and switching tests to vitest. Reason: make new package production-consumable and verifiable.
+- 2026-02-13: Completed all M3 tasks by scaffolding `apps/debugger` (Next app-router), adding layout/routes/error UI/panel components, wiring typed contract client usage, and validating with `next build`.
