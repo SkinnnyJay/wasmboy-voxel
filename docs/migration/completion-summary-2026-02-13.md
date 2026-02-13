@@ -176,6 +176,7 @@ Workflow hardening applied:
 - `changeset-status-ci` output-filter helper coverage now includes an only-warnings stream case (empty passthrough output assertion), locking filtered-output behavior when no informational lines remain
 - `changeset-status-ci` output-filter helper now validates input type and rejects non-string output payloads with explicit errors, preventing implicit `.split` type failures from malformed helper invocations
 - `changeset-status-ci` output-filter helper coverage now includes non-string/symbol/unprintable output rejection paths, locking robust error-reporting semantics for invalid filter inputs
+- `changeset-status-ci` output-filter helper coverage now includes explicit `null` output rejection, locking null-input contract semantics for filter entrypoints
 - timeout argument-value validation now uses a shared helper module (`cli-arg-values`) across both wrappers, reducing parser duplication while preserving split/equals token-guard semantics
 - shared argument-value helper now has focused unit coverage for missing/known-token/whitespace/flag-like value validation and required-following-token reads
 - shared argument-value helper coverage now includes unknown long-flag token rejection under double-dash-disallowed settings, explicit whitespace-only acceptance when enabled, and allowed-known-token read behavior (`--message --help`)
