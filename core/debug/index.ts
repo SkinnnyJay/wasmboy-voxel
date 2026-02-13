@@ -21,5 +21,7 @@ export {
   setReadGbMemoryBreakpoint,
   resetReadGbMemoryBreakpoint,
   setWriteGbMemoryBreakpoint,
-  resetWriteGbMemoryBreakpoint
+  resetWriteGbMemoryBreakpoint,
+  getLastBreakpointAddress,
+  getLastBreakpointAccess
 } from './breakpoints';

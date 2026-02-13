@@ -10,6 +10,8 @@ export function eightBitLoadFromGBMemory(gameboyOffset: i32): i32 {
 
 export function eightBitLoadFromGBMemoryWithTraps(offset: i32): i32 {
   if (offset === Breakpoints.readGbMemory) {
+    Breakpoints.lastBreakpointAddress = offset;
+    Breakpoints.lastBreakpointAccess = 0; // read
     Breakpoints.reachedBreakpoint = true;
   }
 

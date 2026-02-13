@@ -1,5 +1,5 @@
 // Main Class and funcitons for rendering the gameboy display
-import { FRAME_LOCATION, GAMEBOY_INTERNAL_MEMORY_LOCATION } from '../constants';
+import { FRAME_LOCATION, GAMEBOY_INTERNAL_MEMORY_LOCATION, SCANLINE_DEBUG_BUFFER_LOCATION } from '../constants';
 
 const VRAM_BANK_0_BASE: i32 = GAMEBOY_INTERNAL_MEMORY_LOCATION;
 const VRAM_BANK_1_BASE: i32 = GAMEBOY_INTERNAL_MEMORY_LOCATION + 0x2000;
@@ -274,6 +274,14 @@ export function updateGraphics(numberOfCycles: i32): void {
 
 // TODO: Make this a _drawPixelOnScanline, as values can be updated while drawing a scanline
 function _drawScanline(scanlineRegister: i32): void {
+  // Capture per-scanline scroll/window params for debug API (0..143 only)
+  if (scanlineRegister >= 0 && scanlineRegister < 144) {
+    const base = SCANLINE_DEBUG_BUFFER_LOCATION + scanlineRegister * 4;
+    store<u8>(base, <u8>Graphics.scrollX);
+    store<u8>(base + 1, <u8>Graphics.scrollY);
+    store<u8>(base + 2, <u8>Graphics.windowX);
+    store<u8>(base + 3, <u8>Graphics.windowY);
+  }
   // Get our seleted tile data memory location
   let tileDataMemoryLocation = Graphics.memoryLocationTileDataSelectZeroStart;
   if (Lcd.bgWindowTileDataSelect) {

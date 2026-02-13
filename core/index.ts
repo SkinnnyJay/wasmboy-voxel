@@ -61,7 +61,9 @@ export {
   CARTRIDGE_ROM_LOCATION,
   CARTRIDGE_ROM_SIZE,
   DEBUG_GAMEBOY_MEMORY_LOCATION,
-  DEBUG_GAMEBOY_MEMORY_SIZE
+  DEBUG_GAMEBOY_MEMORY_SIZE,
+  SCANLINE_DEBUG_BUFFER_LOCATION,
+  SCANLINE_DEBUG_BUFFER_SIZE
 } from './constants';
 export { getWasmBoyOffsetFromGameBoyOffset } from './memory/memoryMap';
 export {
@@ -70,7 +72,9 @@ export {
   setReadGbMemoryBreakpoint,
   resetReadGbMemoryBreakpoint,
   setWriteGbMemoryBreakpoint,
-  resetWriteGbMemoryBreakpoint
+  resetWriteGbMemoryBreakpoint,
+  getLastBreakpointAddress,
+  getLastBreakpointAccess
 } from './debug/breakpoints';
 export {
   getRegisterA,
