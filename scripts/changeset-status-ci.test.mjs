@@ -478,3 +478,21 @@ exit 0
   assert.equal(result.status, 1);
   assert.match(result.stderr, /timed out after 50ms/u);
 });
+
+test('changeset-status-ci inline timeout CLI override takes precedence over environment', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-inline-override-'));
+  const fakeBinDirectory = writeFakeChangeset(
+    tempDirectory,
+    `#!/usr/bin/env bash
+sleep 0.2
+echo '🦋  info delayed status'
+exit 0
+`,
+  );
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms=50'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});

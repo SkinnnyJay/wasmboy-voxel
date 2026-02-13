@@ -118,6 +118,7 @@ Workflow hardening applied:
 - diagnostics parser now treats whitespace-only `--output` / `--pattern` values (split and equals forms) as missing values, preventing accidental blank path-like argument acceptance
 - duplicate-help regression coverage now includes short-first order (`-h --help`) in both wrappers, ensuring duplicate-help detection remains ordering-agnostic across help aliases
 - duplicate-timeout regression coverage now includes split-only and inline-only duplicate forms in both wrappers (in addition to mixed split/inline orderings), ensuring duplicate-timeout detection remains syntax-order agnostic
+- timeout-override precedence coverage now includes inline CLI override variants for both wrappers, ensuring `--flag=<ms>` overrides timeout env defaults just like split-form overrides
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity

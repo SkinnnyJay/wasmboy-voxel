@@ -937,3 +937,29 @@ exit 0
   );
   assert.match(output, /tar timed out after 50ms/u);
 });
+
+test('bundle-diagnostics inline timeout CLI override takes precedence over timeout env', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-cli-inline-override-'));
+  const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
+  fs.mkdirSync(fakeBinDirectory, { recursive: true });
+  const fakeTarPath = path.join(fakeBinDirectory, 'tar');
+  fs.writeFileSync(
+    fakeTarPath,
+    `#!/usr/bin/env bash
+sleep 0.2
+exit 0
+`,
+    'utf8',
+  );
+  fs.chmodSync(fakeTarPath, 0o755);
+
+  const output = runBundlerCommandExpectFailure(
+    tempDirectory,
+    ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log', '--tar-timeout-ms=50'],
+    {
+      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '5000',
+    },
+  );
+  assert.match(output, /tar timed out after 50ms/u);
+});
