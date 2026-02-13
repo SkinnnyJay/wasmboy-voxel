@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
+    },
+    "agent-memory": {
+      "command": "npx",
+      "args": ["tsx", "mcps/agent-memory/server.ts"]
+    }
+  }
+}
