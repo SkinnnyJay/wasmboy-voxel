@@ -1,0 +1,11 @@
+# WasmBoy-Voxel Cursor Rules
+
+- This repo is an AssemblyScript + JavaScript + TypeScript emulator fork. Avoid
+  guidance that assumes a React/Next.js app.
+- `dist/` and `build/` are generated output. Do not edit them directly.
+- Keep memory layout compatibility. If `core/constants.ts` addresses change,
+  update wrapper offsets and rebuild.
+- Snapshot reads must use `_getWasmConstant` and `_getWasmMemorySection` and
+  handle worker readiness (retry or return `null`).
+- Use Prettier: `npm run prettier:lint` for checks, `npm run prettier` to fix.
+- Prefer explicit types in TypeScript APIs; avoid `any` and type assertions.

@@ -1,0 +1,79 @@
+# Cursor Ignore Configuration
+# Common patterns to ignore
+
+# Version Control
+.git/
+.svn/
+.hg/
+
+# Build outputs
+build/
+dist/
+out/
+target/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Dependencies
+node_modules/
+vendor/
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+
+# IDE and Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs and databases
+*.log
+logs/
+log/
+*.sqlite
+*.db
+
+# Cache and temporary files
+.cache/
+.temp/
+tmp/
+temp/
+.cursor-history/
+
+# Test coverage
+coverage/
+.coverage
+htmlcov/
+
+# Environment and secrets
+.env
+.env.local
+*.pem
+*.key
+secrets/
+
+# Documentation build
+docs/_build/
+site/
+
+# Package files
+*.tgz
+*.tar.gz
+*.zip
+*.rar
+
+# Mobile development
+.gradle/
+*.apk
+*.ipa
+
+# Project specific
+# Add your project-specific ignore patterns here
