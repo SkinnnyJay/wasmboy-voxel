@@ -205,3 +205,4 @@
 - 2026-02-13: Updated CI/contract/release path filters to include `scripts/**`, ensuring workflow runs are triggered when shared automation scripts (including changeset CI wrappers) are modified.
 - 2026-02-13: Expanded diagnostics artifact upload conditions to run on cancellations as well as failures, preserving partial logs/screenshots from interrupted CI runs.
 - 2026-02-13: Added job-level `defaults.run.shell: bash` to all workflows and removed per-step shell overrides, simplifying workflow definitions while keeping consistent pipefail-compatible shell behavior.
+- 2026-02-13: Expanded contract workflow path filters with `contracts/**` so contract-schema/documentation changes trigger contract CI validation consistently.

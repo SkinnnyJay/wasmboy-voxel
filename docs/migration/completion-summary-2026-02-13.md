@@ -55,6 +55,7 @@ Contract workflow uses:
 - `npm run contract:ci` (workflow lint + package CI checks + changeset status + sample contract validation)
 - `npm run changeset:status:ci` (deduplicated/suppressed expected local file-dependency notices in CI output)
 - path filters so the workflow runs only when contract/package/release-metadata files change (including debugger package metadata used by changeset checks)
+- contract workflow path filters include `contracts/**` so contract-schema/documentation edits still exercise contract CI gates
 
 Workflow hardening applied:
 
