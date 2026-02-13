@@ -59,3 +59,19 @@ echo 'should not run'
     /Invalid executable name: \.\.\/fixture-cmd/u,
   );
 });
+
+test('writeFakeExecutable rejects executable names with backslash path separators', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-backslash-path-name-'));
+
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        tempDirectory,
+        '..\\fixture-cmd',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid executable name: \.\.\\fixture-cmd/u,
+  );
+});
