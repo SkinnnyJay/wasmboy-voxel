@@ -408,3 +408,4 @@
 - 2026-02-13: Expanded parser-helper option-contract coverage with explicit non-boolean `allowWhitespaceOnly` rejection for both direct and read-path validation entrypoints, plus explicit read-path `argv` null/undefined rejection assertions.
 - 2026-02-13: Expanded shared timeout-helper options-shape coverage with explicit `null` options-object rejection across direct/composed entrypoints (`options`, `env`, `cli`), locking null-container contract semantics in timeout-resolution helpers.
 - 2026-02-13: Expanded shared timeout-helper option-name coverage with explicit `null` and `undefined` direct `name` rejection in `resolveStrictPositiveIntegerEnv`, locking direct option-name nullability contract semantics.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` index-contract coverage with explicit `undefined` argument-index rejection, locking undefined-index contract semantics alongside existing null/symbol/non-integer/out-of-range guards.
