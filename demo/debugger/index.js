@@ -98,6 +98,100 @@ WasmBoy.ResponsiveGamepad.onInputsChange(
   }
 );
 
+// Keyboard fallback for joypad input (useful when ResponsiveGamepad fails)
+const keyboardJoypadState = {
+  UP: false,
+  RIGHT: false,
+  DOWN: false,
+  LEFT: false,
+  A: false,
+  B: false,
+  SELECT: false,
+  START: false
+};
+
+const keyboardJoypadMapping = {
+  ArrowUp: 'UP',
+  ArrowRight: 'RIGHT',
+  ArrowDown: 'DOWN',
+  ArrowLeft: 'LEFT',
+  KeyZ: 'A',
+  KeyX: 'B',
+  KeyA: 'A',
+  KeyS: 'B',
+  Enter: 'START',
+  ShiftLeft: 'SELECT',
+  ShiftRight: 'SELECT'
+};
+
+let keyboardInputEnabled = false;
+
+const isEditableElement = element => {
+  if (!element) {
+    return false;
+  }
+
+  const tagName = element.tagName;
+  return element.isContentEditable || tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT';
+};
+
+const handleKeyboardJoypad = (event, isPressed) => {
+  if (isEditableElement(event.target)) {
+    return;
+  }
+
+  const joypadKey = keyboardJoypadMapping[event.code];
+  if (!joypadKey) {
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/7312289d-742a-4f37-8218-6c6fb94f8cc7', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        runId: 'pre-fix',
+        hypothesisId: 'H4',
+        location: 'demo/debugger/index.js:152',
+        message: 'keyboard event ignored (no mapping)',
+        data: { code: event.code },
+        timestamp: Date.now()
+      })
+    }).catch(() => {});
+    // #endregion
+    return;
+  }
+
+  if (!keyboardInputEnabled) {
+    keyboardInputEnabled = true;
+    WasmBoy.disableDefaultJoypad();
+    Pubx.get(PUBX_KEYS.NOTIFICATION).showNotification('Keyboard input enabled (Arrow keys / Z / X / Enter / Shift)');
+  }
+
+  if (keyboardJoypadState[joypadKey] !== isPressed) {
+    keyboardJoypadState[joypadKey] = isPressed;
+    WasmBoy.setJoypadState({
+      ...keyboardJoypadState
+    });
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/7312289d-742a-4f37-8218-6c6fb94f8cc7', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        runId: 'pre-fix',
+        hypothesisId: 'H4',
+        location: 'demo/debugger/index.js:176',
+        message: 'keyboard joypad state sent',
+        data: { joypadKey, isPressed, keyboardJoypadState },
+        timestamp: Date.now()
+      })
+    }).catch(() => {});
+    // #endregion
+  }
+
+  event.preventDefault();
+};
+
+window.addEventListener('keydown', event => handleKeyboardJoypad(event, true));
+window.addEventListener('keyup', event => handleKeyboardJoypad(event, false));
+
 // Add all of our layout events
 let layoutChangeThrottle = undefined;
 
