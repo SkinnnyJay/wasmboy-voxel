@@ -220,6 +220,7 @@
 - 2026-02-13: Added `release:verify:strict` and release workflow manual `strict` input path, enabling opt-in no-retry release verification while retaining default CI-retry behavior.
 - 2026-02-13: Refactored `install:stack:ci` to compose `install:packages:ci` plus debugger install, reducing duplication between stack-level and package-level deterministic install commands.
 - 2026-02-13: Added `contract:ci:full` and a `full_gate` manual-dispatch input in contract workflow, enabling optional full-gate verification runs while keeping default contract checks package-focused.
+- 2026-02-13: Added `automation:test` into default `contract:ci` path so contract workflow validates helper-script behavior in addition to workflow/script formatting and package contract checks.
 - 2026-02-13: Added a single retry to `test:integration:headless` (`--retries 1`) to mitigate occasional golden-frame flake in CI while retaining strict pixel-diff assertions.
 - 2026-02-13: Added a single retry to `test:core:savestate` (`--retries 1`) to reduce occasional screenshot-timing flakes while preserving strict save-state golden comparisons.
 - 2026-02-13: Refined retry strategy by restoring strict default local headless/save-state commands and introducing CI-specific retry scripts (`test:integration:headless:ci`, `test:core:savestate:ci`) used by `test:all:nobuild`.

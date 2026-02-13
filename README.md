@@ -328,7 +328,7 @@ npm run release:build
 # Run release verification gate (quality suite + changeset status)
 npm run release:verify
 
-# Run focused contract-check workflow gate locally
+# Run focused contract-check workflow gate locally (includes automation tests)
 npm run contract:ci
 
 # Run full contract gate variant (full ci gate + contract checks)
