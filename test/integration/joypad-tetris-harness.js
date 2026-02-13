@@ -1,12 +1,14 @@
 /**
- * Minimal harness for Tetris (Game Boy) joypad input and baseline ROM check.
+ * Joypad input regression harness: Tetris, Space Invaders, and baseline ROM.
  *
- * Tetris test: Load Tetris.gb, run to title, set Down, run frames, assert cursor
- * moved (frame or tilemap change). Skip if Tetris.gb is not present; place at
- * test/fixtures/Tetris.gb or test/performance/testroms/tetris/Tetris.gb.
+ * Validates that joypad input reaches the core and affects game state (frame
+ * or tilemap change within N frames).
  *
- * Baseline test: Load tobutobugirl (in testroms), run to menu, set joypad,
- * run frames, assert frame changed to confirm input path works.
+ * - Baseline: tobutobugirl, set Down, run frames, assert frame change.
+ * - Tetris: run to title, set Down, run ~45 frames, assert cursor moved
+ *   (1 PLAYER -> 2 PLAYER); skip if Tetris.gb not in test/fixtures or test/performance/testroms/tetris.
+ * - Space Invaders: run a few frames, set A or START, run frames, assert frame
+ *   change; skip if Space Invaders.gb not in test/fixtures or repo root.
  *
  * Run: npm run test:integration:joypad (or test:integration).
  */
@@ -42,8 +44,14 @@ const TETRIS_ROM_PATHS = [
   path.join(testRomsPath, 'tetris', 'Tetris.gb')
 ];
 
-function findTetrisRom() {
-  for (const p of TETRIS_ROM_PATHS) {
+const SPACE_INVADERS_ROM_PATHS = [
+  path.join(fixturesPath, 'Space Invaders.gb'),
+  path.join(__dirname, '../../Space Invaders.gb'),
+  path.join(testRomsPath, 'space-invaders', 'Space Invaders.gb')
+];
+
+function findRom(paths) {
+  for (const p of paths) {
     try {
       if (fs.existsSync(p)) return p;
     } catch (_) {
@@ -51,6 +59,14 @@ function findTetrisRom() {
     }
   }
   return null;
+}
+
+function findTetrisRom() {
+  return findRom(TETRIS_ROM_PATHS);
+}
+
+function findSpaceInvadersRom() {
+  return findRom(SPACE_INVADERS_ROM_PATHS);
 }
 
 function runFrames(n) {
@@ -129,6 +145,35 @@ describe('Joypad Tetris harness', () => {
       const sigAfter = frameSignature(after);
 
       assert.notStrictEqual(sigAfter, sigBefore, 'Tetris title cursor should move from 1 PLAYER to 2 PLAYER when Down is pressed');
+    });
+  });
+
+  describe('Space Invaders', () => {
+    it('should change game state when A or START is pressed', async function () {
+      const romPath = findSpaceInvadersRom();
+      if (!romPath) {
+        this.skip();
+        return;
+      }
+
+      const rom = new Uint8Array(fs.readFileSync(romPath));
+      await WasmBoy.loadROM(rom);
+
+      WasmBoy.setJoypadState({ ...JOYPAD_NEUTRAL });
+      await runFrames(120);
+
+      const before = await commonTest.getImageDataFromFrame();
+      const sigBefore = frameSignature(before);
+
+      WasmBoy.setJoypadState({ ...JOYPAD_NEUTRAL, A: true });
+      await runFrames(30);
+      WasmBoy.setJoypadState({ ...JOYPAD_NEUTRAL });
+      await runFrames(30);
+
+      const after = await commonTest.getImageDataFromFrame();
+      const sigAfter = frameSignature(after);
+
+      assert.notStrictEqual(sigAfter, sigBefore, 'Space Invaders frame should change after A press (input reaches core)');
     });
   });
 });
