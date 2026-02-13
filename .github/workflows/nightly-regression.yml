@@ -47,7 +47,7 @@ jobs:
         run: npm run install:stack:ci
 
       - name: Run full no-build quality suite
-        run: set -o pipefail && npm run test:all:nobuild 2>&1 | tee nightly-quality.log
+        run: set -o pipefail && npm run ci:local 2>&1 | tee nightly-quality.log
 
       - name: Upload failure diagnostics
         if: ${{ failure() || cancelled() }}

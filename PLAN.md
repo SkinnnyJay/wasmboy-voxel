@@ -211,3 +211,4 @@
 - 2026-02-13: Expanded contract workflow path filters with `contracts/**` so contract-schema/documentation changes trigger contract CI validation consistently.
 - 2026-02-13: Added `install:packages:ci` and switched contract workflow to package-only deterministic installs, reducing unnecessary debugger app dependency bootstrap during contract CI.
 - 2026-02-13: Refined contract workflow npm cache inputs to package-only lockfiles, improving cache relevance after adopting package-only deterministic installs.
+- 2026-02-13: Switched CI and nightly workflows to execute the shared `ci:local` alias directly, tightening local/remote command parity for the no-build quality gate.
