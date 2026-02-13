@@ -2,6 +2,12 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { filterChangesetStatusOutput } from './changeset-status-ci-lib.mjs';
 
+const UNPRINTABLE_VALUE = {
+  toString() {
+    throw new Error('cannot stringify');
+  },
+};
+
 test('filterChangesetStatusOutput suppresses expected workspace file warnings', () => {
   const input = [
     'Package "@wasmboy/debugger-app" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../../packages/api"',
@@ -107,6 +113,21 @@ test('filterChangesetStatusOutput handles empty output', () => {
 
   assert.deepEqual(result.suppressedWarnings, []);
   assert.equal(result.passthroughOutput, '');
+});
+
+test('filterChangesetStatusOutput rejects non-string output values', () => {
+  assert.throws(() => filterChangesetStatusOutput(42), /Invalid changeset status output: 42/u);
+});
+
+test('filterChangesetStatusOutput rejects symbol output values', () => {
+  assert.throws(
+    () => filterChangesetStatusOutput(Symbol('changeset-output')),
+    /Invalid changeset status output: Symbol\(changeset-output\)/u,
+  );
+});
+
+test('filterChangesetStatusOutput safely formats unprintable output values', () => {
+  assert.throws(() => filterChangesetStatusOutput(UNPRINTABLE_VALUE), /Invalid changeset status output: \[unprintable\]/u);
 });
 
 test('filterChangesetStatusOutput returns empty passthrough when only warnings are present', () => {

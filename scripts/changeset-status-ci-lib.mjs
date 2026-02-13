@@ -1,9 +1,24 @@
 const expectedWorkspaceWarningPattern = /^Package "@wasmboy\/[^"]+" must depend on the current version of "@wasmboy\/api": "[^"]+" vs "file:/;
 
 /**
+ * @param {unknown} value
+ */
+function formatErrorValue(value) {
+  try {
+    return String(value);
+  } catch {
+    return '[unprintable]';
+  }
+}
+
+/**
  * @param {string} rawOutput
  */
 export function filterChangesetStatusOutput(rawOutput) {
+  if (typeof rawOutput !== 'string') {
+    throw new Error(`Invalid changeset status output: ${formatErrorValue(rawOutput)}`);
+  }
+
   const outputLines = rawOutput.split(/\r?\n/);
   const suppressedWarnings = new Set();
   const passthroughLines = [];
