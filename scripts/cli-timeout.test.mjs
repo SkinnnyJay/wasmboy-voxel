@@ -12,6 +12,42 @@ test('resolveStrictPositiveIntegerEnv returns default for undefined values', () 
   assert.equal(timeout, 120000);
 });
 
+test('resolveStrictPositiveIntegerEnv rejects non-positive default values', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: undefined,
+        defaultValue: 0,
+      }),
+    /Invalid default value for TEST_TIMEOUT: 0/u,
+  );
+});
+
+test('resolveStrictPositiveIntegerEnv rejects non-integer default values', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: undefined,
+        defaultValue: 12.5,
+      }),
+    /Invalid default value for TEST_TIMEOUT: 12\.5/u,
+  );
+});
+
+test('resolveStrictPositiveIntegerEnv rejects above-ceiling default values', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: undefined,
+        defaultValue: 2_147_483_648,
+      }),
+    /Invalid default value for TEST_TIMEOUT: 2147483648/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv returns default for empty-string values', () => {
   const timeout = resolveStrictPositiveIntegerEnv({
     name: 'TEST_TIMEOUT',
@@ -207,5 +243,17 @@ test('resolveTimeoutFromCliAndEnv rejects whitespace-only cli timeout even with 
         cli: { name: '--test-timeout', rawValue: '   ' },
       }),
     /Invalid --test-timeout value:\s+/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects invalid default timeout values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 0,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid default value for TEST_TIMEOUT_ENV: 0/u,
   );
 });

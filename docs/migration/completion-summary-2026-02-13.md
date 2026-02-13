@@ -173,6 +173,8 @@ Workflow hardening applied:
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity
 - shared timeout parser helper coverage now explicitly includes max-boundary acceptance (`2147483647`) and leading-zero acceptance (`00050`) to lock canonicalizable upper-bound input semantics
+- shared timeout parser now validates default timeout inputs (`defaultValue`) as strict positive safe integers within the supported ceiling, preventing invalid internal fallback configuration from being silently accepted
+- shared timeout parser helper coverage now includes invalid-default rejection paths (zero, non-integer, above-ceiling) to lock default-fallback contract semantics
 - shared timeout parser tests now cover whitespace-only env values as invalid, preventing accidental silent coercion in CI configuration
 - shared timeout parser tests now cover empty-string env values as default-fallback behavior, preserving predictable unset-env semantics
 - shared timeout parser tests now cover plus-prefixed and negative numeric inputs as invalid, tightening timeout-config input contract clarity

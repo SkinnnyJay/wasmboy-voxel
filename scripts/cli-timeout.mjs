@@ -1,10 +1,22 @@
 const MAX_TIMEOUT_MS = 2_147_483_647;
 
 /**
+ * @param {string} name
+ * @param {number} defaultValue
+ */
+function assertValidDefaultValue(name, defaultValue) {
+  if (!Number.isFinite(defaultValue) || !Number.isSafeInteger(defaultValue) || defaultValue <= 0 || defaultValue > MAX_TIMEOUT_MS) {
+    throw new Error(`Invalid default value for ${name}: ${defaultValue}`);
+  }
+}
+
+/**
  * @param {{name: string; rawValue: string | undefined; defaultValue: number}} options
  */
 export function resolveStrictPositiveIntegerEnv(options) {
   const { name, rawValue, defaultValue } = options;
+  assertValidDefaultValue(name, defaultValue);
+
   if (rawValue === undefined || rawValue.length === 0) {
     return defaultValue;
   }
