@@ -314,7 +314,7 @@ are extended hardening work (dependency audit + PyBoy-rigor add-ons).
 [ ] - Phase 10: PyBoy Rigor - Add memory view bounds tests
 [ ] - Phase 10: PyBoy Rigor - Add delayed input queue tests
 [ ] - Phase 10: PyBoy Rigor - Add API error taxonomy tests
-[ ] - Phase 10: PyBoy Rigor - Add headless throughput baseline
+[x] - Phase 10: PyBoy Rigor - Add headless throughput baseline
 
 ## Ensuring No Regressions
 
@@ -367,7 +367,7 @@ are extended hardening work (dependency audit + PyBoy-rigor add-ons).
 - [ ] Add memory view bounds tests (read/write, out-of-bounds errors).
 - [ ] Add delayed input queue tests (press/release scheduling).
 - [ ] Add API error taxonomy tests (`InvalidInput`, `InvalidOperation`, `OutOfBounds`).
-- [ ] Add headless throughput regression baseline (frames/sec).
+- [x] Add headless throughput regression baseline (frames/sec).
 
 ### Incremental Release Plan
 

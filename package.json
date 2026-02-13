@@ -78,6 +78,7 @@
     "test:perf": "npm run test:performance",
     "test:performance": "run-s build test:performance:nobuild",
     "test:performance:nobuild": "node --experimental-worker node_modules/mocha/bin/_mocha test/performance/performance-test.js --exit",
+    "test:performance:throughput": "node --experimental-worker node_modules/mocha/bin/_mocha test/performance/headless-throughput.cjs --timeout 30000 --exit",
     "test:integration": "run-s build test:integration:lib test:integration:voxel test:integration:headless test:integration:joypad test:integration:breakpoint test:integration:debugapi test:integration:compat test:integration:baseline",
     "test:integration:nobuild": "run-s test:integration:lib test:integration:voxel test:integration:headless test:integration:joypad test:integration:breakpoint test:integration:debugapi test:integration:compat test:integration:baseline",
     "test:integration:lib": "node --experimental-worker node_modules/mocha/bin/_mocha test/integration/lib-test.cjs --exit",
