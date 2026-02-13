@@ -337,6 +337,7 @@ Workflow hardening applied:
 - read-path parser-helper coverage now explicitly asserts `Infinity` argument-index rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper coverage now explicitly asserts `-Infinity` argument-index rejection in `readRequiredArgumentValue` validation paths
 - parser-helper option-name coverage now explicitly asserts `bigint` `flagName` rejection in `validateRequiredArgumentValue`, locking non-string primitive flag-name contract semantics
+- parser-helper option-name coverage now explicitly asserts `bigint` `flagName` rejection in `readRequiredArgumentValue`, locking non-string primitive flag-name contract semantics in read-path parser validation
 
 ## Security posture at completion
 

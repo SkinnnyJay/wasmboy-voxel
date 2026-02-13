@@ -848,6 +848,18 @@ test('readRequiredArgumentValue rejects non-object options', () => {
   assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, 42), /Invalid required argument options\./u);
 });
 
+test('readRequiredArgumentValue rejects bigint flag names', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: 42n,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid flag name: 42/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects missing known-args options', () => {
   assert.throws(
     () =>
