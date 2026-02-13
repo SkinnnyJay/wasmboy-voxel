@@ -319,6 +319,9 @@ npm run build
 # Build only workspace packages (`packages/*`) and skip app builds
 npm run stack:build:packages
 
+# Run package-only CI checks (build + typecheck + tests)
+npm run ci:packages
+
 # Build release artifacts (root emulator/lib + workspace packages)
 npm run release:build
 

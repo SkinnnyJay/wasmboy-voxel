@@ -186,3 +186,4 @@
 - 2026-02-13: Reduced CI install overhead by disabling install-time audit/funding output in `install:stack:ci`; security audit remains enforced by `audit:check` in the unified quality gate.
 - 2026-02-13: Refined `contract:ci` scope to package-level build/typecheck/tests plus contract and changeset checks, reducing duplicate full-stack validation while preserving contract workflow intent.
 - 2026-02-13: Added path filters to `contract-checks.yml` so contract CI only triggers when relevant package/contract/changeset files change, reducing redundant workflow executions.
+- 2026-02-13: Added reusable `ci:packages` script and composed `contract:ci` from it, further reducing command duplication and improving local/workflow parity for package-focused validation.
