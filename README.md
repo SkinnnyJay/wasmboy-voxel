@@ -391,6 +391,9 @@ npm run scripts:lint
 # Auto-format automation helper scripts
 npm run scripts:format
 
+# Run automation helper unit tests
+npm run automation:test
+
 # All commands for testing, and are test related
 npm run test:*
 
