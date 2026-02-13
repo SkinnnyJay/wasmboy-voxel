@@ -108,3 +108,18 @@ test('filterChangesetStatusOutput handles empty output', () => {
   assert.deepEqual(result.suppressedWarnings, []);
   assert.equal(result.passthroughOutput, '');
 });
+
+test('filterChangesetStatusOutput returns empty passthrough when only warnings are present', () => {
+  const warningOne = 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api"';
+  const warningTwo =
+    'Package "@wasmboy/debugger-app" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../../packages/api"';
+  const input = [warningOne, warningTwo].join('\n');
+
+  const result = filterChangesetStatusOutput(input);
+
+  assert.deepEqual(
+    result.suppressedWarnings,
+    [warningOne, warningTwo].sort((left, right) => left.localeCompare(right)),
+  );
+  assert.equal(result.passthroughOutput, '');
+});
