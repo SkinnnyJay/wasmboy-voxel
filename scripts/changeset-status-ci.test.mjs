@@ -645,6 +645,17 @@ test('changeset-status-ci reports timeout errors with configured value', () => {
   assert.match(result.stderr, /timed out after 50ms/u);
 });
 
+test('changeset-status-ci accepts whitespace-padded timeout environment values', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-env-whitespace-padded-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: ' 50 ',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
 test('changeset-status-ci timeout CLI override takes precedence over environment', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-override-'));
   const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
@@ -656,10 +667,32 @@ test('changeset-status-ci timeout CLI override takes precedence over environment
   assert.match(result.stderr, /timed out after 50ms/u);
 });
 
+test('changeset-status-ci accepts whitespace-padded split CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-split-whitespace-padded-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms', ' 50 '], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
 test('changeset-status-ci inline timeout CLI override takes precedence over environment', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-inline-override-'));
   const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
   const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms=50'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
+test('changeset-status-ci accepts whitespace-padded inline CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-inline-whitespace-padded-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms= 50 '], {
     CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
   });
 

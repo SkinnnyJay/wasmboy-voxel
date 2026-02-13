@@ -1639,6 +1639,17 @@ test('bundle-diagnostics reports tar timeout failures', () => {
   assert.match(output, /tar timed out after 50ms/u);
 });
 
+test('bundle-diagnostics accepts whitespace-padded timeout environment values', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-timeout-env-whitespace-padded-'));
+  const fakeBinDirectory = writeDelayedFakeTar(tempDirectory);
+
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log'], {
+    PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+    BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: ' 50 ',
+  });
+  assert.match(output, /tar timed out after 50ms/u);
+});
+
 test('bundle-diagnostics timeout CLI override takes precedence over timeout env', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-cli-override-'));
   const fakeBinDirectory = writeDelayedFakeTar(tempDirectory);
@@ -1654,6 +1665,21 @@ test('bundle-diagnostics timeout CLI override takes precedence over timeout env'
   assert.match(output, /tar timed out after 50ms/u);
 });
 
+test('bundle-diagnostics accepts whitespace-padded split CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-split-whitespace-padded-'));
+  const fakeBinDirectory = writeDelayedFakeTar(tempDirectory);
+
+  const output = runBundlerCommandExpectFailure(
+    tempDirectory,
+    ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log', '--tar-timeout-ms', ' 50 '],
+    {
+      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '5000',
+    },
+  );
+  assert.match(output, /tar timed out after 50ms/u);
+});
+
 test('bundle-diagnostics inline timeout CLI override takes precedence over timeout env', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-cli-inline-override-'));
   const fakeBinDirectory = writeDelayedFakeTar(tempDirectory);
@@ -1661,6 +1687,21 @@ test('bundle-diagnostics inline timeout CLI override takes precedence over timeo
   const output = runBundlerCommandExpectFailure(
     tempDirectory,
     ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log', '--tar-timeout-ms=50'],
+    {
+      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '5000',
+    },
+  );
+  assert.match(output, /tar timed out after 50ms/u);
+});
+
+test('bundle-diagnostics accepts whitespace-padded inline CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-tar-timeout-inline-whitespace-padded-'));
+  const fakeBinDirectory = writeDelayedFakeTar(tempDirectory);
+
+  const output = runBundlerCommandExpectFailure(
+    tempDirectory,
+    ['--output', 'artifacts/out.tar.gz', '--pattern', 'missing/*.log', '--tar-timeout-ms= 50 '],
     {
       PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
       BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '5000',
