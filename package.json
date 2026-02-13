@@ -37,7 +37,7 @@
     "ci:packages": "run-s stack:build:packages stack:typecheck:packages stack:test:packages",
     "release:build": "run-s build stack:build:packages",
     "release:verify": "run-s test:all:nobuild changeset:status",
-    "contract:ci": "run-s ci:packages changeset:status contract:sample:registers",
+    "contract:ci": "run-s workflow:lint ci:packages changeset:status contract:sample:registers",
     "stack:test": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" test",
     "stack:typecheck": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" typecheck",
     "stack:lint": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" lint",
