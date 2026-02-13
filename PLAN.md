@@ -172,3 +172,4 @@
 - 2026-02-13: Added reusable sample contract fixture/script for CI contract validation and removed CLI `import.meta` CJS build warning by switching to path-based entrypoint detection.
 - 2026-02-13: Removed Next.js multi-lockfile root warning in debugger builds by setting `outputFileTracingRoot` explicitly in app config.
 - 2026-02-13: Hardened GitHub Actions workflows with explicit least-privilege permissions and concurrency cancellation guards across CI, contract-check, nightly, and release pipelines.
+- 2026-02-13: Updated README and completion summary with explicit CI workflow map + hardening notes so contributors can mirror and reason about automation behavior locally.

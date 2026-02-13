@@ -353,6 +353,21 @@ npm run benchmark:*
 npm run demo:*
 ```
 
+### CI Workflows
+
+The repository uses four GitHub Actions workflows:
+
+- `ci.yml`: push/PR quality gate (`npm run test:all:nobuild`)
+- `contract-checks.yml`: contract-focused gate + explicit sample contract validation
+- `nightly-regression.yml`: scheduled daily drift detection (same no-build gate)
+- `release.yml`: changesets-driven release PR/publish automation
+
+For local parity with CI, run:
+
+```bash
+npm run ci:local
+```
+
 Using the [gh-pages](https://www.npmjs.com/package/gh-pages) for debugger/demo deployment onto gh-pages.
 
 # Notable Projects

@@ -34,6 +34,11 @@ CI automation now runs the same gate in:
 - `contract-checks.yml` (contract-focused gate + explicit contract payload validation)
 - `nightly-regression.yml` (daily scheduled drift detection)
 
+Workflow hardening applied:
+
+- explicit workflow permissions (least privilege defaults)
+- concurrency groups with `cancel-in-progress` to avoid duplicate CI spend
+
 ## Security posture at completion
 
 ```bash
