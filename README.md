@@ -341,6 +341,8 @@ npm run contract:ci:full:strict
 npm run changeset:status:ci
 # Show helper usage/flags for the changeset wrapper
 node scripts/changeset-status-ci.mjs --help
+# Optional: override changeset wrapper timeout per invocation
+node scripts/changeset-status-ci.mjs --timeout-ms 180000
 # Optional: override changeset wrapper timeout in milliseconds
 CHANGESET_STATUS_CI_TIMEOUT_MS=180000 node scripts/changeset-status-ci.mjs
 # Timeout env values must be positive integers <= 2147483647

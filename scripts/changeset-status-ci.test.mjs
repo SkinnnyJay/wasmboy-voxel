@@ -139,6 +139,38 @@ test('changeset-status-ci rejects duplicate help flags', () => {
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci rejects duplicate timeout flags', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '100', '--timeout-ms=200']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Duplicate --timeout-ms argument provided/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects missing timeout values', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects empty inline timeout values', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects mixed help and timeout arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--help', '--timeout-ms', '100']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Help flag cannot be combined with timeout override arguments/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci rejects unknown arguments', () => {
   const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--unknown']);
 
@@ -226,6 +258,24 @@ exit 0
   );
   const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, {
     CHANGESET_STATUS_CI_TIMEOUT_MS: '50',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
+test('changeset-status-ci timeout CLI override takes precedence over environment', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-override-'));
+  const fakeBinDirectory = writeFakeChangeset(
+    tempDirectory,
+    `#!/usr/bin/env bash
+sleep 0.2
+echo '🦋  info delayed status'
+exit 0
+`,
+  );
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms', '50'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
   });
 
   assert.equal(result.status, 1);
