@@ -496,6 +496,20 @@ test('bundle-diagnostics rejects unknown short args even when help is present', 
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics rejects unknown args even when short-help is present', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-short-help-unknown-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['-h', '--unknown']);
+  assert.match(output, /Unknown argument: --unknown/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics rejects unknown short args even when short-help is present', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-short-help-unknown-short-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['-h', '-x']);
+  assert.match(output, /Unknown argument: -x/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects help flag mixed with operational args', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-help-mixed-args-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, ['--help', '--output', 'artifacts/out.tar.gz']);
