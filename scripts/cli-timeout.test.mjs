@@ -54,6 +54,30 @@ test('resolveStrictPositiveIntegerEnv rejects non-string option names', () => {
   );
 });
 
+test('resolveStrictPositiveIntegerEnv rejects null option names', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: null,
+        rawValue: undefined,
+        defaultValue: 120000,
+      }),
+    /Invalid timeout option name: null/u,
+  );
+});
+
+test('resolveStrictPositiveIntegerEnv rejects undefined option names', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: undefined,
+        rawValue: undefined,
+        defaultValue: 120000,
+      }),
+    /Invalid timeout option name: undefined/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv rejects symbol option names', () => {
   assert.throws(
     () =>
