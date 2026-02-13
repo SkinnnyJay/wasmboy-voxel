@@ -159,3 +159,4 @@
 - 2026-02-13: Added PyBoy-rigor headless throughput baseline test (`test:performance:throughput`) with JSON-configured FPS threshold and validated runtime output (~834 FPS locally).
 - 2026-02-13: Added core multi-instance isolation regression (`test:core:isolation`) and wired it into `test:core` / `test:core:nobuild` to enforce no shared mutable memory between parallel core instances.
 - 2026-02-13: Added memory view bounds regression coverage (`test:integration:memorybounds`) and integrated it into `test:integration` pipelines, asserting valid range reads and explicit out-of-bounds error behavior.
+- 2026-02-13: Added CLI/error-taxonomy rigor by introducing typed CLI error codes (`InvalidInput`, `InvalidOperation`, `OutOfBounds`) with regression tests and entrypoint-safe execution export for direct command-router testing.

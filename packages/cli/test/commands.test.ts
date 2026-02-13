@@ -8,6 +8,8 @@ import {
   runCommand,
   snapshotCommand,
 } from '../src/commands.js';
+import { CliError } from '../src/errors.js';
+import { executeCli } from '../src/index.js';
 
 function createTempDir(): string {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'wasmboy-cli-test-'));
@@ -65,5 +67,53 @@ describe('cli commands', () => {
     expect(() =>
       contractCheckCommand(['--contract', 'registers', '--file', payloadPath]),
     ).not.toThrow();
+  });
+
+  it('throws InvalidInput for missing rom path', () => {
+    expect(() => runCommand('/tmp/does-not-exist.gb')).toThrowError(CliError);
+    try {
+      runCommand('/tmp/does-not-exist.gb');
+    } catch (error) {
+      if (error instanceof CliError) {
+        expect(error.code).toBe('InvalidInput');
+      } else {
+        throw error;
+      }
+    }
+  });
+
+  it('throws InvalidOperation for unknown CLI command', () => {
+    expect(() => executeCli(['unknown-command'])).toThrowError(CliError);
+    try {
+      executeCli(['unknown-command']);
+    } catch (error) {
+      if (error instanceof CliError) {
+        expect(error.code).toBe('InvalidOperation');
+      } else {
+        throw error;
+      }
+    }
+  });
+
+  it('throws OutOfBounds for invalid contract payload', () => {
+    const dir = createTempDir();
+    const payloadPath = path.join(dir, 'invalid-registers.json');
+    writeJson(payloadPath, {
+      scx: -1,
+    });
+
+    expect(() =>
+      contractCheckCommand(['--contract', 'registers', '--file', payloadPath]),
+    ).toThrowError(CliError);
+
+    try {
+      contractCheckCommand(['--contract', 'registers', '--file', payloadPath]);
+    } catch (error) {
+      if (error instanceof CliError) {
+        expect(error.code).toBe('OutOfBounds');
+      } else {
+        throw error;
+      }
+    }
   });
 });

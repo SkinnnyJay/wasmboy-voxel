@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { CONTRACT_VERSION_V1, ContractRegistry, validateRegistryPayload } from '@wasmboy/api';
+import { CliError } from './errors.js';
 import { log } from './logger.js';
 import { assertFilePath, assertRomPath, resolveInputPath } from './paths.js';
 
@@ -128,18 +129,24 @@ export function contractCheckCommand(args: string[]): void {
   const filePath = parseFlagValue(args, '--file');
 
   if (!contractName || !filePath) {
-    throw new Error('contract-check requires --contract and --file');
+    throw new CliError('InvalidInput', 'contract-check requires --contract and --file');
   }
 
   const schema = ContractRegistry[CONTRACT_VERSION_V1][contractName];
   if (!schema) {
-    throw new Error(`Unknown contract name "${contractName}" for version ${CONTRACT_VERSION_V1}`);
+    throw new CliError(
+      'InvalidInput',
+      `Unknown contract name "${contractName}" for version ${CONTRACT_VERSION_V1}`,
+    );
   }
 
   const payload = JSON.parse(readFileBuffer(assertFilePath(filePath)).toString('utf8'));
   const result = validateRegistryPayload(CONTRACT_VERSION_V1, contractName, payload);
   if (!result.success) {
-    throw new Error(`contract-check failed: ${result.errorMessage ?? 'unknown error'}`);
+    throw new CliError(
+      'OutOfBounds',
+      `contract-check failed: ${result.errorMessage ?? 'unknown error'}`,
+    );
   }
 
   log({
