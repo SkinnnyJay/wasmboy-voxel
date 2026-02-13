@@ -40,6 +40,9 @@ jobs:
   contracts:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -60,7 +63,6 @@ jobs:
 
       - name: Run contract CI gate
         run: set -o pipefail && npm run contract:ci 2>&1 | tee contract-ci.log
-        shell: bash
 
       - name: Upload failure diagnostics
         if: ${{ failure() || cancelled() }}

@@ -30,6 +30,9 @@ jobs:
   release:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,11 +64,9 @@ jobs:
 
       - name: Build release artifacts
         run: set -o pipefail && npm run release:build 2>&1 | tee release-build.log
-        shell: bash
 
       - name: Run release verification gate
         run: set -o pipefail && npm run release:verify 2>&1 | tee release-verify.log
-        shell: bash
 
       - name: Create release PR or publish
         uses: changesets/action@v1

@@ -74,6 +74,7 @@ Workflow hardening applied:
 - log-capturing workflow steps explicitly use `shell: bash` to guarantee `set -o pipefail` behavior
 - failure artifact names include run id/attempt for clearer traceability in repeated or retried runs
 - diagnostics upload steps now run on both failure and cancellation, preserving partial logs from interrupted pipelines
+- workflows now set job-level `defaults.run.shell: bash` so bash semantics are consistently applied across all run steps
 
 ## Security posture at completion
 

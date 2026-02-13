@@ -48,6 +48,9 @@ jobs:
   lint-typecheck-test:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -77,7 +80,6 @@ jobs:
 
       - name: Run full no-build quality suite
         run: set -o pipefail && npm run test:all:nobuild 2>&1 | tee ci-quality.log
-        shell: bash
 
       - name: Upload failure diagnostics
         if: ${{ failure() || cancelled() }}
