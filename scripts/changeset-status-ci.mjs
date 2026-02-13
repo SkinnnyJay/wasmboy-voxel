@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process';
 import { filterChangesetStatusOutput } from './changeset-status-ci-lib.mjs';
-import { resolveStrictPositiveIntegerEnv } from './cli-timeout.mjs';
+import { resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
 import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
 
 const DEFAULT_TIMEOUT_MS = 120000;
@@ -103,15 +103,16 @@ if (parsedArgs.showHelp) {
 
 let timeoutMs = DEFAULT_TIMEOUT_MS;
 try {
-  const envTimeoutMs = resolveStrictPositiveIntegerEnv({
-    name: TIMEOUT_ENV_VARIABLE,
-    rawValue: process.env[TIMEOUT_ENV_VARIABLE],
+  timeoutMs = resolveTimeoutFromCliAndEnv({
     defaultValue: DEFAULT_TIMEOUT_MS,
-  });
-  timeoutMs = resolveStrictPositiveIntegerEnv({
-    name: CLI_TIMEOUT_FLAG,
-    rawValue: parsedArgs.timeoutMsOverride,
-    defaultValue: envTimeoutMs,
+    env: {
+      name: TIMEOUT_ENV_VARIABLE,
+      rawValue: process.env[TIMEOUT_ENV_VARIABLE],
+    },
+    cli: {
+      name: CLI_TIMEOUT_FLAG,
+      rawValue: parsedArgs.timeoutMsOverride,
+    },
   });
 } catch (error) {
   const errorMessage = error instanceof Error ? error.message : 'Invalid timeout configuration.';

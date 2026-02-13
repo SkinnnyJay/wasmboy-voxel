@@ -25,3 +25,24 @@ export function resolveStrictPositiveIntegerEnv(options) {
 
   return parsedTimeout;
 }
+
+/**
+ * @param {{
+ *   defaultValue: number;
+ *   env: {name: string; rawValue: string | undefined};
+ *   cli: {name: string; rawValue: string | undefined};
+ * }} options
+ */
+export function resolveTimeoutFromCliAndEnv(options) {
+  const envTimeout = resolveStrictPositiveIntegerEnv({
+    name: options.env.name,
+    rawValue: options.env.rawValue,
+    defaultValue: options.defaultValue,
+  });
+
+  return resolveStrictPositiveIntegerEnv({
+    name: options.cli.name,
+    rawValue: options.cli.rawValue,
+    defaultValue: envTimeout,
+  });
+}

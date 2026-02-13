@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { resolveStrictPositiveIntegerEnv } from './cli-timeout.mjs';
+import { resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
 import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
 
 /**
@@ -310,15 +310,16 @@ function main() {
   let tarTimeoutMs = DEFAULT_TAR_TIMEOUT_MS;
   try {
     assertRequiredConfig(args.output, args.patterns);
-    const envTarTimeoutMs = resolveStrictPositiveIntegerEnv({
-      name: TAR_TIMEOUT_ENV_VARIABLE,
-      rawValue: process.env[TAR_TIMEOUT_ENV_VARIABLE],
+    tarTimeoutMs = resolveTimeoutFromCliAndEnv({
       defaultValue: DEFAULT_TAR_TIMEOUT_MS,
-    });
-    tarTimeoutMs = resolveStrictPositiveIntegerEnv({
-      name: CLI_TIMEOUT_FLAG,
-      rawValue: args.tarTimeoutMsOverride,
-      defaultValue: envTarTimeoutMs,
+      env: {
+        name: TAR_TIMEOUT_ENV_VARIABLE,
+        rawValue: process.env[TAR_TIMEOUT_ENV_VARIABLE],
+      },
+      cli: {
+        name: CLI_TIMEOUT_FLAG,
+        rawValue: args.tarTimeoutMsOverride,
+      },
     });
   } catch (error) {
     failWithUsage(toErrorMessage(error));

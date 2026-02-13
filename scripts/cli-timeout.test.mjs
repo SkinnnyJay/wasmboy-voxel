@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { resolveStrictPositiveIntegerEnv } from './cli-timeout.mjs';
+import { resolveStrictPositiveIntegerEnv, resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
 
 test('resolveStrictPositiveIntegerEnv returns default for undefined values', () => {
   const timeout = resolveStrictPositiveIntegerEnv({
@@ -101,5 +101,59 @@ test('resolveStrictPositiveIntegerEnv rejects values above supported timeout cei
         defaultValue: 120000,
       }),
     /Invalid TEST_TIMEOUT value: 2147483648/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv returns default when cli/env are unset', () => {
+  const timeout = resolveTimeoutFromCliAndEnv({
+    defaultValue: 120000,
+    env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+    cli: { name: '--test-timeout', rawValue: undefined },
+  });
+
+  assert.equal(timeout, 120000);
+});
+
+test('resolveTimeoutFromCliAndEnv uses env timeout when cli override is unset', () => {
+  const timeout = resolveTimeoutFromCliAndEnv({
+    defaultValue: 120000,
+    env: { name: 'TEST_TIMEOUT_ENV', rawValue: '5000' },
+    cli: { name: '--test-timeout', rawValue: undefined },
+  });
+
+  assert.equal(timeout, 5000);
+});
+
+test('resolveTimeoutFromCliAndEnv lets cli timeout override env timeout', () => {
+  const timeout = resolveTimeoutFromCliAndEnv({
+    defaultValue: 120000,
+    env: { name: 'TEST_TIMEOUT_ENV', rawValue: '5000' },
+    cli: { name: '--test-timeout', rawValue: '50' },
+  });
+
+  assert.equal(timeout, 50);
+});
+
+test('resolveTimeoutFromCliAndEnv fails for invalid env timeout even when cli timeout is valid', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: 'invalid-timeout' },
+        cli: { name: '--test-timeout', rawValue: '50' },
+      }),
+    /Invalid TEST_TIMEOUT_ENV value: invalid-timeout/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv fails for invalid cli timeout even when env timeout is valid', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: '5000' },
+        cli: { name: '--test-timeout', rawValue: 'invalid-timeout' },
+      }),
+    /Invalid --test-timeout value: invalid-timeout/u,
   );
 });
