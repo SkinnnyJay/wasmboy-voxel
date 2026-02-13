@@ -12,6 +12,30 @@ test('resolveStrictPositiveIntegerEnv returns default for undefined values', () 
   assert.equal(timeout, 120000);
 });
 
+test('resolveStrictPositiveIntegerEnv rejects empty option names', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: '   ',
+        rawValue: undefined,
+        defaultValue: 120000,
+      }),
+    /Invalid timeout option name:\s+/u,
+  );
+});
+
+test('resolveStrictPositiveIntegerEnv rejects non-string option names', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 42,
+        rawValue: undefined,
+        defaultValue: 120000,
+      }),
+    /Invalid timeout option name: 42/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv rejects non-positive default values', () => {
   assert.throws(
     () =>
@@ -291,5 +315,17 @@ test('resolveTimeoutFromCliAndEnv rejects non-finite default timeout values', ()
         cli: { name: '--test-timeout', rawValue: undefined },
       }),
     /Invalid default value for TEST_TIMEOUT_ENV: Infinity/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects invalid environment option names', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: ' ', rawValue: undefined },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid timeout option name:\s+/u,
   );
 });

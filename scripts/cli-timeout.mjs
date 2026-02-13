@@ -2,9 +2,20 @@ const MAX_TIMEOUT_MS = 2_147_483_647;
 
 /**
  * @param {string} name
+ */
+function assertValidOptionName(name) {
+  if (typeof name !== 'string' || name.trim().length === 0) {
+    throw new Error(`Invalid timeout option name: ${name}`);
+  }
+}
+
+/**
+ * @param {string} name
  * @param {number} defaultValue
  */
 function assertValidDefaultValue(name, defaultValue) {
+  assertValidOptionName(name);
+
   if (!Number.isFinite(defaultValue) || !Number.isSafeInteger(defaultValue) || defaultValue <= 0 || defaultValue > MAX_TIMEOUT_MS) {
     throw new Error(`Invalid default value for ${name}: ${defaultValue}`);
   }

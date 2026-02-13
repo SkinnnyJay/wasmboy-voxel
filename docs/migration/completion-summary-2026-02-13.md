@@ -180,6 +180,8 @@ Workflow hardening applied:
 - shared timeout parser helper coverage now includes invalid-default rejection paths (zero, non-integer, above-ceiling) to lock default-fallback contract semantics
 - shared timeout parser helper coverage now includes non-finite default rejection (`NaN`), locking finite-number default constraints in fallback validation semantics
 - shared timeout parser helper coverage now includes explicit infinite-default rejection (`Infinity`) in both direct and composed timeout resolution tests, locking finite default fallback constraints across helper entrypoints
+- shared timeout parser now validates option-name inputs and rejects empty/non-string names, preventing ambiguous helper error labels for misconfigured timeout option metadata
+- shared timeout parser helper coverage now includes invalid option-name rejection (empty/non-string names and invalid composed env-name metadata) to lock timeout option-label input contract semantics
 - shared timeout parser tests now cover whitespace-only env values as invalid, preventing accidental silent coercion in CI configuration
 - shared timeout parser tests now cover empty-string env values as default-fallback behavior, preserving predictable unset-env semantics
 - shared timeout parser tests now cover plus-prefixed and negative numeric inputs as invalid, tightening timeout-config input contract clarity
