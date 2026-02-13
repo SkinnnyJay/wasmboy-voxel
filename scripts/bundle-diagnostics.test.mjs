@@ -1560,6 +1560,19 @@ test('bundle-diagnostics rejects tar timeout values above supported ceiling', ()
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics accepts max tar timeout environment value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-max-timeout-env-'));
+  runBundlerCommand(tempDirectory, ['--output', 'artifacts/max-timeout-env.tar.gz', '--pattern', 'missing/*.log'], {
+    BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS: '2147483647',
+  });
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/max-timeout-env.tar.gz');
+  assert.ok(
+    archiveContents.some(entry => entry.endsWith('artifacts/max-timeout-env.txt')),
+    'archive should be created when timeout env is set to max supported value',
+  );
+});
+
 test('bundle-diagnostics treats empty timeout env value as default', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-empty-timeout-env-'));
   runBundlerCommand(tempDirectory, ['--output', 'artifacts/empty-timeout.tar.gz', '--pattern', 'missing/*.log'], {

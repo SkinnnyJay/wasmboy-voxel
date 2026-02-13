@@ -569,6 +569,24 @@ test('changeset-status-ci rejects timeout values above supported ceiling', () =>
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci accepts max timeout environment value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-max-timeout-env-'));
+  const fakeBinDirectory = writeFakeChangeset(
+    tempDirectory,
+    `#!/usr/bin/env bash
+echo '🦋  info NO packages to be bumped at patch'
+exit 0
+`,
+  );
+
+  const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '2147483647',
+  });
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /🦋  info NO packages to be bumped at patch/u);
+});
+
 test('changeset-status-ci treats empty timeout env value as default', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-empty-timeout-env-'));
   const fakeBinDirectory = writeFakeChangeset(
