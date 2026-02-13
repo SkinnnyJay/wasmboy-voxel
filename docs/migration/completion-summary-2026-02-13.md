@@ -303,6 +303,7 @@ Workflow hardening applied:
 - read-path parser-helper tests now include explicit implemented assertions for null/whitespace `allowedKnownValues` entries in `readRequiredArgumentValue` to match documented token-entry guardrails
 - read-path parser-helper coverage now explicitly asserts non-string (`number`) `allowedKnownValues` entry rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper coverage now explicitly asserts non-string and whitespace-only `knownArgs` entry rejection in `readRequiredArgumentValue` validation paths
+- parser-helper coverage now explicitly asserts non-boolean `allowWhitespaceOnly` rejection for direct/read validation entrypoints and null/undefined `argv` rejection in read-path parsing
 
 ## Security posture at completion
 

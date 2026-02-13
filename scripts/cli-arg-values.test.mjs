@@ -429,6 +429,32 @@ test('readRequiredArgumentValue rejects non-array argv inputs', () => {
   );
 });
 
+test('readRequiredArgumentValue rejects undefined argv inputs', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(undefined, 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid argv array for --timeout-ms/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects null argv inputs', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(null, 0, {
+        flagName: '--timeout-ms',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      }),
+    /Invalid argv array for --timeout-ms/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects non-string following argument values', () => {
   assert.throws(
     () =>

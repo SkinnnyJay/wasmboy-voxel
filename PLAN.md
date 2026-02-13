@@ -405,3 +405,4 @@
 - 2026-02-13: Added focused read-path regression assertions for null/whitespace `allowedKnownValues` entries in `readRequiredArgumentValue`, aligning test implementation with documented parser-helper token-entry contracts.
 - 2026-02-13: Expanded shared `readRequiredArgumentValue` allowed-known-token entry coverage with explicit non-string (`number`) `allowedKnownValues` entry rejection, locking read-path token-type contract semantics for allowed-known-value validation.
 - 2026-02-13: Expanded shared `readRequiredArgumentValue` known-token set entry coverage with explicit non-string and whitespace-only `knownArgs` entry rejection paths, locking read-path known-token contract semantics for parser option validation.
+- 2026-02-13: Expanded parser-helper option-contract coverage with explicit non-boolean `allowWhitespaceOnly` rejection for both direct and read-path validation entrypoints, plus explicit read-path `argv` null/undefined rejection assertions.
