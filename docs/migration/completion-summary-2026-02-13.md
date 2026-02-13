@@ -305,6 +305,7 @@ Workflow hardening applied:
 - read-path parser-helper coverage now explicitly asserts non-string and whitespace-only `knownArgs` entry rejection in `readRequiredArgumentValue` validation paths
 - parser-helper coverage now explicitly asserts non-boolean `allowWhitespaceOnly` rejection for direct/read validation entrypoints and null/undefined `argv` rejection in read-path parsing
 - timeout-helper options-shape coverage now explicitly asserts null container rejection for direct/composed entrypoints (`options`, composed `env`, composed `cli`)
+- timeout-helper options-shape coverage now explicitly asserts primitive non-object (`number`) top-level options-object rejection for direct/composed timeout helper entrypoints
 - timeout-helper coverage now explicitly asserts null/undefined direct option-name rejection for `resolveStrictPositiveIntegerEnv`
 - read-path parser-helper coverage now explicitly asserts undefined argument-index rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper coverage now explicitly asserts `NaN` argument-index rejection in `readRequiredArgumentValue` validation paths
