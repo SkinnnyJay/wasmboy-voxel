@@ -141,6 +141,18 @@ test('validateRequiredArgumentValue rejects null flag names', () => {
   );
 });
 
+test('validateRequiredArgumentValue rejects undefined flag names', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('50', {
+        flagName: undefined,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid flag name: undefined/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects invalid known-args options', () => {
   assert.throws(
     () =>
@@ -196,6 +208,17 @@ test('validateRequiredArgumentValue rejects non-boolean allowDoubleDashValue opt
         flagName: '--output',
         knownArgs: KNOWN_ARGS,
         allowDoubleDashValue: /** @type {unknown as boolean} */ ('yes'),
+      }),
+    /Invalid allowDoubleDashValue option for --output/u,
+  );
+});
+
+test('validateRequiredArgumentValue rejects missing allowDoubleDashValue options', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: KNOWN_ARGS,
       }),
     /Invalid allowDoubleDashValue option for --output/u,
   );
