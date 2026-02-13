@@ -345,6 +345,7 @@ Workflow hardening applied:
 - read-path value-token coverage now explicitly asserts empty-string following-token rejection for required flags, locking missing-value semantics for explicit empty argv payloads
 - read-path inline-equals parity coverage now asserts extracted `--flag=value` payload validation parity with split-form `readRequiredArgumentValue` reads, locking parser-helper consistency across inline/split argument styles
 - timeout option-name validation now rejects whitespace-padded names (`name !== name.trim()`), with direct/composed env+cli helper coverage locking disallowed padded-label semantics
+- timeout options-container validation now enforces plain-object inputs, with Date/Map/Set rejection coverage across direct helper options and composed top-level/env/cli timeout option containers
 
 ## Security posture at completion
 

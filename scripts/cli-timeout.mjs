@@ -12,10 +12,22 @@ function formatErrorValue(value) {
 }
 
 /**
+ * @param {unknown} value
+ */
+function isPlainObject(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return false;
+  }
+
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+}
+
+/**
  * @param {{name: string; rawValue: string | undefined; defaultValue: number}} options
  */
 function assertValidTimeoutEnvOptions(options) {
-  if (!options || typeof options !== 'object' || Array.isArray(options)) {
+  if (!isPlainObject(options)) {
     throw new Error('Invalid timeout env resolution options.');
   }
 }
@@ -49,15 +61,15 @@ function assertValidDefaultValue(name, defaultValue) {
  * }} options
  */
 function assertValidTimeoutResolutionOptions(options) {
-  if (!options || typeof options !== 'object' || Array.isArray(options)) {
+  if (!isPlainObject(options)) {
     throw new Error('Invalid timeout resolution options.');
   }
 
-  if (!options.env || typeof options.env !== 'object' || Array.isArray(options.env)) {
+  if (!isPlainObject(options.env)) {
     throw new Error('Invalid timeout env options.');
   }
 
-  if (!options.cli || typeof options.cli !== 'object' || Array.isArray(options.cli)) {
+  if (!isPlainObject(options.cli)) {
     throw new Error('Invalid timeout cli options.');
   }
 }

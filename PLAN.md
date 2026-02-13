@@ -447,3 +447,4 @@
 - 2026-02-13: Expanded shared read-path value-token coverage with empty-string following-token rejection for required flags, locking missing-value semantics for explicit empty argv payloads.
 - 2026-02-13: Added read-path inline-equals parity regression coverage by asserting `validateRequiredArgumentValue` acceptance for extracted `--flag=value` payloads and equality with `readRequiredArgumentValue` split-form reads, locking parser helper consistency across inline/split argument styles.
 - 2026-02-13: Hardened timeout option-name validation by rejecting whitespace-padded option labels (`name !== name.trim()`) and expanded helper coverage across direct/composed env/cli timeout resolution entrypoints.
+- 2026-02-13: Hardened timeout options-container shape guards with plain-object validation (`Object`/`null` prototype only), adding direct/composed Date/Map/Set rejection coverage for top-level, env, and cli timeout option containers.

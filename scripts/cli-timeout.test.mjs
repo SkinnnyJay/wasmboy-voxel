@@ -42,6 +42,18 @@ test('resolveStrictPositiveIntegerEnv rejects bigint options objects', () => {
   assert.throws(() => resolveStrictPositiveIntegerEnv(42n), /Invalid timeout env resolution options\./u);
 });
 
+test('resolveStrictPositiveIntegerEnv rejects Date options objects', () => {
+  assert.throws(() => resolveStrictPositiveIntegerEnv(new Date()), /Invalid timeout env resolution options\./u);
+});
+
+test('resolveStrictPositiveIntegerEnv rejects Map options objects', () => {
+  assert.throws(() => resolveStrictPositiveIntegerEnv(new Map()), /Invalid timeout env resolution options\./u);
+});
+
+test('resolveStrictPositiveIntegerEnv rejects Set options objects', () => {
+  assert.throws(() => resolveStrictPositiveIntegerEnv(new Set()), /Invalid timeout env resolution options\./u);
+});
+
 test('resolveStrictPositiveIntegerEnv rejects empty option names', () => {
   assert.throws(
     () =>
@@ -488,6 +500,18 @@ test('resolveTimeoutFromCliAndEnv rejects bigint top-level options', () => {
   assert.throws(() => resolveTimeoutFromCliAndEnv(42n), /Invalid timeout resolution options\./u);
 });
 
+test('resolveTimeoutFromCliAndEnv rejects Date top-level options', () => {
+  assert.throws(() => resolveTimeoutFromCliAndEnv(new Date()), /Invalid timeout resolution options\./u);
+});
+
+test('resolveTimeoutFromCliAndEnv rejects Map top-level options', () => {
+  assert.throws(() => resolveTimeoutFromCliAndEnv(new Map()), /Invalid timeout resolution options\./u);
+});
+
+test('resolveTimeoutFromCliAndEnv rejects Set top-level options', () => {
+  assert.throws(() => resolveTimeoutFromCliAndEnv(new Set()), /Invalid timeout resolution options\./u);
+});
+
 test('resolveTimeoutFromCliAndEnv rejects missing env option objects', () => {
   assert.throws(
     () =>
@@ -554,6 +578,42 @@ test('resolveTimeoutFromCliAndEnv rejects array env option values', () => {
       resolveTimeoutFromCliAndEnv({
         defaultValue: 120000,
         env: [],
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid timeout env options\./u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects Date env option values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: new Date(),
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid timeout env options\./u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects Map env option values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: new Map(),
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid timeout env options\./u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects Set env option values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: new Set(),
         cli: { name: '--test-timeout', rawValue: undefined },
       }),
     /Invalid timeout env options\./u,
@@ -627,6 +687,42 @@ test('resolveTimeoutFromCliAndEnv rejects array cli option values', () => {
         defaultValue: 120000,
         env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
         cli: [],
+      }),
+    /Invalid timeout cli options\./u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects Date cli option values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: new Date(),
+      }),
+    /Invalid timeout cli options\./u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects Map cli option values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: new Map(),
+      }),
+    /Invalid timeout cli options\./u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects Set cli option values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: new Set(),
       }),
     /Invalid timeout cli options\./u,
   );
