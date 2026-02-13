@@ -154,3 +154,4 @@
 - 2026-02-13: Completed all M9 tasks by adding migration progress links and dedicated usage/troubleshooting guides for API package, debugger app, and CLI workflows.
 - 2026-02-13: Completed all M10 tasks by running final build/lint/typecheck/tests + integration/core/contract checks, updating changelog release notes, and removing deprecated `.cjs.cjs` test runtime references in favor of the unified loader helper.
 - 2026-02-13: Added release changeset metadata for `@wasmboy/api` and `@wasmboy/cli` (`.changeset/strong-llamas-juggle.md`) so release automation has explicit version intent for the migration rollout.
+- 2026-02-13: Audited legacy test dependency surface and replaced `pngjs-image` + `request` usage with direct `pngjs` integration in test helpers, reducing audit pressure while preserving integration/core snapshot behavior.

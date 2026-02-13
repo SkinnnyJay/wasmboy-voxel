@@ -2,7 +2,7 @@
 const WasmBoy = require('./load-wasmboy-runtime.cjs');
 
 // Image Creation
-const PNGImage = require('pngjs-image');
+const { PNG } = require('pngjs');
 
 // File management
 const fs = require('fs');
@@ -54,34 +54,19 @@ const getImageDataFromFrame = async () => {
 // Function to create an image from output
 const createImageFromFrame = (imageDataArray, outputPath) => {
   return new Promise((resolve, reject) => {
-    // https://www.npmjs.com/package/pngjs-image
-    const image = PNGImage.createImage(GAMEBOY_CAMERA_WIDTH, GAMEBOY_CAMERA_HEIGHT);
+    const png = new PNG({
+      width: GAMEBOY_CAMERA_WIDTH,
+      height: GAMEBOY_CAMERA_HEIGHT
+    });
 
-    // Write our pixel values
-    for (let i = 0; i < imageDataArray.length - 4; i = i + 4) {
-      // Since 4 indexes represent 1 pixels. divide i by 4
-      const pixelIndex = i / 4;
-
-      // Get our y value from i
-      const y = Math.floor(pixelIndex / GAMEBOY_CAMERA_WIDTH);
-
-      // Get our x value from i
-      const x = pixelIndex % GAMEBOY_CAMERA_WIDTH;
-
-      image.setAt(x, y, {
-        red: imageDataArray[i],
-        green: imageDataArray[i + 1],
-        blue: imageDataArray[i + 2],
-        alpha: imageDataArray[i + 3]
-      });
+    for (let i = 0; i < imageDataArray.length; i += 1) {
+      png.data[i] = imageDataArray[i] ?? 0;
     }
 
-    image.writeImage(outputPath, function(err) {
-      if (err) {
-        reject(err);
-      }
-      resolve();
-    });
+    const fileStream = fs.createWriteStream(outputPath);
+    fileStream.on('finish', () => resolve());
+    fileStream.on('error', reject);
+    png.pack().on('error', reject).pipe(fileStream);
   });
 };
 
