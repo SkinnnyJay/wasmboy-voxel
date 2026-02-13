@@ -361,6 +361,9 @@ npm run ci:local
 # Dependency audit check used by CI
 npm run audit:check
 
+# Check GitHub workflow formatting locally
+npm run workflow:lint
+
 # All commands for testing, and are test related
 npm run test:*
 
