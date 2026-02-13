@@ -471,6 +471,54 @@ test('changeset-status-ci rejects negative inline CLI timeout override', () => {
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci rejects zero CLI timeout override', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '0']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects zero inline CLI timeout override', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=0']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects CLI timeout overrides with non-numeric suffixes', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '50ms']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects inline CLI timeout overrides with non-numeric suffixes', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=50ms']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects CLI timeout overrides above supported ceiling', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '2147483648']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects inline CLI timeout overrides above supported ceiling', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=2147483648']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci rejects timeout values with non-numeric suffixes', () => {
   const result = runStatusScript(createNodeOnlyPath(), {
     CHANGESET_STATUS_CI_TIMEOUT_MS: '50ms',

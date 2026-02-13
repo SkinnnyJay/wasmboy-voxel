@@ -319,3 +319,4 @@
 - 2026-02-13: Expanded diagnostics help-literal message regression coverage with timeout-coexistence permutations (split and equals forms), preserving intentional help-literal message payload semantics when timeout override arguments are also provided.
 - 2026-02-13: Expanded duplicate-help regression coverage with same-alias permutations (`--help --help` and `-h -h`) across both wrappers, preserving duplicate-help failure semantics independent of alias mixing order.
 - 2026-02-13: Refactored `changeset-status-ci` split-form timeout argument parsing to use a shared required-value helper, aligning helper structure with diagnostics parser internals while preserving existing timeout validation behavior.
+- 2026-02-13: Expanded wrapper-level CLI timeout boundary regression coverage with zero, non-numeric suffix, and above-ceiling override values (split and inline forms) across both helper wrappers.
