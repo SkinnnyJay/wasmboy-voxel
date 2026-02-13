@@ -311,7 +311,7 @@ are extended hardening work (dependency audit + PyBoy-rigor add-ons).
 [ ] - Phase 10: PyBoy Rigor - Add `tick(count, render)` contract + tests
 [ ] - Phase 10: PyBoy Rigor - Add frame-skip equivalence tests
 [x] - Phase 10: PyBoy Rigor - Add multi-instance isolation test
-[ ] - Phase 10: PyBoy Rigor - Add memory view bounds tests
+[x] - Phase 10: PyBoy Rigor - Add memory view bounds tests
 [ ] - Phase 10: PyBoy Rigor - Add delayed input queue tests
 [ ] - Phase 10: PyBoy Rigor - Add API error taxonomy tests
 [x] - Phase 10: PyBoy Rigor - Add headless throughput baseline
@@ -364,7 +364,7 @@ are extended hardening work (dependency audit + PyBoy-rigor add-ons).
 - [ ] Add `tick(count, render)` contract and unit tests for headless parity.
 - [ ] Add frame-skip equivalence tests (`tick(1)` vs `tick(n)`).
 - [x] Add multi-instance isolation test (no shared state across instances).
-- [ ] Add memory view bounds tests (read/write, out-of-bounds errors).
+- [x] Add memory view bounds tests (read/write, out-of-bounds errors).
 - [ ] Add delayed input queue tests (press/release scheduling).
 - [ ] Add API error taxonomy tests (`InvalidInput`, `InvalidOperation`, `OutOfBounds`).
 - [x] Add headless throughput regression baseline (frames/sec).
