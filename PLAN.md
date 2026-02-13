@@ -193,3 +193,4 @@
 - 2026-02-13: Cleaned CI/contract path filter lists to remove stale `pnpm-workspace.yaml` references, keeping workflow trigger rules aligned with actual repo files.
 - 2026-02-13: Added `workflow:lint` and wired it into `test:all:nobuild` so GitHub Actions YAML formatting is validated as part of the standard quality gate.
 - 2026-02-13: Added failure-diagnostics artifact uploads (quality logs + generated screenshots) to CI and nightly workflows to improve regression triage speed when quality gates fail.
+- 2026-02-13: Extended failure-diagnostics artifact support to contract and release workflows by teeing gate logs and uploading them on failure for consistent cross-pipeline observability.

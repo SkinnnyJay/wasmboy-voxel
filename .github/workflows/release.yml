@@ -59,10 +59,10 @@ jobs:
         run: npm run install:stack:ci
 
       - name: Build release artifacts
-        run: npm run release:build
+        run: set -o pipefail && npm run release:build 2>&1 | tee release-build.log
 
       - name: Run release verification gate
-        run: npm run release:verify
+        run: set -o pipefail && npm run release:verify 2>&1 | tee release-verify.log
 
       - name: Create release PR or publish
         uses: changesets/action@v1
@@ -72,3 +72,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Upload failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-failure-diagnostics
+          if-no-files-found: ignore
+          path: |
+            release-build.log
+            release-verify.log

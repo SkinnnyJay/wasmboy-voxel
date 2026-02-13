@@ -57,4 +57,13 @@ jobs:
         run: npm run install:stack:ci
 
       - name: Run contract CI gate
-        run: npm run contract:ci
+        run: set -o pipefail && npm run contract:ci 2>&1 | tee contract-ci.log
+
+      - name: Upload failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: contract-failure-diagnostics
+          if-no-files-found: ignore
+          path: |
+            contract-ci.log
