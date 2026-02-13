@@ -70,6 +70,7 @@ Contract workflow uses:
 - path filters so the workflow runs only when contract/package/release-metadata files change (including debugger package metadata used by changeset checks)
 - contract workflow path filters include `contracts/**` so contract-schema/documentation edits still exercise contract CI gates
 - contract workflow manual dispatch supports `full_gate=true`, with optional `strict=true` to run `contract:ci:full:strict`
+- contract workflow validates dispatch input combinations (`strict=true` without `full_gate=true` fails fast)
 
 Workflow hardening applied:
 

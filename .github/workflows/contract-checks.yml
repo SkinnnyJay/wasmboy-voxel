@@ -76,6 +76,11 @@ jobs:
       - name: Run contract CI gate
         run: |
           set -o pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.strict }}" == "true" && "${{ inputs.full_gate }}" != "true" ]]; then
+            echo "Invalid workflow_dispatch inputs: strict=true requires full_gate=true." >&2
+            exit 1
+          fi
+
           if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.full_gate }}" == "true" ]]; then
             if [[ "${{ inputs.strict }}" == "true" ]]; then
               npm run contract:ci:full:strict 2>&1 | tee contract-ci.log
