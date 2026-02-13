@@ -458,6 +458,18 @@ test('resolveStrictPositiveIntegerEnv rejects values above supported timeout cei
   );
 });
 
+test('resolveStrictPositiveIntegerEnv rejects max-safe-integer overflow strings', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: '9007199254740992',
+        defaultValue: 120000,
+      }),
+    /Invalid TEST_TIMEOUT value: 9007199254740992/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv accepts max supported timeout value', () => {
   const timeout = resolveStrictPositiveIntegerEnv({
     name: 'TEST_TIMEOUT',
@@ -772,6 +784,18 @@ test('resolveTimeoutFromCliAndEnv fails for invalid env timeout even when cli ti
   );
 });
 
+test('resolveTimeoutFromCliAndEnv fails for max-safe-integer-overflow env timeout even when cli timeout is valid', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: '9007199254740992' },
+        cli: { name: '--test-timeout', rawValue: '50' },
+      }),
+    /Invalid TEST_TIMEOUT_ENV value: 9007199254740992/u,
+  );
+});
+
 test('resolveTimeoutFromCliAndEnv fails for invalid cli timeout even when env timeout is valid', () => {
   assert.throws(
     () =>
@@ -781,6 +805,18 @@ test('resolveTimeoutFromCliAndEnv fails for invalid cli timeout even when env ti
         cli: { name: '--test-timeout', rawValue: 'invalid-timeout' },
       }),
     /Invalid --test-timeout value: invalid-timeout/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv fails for max-safe-integer-overflow cli timeout even when env timeout is valid', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: '5000' },
+        cli: { name: '--test-timeout', rawValue: '9007199254740992' },
+      }),
+    /Invalid --test-timeout value: 9007199254740992/u,
   );
 });
 

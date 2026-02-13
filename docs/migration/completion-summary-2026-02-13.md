@@ -347,6 +347,7 @@ Workflow hardening applied:
 - timeout option-name validation now rejects whitespace-padded names (`name !== name.trim()`), with direct/composed env+cli helper coverage locking disallowed padded-label semantics
 - timeout options-container validation now enforces plain-object inputs, with Date/Map/Set rejection coverage across direct helper options and composed top-level/env/cli timeout option containers
 - timeout default-value boundary coverage now explicitly asserts `-0` rejection in direct and composed timeout helpers, locking negative-zero default semantics alongside existing non-positive default guards
+- timeout raw-value overflow coverage now explicitly asserts max-safe-integer overflow string rejection (`9007199254740992`) across direct env parsing and composed env/cli precedence paths
 
 ## Security posture at completion
 
