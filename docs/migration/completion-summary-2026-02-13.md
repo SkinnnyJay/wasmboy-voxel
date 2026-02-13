@@ -67,6 +67,7 @@ Workflow hardening applied:
 - CI install command disables install-time audit/fund output (`--no-audit --fund=false`) since audit is enforced in the dedicated quality gate
 - package-focused deterministic install command (`npm run install:packages:ci`) used by contract workflow to avoid unnecessary app dependency bootstrap
 - setup-node cache dependency paths include all workspace lockfiles for stable multi-package npm cache keys
+- contract workflow cache keys now omit debugger lockfile to better match package-only install inputs
 - release workflow now also caches Next.js build artifacts for debugger app builds
 - workflow formatting checks are enforced via `workflow:lint` and included in the unified quality gate
 - workflow formatting can be auto-remediated locally via `workflow:format`

@@ -207,3 +207,4 @@
 - 2026-02-13: Added job-level `defaults.run.shell: bash` to all workflows and removed per-step shell overrides, simplifying workflow definitions while keeping consistent pipefail-compatible shell behavior.
 - 2026-02-13: Expanded contract workflow path filters with `contracts/**` so contract-schema/documentation changes trigger contract CI validation consistently.
 - 2026-02-13: Added `install:packages:ci` and switched contract workflow to package-only deterministic installs, reducing unnecessary debugger app dependency bootstrap during contract CI.
+- 2026-02-13: Refined contract workflow npm cache inputs to package-only lockfiles, improving cache relevance after adopting package-only deterministic installs.
