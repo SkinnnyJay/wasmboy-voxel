@@ -477,6 +477,30 @@ test('readRequiredArgumentValue rejects null known-args options', () => {
   );
 });
 
+test('readRequiredArgumentValue rejects non-string known-args entries', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: new Set([42]),
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args entries for --timeout-ms/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects whitespace-only known-args entries', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: new Set(['  ']),
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args entries for --timeout-ms/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects missing allowDoubleDashValue options', () => {
   assert.throws(
     () =>

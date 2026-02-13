@@ -302,6 +302,7 @@ Workflow hardening applied:
 - read-path CLI argument parsing coverage now explicitly asserts null and whitespace-only `allowedKnownValues` entry rejection in `readRequiredArgumentValue` validation paths
 - read-path parser-helper tests now include explicit implemented assertions for null/whitespace `allowedKnownValues` entries in `readRequiredArgumentValue` to match documented token-entry guardrails
 - read-path parser-helper coverage now explicitly asserts non-string (`number`) `allowedKnownValues` entry rejection in `readRequiredArgumentValue` validation paths
+- read-path parser-helper coverage now explicitly asserts non-string and whitespace-only `knownArgs` entry rejection in `readRequiredArgumentValue` validation paths
 
 ## Security posture at completion
 
