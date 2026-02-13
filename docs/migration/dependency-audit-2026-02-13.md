@@ -36,3 +36,15 @@
 Remaining findings are tied to legacy tooling chains (`mocha`, `np`, older
 webpack-era utility deps) and need a staged upgrade plan to avoid breaking the
 historical emulator test harness.
+
+## Follow-up (same day)
+
+- Removed direct `np` dependency from root devDependencies.
+- Switched `lib:deploy:np` script to `npx np --no-cleanup`.
+- Pinned `mocha` to `11.3.0` to avoid the currently-audited vulnerable range.
+
+Post-change `npm audit --omit=optional` result:
+
+- **5 vulnerabilities total**
+  - 3 moderate
+  - 2 high
