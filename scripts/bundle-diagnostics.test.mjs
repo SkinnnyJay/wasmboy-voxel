@@ -195,6 +195,29 @@ test('bundle-diagnostics accepts custom messages equal to -h', () => {
   assert.equal(placeholderText, customMessage, 'placeholder file should preserve short-help token message text');
 });
 
+test('bundle-diagnostics accepts custom message literal --help with timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-help-token-message-timeout-'));
+  const customMessage = '--help';
+
+  runBundlerCommand(tempDirectory, [
+    '--output',
+    'artifacts/custom-help-token-timeout.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--message',
+    customMessage,
+    '--tar-timeout-ms',
+    '120000',
+  ]);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/custom-help-token-timeout.tar.gz');
+  const placeholderEntry = archiveContents.find(entry => entry.endsWith('artifacts/custom-help-token-timeout.txt'));
+  assert.ok(placeholderEntry, 'archive should include placeholder entry for help-token message with timeout override');
+
+  const placeholderText = readArchiveEntry(tempDirectory, 'artifacts/custom-help-token-timeout.tar.gz', placeholderEntry).trim();
+  assert.equal(placeholderText, customMessage, 'placeholder file should preserve help-token message with timeout override');
+});
+
 test('bundle-diagnostics supports equals-form arguments for output pattern and message', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-equals-form-'));
   const customMessage = 'equals syntax placeholder message';
@@ -261,6 +284,25 @@ test('bundle-diagnostics accepts equals-form custom messages equal to --help', (
 
   const placeholderText = readArchiveEntry(tempDirectory, 'artifacts/equals-help-token.tar.gz', placeholderEntry).trim();
   assert.equal(placeholderText, customMessage, 'placeholder file should preserve equals-form help-token message text');
+});
+
+test('bundle-diagnostics accepts equals-form custom message literal -h with inline timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-equals-form-short-help-timeout-message-'));
+  const customMessage = '-h';
+
+  runBundlerCommand(tempDirectory, [
+    '--output=artifacts/equals-short-help-timeout.tar.gz',
+    '--pattern=missing/*.log',
+    `--message=${customMessage}`,
+    '--tar-timeout-ms=120000',
+  ]);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/equals-short-help-timeout.tar.gz');
+  const placeholderEntry = archiveContents.find(entry => entry.endsWith('artifacts/equals-short-help-timeout.txt'));
+  assert.ok(placeholderEntry, 'archive should include placeholder entry for equals-form short-help message with inline timeout');
+
+  const placeholderText = readArchiveEntry(tempDirectory, 'artifacts/equals-short-help-timeout.tar.gz', placeholderEntry).trim();
+  assert.equal(placeholderText, customMessage, 'placeholder file should preserve equals-form short-help message with inline timeout');
 });
 
 test('bundle-diagnostics de-duplicates files matched by repeated patterns', () => {
