@@ -44,4 +44,15 @@ jobs:
         run: npm run install:stack:ci
 
       - name: Run full no-build quality suite
-        run: npm run test:all:nobuild
+        run: set -o pipefail && npm run test:all:nobuild 2>&1 | tee nightly-quality.log
+
+      - name: Upload failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-failure-diagnostics
+          if-no-files-found: ignore
+          path: |
+            nightly-quality.log
+            test/core/save-state/*.png
+            test/integration/headless-simple*.png

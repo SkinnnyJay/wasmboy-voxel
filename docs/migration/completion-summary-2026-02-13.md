@@ -64,6 +64,7 @@ Workflow hardening applied:
 - setup-node cache dependency paths include all workspace lockfiles for stable multi-package npm cache keys
 - release workflow now also caches Next.js build artifacts for debugger app builds
 - workflow formatting checks are enforced via `workflow:lint` and included in the unified quality gate
+- CI and nightly workflows now capture full quality-gate logs and relevant screenshot outputs as artifacts on failure for faster triage
 
 ## Security posture at completion
 

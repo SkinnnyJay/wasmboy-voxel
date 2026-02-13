@@ -192,3 +192,4 @@
 - 2026-02-13: Added manual dispatch support and path filters to main CI workflow, plus manual dispatch to contract checks, improving operational control while reducing redundant runs on irrelevant changes.
 - 2026-02-13: Cleaned CI/contract path filter lists to remove stale `pnpm-workspace.yaml` references, keeping workflow trigger rules aligned with actual repo files.
 - 2026-02-13: Added `workflow:lint` and wired it into `test:all:nobuild` so GitHub Actions YAML formatting is validated as part of the standard quality gate.
+- 2026-02-13: Added failure-diagnostics artifact uploads (quality logs + generated screenshots) to CI and nightly workflows to improve regression triage speed when quality gates fail.
