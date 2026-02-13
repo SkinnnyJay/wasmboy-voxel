@@ -110,6 +110,7 @@ Workflow hardening applied:
 - helper timeout-override regression coverage now includes plus-prefixed and negative CLI timeout overrides for both wrappers (`+5000`, `-5`) to keep strict numeric-input semantics consistent at wrapper boundaries
 - helper timeout-override regression coverage now includes split/inline parity assertions for whitespace/plus/negative timeout overrides in both wrappers, ensuring both argument styles enforce identical strict validation behavior
 - help/timeout exclusivity coverage now includes inline-timeout variants in both wrappers (`--help --timeout-ms=...`, `--help --tar-timeout-ms=...`) to preserve strict non-mixed help invocation semantics across argument styles
+- help-mode strictness coverage now includes unknown short-flag combinations (`--help -x`) for both wrappers, ensuring unknown-short argument rejection remains enforced even in help-mixed invocations
 - timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
 - timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
 - shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity

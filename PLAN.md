@@ -293,3 +293,4 @@
 - 2026-02-13: Expanded wrapper timeout-override regression coverage with plus-prefixed and negative CLI values (`+5000`, `-5`) for both helpers, preserving strict numeric timeout validation behavior at CLI boundaries.
 - 2026-02-13: Added split/inline parity regression coverage for wrapper timeout overrides (whitespace/plus/negative values) across both helpers, locking equivalent strict-validation behavior for `--flag value` and `--flag=value` forms.
 - 2026-02-13: Expanded help-mixed timeout regression coverage to include inline timeout forms for both helpers, preserving strict help-flag exclusivity semantics across split and equals argument styles.
+- 2026-02-13: Expanded help-mode strictness regression coverage with unknown short-flag mixes (`--help -x`) for both helpers, preserving unknown-short rejection guarantees even when help is present.
