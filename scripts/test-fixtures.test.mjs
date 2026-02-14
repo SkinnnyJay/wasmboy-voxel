@@ -68,6 +68,42 @@ echo 'fixture command two'
   assert.match(secondResult.stdout, /fixture command two/u);
 });
 
+test('writeFakeExecutable supports long nested temp fixture paths', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-long-path-stress-'));
+  const nestedPathSegments = Array.from({ length: 12 }, (_, index) => `segment-${String(index).padStart(2, '0')}-fixture`);
+  const longNestedTempDirectory = path.join(tempDirectory, ...nestedPathSegments);
+  fs.mkdirSync(longNestedTempDirectory, { recursive: true });
+
+  const fakeBinDirectory = writeFakeExecutable(
+    longNestedTempDirectory,
+    'fixture-cmd',
+    `#!/usr/bin/env bash
+echo 'fixture command long path'
+`,
+  );
+
+  const executablePath = path.join(fakeBinDirectory, 'fixture-cmd');
+  assert.equal(fs.existsSync(executablePath), true);
+  assert.ok(fakeBinDirectory.length >= 160, `expected stress path length >= 160, got ${String(fakeBinDirectory.length)}`);
+});
+
+test('writeFakeExecutable rejects Windows reserved temp directory path segments', { skip: process.platform !== 'win32' }, () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-windows-reserved-temp-path-'));
+  const reservedTempDirectory = path.join(tempDirectory, 'CON', 'nested');
+
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        reservedTempDirectory,
+        'fixture-cmd',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid temp directory:/u,
+  );
+});
+
 test('writeFakeExecutable rejects non-string temp directories', () => {
   assert.throws(
     () =>
