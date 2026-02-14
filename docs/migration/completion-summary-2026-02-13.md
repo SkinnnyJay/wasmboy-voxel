@@ -529,3 +529,7 @@ Result at completion: **0 vulnerabilities**.
 - release changeset added for:
   - `@wasmboy/api` (minor)
   - `@wasmboy/cli` (minor)
+
+## Post-completion incremental hardening
+
+- Added deterministic list ordering in shared artifact summary payload builders (`deletedDirectories`, `deletedFiles`, `blockedPaths`) and validated through summary helper and executable CLI contract tests, reducing cross-run ordering drift in machine-readable automation outputs.
