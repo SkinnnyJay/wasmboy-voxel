@@ -153,7 +153,7 @@
 [x] - task174 (S2 reliability): Backlog discovery candidate #74 — define validation command at implementation time.
 [x] - task175 (S2 reliability): Backlog discovery candidate #75 — define validation command at implementation time.
 [x] - task176 (S2 reliability): Backlog discovery candidate #76 — define validation command at implementation time.
-[ ] - task177 (S2 reliability): Backlog discovery candidate #77 — define validation command at implementation time.
+[x] - task177 (S2 reliability): Backlog discovery candidate #77 — define validation command at implementation time.
 [ ] - task178 (S2 reliability): Backlog discovery candidate #78 — define validation command at implementation time.
 [ ] - task179 (S2 reliability): Backlog discovery candidate #79 — define validation command at implementation time.
 [ ] - task180 (S2 reliability): Backlog discovery candidate #80 — define validation command at implementation time.
@@ -732,3 +732,4 @@
 - 2026-02-14: Addressed next-cycle `task174` by hardening workspace security-scan CLI argument parsing (strict argv contracts, duplicate/unknown flag rejection, help usage, and timeout override support) while wiring CLI timeout overrides through shared timeout resolution; validated via `node --test "scripts/security-scan-workspaces.test.mjs"`; marked `task174` completed.
 - 2026-02-14: Addressed next-cycle `task175` by hardening release checklist dry-run CLI argument parsing (strict argv contracts, duplicate/unknown flag rejection, help usage, and timeout override support) while wiring CLI timeout overrides through shared timeout resolution; validated via `node --test "scripts/release-checklist-dry-run.test.mjs"`; marked `task175` completed.
 - 2026-02-14: Addressed next-cycle `task176` by hardening next-backlog generation option contracts (options object shape, positive-integer `backlogSize`/`startTaskNumber` validation) with regression coverage for invalid-size/invalid-start cases; validated via `node --test "scripts/next-backlog-generator.test.mjs"`; marked `task176` completed.
+- 2026-02-14: Addressed next-cycle `task177` by hardening next-backlog generator CLI argument parsing (`--backlog-size` / `--start-task-number` / `--help`) with strict duplicate/unknown rejection, numeric override validation, and override-aware generation coverage; validated via `node --test "scripts/next-backlog-generator.test.mjs"`; marked `task177` completed.

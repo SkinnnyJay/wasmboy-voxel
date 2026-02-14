@@ -549,3 +549,4 @@ Result at completion: **0 vulnerabilities**.
 - Hardened workspace security-scan CLI parsing with strict unknown/duplicate argument rejection, help usage output, and timeout CLI override wiring through shared timeout resolution.
 - Hardened release checklist dry-run CLI parsing with strict unknown/duplicate argument rejection, help usage output, and timeout CLI override wiring through shared timeout resolution.
 - Hardened next-backlog generator option contracts by validating options object shape plus positive-integer backlog size/start-task parameters before row generation, with regression coverage for invalid numeric inputs.
+- Hardened next-backlog generator CLI parsing with strict duplicate/unknown argument rejection, help output, and numeric `--backlog-size`/`--start-task-number` overrides wired into file generation.
