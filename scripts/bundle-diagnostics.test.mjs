@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { runSubprocess } from './subprocess-test-harness.mjs';
 import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
 import { writeFakeExecutable } from './test-fixtures.mjs';
 
@@ -35,13 +35,10 @@ function runBundlerCommand(cwd, args, env = {}) {
 }
 
 function runBundlerCommandRaw(cwd, args, env = {}) {
-  return spawnSync('node', [bundlerScriptPath, ...args], {
+  return runSubprocess(process.execPath, [bundlerScriptPath, ...args], {
     cwd,
-    encoding: 'utf8',
-    env: {
-      ...process.env,
-      ...env,
-    },
+    env,
+    description: 'bundle-diagnostics command',
   });
 }
 
@@ -53,9 +50,9 @@ function runBundlerCommandExpectFailure(cwd, args, env = {}) {
 }
 
 function listArchiveContents(cwd, archivePath) {
-  const result = spawnSync('tar', ['-tzf', archivePath], {
+  const result = runSubprocess('tar', ['-tzf', archivePath], {
     cwd,
-    encoding: 'utf8',
+    description: 'tar list archive',
   });
 
   if (result.status !== 0) {
@@ -69,9 +66,9 @@ function listArchiveContents(cwd, archivePath) {
 }
 
 function readArchiveEntry(cwd, archivePath, entryPath) {
-  const result = spawnSync('tar', ['-xOf', archivePath, entryPath], {
+  const result = runSubprocess('tar', ['-xOf', archivePath, entryPath], {
     cwd,
-    encoding: 'utf8',
+    description: 'tar read archive entry',
   });
 
   if (result.status !== 0) {

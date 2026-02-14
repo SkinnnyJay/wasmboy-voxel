@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
 import test from 'node:test';
+import { runSubprocess } from './subprocess-test-harness.mjs';
 import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
 import {
   loadCoreFromDist,
@@ -52,10 +52,9 @@ test('parseCoreMemoryOffsetCheckArgs rejects malformed and duplicate arguments',
 });
 
 test('core-memory-offset-contract-check script prints usage for --help', () => {
-  const result = spawnSync(process.execPath, [coreMemoryOffsetCheckScriptPath, '--help'], {
+  const result = runSubprocess(process.execPath, [coreMemoryOffsetCheckScriptPath, '--help'], {
     cwd: process.cwd(),
-    encoding: 'utf8',
-    env: process.env,
+    description: 'core-memory-offset-contract-check help',
   });
 
   assert.equal(result.status, 0);

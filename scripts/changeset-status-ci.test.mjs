@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { runSubprocess } from './subprocess-test-harness.mjs';
 import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
 import { writeFakeExecutable } from './test-fixtures.mjs';
 
@@ -14,24 +14,22 @@ const statusScriptPath = path.join(currentDirectory, 'changeset-status-ci.mjs');
 installTempDirectoryCleanup(fs);
 
 function runStatusScript(customPath, extraEnv = {}) {
-  return spawnSync('node', [statusScriptPath], {
-    encoding: 'utf8',
+  return runSubprocess(process.execPath, [statusScriptPath], {
     env: {
-      ...process.env,
       PATH: customPath,
       ...extraEnv,
     },
+    description: 'changeset-status-ci command',
   });
 }
 
 function runStatusScriptWithArgs(customPath, args, extraEnv = {}) {
-  return spawnSync('node', [statusScriptPath, ...args], {
-    encoding: 'utf8',
+  return runSubprocess(process.execPath, [statusScriptPath, ...args], {
     env: {
-      ...process.env,
       PATH: customPath,
       ...extraEnv,
     },
+    description: 'changeset-status-ci command',
   });
 }
 

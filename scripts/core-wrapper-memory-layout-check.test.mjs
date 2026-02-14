@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
+import { runSubprocess } from './subprocess-test-harness.mjs';
 import { runCoreWrapperMemoryLayoutCheck, validateCoreWrapperMemoryLayout } from './core-wrapper-memory-layout-check-lib.mjs';
 import { parseCoreWrapperMemoryLayoutCheckArgs } from './core-wrapper-memory-layout-check.mjs';
 import { UNPRINTABLE_VALUE } from './test-helpers.mjs';
@@ -104,10 +104,9 @@ test('parseCoreWrapperMemoryLayoutCheckArgs rejects malformed and duplicate argu
 });
 
 test('core-wrapper-memory-layout-check script prints usage for --help', () => {
-  const result = spawnSync(process.execPath, [coreWrapperMemoryLayoutCheckScriptPath, '--help'], {
+  const result = runSubprocess(process.execPath, [coreWrapperMemoryLayoutCheckScriptPath, '--help'], {
     cwd: process.cwd(),
-    encoding: 'utf8',
-    env: process.env,
+    description: 'core-wrapper-memory-layout-check help',
   });
 
   assert.equal(result.status, 0);
