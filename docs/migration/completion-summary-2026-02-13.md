@@ -373,6 +373,7 @@ Workflow hardening applied:
 - bundle-diagnostics dedupe coverage now includes case-variant alias collisions (`logs/` and `LOGS/` symlink aliases) to ensure same-file aliases collapse into a single archive entry
 - bundle-diagnostics placeholder cleanup handling now includes failure-mode coverage for tar-side placeholder removal and cleanup unlink errors, with explicit cleanup diagnostics that do not mask primary archive failures
 - bundle-diagnostics timeout precedence coverage now explicitly includes empty-env + invalid-CLI overrides and whitespace-only env timeout rejection even when split/inline CLI overrides are otherwise valid
+- bundle-diagnostics runtime error-message contract now includes unexpected filesystem setup failures (e.g. mkdir against file paths), ensuring diagnostics remain prefixed and avoid argument-usage output
 
 ## Security posture at completion
 

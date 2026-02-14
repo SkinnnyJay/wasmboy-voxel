@@ -218,6 +218,17 @@ test('bundle-diagnostics reports a clear error when tar is missing from PATH', (
   );
 });
 
+test('bundle-diagnostics formats unexpected mkdir failures with runtime error prefix', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-runtime-mkdir-failure-'));
+  const blockedParentPath = path.join(tempDirectory, 'blocked-parent');
+  fs.writeFileSync(blockedParentPath, 'blocking file\n', 'utf8');
+
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'blocked-parent/out.tar.gz', '--pattern', 'missing/*.log']);
+  assert.match(output, /\[bundle-diagnostics\]/u);
+  assert.match(output, /(EEXIST|ENOTDIR)/u);
+  assert.doesNotMatch(output, /Usage:/u);
+});
+
 test('bundle-diagnostics writes custom placeholder message when provided', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-empty-message-'));
   const customMessage = 'custom placeholder message';
