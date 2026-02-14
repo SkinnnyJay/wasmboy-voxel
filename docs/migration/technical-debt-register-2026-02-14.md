@@ -87,6 +87,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C064 | Artifact summary deterministic list order        | Added deterministic sorting for machine-readable summary list fields (`deletedDirectories`, `deletedFiles`, `blockedPaths`) in shared summary builders, with helper and executable contract coverage to prevent ordering drift. | S4                | `@automation-tooling` |
 | TD-C065 | Artifact summary locale-independent sort         | Replaced locale-sensitive path sorting with ordinal string comparison in artifact summary builders and added mixed-case regression coverage to lock cross-platform deterministic ordering in machine-readable payloads.         | S4                | `@automation-tooling` |
 | TD-C066 | Artifact summary duplicate-path canonicalization | De-duplicated repeated path entries in cleanup/guard summary builders before deriving totals, ensuring machine-readable path arrays and count fields remain canonical and consistent even under duplicate input paths.          | S4                | `@automation-tooling` |
+| TD-C067 | Artifact summary separator canonicalization      | Normalized windows-style separators to POSIX slash form before summary de-duplication/sorting so mixed slash/backslash inputs produce canonical machine-readable path lists and consistent counts across platforms.             | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

@@ -43,7 +43,8 @@ function assertStringArray(candidateArray, parameterName) {
  * @param {string[]} values
  */
 function sortedUniqueStringArray(values) {
-  return [...new Set(values)].sort((left, right) => (left === right ? 0 : left < right ? -1 : 1));
+  const normalizedValues = values.map(value => value.replaceAll('\\', '/'));
+  return [...new Set(normalizedValues)].sort((left, right) => (left === right ? 0 : left < right ? -1 : 1));
 }
 
 /**

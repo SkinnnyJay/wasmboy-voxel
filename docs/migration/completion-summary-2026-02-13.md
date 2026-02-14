@@ -535,3 +535,4 @@ Result at completion: **0 vulnerabilities**.
 - Added deterministic list ordering in shared artifact summary payload builders (`deletedDirectories`, `deletedFiles`, `blockedPaths`) and validated through summary helper and executable CLI contract tests, reducing cross-run ordering drift in machine-readable automation outputs.
 - Replaced locale-sensitive artifact summary path sorting with ordinal comparison and added mixed-case ordering regression coverage, ensuring deterministic machine-readable summary ordering across OS locale differences.
 - Added duplicate-path canonicalization in shared artifact summary builders so repeated input paths collapse to unique sorted outputs before count derivation, preventing inflated machine-readable totals from duplicate path inputs.
+- Added windows-separator path canonicalization in shared artifact summary builders so mixed `\` and `/` inputs normalize to one machine-readable path format prior to sort/de-dup/count derivation.
