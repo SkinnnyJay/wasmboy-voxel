@@ -774,3 +774,4 @@
 - 2026-02-14: Re-ran strict release verification wrapper (`npm run release:verify:strict`) once more to reconfirm full strict CI parity chain (`test:all:nobuild:strict` + changeset status) remains green with a clean working tree.
 - 2026-02-14: Re-ran no-build Playwright smoke command (`npm run test:e2e:playwright:headless:nobuild`) to reconfirm headless browser verification remains green without rebuilding artifacts and leaves a clean working tree.
 - 2026-02-14: Re-ran release checklist package dry-run command (`npm run release:checklist:npm-dry-run`) to reconfirm publishability validation for `@wasmboy/api` and `@wasmboy/cli` remains green with a clean working tree.
+- 2026-02-14: Re-ran standalone changeset status gate (`npm run changeset:status:ci`) to reconfirm expected workspace file-dependency suppressions and stable minor-bump classification output with a clean working tree.
