@@ -36,12 +36,38 @@ describe('cli commands', () => {
     expect(() => runCommand(romPath)).not.toThrow();
   });
 
+  it('run command accepts windows-style quoted ROM paths', () => {
+    const dir = createTempDir();
+    const romPath = path.join(dir, 'quoted sample.gb');
+    fs.writeFileSync(romPath, Buffer.from([4, 3, 2, 1]));
+
+    const windowsStyleQuotedRomPath = `"${romPath.replaceAll('/', '\\')}"`;
+    expect(() => runCommand(windowsStyleQuotedRomPath)).not.toThrow();
+  });
+
   it('snapshot command writes JSON payload', () => {
     const dir = createTempDir();
     const romPath = path.join(dir, 'sample.gbc');
     const outPath = path.join(dir, 'snapshot.json');
     fs.writeFileSync(romPath, Buffer.from([9, 8, 7]));
     snapshotCommand(romPath, outPath);
+    const parsed = JSON.parse(fs.readFileSync(outPath, 'utf8')) as { sha256?: string };
+    expect(typeof parsed.sha256).toBe('string');
+  });
+
+  it('snapshot command accepts windows-style quoted output paths', () => {
+    const dir = createTempDir();
+    const romPath = path.join(dir, 'sample.gbc');
+    const nestedOutDirectory = path.join(dir, 'snapshot output');
+    fs.mkdirSync(nestedOutDirectory, { recursive: true });
+    const outPath = path.join(nestedOutDirectory, 'result.json');
+
+    fs.writeFileSync(romPath, Buffer.from([9, 8, 7]));
+
+    const windowsStyleQuotedRomPath = `"${romPath.replaceAll('/', '\\')}"`;
+    const windowsStyleQuotedOutPath = `"${outPath.replaceAll('/', '\\')}"`;
+    snapshotCommand(windowsStyleQuotedRomPath, windowsStyleQuotedOutPath);
+
     const parsed = JSON.parse(fs.readFileSync(outPath, 'utf8')) as { sha256?: string };
     expect(typeof parsed.sha256).toBe('string');
   });

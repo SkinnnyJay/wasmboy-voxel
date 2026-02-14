@@ -401,6 +401,7 @@ Workflow hardening applied:
 - packages/cli command parsing now rejects unknown options with nearest-flag suggestions for `snapshot`, `compare`, and `contract-check`, with regression coverage for typo hints (`--ot`, `--currnt`, `--contrct`)
 - packages/cli now enforces mutually exclusive alias pairs for output/current options (`--out` vs `-o`, `--current` vs `-c`) and includes regression tests for conflict diagnostics
 - packages/cli filesystem read/write failures are now surfaced through normalized `CliError` InvalidOperation messages (including errno + operation + path), with permission-denied formatting regressions for `run` and `snapshot`
+- packages/cli path resolution now handles Windows-style backslashes and wrapping quotes consistently; regression tests cover quoted/backslash ROM inputs and quoted/backslash snapshot output paths
 
 ## Security posture at completion
 

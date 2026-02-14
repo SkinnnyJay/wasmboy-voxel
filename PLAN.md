@@ -504,3 +504,4 @@
 - 2026-02-13: Added `packages/cli` unknown-option suggestion handling/tests for `snapshot`, `compare`, and `contract-check` commands, including typo-to-flag hints (`--ot`→`--out`, `--currnt`→`--current`, `--contrct`→`--contract`).
 - 2026-02-13: Added mutually exclusive flag enforcement/tests for CLI alias pairs (`snapshot`: `--out` vs `-o`, `compare`: `--current` vs `-c`) with explicit InvalidInput diagnostics on conflicting usage.
 - 2026-02-13: Hardened CLI filesystem error formatting by wrapping read/write failures in `CliError(InvalidOperation)` envelopes with normalized `read/write failed for "<path>": <ERRNO>: <message>` diagnostics; added permission-denied regression tests.
+- 2026-02-13: Added Windows-style path + quoted-path CLI coverage by normalizing backslash separators and stripping wrapping quotes in path resolution; added regression tests for quoted/backslash ROM and output paths.

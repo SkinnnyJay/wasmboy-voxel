@@ -4,8 +4,26 @@ import { CliError } from './errors.js';
 
 const ROM_EXTENSIONS = new Set(['.gb', '.gbc']);
 
+function stripWrappingQuotes(inputPath: string): string {
+  if (inputPath.length < 2) {
+    return inputPath;
+  }
+
+  const firstCharacter = inputPath[0];
+  const lastCharacter = inputPath[inputPath.length - 1];
+  const isWrappedWithDoubleQuotes = firstCharacter === '"' && lastCharacter === '"';
+  const isWrappedWithSingleQuotes = firstCharacter === "'" && lastCharacter === "'";
+  if (!isWrappedWithDoubleQuotes && !isWrappedWithSingleQuotes) {
+    return inputPath;
+  }
+
+  return inputPath.slice(1, -1);
+}
+
 export function resolveInputPath(inputPath: string): string {
-  return path.resolve(process.cwd(), inputPath);
+  const unquotedPath = stripWrappingQuotes(inputPath);
+  const normalizedSeparators = unquotedPath.replace(/\\/g, '/');
+  return path.resolve(process.cwd(), normalizedSeparators);
 }
 
 export function assertRomPath(inputPath: string): string {
