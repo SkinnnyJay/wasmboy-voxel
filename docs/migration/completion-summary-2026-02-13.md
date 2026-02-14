@@ -447,6 +447,7 @@ Workflow hardening applied:
 - CI automation matrix jobs now bundle and upload node-version-specific `automation:test` logs on failure/cancellation, improving artifact-level triage for automation helper regressions in `automation-test-matrix`
 - CI automation matrix now includes one-step flaky rerun detection for `automation:test` (retry once after first failure), emits warning annotations for pass-on-retry outcomes, and records attempt/flake-marker logs for diagnostics bundles
 - release workflow now supports explicit dry-run/publish modes with manual approval gating (`dry_run` + `approve_publish` workflow-dispatch inputs): push-triggered releases run verification-only dry-runs, and changesets publish/create-PR is limited to approved manual publish runs
+- dependency freshness auditing is now available by workspace (`dependency:freshness:audit`, `dependency:freshness:audit:strict`), providing root/api/cli/debugger `npm outdated` visibility with structured report output and strict-fail capability for enforcement scenarios
 
 ## Security posture at completion
 

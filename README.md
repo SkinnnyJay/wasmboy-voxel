@@ -386,6 +386,12 @@ npm run release:verify:strict
 # Dependency audit check used by CI
 npm run audit:check
 
+# Workspace dependency freshness report (root + packages/apps)
+npm run dependency:freshness:audit
+
+# Fail when any workspace has outdated dependencies
+npm run dependency:freshness:audit:strict
+
 # Check GitHub workflow formatting locally
 npm run workflow:lint
 

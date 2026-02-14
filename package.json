@@ -55,6 +55,8 @@
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
     "audit:check": "npm audit --omit=optional",
+    "dependency:freshness:audit": "node scripts/dependency-freshness-audit.mjs",
+    "dependency:freshness:audit:strict": "node scripts/dependency-freshness-audit.mjs --fail-on-outdated",
     "workflow:lint": "npx prettier --check \".github/workflows/*.yml\"",
     "workflow:format": "npx prettier --write \".github/workflows/*.yml\"",
     "scripts:lint": "npx prettier --check \"scripts/**/*.mjs\"",
