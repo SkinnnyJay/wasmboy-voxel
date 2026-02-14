@@ -188,6 +188,16 @@ test('clean artifact script honors summary timestamp override environment variab
   assert.equal(parsedOutput.timestampMs, 789);
 });
 
+test('clean artifact script rejects invalid summary timestamp override values', () => {
+  const result = runScript(cleanArtifactsScriptPath, ['--json'], {
+    env: { WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS: 'invalid' },
+  });
+
+  assert.equal(result.status, 1);
+  assert.equal(result.stdout, '');
+  assert.match(result.stderr, /\[clean:artifacts\] WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS must be a positive integer when provided\./u);
+});
+
 test('clean artifact script emits apply-mode JSON summary and removes files', () => {
   const tempRepoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'artifact-cli-json-apply-'));
   const generatedOutputPath = path.join(tempRepoRoot, 'test', 'integration', 'headless.output');
@@ -254,6 +264,19 @@ test('generated artifact guard script honors summary timestamp override environm
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
   assert.equal(parsedOutput.timestampMs, 789);
+});
+
+test('generated artifact guard script rejects invalid summary timestamp override values', () => {
+  const result = runScript(guardArtifactsScriptPath, ['--json'], {
+    env: { WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS: 'invalid' },
+  });
+
+  assert.equal(result.status, 1);
+  assert.equal(result.stdout, '');
+  assert.match(
+    result.stderr,
+    /\[guard:generated-artifacts\] WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS must be a positive integer when provided\./u,
+  );
 });
 
 test('generated artifact guard JSON summary reflects override in no-op runs', () => {
