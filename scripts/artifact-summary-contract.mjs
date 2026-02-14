@@ -90,6 +90,7 @@ export function buildCleanupArtifactSummary(options) {
     ...buildArtifactSummaryMetadata(CLEAN_ARTIFACT_SUMMARY_TOOL, { timestampMs: options.timestampMs }),
     mode: options.dryRun ? 'dry-run' : 'apply',
     removedCount,
+    hasRemovals: removedCount > 0,
     deletedDirectoryCount: options.deletedDirectories.length,
     deletedFileCount: options.deletedFiles.length,
     deletedDirectories: options.deletedDirectories,
@@ -131,6 +132,7 @@ export function buildGuardArtifactSummary(options) {
     isValid: options.isValid,
     blockedPaths: options.blockedPaths,
     blockedPathCount: options.blockedPaths.length,
+    hasBlockedPaths: options.blockedPaths.length > 0,
     stagedPathCount: options.stagedPathCount,
   };
 }

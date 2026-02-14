@@ -103,6 +103,7 @@ test('buildCleanupArtifactSummary emits derived count fields and mode', () => {
     timestampMs: 789,
     mode: 'dry-run',
     removedCount: 2,
+    hasRemovals: true,
     deletedDirectoryCount: 1,
     deletedFileCount: 1,
     deletedDirectories: ['build'],
@@ -144,6 +145,7 @@ test('buildGuardArtifactSummary emits derived blocked count fields', () => {
     isValid: false,
     blockedPaths: ['build/a-generated.js'],
     blockedPathCount: 1,
+    hasBlockedPaths: true,
     stagedPathCount: 2,
   });
 });
@@ -166,4 +168,21 @@ test('buildGuardArtifactSummary validates options contracts', () => {
     () => buildGuardArtifactSummary({ allowGeneratedEdits: true, isValid: true, blockedPaths: [], stagedPathCount: -1 }),
     /Expected options\.stagedPathCount to be a non-negative integer\./u,
   );
+});
+
+test('summary builders expose boolean convenience flags for no-op payloads', () => {
+  const cleanupSummary = buildCleanupArtifactSummary({
+    dryRun: false,
+    deletedDirectories: [],
+    deletedFiles: [],
+  });
+  const guardSummary = buildGuardArtifactSummary({
+    allowGeneratedEdits: false,
+    isValid: true,
+    blockedPaths: [],
+    stagedPathCount: 0,
+  });
+
+  assert.equal(cleanupSummary.hasRemovals, false);
+  assert.equal(guardSummary.hasBlockedPaths, false);
 });

@@ -511,6 +511,7 @@ Workflow hardening applied:
 - next-cycle `task153` is now completed by adding whitespace-tolerant parsing for summary timestamp overrides with helper/executable regression coverage, improving operator ergonomics while preserving strict positive-integer validation
 - next-cycle `task154` is now completed by adding explicit `timestampSource` metadata in artifact JSON summaries, enabling downstream automation to distinguish system-clock timestamps from env-overridden timestamps deterministically
 - next-cycle `task155` is now completed by centralizing cleanup/guard summary payload construction in shared helper builders with strict input-contract coverage, reducing duplicate JSON assembly logic and contract drift risk
+- next-cycle `task156` is now completed by adding boolean outcome flags (`hasRemovals`, `hasBlockedPaths`) to artifact JSON summaries with helper/executable contract coverage for simpler downstream automation branching
 
 ## Security posture at completion
 

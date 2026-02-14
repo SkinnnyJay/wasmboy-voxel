@@ -21,7 +21,9 @@ This protects the repo from accidental generated-output drift.
   and `timestampMs` metadata for traceability plus explicit
   `deletedDirectoryCount` /
   `deletedFileCount` totals; `--help`/`-h` always prints usage even when mixed
-  with other flags; set `WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS` to emit a
+  with other flags; payloads also expose `hasRemovals` as a boolean convenience
+  status;
+  set `WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS` to emit a
   deterministic timestamp in JSON output when needed (leading/trailing
   whitespace is ignored; invalid values fail with
   non-zero exit and a clear diagnostic));
@@ -33,7 +35,8 @@ This protects the repo from accidental generated-output drift.
   `tool`, `schemaVersion`, `timestampSource`, and `timestampMs` metadata;
   `--help`/`-h` always prints usage even when mixed with other flags; payloads
   also expose
-  `blockedPathCount` alongside `blockedPaths`; set
+  `blockedPathCount` alongside `blockedPaths` plus `hasBlockedPaths` as a
+  boolean convenience status; set
   `WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS` to emit a deterministic timestamp in
   JSON output when needed (leading/trailing whitespace is ignored; invalid
   values fail with non-zero exit and a clear diagnostic); npm shortcut:
