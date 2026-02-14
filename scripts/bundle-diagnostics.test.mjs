@@ -291,6 +291,27 @@ test('bundle-diagnostics preserves whitespace-only custom placeholder message', 
   assert.equal(placeholderText, `${whitespaceMessage}\n`, 'placeholder file should preserve whitespace-only message content');
 });
 
+test('bundle-diagnostics preserves UTF-16 and CRLF custom placeholder messages', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-empty-message-utf16-crlf-'));
+  const customMessage = '🧪 diagnostics\r\nline-two';
+
+  runBundlerCommand(tempDirectory, [
+    '--output',
+    'artifacts/custom-utf16-crlf-empty.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--message',
+    customMessage,
+  ]);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/custom-utf16-crlf-empty.tar.gz');
+  const placeholderEntry = archiveContents.find(entry => entry.endsWith('artifacts/custom-utf16-crlf-empty.txt'));
+  assert.ok(placeholderEntry, 'archive should include UTF-16 + CRLF placeholder entry');
+
+  const placeholderText = readArchiveEntry(tempDirectory, 'artifacts/custom-utf16-crlf-empty.tar.gz', placeholderEntry);
+  assert.equal(placeholderText, `${customMessage}\n`, 'placeholder file should preserve UTF-16 + CRLF message text');
+});
+
 test('bundle-diagnostics accepts custom messages that begin with double dashes', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-empty-message-dash-prefix-'));
   const customMessage = '--custom placeholder message';
