@@ -19,7 +19,7 @@ function toPosixPath(relativePath) {
 /**
  * @param {string} relativePath
  */
-function shouldRemoveGeneratedFile(relativePath) {
+export function shouldRemoveGeneratedFile(relativePath) {
   const normalizedPath = toPosixPath(relativePath);
 
   if (normalizedPath.startsWith('test/accuracy/testroms/')) {
