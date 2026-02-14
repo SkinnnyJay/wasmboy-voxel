@@ -16,6 +16,9 @@ games/*
 *.sym
 *.sn1
 
+# Playwright and other local test artifacts
+temp/
+
 # Ignore test files
 test/accuracy/testroms/**/*.output
 test/accuracy/testroms/**/*.png
