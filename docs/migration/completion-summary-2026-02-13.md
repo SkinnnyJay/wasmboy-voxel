@@ -475,6 +475,7 @@ Workflow hardening applied:
 - next-cycle `task117` is now completed by extracting shared artifact policy helpers used by both cleanup and pre-commit guard scripts, reducing policy duplication and preserving normalized cross-platform path handling with full automation regression validation
 - next-cycle `task118` is now completed by adding focused unit tests for artifact policy helpers, locking normalization and block/cleanup classification behavior at the source module boundary
 - next-cycle `task119` is now completed by adding dry-run/help CLI support for accidental artifact cleanup, including parser validation and non-destructive candidate reporting coverage to improve local review workflows
+- next-cycle `task120` is now completed by adding a first-class npm dry-run command for artifact cleanup and enforcing/documenting that script contract so engineers can inspect generated artifact candidates without mutating workspace state
 
 ## Security posture at completion
 

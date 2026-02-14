@@ -35,3 +35,10 @@ test('headless cleanup wrapper scripts run headless test then artifact cleanup',
   assert.equal(scripts['test:integration:headless:clean'], 'run-s test:integration:headless clean:artifacts:precommit');
   assert.equal(scripts['test:integration:headless:clean:ci'], 'run-s test:integration:headless:ci clean:artifacts:precommit');
 });
+
+test('artifact cleanup scripts expose default and dry-run variants', () => {
+  const scripts = readPackageScripts();
+
+  assert.equal(scripts['clean:artifacts:precommit'], 'node scripts/clean-accidental-build-artifacts.mjs');
+  assert.equal(scripts['clean:artifacts:precommit:dry-run'], 'node scripts/clean-accidental-build-artifacts.mjs --dry-run');
+});

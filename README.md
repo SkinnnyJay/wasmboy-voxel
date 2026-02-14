@@ -431,6 +431,9 @@ npm run core:memory-offset:check
 # Run automation formatting + helper unit tests together
 npm run automation:check
 
+# Preview generated artifact cleanup targets without deleting files
+npm run clean:artifacts:precommit:dry-run
+
 # Show helper usage/flags for diagnostics archive bundling
 node scripts/bundle-diagnostics.mjs --help
 # Optional: override tar timeout per invocation

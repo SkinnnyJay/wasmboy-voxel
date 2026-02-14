@@ -69,6 +69,7 @@
     "core:memory-offset:check": "node scripts/core-memory-offset-contract-check.mjs",
     "lint:library:console": "node scripts/check-library-console-usage.mjs",
     "clean:artifacts:precommit": "node scripts/clean-accidental-build-artifacts.mjs",
+    "clean:artifacts:precommit:dry-run": "node scripts/clean-accidental-build-artifacts.mjs --dry-run",
     "guard:generated-artifacts:precommit": "node scripts/guard-generated-artifacts-precommit.mjs",
     "automation:test": "node --test \"scripts/**/*.test.mjs\"",
     "automation:check": "run-s workflow:check memory:layout:check core:memory-offset:check lint:library:console automation:test",
