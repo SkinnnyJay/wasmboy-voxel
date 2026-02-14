@@ -38,3 +38,19 @@ Returns recent events/snapshots and frame/checksum metadata.
 
 Use the UI `Export JSONL` action to generate event + snapshot JSONL output for
 LLM/debug tooling ingestion.
+
+## Memory panel constraints for large dumps
+
+The current `Memory Viewer` panel is intentionally constrained for UI safety:
+
+- it renders a small fixed row window instead of full raw dumps
+- it surfaces checksum metadata from the latest snapshot instead of bulk memory payloads
+- it avoids mounting large byte arrays directly into React component trees
+
+Practical implications:
+
+- very large VRAM/OAM dumps should be inspected through exported JSONL artifacts, contract-check
+  files, or backend diagnostics rather than direct panel rendering
+- if you need full dump views, prefer paginated/virtualized rendering to prevent browser memory
+  spikes and long main-thread stalls
+- keep per-panel rendered byte windows bounded when adding new memory visualization features
