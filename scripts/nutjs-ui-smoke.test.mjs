@@ -105,7 +105,12 @@ test('runNutjsUiSmoke executes smoke action with loaded NutJS module', async () 
   assert.equal(smokeActionInvoked, true);
   assert.equal(summary.status, 'passed');
   assert.deepEqual(summary.reasons, []);
-  assert.deepEqual(summary.smokeMetadata, { validated: true });
+  assert.deepEqual(summary.smokeMetadata, {
+    validated: true,
+    resourceCleanup: {
+      timeoutMs: 10000,
+    },
+  });
 });
 
 test('runNutjsUiSmoke default smoke action reports platform shortcut mapping metadata', async () => {
@@ -150,6 +155,9 @@ test('runNutjsUiSmoke default smoke action reports platform shortcut mapping met
     evictedBuffers: 1,
     evictedBytes: 256,
   });
+  assert.deepEqual(summary.smokeMetadata.resourceCleanup, {
+    timeoutMs: 10000,
+  });
 });
 
 test('runNutjsUiSmoke reports macOS accessibility retry hints when untrusted', async () => {
@@ -162,4 +170,30 @@ test('runNutjsUiSmoke reports macOS accessibility retry hints when untrusted', a
   assert.equal(summary.status, 'skipped');
   assert.deepEqual(summary.reasons, ['macos-accessibility-untrusted']);
   assert.ok(summary.capabilityMetadata.macosPermissionState.retryHints.length >= 3);
+});
+
+test('runNutjsUiSmoke enforces timeout and disposes custom sessions', async () => {
+  let disposed = false;
+  await assert.rejects(
+    () =>
+      runNutjsUiSmoke({
+        platform: 'linux',
+        env: {
+          DISPLAY: ':99',
+        },
+        timeoutMs: 10,
+        loader: async () => ({ keyboard: {}, mouse: {} }),
+        createSession: async () => ({
+          dispose: async () => {
+            disposed = true;
+          },
+        }),
+        smokeAction: async () => {
+          await new Promise(resolve => setTimeout(resolve, 30));
+          return { shouldNotReach: true };
+        },
+      }),
+    /\[nutjs:resource-cleanup\] action timed out after 10ms\./u,
+  );
+  assert.equal(disposed, true);
 });

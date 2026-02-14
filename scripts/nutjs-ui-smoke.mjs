@@ -6,6 +6,7 @@ import { resolveNutjsShortcutKeyNames, resolveNutjsShortcutScanCodes } from './n
 import { resolveNutjsLinuxDisplayStrategy } from './nutjs-linux-display.mjs';
 import { resolveNutjsMacOsPermissionState } from './nutjs-macos-permissions.mjs';
 import { createNutjsMemoryGuard } from './nutjs-memory-guard.mjs';
+import { runNutjsWithResourceCleanup } from './nutjs-resource-cleanup.mjs';
 
 const DEFAULT_NUTJS_PACKAGE_NAME = '@nut-tree-fork/nut-js';
 const SCRIPT_USAGE = `Usage: node scripts/nutjs-ui-smoke.mjs [--json] [--strict] [--help]\n\nOptions:\n  --json      Emit machine-readable JSON summary.\n  --strict    Fail when NutJS or host capabilities are unavailable.\n  --help, -h  Show this usage message.\n`;
@@ -176,10 +177,13 @@ async function runDefaultSmokeAction(nutjsModule, platform, environment) {
  *   platform?: string;
  *   env?: Record<string, unknown>;
  *   loader?: (specifier: string) => Promise<unknown>;
+ *   createSession?: () => Promise<unknown>;
+ *   timeoutMs?: number;
  *   smokeAction?: (context: {
  *     nutjsModule: unknown;
  *     platform: string;
  *     env: Record<string, unknown>;
+ *     session: unknown;
  *   }) => Promise<Record<string, unknown> | void>;
  * }} [options]
  */
@@ -202,6 +206,14 @@ export async function runNutjsUiSmoke(options = {}) {
 
   if (options.loader !== undefined && typeof options.loader !== 'function') {
     throw new TypeError('[nutjs:ui-smoke] Expected options.loader to be a function when provided.');
+  }
+
+  if (options.createSession !== undefined && typeof options.createSession !== 'function') {
+    throw new TypeError('[nutjs:ui-smoke] Expected options.createSession to be a function when provided.');
+  }
+
+  if (options.timeoutMs !== undefined && (!Number.isInteger(options.timeoutMs) || options.timeoutMs <= 0)) {
+    throw new TypeError('[nutjs:ui-smoke] Expected options.timeoutMs to be a positive integer when provided.');
   }
 
   if (options.smokeAction !== undefined && typeof options.smokeAction !== 'function') {
@@ -243,13 +255,25 @@ export async function runNutjsUiSmoke(options = {}) {
   }
 
   const smokeAction = options.smokeAction ?? (async context => runDefaultSmokeAction(context.nutjsModule, context.platform, context.env));
-  const smokeMetadata = await smokeAction({
-    nutjsModule: loadedModule.nutjsModule,
-    platform,
-    env: environment,
+  const cleanupResult = await runNutjsWithResourceCleanup({
+    timeoutMs: options.timeoutMs,
+    createSession: options.createSession,
+    action: async session =>
+      smokeAction({
+        nutjsModule: loadedModule.nutjsModule,
+        platform,
+        env: environment,
+        session,
+      }),
   });
+  const smokeMetadata = cleanupResult.actionResult;
   if (smokeMetadata && typeof smokeMetadata === 'object' && !Array.isArray(smokeMetadata)) {
-    summary.smokeMetadata = smokeMetadata;
+    summary.smokeMetadata = {
+      ...smokeMetadata,
+      resourceCleanup: {
+        timeoutMs: cleanupResult.timeoutMs,
+      },
+    };
   }
 
   return summary;
