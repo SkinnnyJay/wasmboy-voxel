@@ -479,6 +479,7 @@ Workflow hardening applied:
 - next-cycle `task121` is now completed by adding argument parser/help support to the generated-artifact guard script with regression coverage, making manual guard invocation behavior explicit and contract-tested
 - next-cycle `task122` is now completed by adding subprocess-level CLI contract tests for cleanup/guard scripts so usage and unknown-flag error behaviors are validated end-to-end at the executable boundary
 - next-cycle `task123` is now completed by removing duplicate error-prefix noise from cleanup/guard parser failures and updating executable contract tests to lock clean, single-prefix CLI diagnostics
+- next-cycle `task124` is now completed by de-duplicating normalized blocked-path results in the generated-artifact guard, ensuring concise deterministic pre-commit diagnostics even when duplicate path aliases are staged
 
 ## Security posture at completion
 

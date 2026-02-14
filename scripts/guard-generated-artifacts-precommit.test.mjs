@@ -28,6 +28,12 @@ test('findBlockedArtifactPaths flags staged integration output artifacts', () =>
   assert.deepEqual(blockedPaths, ['test/integration/headless-simple.golden.output.png', 'test/integration/headless-simple.output']);
 });
 
+test('findBlockedArtifactPaths de-duplicates equivalent blocked paths', () => {
+  const blockedPaths = findBlockedArtifactPaths(['dist/wasmboy.wasm.esm.js', './dist/wasmboy.wasm.esm.js', '.\\dist\\wasmboy.wasm.esm.js']);
+
+  assert.deepEqual(blockedPaths, ['dist/wasmboy.wasm.esm.js']);
+});
+
 test('findBlockedArtifactPaths blocks non-golden accuracy and performance outputs', () => {
   const blockedPaths = findBlockedArtifactPaths([
     'test/accuracy/testroms/suite/frame.output',

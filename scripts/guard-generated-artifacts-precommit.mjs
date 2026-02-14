@@ -9,10 +9,16 @@ const SCRIPT_USAGE = `Usage: node scripts/guard-generated-artifacts-precommit.mj
  * @param {string[]} stagedPaths
  */
 export function findBlockedArtifactPaths(stagedPaths) {
-  return stagedPaths
-    .map(normalizeArtifactPath)
-    .filter(stagedPath => shouldBlockStagedArtifactPath(stagedPath))
-    .sort((left, right) => left.localeCompare(right));
+  const blockedPathSet = new Set();
+
+  for (const stagedPath of stagedPaths) {
+    const normalizedPath = normalizeArtifactPath(stagedPath);
+    if (shouldBlockStagedArtifactPath(normalizedPath)) {
+      blockedPathSet.add(normalizedPath);
+    }
+  }
+
+  return [...blockedPathSet].sort((left, right) => left.localeCompare(right));
 }
 
 /**
