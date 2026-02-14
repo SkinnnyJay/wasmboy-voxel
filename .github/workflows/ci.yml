@@ -65,6 +65,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Guard against tracked debugger build artifacts
+        run: |
+          tracked_next_files="$(git ls-files -- 'apps/debugger/.next/**')"
+          if [[ -n "${tracked_next_files}" ]]; then
+            echo "Tracked build artifacts under apps/debugger/.next are not allowed."
+            echo "${tracked_next_files}"
+            exit 1
+          fi
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -91,6 +100,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Guard against tracked debugger build artifacts
+        run: |
+          tracked_next_files="$(git ls-files -- 'apps/debugger/.next/**')"
+          if [[ -n "${tracked_next_files}" ]]; then
+            echo "Tracked build artifacts under apps/debugger/.next are not allowed."
+            echo "${tracked_next_files}"
+            exit 1
+          fi
 
       - name: Setup Node
         uses: actions/setup-node@v4
