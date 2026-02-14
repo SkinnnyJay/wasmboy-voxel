@@ -62,6 +62,22 @@ exit 0
   );
 }
 
+const HELP_DUPLICATE_ARG_FIXTURES = {
+  longThenShort: ['--help', '-h'],
+  shortThenLong: ['-h', '--help'],
+  longThenLong: ['--help', '--help'],
+  shortThenShort: ['-h', '-h'],
+};
+
+const TIMEOUT_DUPLICATE_ARG_FIXTURES = {
+  splitThenInline: ['--timeout-ms', '100', '--timeout-ms=200'],
+  inlineThenSplit: ['--timeout-ms=200', '--timeout-ms', '100'],
+  splitThenSplit: ['--timeout-ms', '200', '--timeout-ms', '100'],
+  inlineThenInline: ['--timeout-ms=200', '--timeout-ms=100'],
+  validThenMalformedInline: ['--timeout-ms=200', '--timeout-ms==100'],
+  malformedThenValidInline: ['--timeout-ms==200', '--timeout-ms=100'],
+};
+
 test('changeset-status-ci forwards filtered output and exit status', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-pass-'));
   const fakeBinDirectory = writeFakeChangeset(
@@ -164,7 +180,7 @@ test('changeset-status-ci prints usage with -h alias', () => {
 });
 
 test('changeset-status-ci rejects duplicate help flags', () => {
-  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--help', '-h']);
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), HELP_DUPLICATE_ARG_FIXTURES.longThenShort);
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /\[changeset:status:ci\]/u);
@@ -173,7 +189,7 @@ test('changeset-status-ci rejects duplicate help flags', () => {
 });
 
 test('changeset-status-ci rejects duplicate help flags in short-first order', () => {
-  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['-h', '--help']);
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), HELP_DUPLICATE_ARG_FIXTURES.shortThenLong);
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /\[changeset:status:ci\]/u);
@@ -182,7 +198,7 @@ test('changeset-status-ci rejects duplicate help flags in short-first order', ()
 });
 
 test('changeset-status-ci rejects duplicate long help flags', () => {
-  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--help', '--help']);
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), HELP_DUPLICATE_ARG_FIXTURES.longThenLong);
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /\[changeset:status:ci\]/u);
@@ -191,7 +207,7 @@ test('changeset-status-ci rejects duplicate long help flags', () => {
 });
 
 test('changeset-status-ci rejects duplicate short help flags', () => {
-  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['-h', '-h']);
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), HELP_DUPLICATE_ARG_FIXTURES.shortThenShort);
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /\[changeset:status:ci\]/u);
@@ -200,7 +216,7 @@ test('changeset-status-ci rejects duplicate short help flags', () => {
 });
 
 test('changeset-status-ci rejects duplicate timeout flags', () => {
-  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '100', '--timeout-ms=200']);
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), TIMEOUT_DUPLICATE_ARG_FIXTURES.splitThenInline);
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Duplicate --timeout-ms argument provided/u);
@@ -208,7 +224,7 @@ test('changeset-status-ci rejects duplicate timeout flags', () => {
 });
 
 test('changeset-status-ci rejects duplicate timeout flags in inline-first order', () => {
-  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=200', '--timeout-ms', '100']);
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), TIMEOUT_DUPLICATE_ARG_FIXTURES.inlineThenSplit);
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Duplicate --timeout-ms argument provided/u);
@@ -216,7 +232,7 @@ test('changeset-status-ci rejects duplicate timeout flags in inline-first order'
 });
 
 test('changeset-status-ci rejects duplicate timeout flags in split-only order', () => {
-  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '200', '--timeout-ms', '100']);
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), TIMEOUT_DUPLICATE_ARG_FIXTURES.splitThenSplit);
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Duplicate --timeout-ms argument provided/u);
@@ -224,7 +240,7 @@ test('changeset-status-ci rejects duplicate timeout flags in split-only order', 
 });
 
 test('changeset-status-ci rejects duplicate timeout flags in inline-only order', () => {
-  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=200', '--timeout-ms=100']);
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), TIMEOUT_DUPLICATE_ARG_FIXTURES.inlineThenInline);
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Duplicate --timeout-ms argument provided/u);
@@ -232,7 +248,7 @@ test('changeset-status-ci rejects duplicate timeout flags in inline-only order',
 });
 
 test('changeset-status-ci prioritizes duplicate timeout errors over malformed second inline timeout tokens', () => {
-  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=200', '--timeout-ms==100']);
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), TIMEOUT_DUPLICATE_ARG_FIXTURES.validThenMalformedInline);
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Duplicate --timeout-ms argument provided/u);
@@ -240,7 +256,7 @@ test('changeset-status-ci prioritizes duplicate timeout errors over malformed se
 });
 
 test('changeset-status-ci reports malformed first inline timeout tokens before duplicate checks', () => {
-  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms==200', '--timeout-ms=100']);
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), TIMEOUT_DUPLICATE_ARG_FIXTURES.malformedThenValidInline);
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Malformed inline value for --timeout-ms argument/u);

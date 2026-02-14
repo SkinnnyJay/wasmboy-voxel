@@ -381,6 +381,7 @@ Workflow hardening applied:
 - test-fixtures executable-name validation now rejects Windows reserved device names (`CON`, `PRN`, etc.), ensuring fake executable generation behaves consistently across platforms
 - test-fixtures coverage now includes fake-bin idempotency semantics, verifying repeated fixture writes reuse the same fake-bin path and keep all generated commands runnable
 - scripts test suites now share a centralized `UNPRINTABLE_VALUE` fixture helper, eliminating duplicated unprintable-value fixture declarations across script utility test files
+- changeset-status duplicate-argument parser tests now use reusable fixture constants for help/timeout duplicate matrices, reducing repeated literal arrays while retaining full precedence coverage
 
 ## Security posture at completion
 

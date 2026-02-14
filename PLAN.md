@@ -483,3 +483,4 @@
 - 2026-02-13: Hardened `writeFakeExecutable` cross-platform filename semantics by rejecting Windows reserved device names (`CON`, `PRN`, etc.) and adding dedicated regression coverage.
 - 2026-02-13: Added `writeFakeExecutable` fake-bin idempotency coverage, asserting repeated fixture writes against an existing `fake-bin` directory preserve path stability and command executability.
 - 2026-02-13: Refactored scripts test fixtures to centralize shared `UNPRINTABLE_VALUE` test input in a reusable helper module, reducing duplicated fixture boilerplate across argument/timeout/filter/fixture test suites.
+- 2026-02-13: Refactored duplicate argument parser test fixtures in `changeset-status-ci.test.mjs` into reusable constant maps for help and timeout duplicate/malformed matrices, reducing fixture duplication while preserving coverage semantics.
