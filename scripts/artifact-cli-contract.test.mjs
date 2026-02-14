@@ -26,6 +26,13 @@ function writeFileEnsuringParent(filePath, contents = 'fixture') {
   fs.writeFileSync(filePath, contents, 'utf8');
 }
 
+function assertSummaryMetadata(summaryPayload) {
+  assert.equal(summaryPayload.schemaVersion, 1);
+  assert.equal(typeof summaryPayload.timestampMs, 'number');
+  assert.equal(Number.isInteger(summaryPayload.timestampMs), true);
+  assert.equal(summaryPayload.timestampMs > 0, true);
+}
+
 function runGit(args, cwd) {
   const result = spawnSync('git', args, {
     cwd,
@@ -135,9 +142,8 @@ test('clean artifact script emits JSON summary when --json is set', () => {
   assert.equal(result.status, 0);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
-  assert.equal(parsedOutput.schemaVersion, 1);
+  assertSummaryMetadata(parsedOutput);
   assert.equal(parsedOutput.mode, 'dry-run');
-  assert.equal(typeof parsedOutput.timestampMs, 'number');
   assert.equal(parsedOutput.removedCount, 1);
   assert.deepEqual(parsedOutput.deletedDirectories, []);
   assert.deepEqual(parsedOutput.deletedFiles, ['test/integration/headless.output']);
@@ -154,9 +160,8 @@ test('clean artifact script emits apply-mode JSON summary and removes files', ()
   assert.equal(result.status, 0);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
-  assert.equal(parsedOutput.schemaVersion, 1);
+  assertSummaryMetadata(parsedOutput);
   assert.equal(parsedOutput.mode, 'apply');
-  assert.equal(typeof parsedOutput.timestampMs, 'number');
   assert.equal(parsedOutput.removedCount, 1);
   assert.deepEqual(parsedOutput.deletedDirectories, []);
   assert.deepEqual(parsedOutput.deletedFiles, ['test/integration/headless.output']);
@@ -172,9 +177,8 @@ test('clean artifact script emits zero-count JSON summary when nothing matches',
   assert.equal(result.status, 0);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
-  assert.equal(parsedOutput.schemaVersion, 1);
+  assertSummaryMetadata(parsedOutput);
   assert.equal(parsedOutput.mode, 'apply');
-  assert.equal(typeof parsedOutput.timestampMs, 'number');
   assert.equal(parsedOutput.removedCount, 0);
   assert.deepEqual(parsedOutput.deletedDirectories, []);
   assert.deepEqual(parsedOutput.deletedFiles, []);
@@ -186,9 +190,8 @@ test('generated artifact guard script emits JSON summary when --json is set', ()
   assert.equal(result.status, 0);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
-  assert.equal(parsedOutput.schemaVersion, 1);
+  assertSummaryMetadata(parsedOutput);
   assert.equal(typeof parsedOutput.allowGeneratedEdits, 'boolean');
-  assert.equal(typeof parsedOutput.timestampMs, 'number');
   assert.equal(parsedOutput.isValid, true);
   assert.equal(parsedOutput.stagedPathCount, 0);
   assert.deepEqual(parsedOutput.blockedPaths, []);
@@ -202,9 +205,8 @@ test('generated artifact guard JSON summary reflects override in no-op runs', ()
   assert.equal(result.status, 0);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
-  assert.equal(parsedOutput.schemaVersion, 1);
+  assertSummaryMetadata(parsedOutput);
   assert.equal(parsedOutput.allowGeneratedEdits, true);
-  assert.equal(typeof parsedOutput.timestampMs, 'number');
   assert.equal(parsedOutput.isValid, true);
   assert.equal(parsedOutput.stagedPathCount, 0);
   assert.deepEqual(parsedOutput.blockedPaths, []);
@@ -218,9 +220,8 @@ test('generated artifact guard JSON output reports blocked staged artifacts', ()
   assert.equal(result.status, 1);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
-  assert.equal(parsedOutput.schemaVersion, 1);
+  assertSummaryMetadata(parsedOutput);
   assert.equal(parsedOutput.allowGeneratedEdits, false);
-  assert.equal(typeof parsedOutput.timestampMs, 'number');
   assert.equal(parsedOutput.isValid, false);
   assert.deepEqual(parsedOutput.blockedPaths, [tempRepo.stagedRelativePaths[0]]);
   assert.equal(parsedOutput.stagedPathCount, 1);
@@ -237,9 +238,8 @@ test('generated artifact guard JSON output honors generated-edit override', () =
   assert.equal(result.status, 0);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
-  assert.equal(parsedOutput.schemaVersion, 1);
+  assertSummaryMetadata(parsedOutput);
   assert.equal(parsedOutput.allowGeneratedEdits, true);
-  assert.equal(typeof parsedOutput.timestampMs, 'number');
   assert.equal(parsedOutput.isValid, true);
   assert.deepEqual(parsedOutput.blockedPaths, []);
   assert.equal(parsedOutput.stagedPathCount, 1);
@@ -253,7 +253,7 @@ test('generated artifact guard JSON output sorts blocked paths deterministically
   assert.equal(result.status, 1);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
-  assert.equal(parsedOutput.schemaVersion, 1);
+  assertSummaryMetadata(parsedOutput);
   assert.equal(parsedOutput.allowGeneratedEdits, false);
   assert.equal(parsedOutput.isValid, false);
   assert.deepEqual(parsedOutput.blockedPaths, ['build/a-generated.js', 'dist/z-generated.js']);
