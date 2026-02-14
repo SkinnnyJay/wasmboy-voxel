@@ -48,6 +48,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C025 | Cleanup dry-run discoverability   | Added package script and contract coverage for `clean:artifacts:precommit:dry-run` plus README/policy docs so dry-run artifact inspection stays visible and regression-checked across contributor workflows. | S4                | `@automation-tooling` |
 | TD-C026 | Guard CLI usability               | Added generated-artifact guard CLI parser/help contract (`--help`, unknown-flag rejection) with regression tests so manual pre-commit guard invocation has explicit, validated usage behavior.               | S4                | `@automation-tooling` |
 | TD-C027 | Artifact CLI executable contracts | Added subprocess-driven CLI contract tests covering cleanup/guard script usage and unknown-flag behavior, protecting executable interface guarantees beyond direct function-level tests.                     | S4                | `@automation-tooling` |
+| TD-C028 | Artifact CLI diagnostic clarity   | Removed duplicate script-prefix noise from cleanup/guard unknown-flag parser failures and refreshed function + subprocess contract tests so diagnostics stay concise and actionable.                         | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

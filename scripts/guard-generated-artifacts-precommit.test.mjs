@@ -96,8 +96,5 @@ test('parseGeneratedArtifactGuardArgs supports help flags', () => {
 });
 
 test('parseGeneratedArtifactGuardArgs rejects unknown flags', () => {
-  assert.throws(
-    () => parseGeneratedArtifactGuardArgs(['--dry-run']),
-    /\[guard:generated-artifacts\] Unknown argument "--dry-run"\. Supported flags: --help\./u,
-  );
+  assert.throws(() => parseGeneratedArtifactGuardArgs(['--dry-run']), /Unknown argument "--dry-run"\. Supported flags: --help\./u);
 });

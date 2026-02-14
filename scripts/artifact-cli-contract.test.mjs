@@ -27,10 +27,7 @@ test('clean artifact script rejects unknown flags', () => {
   const result = runScript(cleanArtifactsScriptPath, ['--unknown']);
 
   assert.equal(result.status, 1);
-  assert.match(
-    result.stderr,
-    /\[clean:artifacts\] \[clean:artifacts\] Unknown argument "--unknown"\. Supported flags: --dry-run, --help\./u,
-  );
+  assert.match(result.stderr, /\[clean:artifacts\] Unknown argument "--unknown"\. Supported flags: --dry-run, --help\./u);
 });
 
 test('generated artifact guard script prints usage for --help', () => {
@@ -44,8 +41,5 @@ test('generated artifact guard script rejects unknown flags', () => {
   const result = runScript(guardArtifactsScriptPath, ['--dry-run']);
 
   assert.equal(result.status, 1);
-  assert.match(
-    result.stderr,
-    /\[guard:generated-artifacts\] \[guard:generated-artifacts\] Unknown argument "--dry-run"\. Supported flags: --help\./u,
-  );
+  assert.match(result.stderr, /\[guard:generated-artifacts\] Unknown argument "--dry-run"\. Supported flags: --help\./u);
 });

@@ -114,7 +114,7 @@ export function parseCleanArtifactsArgs(argv) {
       return { dryRun: false, shouldPrintUsage: true };
     }
 
-    throw new Error(`[clean:artifacts] Unknown argument "${token}". Supported flags: --dry-run, --help.`);
+    throw new Error(`Unknown argument "${token}". Supported flags: --dry-run, --help.`);
   }
 
   return { dryRun, shouldPrintUsage: false };

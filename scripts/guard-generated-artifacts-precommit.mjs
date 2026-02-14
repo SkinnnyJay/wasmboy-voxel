@@ -67,7 +67,7 @@ export function parseGeneratedArtifactGuardArgs(argv) {
       return { shouldPrintUsage: true };
     }
 
-    throw new Error(`[guard:generated-artifacts] Unknown argument "${token}". Supported flags: --help.`);
+    throw new Error(`Unknown argument "${token}". Supported flags: --help.`);
   }
 
   return { shouldPrintUsage: false };

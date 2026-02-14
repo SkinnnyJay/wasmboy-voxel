@@ -114,8 +114,5 @@ test('parseCleanArtifactsArgs supports dry-run and usage flags', () => {
 });
 
 test('parseCleanArtifactsArgs rejects unknown flags', () => {
-  assert.throws(
-    () => parseCleanArtifactsArgs(['--unknown']),
-    /\[clean:artifacts\] Unknown argument "--unknown"\. Supported flags: --dry-run, --help\./u,
-  );
+  assert.throws(() => parseCleanArtifactsArgs(['--unknown']), /Unknown argument "--unknown"\. Supported flags: --dry-run, --help\./u);
 });
