@@ -29,8 +29,20 @@ compiled to WebAssembly, with a JavaScript wrapper, workers, and demo apps.
 ## Architecture
 1. **Core (`core/`)** AssemblyScript emulator compiled to `dist/core/core.untouched.wasm`.
 2. **Library (`lib/`)** JavaScript wrapper and workers, built to `dist/wasmboy.wasm.*`.
-3. **Voxel wrapper (`voxel-wrapper.ts`, `index.ts`)** TypeScript layer that exposes
+3. **Headless (`lib/headless/`)** Main-thread runner (no Workers), built to
+   `dist/wasmboy.headless.esm.js` and `dist/wasmboy.headless.cjs.cjs`. Use for CI, testing,
+   and deterministic frame stepping via `WasmBoyHeadless`.
+4. **Voxel wrapper (`voxel-wrapper.ts`, `index.ts`)** TypeScript layer that exposes
    `WasmBoyVoxelApi` with PPU snapshot helpers.
+
+## Headless mode
+- **Config headless:** `config({ headless: true, updateGraphicsCallback })` skips canvas/audio
+  init; frames are delivered to the callback when Workers are used (e.g. Node with
+  `--experimental-worker`). See `docs/HEADLESS_MODE.md`.
+- **WasmBoyHeadless:** Import from `dist/wasmboy.headless.esm.js` (or `.cjs.cjs`) for a
+  synchronous API: `loadROM()`, `stepFrame()` / `stepFrames(n)`, `getFrameBuffer()`,
+  `getPpuSnapshot()`, `readMemory()` / `writeMemory()`, `setJoypadState()`, `saveState()` /
+  `loadState()`. No Workers; suitable for headless Chrome, Vitest, and CI.
 
 ## PPU Snapshot System
 - Snapshot uses `_getWasmConstant("DEBUG_GAMEBOY_MEMORY_LOCATION")` for base memory.

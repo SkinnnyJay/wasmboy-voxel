@@ -1,5 +1,10 @@
 # Migration Execution Plan
 
+## Completion status (review 2026-02-13)
+
+- **Complete:** Milestones 0–10 (baseline, scaffolding, contracts, wrapper integration, build/packaging, Next.js debugger, state/events, CLI, regression safety, compatibility, tooling, docs, finalization). Backlog tasks 159–181 (artifact/dependency/CLI hardening).
+- **Incomplete:** Backlog placeholders task182–task200; S1-001–S1-020 (Critical: core timing, graphics, audio, memory, serial, bootrom); S2-001–S2-030 (High: sound bounds, cross-platform, NutJS, wrapper memory, debugger soak/large-data). See **PLAN44.md** for consolidated incomplete work and research findings.
+
 ## How to Work This Plan
 
 1. Pick the next unchecked task (`[ ]`).

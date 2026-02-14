@@ -12,8 +12,7 @@ TypeScript conversion of the existing `lib/` is **last** (Phase 11).
 | PLAN2.md  | 0%        | All tasks unchecked; migration/ not started |
 | MIGRATE   | 0%        | Design doc; no tasks marked done            |
 
-**Conclusion:** No phases are complete. Execute phases in the order below; do not
-start Phase 11 (TypeScript migration) until Phase 10 is done.
+**Conclusion:** Phases 0–10 are **effectively complete** (executed at repo root per PLAN.md; this doc assumed `migration/`). Phase 11 (TypeScript migration) is not started. Remaining work: PLAN.md S1/S2 and backlog task182–200; see **PLAN44.md** for consolidated incomplete items and research findings.
 
 ---
 

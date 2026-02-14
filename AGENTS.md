@@ -8,6 +8,8 @@ rendering. It is consumed by the parent `gameboy-remix` project via
 ## Architecture
 - `core/` AssemblyScript Game Boy emulator compiled to WASM.
 - `lib/` JavaScript wrapper and workers.
+- `lib/headless/` Main-thread runner (`WasmBoyHeadless`), no Workers; built to
+  `dist/wasmboy.headless.*`. Use for headless Chrome, CI, and frame-step testing.
 - `voxel-wrapper.ts` and `index.ts` add voxel snapshot helpers.
 - `demo/` debugger, benchmark, iframe demos.
 

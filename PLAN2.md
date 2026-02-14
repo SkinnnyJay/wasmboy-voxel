@@ -14,6 +14,10 @@ single source of truth. Use it to track progress and preserve design intent.
 7. Do not stop until everything is `[x]`.
 8. This plan is living. Add new tasks when discovered and complete them too.
 
+## Completion status (review 2026-02-13)
+
+This plan assumed work under `migration/` with Bun. The repo instead completed equivalent work at **repo root** with pnpm (see PLAN.md). Phases 0–10 are **effectively complete** per PLAN.md; Phase 11 (TypeScript migration) is not started. For remaining work (S1/S2, task182–200) and consolidated research findings, see **PLAN44.md**.
+
 ## Reference Info (Why + Constraints)
 
 ### Goals
