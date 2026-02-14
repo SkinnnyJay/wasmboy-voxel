@@ -98,7 +98,26 @@ jobs:
             apps/debugger/package-lock.json
 
       - name: Run automation script tests
-        run: npm run automation:test
+        run: |
+          set -o pipefail
+          npm run automation:test 2>&1 | tee automation-test-node-${{ matrix.node-version }}.log
+
+      - name: Compress automation diagnostics payload
+        if: ${{ failure() || cancelled() }}
+        run: >
+          node scripts/bundle-diagnostics.mjs
+          --output artifacts/automation-matrix-node-${{ matrix.node-version }}-diagnostics.tar.gz
+          --pattern 'automation-test-node-${{ matrix.node-version }}.log'
+
+      - name: Upload automation failure diagnostics
+        if: ${{ failure() || cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: automation-matrix-failure-diagnostics-node-${{ matrix.node-version }}-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 14
+          if-no-files-found: ignore
+          path: |
+            artifacts/automation-matrix-node-${{ matrix.node-version }}-diagnostics.tar.gz
 
   lint-typecheck-test:
     runs-on: ubuntu-latest
