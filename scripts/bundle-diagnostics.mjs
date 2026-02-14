@@ -102,6 +102,9 @@ function parseArgs(argv) {
         throw new Error(`Duplicate ${MESSAGE_FLAG} argument provided.`);
       }
       const value = token.slice(`${MESSAGE_FLAG}=`.length);
+      if (value.startsWith('=')) {
+        throw new Error(`Malformed inline value for ${MESSAGE_FLAG} argument.`);
+      }
       validateRequiredArgumentValue(value, {
         flagName: MESSAGE_FLAG,
         knownArgs: KNOWN_ARGS,

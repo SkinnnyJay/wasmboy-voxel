@@ -1224,6 +1224,17 @@ test('bundle-diagnostics requires a value for equals-form message flag', () => {
   assert.match(output, /Missing value for --message argument/u);
 });
 
+test('bundle-diagnostics rejects malformed equals-form message values with double equals', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-malformed-message-inline-double-equals-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output=artifacts/out.tar.gz',
+    '--pattern=missing/*.log',
+    '--message==custom placeholder',
+  ]);
+  assert.match(output, /Malformed inline value for --message argument/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects timeout-flag token as message value', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-invalid-message-timeout-token-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, [

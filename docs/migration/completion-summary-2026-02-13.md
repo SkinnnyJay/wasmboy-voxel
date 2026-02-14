@@ -363,6 +363,7 @@ Workflow hardening applied:
 - shared required-argument option validation now rejects whitespace-padded `flagName` values, with validate/read helper regression coverage to lock canonical flag-label semantics
 - required-argument set-entry validation now rejects whitespace-padded `knownArgs` and `allowedKnownValues` entries, with validate/read helper regression coverage for canonical token-set semantics
 - required-argument options-container validation now enforces plain-object inputs, with Date/Map/Set options-object rejection coverage across validate/read helper entrypoints
+- bundle-diagnostics equals-form parsing now rejects malformed message double-equals forms (`--message==...`), aligning malformed-inline semantics across all equals-form flags
 
 ## Security posture at completion
 
