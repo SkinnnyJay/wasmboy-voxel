@@ -493,3 +493,4 @@
 - 2026-02-13: Audited `packages/api` public export surface and documented backward-compatibility guarantees/risks in `docs/migration/packages-api-export-audit-2026-02-13.md` (root export map, runtime/type symbols, registry keys, follow-up guardrail recommendations).
 - 2026-02-13: Expanded `packages/api` contract tests for register bounds and coercion rejection, asserting all register fields reject out-of-range values (`<0`, `>0xff`) and non-numeric coercible payloads (string/boolean).
 - 2026-02-13: Added snapshot schema stability regression coverage in `packages/api`, asserting all `PpuSnapshotSchema` fields remain non-optional and any single-field omission fails validation.
+- 2026-02-13: Expanded `packages/api` contract validation coverage for non-object payloads across all v1 entrypoints (`registers`, `ppuSnapshot`, `memorySection`, `debugFrame`, `metadata`) for both registry-based and direct schema validation paths.

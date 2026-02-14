@@ -33,6 +33,21 @@ const REGISTER_KEYS: (keyof Registers)[] = [
   'obp1',
 ];
 
+const makeValidDebugFrame = () => ({
+  version: 'v1',
+  frameId: 1,
+  timestampMs: 16.67,
+  fps: 60,
+  registers: makeValidRegisters(),
+  checksums: {
+    tileDataSha256: 'a'.repeat(64),
+    bgTileMapSha256: 'b'.repeat(64),
+    windowTileMapSha256: 'c'.repeat(64),
+    oamDataSha256: 'd'.repeat(64),
+  },
+  events: [],
+});
+
 describe('contracts v1', () => {
   it('accepts valid PPU snapshot payload', () => {
     const payload = {
@@ -132,6 +147,35 @@ describe('contracts v1', () => {
     }
   });
 
+  it('rejects non-object payloads across all v1 contract entrypoints', () => {
+    const nonObjectPayloads: unknown[] = [undefined, null, 42, 'invalid-payload', true, 42n];
+    const contractCases = [
+      { contractName: 'registers', schema: V1Schemas.RegistersSchema },
+      { contractName: 'ppuSnapshot', schema: V1Schemas.PpuSnapshotSchema },
+      { contractName: 'memorySection', schema: V1Schemas.MemorySectionSchema },
+      { contractName: 'debugFrame', schema: V1Schemas.DebugFrameSchema },
+      { contractName: 'metadata', schema: V1Schemas.ContractVersionMetadataSchema },
+    ] as const;
+
+    for (const nonObjectPayload of nonObjectPayloads) {
+      for (const contractCase of contractCases) {
+        const registryResult = validateRegistryPayload(
+          CONTRACT_VERSION_V1,
+          contractCase.contractName,
+          nonObjectPayload,
+        );
+        expect(registryResult.success).toBe(false);
+        expect(registryResult.data).toBeNull();
+        expect(typeof registryResult.errorMessage).toBe('string');
+
+        const directResult = validateContractPayload(contractCase.schema, nonObjectPayload);
+        expect(directResult.success).toBe(false);
+        expect(directResult.data).toBeNull();
+        expect(typeof directResult.errorMessage).toBe('string');
+      }
+    }
+  });
+
   it('validates known registry schemas and reports unknown keys', () => {
     const ok = validateRegistryPayload(CONTRACT_VERSION_V1, 'registers', makeValidRegisters());
     expect(ok.success).toBe(true);
@@ -145,5 +189,8 @@ describe('contracts v1', () => {
     expect(String(unknown.errorMessage)).toMatch(/Unknown contract schema/);
 
     expect(typeof ContractRegistry.v1.ppuSnapshot.safeParse).toBe('function');
+    expect(
+      validateRegistryPayload(CONTRACT_VERSION_V1, 'debugFrame', makeValidDebugFrame()).success,
+    ).toBe(true);
   });
 });

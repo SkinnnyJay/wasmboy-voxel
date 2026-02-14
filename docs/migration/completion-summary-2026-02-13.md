@@ -391,6 +391,7 @@ Workflow hardening applied:
 - packages/api public exports were audited and documented with backward-compatibility guarantees/risks (entrypoint symbols, registry keys, export-map scope), establishing a baseline for future API stability checks
 - packages/api contract tests now include full-register-field bounds and coercion rejection coverage, verifying all register keys reject out-of-range and string/boolean payloads without coercion
 - packages/api snapshot schema tests now enforce required-field stability by asserting all snapshot keys remain non-optional and any omitted field fails validation
+- packages/api validation coverage now includes non-object payload rejection across all v1 contract entrypoints, for both `validateRegistryPayload` and `validateContractPayload` paths
 
 ## Security posture at completion
 
