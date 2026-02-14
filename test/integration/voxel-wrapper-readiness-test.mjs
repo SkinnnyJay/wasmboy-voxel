@@ -54,12 +54,16 @@ const { WasmBoy } = await import('../../voxel-wrapper.ts');
 
 const originalGetWasmConstant = WasmBoy._getWasmConstant;
 const originalGetWasmMemorySection = WasmBoy._getWasmMemorySection;
+const originalGetWasmMemoryBuffer = WasmBoy._getWasmMemoryBuffer;
+const originalGetWasmMemoryView = WasmBoy._getWasmMemoryView;
 const originalGetPpuSnapshotBuffer = WasmBoy._getPpuSnapshotBuffer;
 const originalParsePpuSnapshotBuffer = WasmBoy._parsePpuSnapshotBuffer;
 
 afterEach(() => {
   WasmBoy._getWasmConstant = originalGetWasmConstant;
   WasmBoy._getWasmMemorySection = originalGetWasmMemorySection;
+  WasmBoy._getWasmMemoryBuffer = originalGetWasmMemoryBuffer;
+  WasmBoy._getWasmMemoryView = originalGetWasmMemoryView;
   WasmBoy._getPpuSnapshotBuffer = originalGetPpuSnapshotBuffer;
   WasmBoy._parsePpuSnapshotBuffer = originalParsePpuSnapshotBuffer;
   WasmBoy.clearPpuSnapshotCache();
@@ -185,6 +189,41 @@ test('getPpuSnapshot returns null when core lacks memory-section internals', asy
 
   const snapshot = await WasmBoy.getPpuSnapshot();
   assert.equal(snapshot, null);
+});
+
+test('getDirectMemoryAccess reports unavailable when no sync memory hooks are present', () => {
+  WasmBoy._getWasmMemoryBuffer = undefined;
+  WasmBoy._getWasmMemoryView = undefined;
+
+  const directMemory = WasmBoy.getDirectMemoryAccess();
+  assert.equal(directMemory.available, false);
+  assert.equal(directMemory.getView(0, 1), null);
+});
+
+test('getDirectMemoryAccess exposes view reads from sync memory buffers', () => {
+  const buffer = new Uint8Array([5, 6, 7, 8, 9]).buffer;
+  WasmBoy._getWasmMemoryView = undefined;
+  WasmBoy._getWasmMemoryBuffer = () => buffer;
+
+  const directMemory = WasmBoy.getDirectMemoryAccess();
+  assert.equal(directMemory.available, true);
+  assert.deepEqual(Array.from(directMemory.getView(1, 3) ?? []), [6, 7, 8]);
+  assert.equal(directMemory.getView(-1, 1), null);
+  assert.equal(directMemory.getView(3, 3), null);
+});
+
+test('getDirectMemoryAccess prefers explicit sync memory view provider when available', () => {
+  const calls = [];
+  WasmBoy._getWasmMemoryBuffer = () => new ArrayBuffer(16);
+  WasmBoy._getWasmMemoryView = (offset, length) => {
+    calls.push([offset, length]);
+    return new Uint8Array([1, 2, 3]);
+  };
+
+  const directMemory = WasmBoy.getDirectMemoryAccess();
+  assert.equal(directMemory.available, true);
+  assert.deepEqual(Array.from(directMemory.getView(4, 3) ?? []), [1, 2, 3]);
+  assert.deepEqual(calls, [[4, 3]]);
 });
 
 test('getPpuSnapshotLayers reads only tile data when only tileData layer is requested', async () => {

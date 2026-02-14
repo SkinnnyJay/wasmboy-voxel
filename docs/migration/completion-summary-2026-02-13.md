@@ -460,6 +460,7 @@ Workflow hardening applied:
 - next-cycle `task102` is now completed by classifying volatile `WASMBOY_STATE` save/load bytes and enforcing non-volatile determinism in core serialization regression coverage (`test/core/serialization-determinism-test.cjs` + `docs/migration/core-save-state-volatile-field-classification-2026-02-14.md`), with debt-register closure for TD-002
 - next-cycle `task110` is now completed by introducing shared schema-driven throw-case test registration (`scripts/test-schema-helpers.mjs`) and migrating dense parser validation suites (`cli-arg-values`, `cli-timeout`) to the shared fixture pattern, with debt-register closure for TD-010
 - next-cycle `task106` is now completed by refactoring voxel snapshot fallback reads to batch register-block access and perform selective layer retrieval in `getPpuSnapshotLayers` (avoiding forced full-layer reads for partial requests), validated by expanded wrapper readiness integration tests and debt-register closure for TD-006
+- next-cycle `task107` is now completed by implementing capability-based direct memory access in the voxel wrapper (`getDirectMemoryAccess`) using optional sync hooks (`_getWasmMemoryView` / `_getWasmMemoryBuffer`) with bounds validation, validated via expanded wrapper readiness integration tests, and recorded as debt-register closure for TD-007
 
 ## Security posture at completion
 

@@ -42,6 +42,8 @@ export interface WasmBoyApi {
   setJoypadState(state: WasmBoyJoypadState): void;
   resumeAudioContext(): void;
   _getWasmMemorySection(start: number, end: number): Promise<Uint8Array>;
+  _getWasmMemoryBuffer?(): ArrayBuffer | null;
+  _getWasmMemoryView?(offset: number, length: number): Uint8Array | null;
   _setWasmMemorySection?(start: number, data: Uint8Array | ArrayBuffer): Promise<boolean>;
   setWasmMemorySection?(start: number, data: Uint8Array | ArrayBuffer): Promise<boolean>;
   _getWasmConstant(name: string): Promise<number>;
@@ -668,6 +670,42 @@ function createStubDirtyTileBitfield(): DirtyTileBitfield {
   };
 }
 
+const isValidDirectMemoryRange = (offset: number, length: number): boolean =>
+  Number.isInteger(offset) && Number.isInteger(length) && offset >= 0 && length >= 0;
+
+const createDirectMemoryViewReader = (api: WasmBoyApi): ((offset: number, length: number) => Uint8Array | null) | null => {
+  if (typeof api._getWasmMemoryView === 'function') {
+    return (offset: number, length: number): Uint8Array | null => {
+      if (!isValidDirectMemoryRange(offset, length)) {
+        return null;
+      }
+      const view = api._getWasmMemoryView?.(offset, length);
+      if (!(view instanceof Uint8Array) || view.length !== length) {
+        return null;
+      }
+      return view;
+    };
+  }
+
+  if (typeof api._getWasmMemoryBuffer === 'function') {
+    return (offset: number, length: number): Uint8Array | null => {
+      if (!isValidDirectMemoryRange(offset, length)) {
+        return null;
+      }
+      const buffer = api._getWasmMemoryBuffer?.();
+      if (!(buffer instanceof ArrayBuffer)) {
+        return null;
+      }
+      if (offset + length > buffer.byteLength) {
+        return null;
+      }
+      return new Uint8Array(buffer, offset, length);
+    };
+  }
+
+  return null;
+};
+
 function rgb555ToRgb(word: number): [number, number, number] {
   const r = (((word >> 0) & 31) * 255) / 31;
   const g = (((word >> 5) & 31) * 255) / 31;
@@ -783,9 +821,16 @@ export const WasmBoy: WasmBoyVoxelApi = Object.assign(BaseWasmBoy, {
     };
   },
   getDirectMemoryAccess(): DirectMemoryAccess {
+    const directMemoryViewReader = createDirectMemoryViewReader(BaseApi);
+    if (!directMemoryViewReader) {
+      return {
+        available: false,
+        getView: () => null,
+      };
+    }
     return {
-      available: false,
-      getView: () => null,
+      available: true,
+      getView: directMemoryViewReader,
     };
   },
 }) as WasmBoyVoxelApi;
