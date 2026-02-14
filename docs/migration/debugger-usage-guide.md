@@ -39,6 +39,19 @@ Returns recent events/snapshots and frame/checksum metadata.
 Use the UI `Export JSONL` action to generate event + snapshot JSONL output for
 LLM/debug tooling ingestion.
 
+## Snapshot timeline paging for large histories
+
+The `Snapshot Timeline` panel keeps rendering bounded with a fixed page size and
+navigation controls:
+
+- `Oldest` jumps to the earliest captured page window.
+- `Older` steps one page deeper into history.
+- `Newer` steps back toward recent pages.
+- `Newest` jumps to the latest page window.
+
+This enables deep inspection of long-running sessions without mounting thousands
+of timeline rows into the DOM at once.
+
 ## Memory panel constraints for large dumps
 
 The current `Memory Viewer` panel is intentionally constrained for UI safety:

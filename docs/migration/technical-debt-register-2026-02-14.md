@@ -13,12 +13,11 @@ Ownership tags are subsystem owners (team-level), not individual names.
 
 ## Open debt items
 
-| Debt ID | Area                      | Description                                                                                                              | Severity | Owner Tag        | Source                                                                | Status |
-| ------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------- | ---------------- | --------------------------------------------------------------------- | ------ |
-| TD-003  | Core graphics perf        | Branch-heavy hot loops in scanline/background/sprite paths need selective branch-hoist refactors.                        | S3       | `@core-graphics` | `docs/migration/core-graphics-branch-churn-profile-2026-02-14.md`     | Open   |
-| TD-004  | Core sound perf/clarity   | Duplicate state-write sites and repeated frequency sync paths in sound channels remain partially redundant.              | S3       | `@core-audio`    | `docs/migration/core-sound-duplicate-state-write-audit-2026-02-14.md` | Open   |
-| TD-005  | Core memory banking       | `handleBanking`/trap branching fan-out remains high; split-by-family refactor still pending.                             | S3       | `@core-memory`   | `docs/migration/core-memory-banking-branch-audit-2026-02-14.md`       | Open   |
-| TD-009  | Debugger large-dataset UX | Bounded rendering is in place, but paginated/virtualized deep inspection UX for very large timelines remains incomplete. | S4       | `@debugger-ui`   | `apps/debugger/docs/migration/debugger-usage-guide.md`                | Open   |
+| Debt ID | Area                    | Description                                                                                                 | Severity | Owner Tag        | Source                                                                | Status |
+| ------- | ----------------------- | ----------------------------------------------------------------------------------------------------------- | -------- | ---------------- | --------------------------------------------------------------------- | ------ |
+| TD-003  | Core graphics perf      | Branch-heavy hot loops in scanline/background/sprite paths need selective branch-hoist refactors.           | S3       | `@core-graphics` | `docs/migration/core-graphics-branch-churn-profile-2026-02-14.md`     | Open   |
+| TD-004  | Core sound perf/clarity | Duplicate state-write sites and repeated frequency sync paths in sound channels remain partially redundant. | S3       | `@core-audio`    | `docs/migration/core-sound-duplicate-state-write-audit-2026-02-14.md` | Open   |
+| TD-005  | Core memory banking     | `handleBanking`/trap branching fan-out remains high; split-by-family refactor still pending.                | S3       | `@core-memory`   | `docs/migration/core-memory-banking-branch-audit-2026-02-14.md`       | Open   |
 
 ## Closed debt items (resolved in migration cycle)
 
@@ -35,6 +34,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C009 | Wrapper allocation pressure  | Refactored snapshot fallback reads to batch register-block fetches and selective layer retrieval for `getPpuSnapshotLayers`, preventing full snapshot allocations for partial layer requests.         | S3                | `@wrapper-voxel`      |
 | TD-C010 | Wrapper direct memory        | Implemented capability-based `getDirectMemoryAccess()` using optional sync hooks (`_getWasmMemoryView` / `_getWasmMemoryBuffer`) with bounds validation and wrapper readiness integration coverage.   | S4                | `@wrapper-voxel`      |
 | TD-C011 | Debugger worker lifecycle    | Added worker restart telemetry events, capped exponential backoff tuning, and surfaced restart diagnostics in debugger UI state (`apps/debugger/lib/worker-loader.ts`, `apps/debugger/app/page.tsx`). | S3                | `@debugger-runtime`   |
+| TD-C012 | Debugger large-dataset UX    | Added paginated timeline deep-inspection UX with oldest/older/newer/newest controls and tested page-window selection helpers for large snapshot histories.                                            | S4                | `@debugger-ui`        |
 
 ## Triage cadence
 

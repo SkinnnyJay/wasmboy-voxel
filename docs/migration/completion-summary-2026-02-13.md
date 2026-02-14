@@ -462,6 +462,7 @@ Workflow hardening applied:
 - next-cycle `task106` is now completed by refactoring voxel snapshot fallback reads to batch register-block access and perform selective layer retrieval in `getPpuSnapshotLayers` (avoiding forced full-layer reads for partial requests), validated by expanded wrapper readiness integration tests and debt-register closure for TD-006
 - next-cycle `task107` is now completed by implementing capability-based direct memory access in the voxel wrapper (`getDirectMemoryAccess`) using optional sync hooks (`_getWasmMemoryView` / `_getWasmMemoryBuffer`) with bounds validation, validated via expanded wrapper readiness integration tests, and recorded as debt-register closure for TD-007
 - next-cycle `task108` is now completed by adding debugger worker restart telemetry plus capped exponential backoff tuning in `createAutoRestartingDebuggerWorker`, then surfacing worker lifecycle diagnostics in the debugger app shell; validated with the debugger Vitest suite and recorded as debt-register closure for TD-008
+- next-cycle `task109` is now completed by adding paginated snapshot timeline deep-inspection controls for large datasets (oldest/older/newer/newest navigation) backed by deterministic page-window helper tests in the debugger suite, recorded as debt-register closure for TD-009
 
 ## Security posture at completion
 
