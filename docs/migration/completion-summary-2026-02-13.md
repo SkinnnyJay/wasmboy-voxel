@@ -426,6 +426,7 @@ Workflow hardening applied:
 - core sound channel update paths were audited for duplicated state writes (`docs/migration/core-sound-duplicate-state-write-audit-2026-02-14.md`), documenting repeat frequency-field sync writes, NR52 reset fan-out behavior, and low-risk dedupe candidates for mixer-state flags
 - core suite now includes an execute-loop microbenchmark regression guard (`test/core/execute-loop-microbench.cjs` + baseline fixture), and all core test script variants run it by default to catch execution-loop slowdowns
 - core suite now includes divider-overflow boundary coverage for timers (`test/core/timer-overflow-boundary-test.cjs`), validating 16-bit DIV wrap behavior remains bounded and stable near overflow edges
+- core suite now includes interrupt-priority ordering regressions (`test/core/interrupt-priority-ordering-test.cjs`) that assert simultaneous pending flags are serviced in hardware-priority order (VBlank → LCD → Timer → Serial → Joypad)
 
 ## Security posture at completion
 
