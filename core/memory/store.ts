@@ -5,7 +5,11 @@ import { splitHighByte, splitLowByte } from '../helpers/index';
 import { Breakpoints } from '../debug/breakpoints';
 
 export function eightBitStoreIntoGBMemory(gameboyOffset: i32, value: i32): void {
-  store<u8>(getWasmBoyOffsetFromGameBoyOffset(gameboyOffset), value);
+  const wasmBoyOffset = getWasmBoyOffsetFromGameBoyOffset(gameboyOffset);
+  if (wasmBoyOffset < 0) {
+    return;
+  }
+  store<u8>(wasmBoyOffset, value);
 }
 
 export function eightBitStoreIntoGBMemoryWithTraps(offset: i32, value: i32): void {
