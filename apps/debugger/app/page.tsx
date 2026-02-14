@@ -10,7 +10,7 @@ import { SnapshotTimelinePanel } from '../components/SnapshotTimelinePanel';
 import { contractsClient } from '../lib/contracts-client';
 import { exportDebugDataJsonl } from '../lib/export-jsonl';
 import { markFrameRendered, measureFrameRenderLatency } from '../lib/performance-marks';
-import { createDebuggerWorker } from '../lib/worker-loader';
+import { createAutoRestartingDebuggerWorker } from '../lib/worker-loader';
 import { debuggerSelectors, useDebuggerStore } from '../store/debugger-store';
 
 export default function HomePage() {
@@ -27,13 +27,21 @@ export default function HomePage() {
 
   useEffect(() => {
     try {
-      const worker = createDebuggerWorker(
+      const workerController = createAutoRestartingDebuggerWorker(
         new URL('../workers/debugger.worker.ts', import.meta.url),
+        {
+          maxRestarts: 2,
+          onRestart(restartCount, worker) {
+            setWorkerState(`restarted-${restartCount}`);
+            worker.postMessage({ ping: `hello-debugger-restart-${restartCount}` });
+          },
+        },
       );
+      const worker = workerController.getWorker();
       setWorkerState('ready');
       worker.postMessage({ ping: 'hello-debugger' });
       return () => {
-        worker.terminate();
+        workerController.dispose();
         setWorkerState('terminated');
       };
     } catch {
