@@ -133,6 +133,10 @@ describe('worker loader', () => {
         new URL('file:///debugger.worker.js'),
         {
           maxRestarts: 2,
+          scheduleRestart(_delayMs, callback) {
+            callback();
+            return () => {};
+          },
           onRestart(restartCount) {
             restartCounts.push(restartCount);
           },
@@ -156,6 +160,94 @@ describe('worker loader', () => {
       RestartableMockWorker.instances[2]?.trigger('error');
       expect(RestartableMockWorker.instances.length).toBe(3);
       expect(RestartableMockWorker.terminateCount).toBe(terminateCountAfterDispose);
+    } finally {
+      if (originalWorker) {
+        Object.defineProperty(globalThis, 'Worker', {
+          configurable: true,
+          writable: true,
+          value: originalWorker,
+        });
+      } else {
+        Object.defineProperty(globalThis, 'Worker', {
+          configurable: true,
+          writable: true,
+          value: undefined,
+        });
+      }
+    }
+  });
+
+  it('captures telemetry and applies capped exponential restart backoff', () => {
+    const originalWorker = globalThis.Worker;
+    RestartableMockWorker.instances = [];
+    RestartableMockWorker.optionsHistory = [];
+    RestartableMockWorker.terminateCount = 0;
+    const telemetryEvents: Array<{ eventType: string; reason: string; delayMs: number }> = [];
+    const scheduledDelays: number[] = [];
+    const scheduledCallbacks: Array<() => void> = [];
+    let nowValue = 1000;
+
+    Object.defineProperty(globalThis, 'Worker', {
+      configurable: true,
+      writable: true,
+      value: RestartableMockWorker,
+    });
+
+    try {
+      const workerHandle = createAutoRestartingDebuggerWorker(
+        new URL('file:///debugger.worker.js'),
+        {
+          maxRestarts: 3,
+          restartBaseDelayMs: 10,
+          restartMaxDelayMs: 25,
+          now() {
+            nowValue += 5;
+            return nowValue;
+          },
+          scheduleRestart(delayMs, callback) {
+            scheduledDelays.push(delayMs);
+            scheduledCallbacks.push(callback);
+            return () => {};
+          },
+          onTelemetry(event) {
+            telemetryEvents.push(event);
+          },
+        },
+      );
+
+      expect(RestartableMockWorker.instances.length).toBe(1);
+      RestartableMockWorker.instances[0]?.trigger('error');
+      expect(scheduledDelays).toEqual([10]);
+      expect(RestartableMockWorker.instances.length).toBe(1);
+
+      scheduledCallbacks[0]?.();
+      expect(RestartableMockWorker.instances.length).toBe(2);
+
+      RestartableMockWorker.instances[1]?.trigger('messageerror');
+      expect(scheduledDelays).toEqual([10, 20]);
+      scheduledCallbacks[1]?.();
+      expect(RestartableMockWorker.instances.length).toBe(3);
+
+      RestartableMockWorker.instances[2]?.trigger('error');
+      expect(scheduledDelays).toEqual([10, 20, 25]);
+      scheduledCallbacks[2]?.();
+      expect(RestartableMockWorker.instances.length).toBe(4);
+
+      RestartableMockWorker.instances[3]?.trigger('error');
+      expect(scheduledDelays).toEqual([10, 20, 25]);
+
+      const eventTypes = telemetryEvents.map(event => event.eventType);
+      expect(eventTypes).toContain('crash-detected');
+      expect(eventTypes).toContain('restart-scheduled');
+      expect(eventTypes).toContain('restart-completed');
+      expect(
+        telemetryEvents.some(
+          event => event.eventType === 'restart-skipped' && event.reason === 'budget-exhausted',
+        ),
+      ).toBe(true);
+
+      workerHandle.dispose();
+      expect(telemetryEvents.at(-1)?.eventType).toBe('disposed');
     } finally {
       if (originalWorker) {
         Object.defineProperty(globalThis, 'Worker', {

@@ -16,6 +16,21 @@ import { debuggerSelectors, useDebuggerStore } from '../store/debugger-store';
 export default function HomePage() {
   const contractProbe = useMemo(() => contractsClient.createPlaceholderSnapshotValidation(), []);
   const [workerState, setWorkerState] = useState<string>('idle');
+  const [workerTelemetry, setWorkerTelemetry] = useState<{
+    crashes: number;
+    scheduledRestarts: number;
+    completedRestarts: number;
+    skippedRestarts: number;
+    lastDelayMs: number;
+    lastReason: string;
+  }>({
+    crashes: 0,
+    scheduledRestarts: 0,
+    completedRestarts: 0,
+    skippedRestarts: 0,
+    lastDelayMs: 0,
+    lastReason: 'none',
+  });
   const [jsonlPreview, setJsonlPreview] = useState<string>('');
   const frameId = useDebuggerStore(debuggerSelectors.frameId);
   const frameTimestampMs = useDebuggerStore(debuggerSelectors.frameTimestampMs);
@@ -32,9 +47,24 @@ export default function HomePage() {
         new URL('../workers/debugger.worker.ts', import.meta.url),
         {
           maxRestarts: 2,
+          restartBaseDelayMs: 250,
+          restartMaxDelayMs: 2000,
           onRestart(restartCount, worker) {
             setWorkerState(`restarted-${restartCount}`);
             worker.postMessage({ ping: `hello-debugger-restart-${restartCount}` });
+          },
+          onTelemetry(event) {
+            setWorkerTelemetry(previous => ({
+              crashes: previous.crashes + (event.eventType === 'crash-detected' ? 1 : 0),
+              scheduledRestarts:
+                previous.scheduledRestarts + (event.eventType === 'restart-scheduled' ? 1 : 0),
+              completedRestarts:
+                previous.completedRestarts + (event.eventType === 'restart-completed' ? 1 : 0),
+              skippedRestarts:
+                previous.skippedRestarts + (event.eventType === 'restart-skipped' ? 1 : 0),
+              lastDelayMs: event.delayMs,
+              lastReason: event.reason,
+            }));
           },
         },
       );
@@ -72,6 +102,12 @@ export default function HomePage() {
         {contractProbe.success ? 'valid placeholder payload' : 'invalid payload'}
       </p>
       <p className="muted">Worker strategy: {workerState}</p>
+      <p className="muted">
+        Worker restart diagnostics: crashes={workerTelemetry.crashes}, scheduled=
+        {workerTelemetry.scheduledRestarts}, completed={workerTelemetry.completedRestarts}, skipped=
+        {workerTelemetry.skippedRestarts}, lastDelayMs={workerTelemetry.lastDelayMs}, lastReason=
+        {workerTelemetry.lastReason}
+      </p>
       <p className="muted">
         Frame metadata: #{frameId} @ {frameTimestampMs}
       </p>
