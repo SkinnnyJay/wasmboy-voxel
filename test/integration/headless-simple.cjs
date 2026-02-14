@@ -70,7 +70,7 @@ describe('WasmBoy Headless Simple', () => {
 
     // This should be the tobutobu start menu
     const startMenuImageDataArray = await commonTest.getImageDataFromFrame();
-    await commonTest.createImageFromFrame(startMenuImageDataArray, `./test/integration/headless-simple.start-menu.png`);
+    await commonTest.createImageFromFrame(startMenuImageDataArray, `./test/integration/headless-simple.start-menu.output.png`);
 
     // Make sure the start menu can be pressed
     WasmBoy.setJoypadState({
@@ -91,7 +91,7 @@ describe('WasmBoy Headless Simple', () => {
 
     //  Screenshot the level select
     const levelSelectImageDataArray = await commonTest.getImageDataFromFrame();
-    await commonTest.createImageFromFrame(levelSelectImageDataArray, `./test/integration/headless-simple.level-select.png`);
+    await commonTest.createImageFromFrame(levelSelectImageDataArray, `./test/integration/headless-simple.level-select.output.png`);
 
     // Select the Stage
     WasmBoy.setJoypadState({
@@ -112,13 +112,13 @@ describe('WasmBoy Headless Simple', () => {
       await WasmBoy._runWasmExport('executeMultipleFrames', [60]);
     }
 
-    const goldenImageFile = `./test/integration/headless-simple.golden.png`;
+    const outputImageFile = `./test/integration/headless-simple.golden.output.png`;
     const goldenJSONFile = `./test/integration/headless-simple.golden.json`;
 
     const imageDataArray = await commonTest.getImageDataFromFrame();
 
-    await commonTest.createImageFromFrame(imageDataArray, goldenImageFile);
-    console.log(`Screenshot created at: ${goldenImageFile}`);
+    await commonTest.createImageFromFrame(imageDataArray, outputImageFile);
+    console.log(`Screenshot created at: ${outputImageFile}`);
 
     // Do the golden comparison
     goldenFileCompareOrCreate(goldenJSONFile, imageDataArray);

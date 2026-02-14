@@ -3,7 +3,11 @@ import { access, readdir, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
 const DIRECTORY_CLEAN_TARGETS = ['build', path.join('apps', 'debugger', '.next')];
-const GENERATED_FILE_SCAN_ROOTS = [path.join('test', 'accuracy', 'testroms'), path.join('test', 'performance', 'testroms')];
+const GENERATED_FILE_SCAN_ROOTS = [
+  path.join('test', 'accuracy', 'testroms'),
+  path.join('test', 'performance', 'testroms'),
+  path.join('test', 'integration'),
+];
 
 /**
  * @param {string} relativePath
@@ -29,6 +33,10 @@ function shouldRemoveGeneratedFile(relativePath) {
 
   if (normalizedPath.startsWith('test/performance/testroms/') && normalizedPath.endsWith('.png')) {
     return !normalizedPath.endsWith('.noPerformanceOptions.png');
+  }
+
+  if (normalizedPath.startsWith('test/integration/')) {
+    return normalizedPath.endsWith('.output.png') || normalizedPath.endsWith('.output');
   }
 
   return false;

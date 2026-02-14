@@ -73,3 +73,20 @@ test('cleanAccidentalBuildArtifacts returns empty lists when no accidental artif
   assert.deepEqual(result.deletedFiles, []);
   assert.equal(fs.existsSync(keepFilePath), true);
 });
+
+test('cleanAccidentalBuildArtifacts removes integration output files and keeps golden screenshots', async () => {
+  const repoRoot = createTempRepoRoot('clean-artifacts-integration-');
+  const generatedOutputPng = path.join(repoRoot, 'test', 'integration', 'headless-simple.golden.output.png');
+  const generatedOutputLog = path.join(repoRoot, 'test', 'integration', 'headless-simple.output');
+  const goldenScreenshot = path.join(repoRoot, 'test', 'integration', 'headless-simple.golden.png');
+  writeFileSyncEnsuringParent(generatedOutputPng);
+  writeFileSyncEnsuringParent(generatedOutputLog);
+  writeFileSyncEnsuringParent(goldenScreenshot);
+
+  const result = await cleanAccidentalBuildArtifacts({ repoRoot });
+
+  assert.equal(fs.existsSync(generatedOutputPng), false);
+  assert.equal(fs.existsSync(generatedOutputLog), false);
+  assert.equal(fs.existsSync(goldenScreenshot), true);
+  assert.deepEqual(result.deletedFiles, ['test/integration/headless-simple.golden.output.png', 'test/integration/headless-simple.output']);
+});
