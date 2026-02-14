@@ -52,6 +52,27 @@ test('filterChangesetStatusOutput keeps non-wasmboy file dependency warnings', (
   assert.equal(result.passthroughOutput, input);
 });
 
+test('filterChangesetStatusOutput keeps malformed workspace warnings with missing file quote terminators', () => {
+  const malformedWorkspaceWarning = 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api';
+  const input = [malformedWorkspaceWarning, '🦋  info NO packages to be bumped at patch'].join('\n');
+
+  const result = filterChangesetStatusOutput(input);
+
+  assert.deepEqual(result.suppressedWarnings, []);
+  assert.equal(result.passthroughOutput, input);
+});
+
+test('filterChangesetStatusOutput keeps workspace warnings with unexpected trailing tokens', () => {
+  const malformedWorkspaceWarning =
+    'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api" (unexpected trailing tokens)';
+  const input = [malformedWorkspaceWarning, '🦋  info NO packages to be bumped at patch'].join('\n');
+
+  const result = filterChangesetStatusOutput(input);
+
+  assert.deepEqual(result.suppressedWarnings, []);
+  assert.equal(result.passthroughOutput, input);
+});
+
 test('filterChangesetStatusOutput returns suppressed warnings in deterministic order', () => {
   const cliWarning = 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api"';
   const debuggerWarning =
