@@ -353,6 +353,7 @@ Workflow hardening applied:
 - bundle-diagnostics parser now rejects malformed double-equals inline forms for `--output`, `--pattern`, and `--tar-timeout-ms`, with regression tests verifying explicit parse failures and usage guidance output
 - bundle-diagnostics file dedupe now canonicalizes matches using real paths, preventing duplicate archive entries when the same file is matched via symlink and non-symlink paths (covered by symlink dedupe regression tests)
 - bundle-diagnostics dedupe coverage now explicitly asserts case-variant filename preservation (`Case.log` and `case.log`) on case-sensitive filesystems
+- bundle-diagnostics archive-failure handling now sets `process.exitCode` (instead of immediate `process.exit`) so `finally` cleanup removes placeholder files, with regression coverage for non-zero tar exit cleanup paths
 
 ## Security posture at completion
 

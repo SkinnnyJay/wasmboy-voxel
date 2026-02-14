@@ -77,6 +77,16 @@ exit 0
   );
 }
 
+function writeFailingFakeTar(tempDirectory) {
+  return writeFakeExecutable(
+    tempDirectory,
+    'tar',
+    `#!/usr/bin/env bash
+exit 1
+`,
+  );
+}
+
 test('bundle-diagnostics archives matched files', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-match-'));
   const logsDirectory = path.join(tempDirectory, 'logs');
@@ -106,6 +116,25 @@ test('bundle-diagnostics emits placeholder when no files match', () => {
     fs.existsSync(path.join(tempDirectory, 'artifacts/empty.txt')),
     false,
     'temporary placeholder file should be removed after archive creation',
+  );
+});
+
+test('bundle-diagnostics cleans placeholder files when archive creation fails', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-empty-failing-tar-'));
+  const fakeBinDirectory = writeFailingFakeTar(tempDirectory);
+  const output = runBundlerCommandExpectFailure(
+    tempDirectory,
+    ['--output', 'artifacts/empty-failing.tar.gz', '--pattern', 'missing/*.log'],
+    {
+      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+    },
+  );
+
+  assert.match(output, /tar exited with status 1/u);
+  assert.equal(
+    fs.existsSync(path.join(tempDirectory, 'artifacts/empty-failing.txt')),
+    false,
+    'placeholder file should be removed when archive creation fails',
   );
 });
 

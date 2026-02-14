@@ -358,7 +358,7 @@ function main() {
     createArchive(args.output, filesToArchive, tarTimeoutMs);
   } catch (error) {
     console.error(`[bundle-diagnostics] ${toErrorMessage(error)}`);
-    process.exit(1);
+    process.exitCode = 1;
   } finally {
     if (placeholderFile && fs.existsSync(placeholderFile)) {
       fs.unlinkSync(placeholderFile);
