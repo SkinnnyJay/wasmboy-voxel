@@ -784,3 +784,4 @@
 - 2026-02-14: Re-ran versioned V1 wrapper gate (`make v1-test`) to reconfirm integration no-build CI and core no-build CI wrapper orchestration remains green end-to-end with a clean working tree.
 - 2026-02-14: Re-ran strict no-build CI-parity gate (`npm run test:all:nobuild:strict`) to reconfirm automation, workspace smoke/lint/typecheck/test, integration/core/performance, and security audit sequencing remains green with a clean working tree.
 - 2026-02-14: Re-ran strict release wrapper (`npm run release:verify:strict`) to reconfirm strict CI-parity chain plus changeset status remain green end-to-end with a clean working tree.
+- 2026-02-14: Re-ran automation contract/tooling gate (`npm run automation:check`) to reconfirm workflow formatting, memory-layout/core-offset contracts, library console-lint guard, and script test harness coverage remain green with a clean working tree.
