@@ -515,3 +515,4 @@
 - 2026-02-14: Added debugger panel rendering regression coverage for large event logs by mocking store payloads and asserting `EventLogPanel` renders high-volume event entries without falling back to empty-state messaging.
 - 2026-02-14: Added malformed-frame resilience coverage for debugger AI route payloads, including sanitization of invalid frame metadata/checksum/event/snapshot entries and regression tests verifying `GET /api/ai/debug` returns safe normalized envelopes.
 - 2026-02-14: Added debugger frame-render performance instrumentation via capture/render marks + latency measures, wired into snapshot capture/UI frame effects, with dedicated utility tests for mark/measure behavior and failure fallback paths.
+- 2026-02-14: Added runaway timeline safeguards by clamping snapshot selector output and panel render windows, plus regression tests proving oversized snapshot arrays render only the latest bounded timeline segment with truncation notice messaging.

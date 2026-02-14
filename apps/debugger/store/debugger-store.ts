@@ -167,5 +167,5 @@ export const debuggerSelectors = {
       ? (state.snapshots[state.snapshots.length - 1] ?? null)?.checksums ?? null
       : null,
   eventStream: (state: DebuggerStoreState) => state.events,
-  snapshots: (state: DebuggerStoreState) => state.snapshots,
+  snapshots: (state: DebuggerStoreState) => state.snapshots.slice(-MAX_SNAPSHOTS),
 };
