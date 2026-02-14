@@ -436,12 +436,16 @@ npm run clean:artifacts:precommit:dry-run
 
 # Print machine-readable cleanup summary JSON
 node scripts/clean-accidental-build-artifacts.mjs --dry-run --json
+# Equivalent npm shortcut
+npm run clean:artifacts:precommit:json
 
 # Show generated artifact guard usage/help
 node scripts/guard-generated-artifacts-precommit.mjs --help
 
 # Print machine-readable generated-artifact guard summary JSON
 node scripts/guard-generated-artifacts-precommit.mjs --json
+# Equivalent npm shortcut
+npm run guard:generated-artifacts:precommit:json
 
 # Show helper usage/flags for diagnostics archive bundling
 node scripts/bundle-diagnostics.mjs --help
