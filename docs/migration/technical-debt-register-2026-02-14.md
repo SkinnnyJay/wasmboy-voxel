@@ -100,6 +100,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C077 | Dependency freshness CLI argument contract hardening | Added strict dependency-freshness CLI argument parsing (unknown/duplicate rejection, help usage semantics, timeout override support) with parser and timeout-resolution regression coverage to reduce automation misconfiguration risk.      | S4                | `@automation-tooling` |
 | TD-C078 | Security scan CLI argument contract hardening        | Added strict workspace security-scan CLI argument parsing (unknown/duplicate rejection, help usage semantics, timeout override support) with parser and timeout-resolution regression coverage to reduce automation misconfiguration risk.   | S4                | `@automation-tooling` |
 | TD-C079 | Release checklist CLI argument contract hardening    | Added strict release-checklist dry-run CLI argument parsing (unknown/duplicate rejection, help usage semantics, timeout override support) with parser and timeout-resolution regression coverage to reduce automation misconfiguration risk. | S4                | `@automation-tooling` |
+| TD-C080 | Next backlog generator option contract hardening     | Added strict next-backlog generator option validation (options object contract plus positive-integer backlog size/start-task guards) with regression coverage for invalid numeric inputs to prevent malformed generated backlog drafts.      | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

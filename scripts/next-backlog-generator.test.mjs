@@ -58,6 +58,7 @@ test('createNextHundredBacklogMarkdown seeds backlog rows from debt items then p
 });
 
 test('createNextHundredBacklogMarkdown validates required parameters', () => {
+  assert.throws(() => createNextHundredBacklogMarkdown(null), /Invalid backlog generation options/u);
   assert.throws(
     () =>
       createNextHundredBacklogMarkdown({
@@ -73,6 +74,42 @@ test('createNextHundredBacklogMarkdown validates required parameters', () => {
         generatedAtIso: 42,
       }),
     /Invalid generatedAtIso: 42/u,
+  );
+  assert.throws(
+    () =>
+      createNextHundredBacklogMarkdown({
+        debtItems: [],
+        generatedAtIso: '2026-02-14T00:00:00.000Z',
+        backlogSize: 0,
+      }),
+    /Invalid backlogSize: 0/u,
+  );
+  assert.throws(
+    () =>
+      createNextHundredBacklogMarkdown({
+        debtItems: [],
+        generatedAtIso: '2026-02-14T00:00:00.000Z',
+        backlogSize: 1.5,
+      }),
+    /Invalid backlogSize: 1\.5/u,
+  );
+  assert.throws(
+    () =>
+      createNextHundredBacklogMarkdown({
+        debtItems: [],
+        generatedAtIso: '2026-02-14T00:00:00.000Z',
+        startTaskNumber: 0,
+      }),
+    /Invalid startTaskNumber: 0/u,
+  );
+  assert.throws(
+    () =>
+      createNextHundredBacklogMarkdown({
+        debtItems: [],
+        generatedAtIso: '2026-02-14T00:00:00.000Z',
+        startTaskNumber: 101.1,
+      }),
+    /Invalid startTaskNumber: 101\.1/u,
   );
 });
 

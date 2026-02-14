@@ -99,6 +99,10 @@ function mapSeverityToImpact(severity) {
  * }} options
  */
 export function createNextHundredBacklogMarkdown(options) {
+  if (!options || typeof options !== 'object') {
+    throw new Error('Invalid backlog generation options.');
+  }
+
   const backlogSize = options.backlogSize ?? DEFAULT_BACKLOG_SIZE;
   const startTaskNumber = options.startTaskNumber ?? DEFAULT_START_TASK_NUMBER;
   const generatedAtIso = options.generatedAtIso;
@@ -108,6 +112,12 @@ export function createNextHundredBacklogMarkdown(options) {
   }
   if (typeof generatedAtIso !== 'string') {
     throw new Error(`Invalid generatedAtIso: ${formatUnknown(generatedAtIso)}`);
+  }
+  if (!Number.isInteger(backlogSize) || backlogSize < 1) {
+    throw new Error(`Invalid backlogSize: ${formatUnknown(backlogSize)}`);
+  }
+  if (!Number.isInteger(startTaskNumber) || startTaskNumber < 1) {
+    throw new Error(`Invalid startTaskNumber: ${formatUnknown(startTaskNumber)}`);
   }
 
   const rows = [];
