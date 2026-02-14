@@ -480,3 +480,4 @@
 - 2026-02-13: Tightened `changeset-status` workspace-warning matcher and added malformed-warning regressions so only fully-formed file-dependency warnings are suppressed (missing quote/trailing token variants now pass through).
 - 2026-02-13: Hardened `writeFakeExecutable` filename validation with explicit overlength-name rejection (byte-length guard) and added regression coverage for extremely long executable names.
 - 2026-02-13: Expanded `writeFakeExecutable` body validation coverage for newline-only payloads (`\\n\\n`, `\\r\\n\\r\\n`), locking trim-based rejection semantics for structurally empty scripts.
+- 2026-02-13: Hardened `writeFakeExecutable` cross-platform filename semantics by rejecting Windows reserved device names (`CON`, `PRN`, etc.) and adding dedicated regression coverage.

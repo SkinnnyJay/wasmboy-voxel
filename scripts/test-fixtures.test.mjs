@@ -271,6 +271,34 @@ echo 'should not run'
   );
 });
 
+test('writeFakeExecutable rejects Windows reserved executable names', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-windows-reserved-name-'));
+
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        tempDirectory,
+        'CON',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid executable name: CON/u,
+  );
+
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        tempDirectory,
+        'prn',
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid executable name: prn/u,
+  );
+});
+
 test('writeFakeExecutable rejects non-string executable names', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-non-string-name-'));
 

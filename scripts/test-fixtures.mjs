@@ -13,6 +13,13 @@ function formatErrorValue(value) {
 }
 
 /**
+ * @param {string} executableName
+ */
+function isWindowsReservedExecutableName(executableName) {
+  return /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\..*)?$/iu.test(executableName);
+}
+
+/**
  * @param {string} tempDirectory
  * @param {string} executableName
  * @param {string} body
@@ -33,6 +40,7 @@ export function writeFakeExecutable(tempDirectory, executableName, body) {
   if (
     !executableName ||
     Buffer.byteLength(executableName, 'utf8') > 255 ||
+    isWindowsReservedExecutableName(executableName) ||
     executableName.includes('\0') ||
     /\s/u.test(executableName) ||
     executableName === '.' ||
