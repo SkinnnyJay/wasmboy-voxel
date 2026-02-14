@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url';
 
 const BLOCKED_ARTIFACT_PREFIXES = ['dist/', 'build/'];
 const BLOCKED_INTEGRATION_OUTPUT_PREFIX = 'test/integration/';
+const BLOCKED_ACCURACY_OUTPUT_PREFIX = 'test/accuracy/testroms/';
+const BLOCKED_PERFORMANCE_OUTPUT_PREFIX = 'test/performance/testroms/';
 const ALLOW_OVERRIDE_ENV_NAME = 'WASMBOY_ALLOW_GENERATED_EDITS';
 
 /**
@@ -11,6 +13,47 @@ const ALLOW_OVERRIDE_ENV_NAME = 'WASMBOY_ALLOW_GENERATED_EDITS';
  */
 function normalizeStagedPath(stagedPath) {
   return stagedPath.replaceAll('\\', '/').replace(/^\.?\//u, '');
+}
+
+/**
+ * @param {string} stagedPath
+ */
+function isBlockedIntegrationOutputPath(stagedPath) {
+  return stagedPath.startsWith(BLOCKED_INTEGRATION_OUTPUT_PREFIX) && (stagedPath.endsWith('.output') || stagedPath.endsWith('.output.png'));
+}
+
+/**
+ * @param {string} stagedPath
+ */
+function isBlockedAccuracyGeneratedPath(stagedPath) {
+  if (!stagedPath.startsWith(BLOCKED_ACCURACY_OUTPUT_PREFIX)) {
+    return false;
+  }
+
+  if (stagedPath.endsWith('.output')) {
+    return !stagedPath.endsWith('.golden.output');
+  }
+
+  if (stagedPath.endsWith('.png')) {
+    return !stagedPath.endsWith('.golden.png');
+  }
+
+  return false;
+}
+
+/**
+ * @param {string} stagedPath
+ */
+function isBlockedPerformanceGeneratedPath(stagedPath) {
+  if (!stagedPath.startsWith(BLOCKED_PERFORMANCE_OUTPUT_PREFIX)) {
+    return false;
+  }
+
+  if (stagedPath.endsWith('.png')) {
+    return !stagedPath.endsWith('.noPerformanceOptions.png');
+  }
+
+  return false;
 }
 
 /**
@@ -22,8 +65,9 @@ export function findBlockedArtifactPaths(stagedPaths) {
     .filter(
       stagedPath =>
         BLOCKED_ARTIFACT_PREFIXES.some(prefix => stagedPath.startsWith(prefix)) ||
-        (stagedPath.startsWith(BLOCKED_INTEGRATION_OUTPUT_PREFIX) &&
-          (stagedPath.endsWith('.output') || stagedPath.endsWith('.output.png'))),
+        isBlockedIntegrationOutputPath(stagedPath) ||
+        isBlockedAccuracyGeneratedPath(stagedPath) ||
+        isBlockedPerformanceGeneratedPath(stagedPath),
     )
     .sort((left, right) => left.localeCompare(right));
 }
@@ -88,7 +132,7 @@ function runPrecommitGuard() {
     process.stderr.write(`[guard:generated-artifacts] - ${blockedPath}\n`);
   }
   process.stderr.write(
-    `[guard:generated-artifacts] Remove staged dist/build or test/integration .output artifacts, or set ${ALLOW_OVERRIDE_ENV_NAME}=1 for intentional generated-artifact commits.\n`,
+    `[guard:generated-artifacts] Remove staged generated artifacts (dist/build, integration .output files, non-golden accuracy/performance outputs), or set ${ALLOW_OVERRIDE_ENV_NAME}=1 for intentional generated-artifact commits.\n`,
   );
   process.exitCode = 1;
 }

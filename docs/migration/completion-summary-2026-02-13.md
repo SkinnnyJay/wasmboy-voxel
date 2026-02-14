@@ -470,6 +470,7 @@ Workflow hardening applied:
 - next-cycle `task112` is now completed by adding cleanup-wrapped headless integration commands and routing aggregate integration scripts through them, so local/CI integration runs automatically clear generated `.output` artifacts after headless snapshot checks
 - next-cycle `task113` is now completed by adding package-script contract tests that lock in cleanup-wrapped headless integration script wiring, preventing accidental regressions in aggregate integration command chains
 - next-cycle `task114` is now completed by extending pre-commit generated-artifact blocking to integration `.output` artifacts and updating guard/policy documentation with regression coverage, preventing accidental staging of transient headless integration outputs
+- next-cycle `task115` is now completed by expanding pre-commit generated-artifact blocking to non-golden accuracy outputs and non-baseline performance PNG outputs, with regression tests ensuring intentional golden/baseline artifacts remain allowed
 
 ## Security posture at completion
 

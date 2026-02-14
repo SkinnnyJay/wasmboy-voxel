@@ -24,6 +24,23 @@ test('findBlockedArtifactPaths flags staged integration output artifacts', () =>
   assert.deepEqual(blockedPaths, ['test/integration/headless-simple.golden.output.png', 'test/integration/headless-simple.output']);
 });
 
+test('findBlockedArtifactPaths blocks non-golden accuracy and performance outputs', () => {
+  const blockedPaths = findBlockedArtifactPaths([
+    'test/accuracy/testroms/suite/frame.output',
+    'test/accuracy/testroms/suite/frame.golden.output',
+    'test/accuracy/testroms/suite/frame.png',
+    'test/accuracy/testroms/suite/frame.golden.png',
+    'test/performance/testroms/suite/frame.png',
+    'test/performance/testroms/suite/frame.noPerformanceOptions.png',
+  ]);
+
+  assert.deepEqual(blockedPaths, [
+    'test/accuracy/testroms/suite/frame.output',
+    'test/accuracy/testroms/suite/frame.png',
+    'test/performance/testroms/suite/frame.png',
+  ]);
+});
+
 test('validateGeneratedArtifactStaging passes when no generated artifact paths are staged', () => {
   const result = validateGeneratedArtifactStaging(['core/constants.ts', 'voxel-wrapper.ts']);
 
@@ -35,6 +52,7 @@ test('validateGeneratedArtifactStaging fails when generated artifact paths are s
   const result = validateGeneratedArtifactStaging([
     'dist/wasmboy.wasm.esm.js',
     'build/debugger/index.html',
+    'test/accuracy/testroms/suite/frame.output',
     'test/integration/headless-simple.output',
     'README.md',
   ]);
@@ -43,8 +61,21 @@ test('validateGeneratedArtifactStaging fails when generated artifact paths are s
   assert.deepEqual(result.blockedPaths, [
     'build/debugger/index.html',
     'dist/wasmboy.wasm.esm.js',
+    'test/accuracy/testroms/suite/frame.output',
     'test/integration/headless-simple.output',
   ]);
+});
+
+test('validateGeneratedArtifactStaging does not flag golden-only test artifacts', () => {
+  const result = validateGeneratedArtifactStaging([
+    'test/accuracy/testroms/suite/frame.golden.output',
+    'test/accuracy/testroms/suite/frame.golden.png',
+    'test/performance/testroms/suite/frame.noPerformanceOptions.png',
+    'README.md',
+  ]);
+
+  assert.equal(result.isValid, true);
+  assert.deepEqual(result.blockedPaths, []);
 });
 
 test('validateGeneratedArtifactStaging supports explicit override for intentional generated edits', () => {

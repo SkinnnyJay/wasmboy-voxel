@@ -6,6 +6,9 @@ By default, pre-commit blocks staged:
 - `build/**`
 - `test/integration/**/*.output`
 - `test/integration/**/*.output.png`
+- non-golden `test/accuracy/testroms/**/*.output`
+- non-golden `test/accuracy/testroms/**/*.png`
+- non-baseline `test/performance/testroms/**/*.png`
 
 This protects the repo from accidental generated-output drift.
 

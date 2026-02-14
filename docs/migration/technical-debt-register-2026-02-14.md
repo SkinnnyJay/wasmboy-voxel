@@ -40,6 +40,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C017 | Integration cleanup defaults | Added cleanup-wrapped headless integration commands and routed aggregate integration scripts to use them by default, preventing residual output artifact accumulation in local/CI workflows.               | S4                | `@repo-tooling`       |
 | TD-C018 | Integration script contracts | Added package-script contract regressions to enforce cleanup-wrapped headless integration wiring (`scripts/package-scripts-contract.test.mjs`) across aggregate integration commands.                      | S4                | `@automation-tooling` |
 | TD-C019 | Integration staging guard    | Extended generated-artifact pre-commit guard to block staged `test/integration/*.output` artifacts and updated policy docs/tests to prevent accidental commit churn from transient headless outputs.       | S4                | `@repo-tooling`       |
+| TD-C020 | Accuracy/perf staging guard  | Extended generated-artifact pre-commit guard to block non-golden `test/accuracy/testroms` outputs and non-baseline `test/performance/testroms` PNG artifacts while allowing golden/baseline files.         | S4                | `@repo-tooling`       |
 
 ## Triage cadence
 
