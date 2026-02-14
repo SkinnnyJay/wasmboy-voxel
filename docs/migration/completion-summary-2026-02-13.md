@@ -424,6 +424,7 @@ Workflow hardening applied:
 - voxel-wrapper snapshot fallback logic now tolerates partial memory-section read failures by converting thrown section-read errors into `null` snapshot responses (with error emission), with dedicated regression tests proving non-throwing failure behavior
 - core graphics hot-path branch churn was profiled and documented (`docs/migration/core-graphics-branch-churn-profile-2026-02-14.md`), including throughput baseline evidence plus branch-density/hot-loop findings and prioritized low-risk reduction candidates
 - core sound channel update paths were audited for duplicated state writes (`docs/migration/core-sound-duplicate-state-write-audit-2026-02-14.md`), documenting repeat frequency-field sync writes, NR52 reset fan-out behavior, and low-risk dedupe candidates for mixer-state flags
+- core suite now includes an execute-loop microbenchmark regression guard (`test/core/execute-loop-microbench.cjs` + baseline fixture), and all core test script variants run it by default to catch execution-loop slowdowns
 
 ## Security posture at completion
 
