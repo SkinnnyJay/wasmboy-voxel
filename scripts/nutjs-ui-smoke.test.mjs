@@ -102,4 +102,11 @@ test('runNutjsUiSmoke default smoke action reports platform shortcut mapping met
   assert.deepEqual(summary.smokeMetadata.defaultShortcutAction, 'open-devtools');
   assert.deepEqual(summary.smokeMetadata.defaultShortcutScanCodes, ['MetaLeft', 'AltLeft', 'KeyI']);
   assert.deepEqual(summary.smokeMetadata.defaultShortcutKeyNames, ['LeftSuper', 'LeftAlt', 'I']);
+  assert.deepEqual(summary.smokeMetadata.pointerTransformSample, {
+    platform: 'darwin',
+    scale: 1,
+    source: 'default',
+    x: 320,
+    y: 180,
+  });
 });

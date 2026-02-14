@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { transformNutjsPointerCoordinate } from './nutjs-display-scale.mjs';
 import { resolveNutjsShortcutKeyNames, resolveNutjsShortcutScanCodes } from './nutjs-keyboard-layout-map.mjs';
 
 const DEFAULT_NUTJS_PACKAGE_NAME = '@nut-tree-fork/nut-js';
@@ -117,8 +118,9 @@ export async function loadNutjsModule(options = {}) {
 /**
  * @param {unknown} nutjsModule
  * @param {string} platform
+ * @param {Record<string, unknown>} environment
  */
-async function runDefaultSmokeAction(nutjsModule, platform) {
+async function runDefaultSmokeAction(nutjsModule, platform, environment) {
   if (nutjsModule === null || typeof nutjsModule !== 'object') {
     throw new Error('NutJS module did not resolve to an object export.');
   }
@@ -134,6 +136,7 @@ async function runDefaultSmokeAction(nutjsModule, platform) {
     defaultShortcutAction: 'open-devtools',
     defaultShortcutScanCodes: resolveNutjsShortcutScanCodes('open-devtools', platform),
     defaultShortcutKeyNames: resolveNutjsShortcutKeyNames('open-devtools', platform),
+    pointerTransformSample: transformNutjsPointerCoordinate({ x: 320, y: 180 }, { platform, env: environment }),
   };
 }
 
@@ -208,7 +211,7 @@ export async function runNutjsUiSmoke(options = {}) {
     return summary;
   }
 
-  const smokeAction = options.smokeAction ?? (async context => runDefaultSmokeAction(context.nutjsModule, context.platform));
+  const smokeAction = options.smokeAction ?? (async context => runDefaultSmokeAction(context.nutjsModule, context.platform, context.env));
   const smokeMetadata = await smokeAction({
     nutjsModule: loadedModule.nutjsModule,
     platform,
