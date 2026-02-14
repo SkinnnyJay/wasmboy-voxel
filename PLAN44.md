@@ -23,7 +23,7 @@ This document is the **single source** for incomplete work. It consolidates unfi
 
 ## 2) How to work this plan
 
-1. Pick the next unchecked task (`[ ]`) in the recommended order (§6) or by priority.
+1. Pick the next unchecked task (unchecked checkbox) in the recommended order (§6) or by priority.
 2. Do the work in a branch or locally; run the relevant tests for that task.
 3. Commit with a clear message; update this file: mark the task `[x]`.
 4. Move to the next task. Add new tasks here when discovered.

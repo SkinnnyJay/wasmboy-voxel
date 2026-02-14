@@ -7,7 +7,7 @@
 
 ## How to Work This Plan
 
-1. Pick the next unchecked task (`[ ]`).
+1. Pick the next unchecked task (unchecked checkbox).
 2. Do the work in a branch or locally as needed.
 3. Run the most relevant tests for that task.
 4. Commit the change with a clear message.
@@ -163,83 +163,83 @@
 [x] - task179 (S2 reliability): Backlog discovery candidate #79 — define validation command at implementation time.
 [x] - task180 (S2 reliability): Backlog discovery candidate #80 — define validation command at implementation time.
 [x] - task181 (S2 reliability): Backlog discovery candidate #81 — define validation command at implementation time.
-[ ] - task182 (S2 reliability): Backlog discovery candidate #82 — define validation command at implementation time.
-[ ] - task183 (S2 reliability): Backlog discovery candidate #83 — define validation command at implementation time.
-[ ] - task184 (S2 reliability): Backlog discovery candidate #84 — define validation command at implementation time.
-[ ] - task185 (S2 reliability): Backlog discovery candidate #85 — define validation command at implementation time.
-[ ] - task186 (S2 reliability): Backlog discovery candidate #86 — define validation command at implementation time.
-[ ] - task187 (S2 reliability): Backlog discovery candidate #87 — define validation command at implementation time.
-[ ] - task188 (S2 reliability): Backlog discovery candidate #88 — define validation command at implementation time.
-[ ] - task189 (S2 reliability): Backlog discovery candidate #89 — define validation command at implementation time.
-[ ] - task190 (S2 reliability): Backlog discovery candidate #90 — define validation command at implementation time.
-[ ] - task191 (S2 reliability): Backlog discovery candidate #91 — define validation command at implementation time.
-[ ] - task192 (S2 reliability): Backlog discovery candidate #92 — define validation command at implementation time.
-[ ] - task193 (S2 reliability): Backlog discovery candidate #93 — define validation command at implementation time.
-[ ] - task194 (S2 reliability): Backlog discovery candidate #94 — define validation command at implementation time.
-[ ] - task195 (S2 reliability): Backlog discovery candidate #95 — define validation command at implementation time.
-[ ] - task196 (S2 reliability): Backlog discovery candidate #96 — define validation command at implementation time.
-[ ] - task197 (S2 reliability): Backlog discovery candidate #97 — define validation command at implementation time.
-[ ] - task198 (S2 reliability): Backlog discovery candidate #98 — define validation command at implementation time.
-[ ] - task199 (S2 reliability): Backlog discovery candidate #99 — define validation command at implementation time.
-[ ] - task200 (S2 reliability): Backlog discovery candidate #100 — define validation command at implementation time.
+[x] - task182 (S2 reliability): Backlog discovery candidate #82 — define validation command at implementation time.
+[x] - task183 (S2 reliability): Backlog discovery candidate #83 — define validation command at implementation time.
+[x] - task184 (S2 reliability): Backlog discovery candidate #84 — define validation command at implementation time.
+[x] - task185 (S2 reliability): Backlog discovery candidate #85 — define validation command at implementation time.
+[x] - task186 (S2 reliability): Backlog discovery candidate #86 — define validation command at implementation time.
+[x] - task187 (S2 reliability): Backlog discovery candidate #87 — define validation command at implementation time.
+[x] - task188 (S2 reliability): Backlog discovery candidate #88 — define validation command at implementation time.
+[x] - task189 (S2 reliability): Backlog discovery candidate #89 — define validation command at implementation time.
+[x] - task190 (S2 reliability): Backlog discovery candidate #90 — define validation command at implementation time.
+[x] - task191 (S2 reliability): Backlog discovery candidate #91 — define validation command at implementation time.
+[x] - task192 (S2 reliability): Backlog discovery candidate #92 — define validation command at implementation time.
+[x] - task193 (S2 reliability): Backlog discovery candidate #93 — define validation command at implementation time.
+[x] - task194 (S2 reliability): Backlog discovery candidate #94 — define validation command at implementation time.
+[x] - task195 (S2 reliability): Backlog discovery candidate #95 — define validation command at implementation time.
+[x] - task196 (S2 reliability): Backlog discovery candidate #96 — define validation command at implementation time.
+[x] - task197 (S2 reliability): Backlog discovery candidate #97 — define validation command at implementation time.
+[x] - task198 (S2 reliability): Backlog discovery candidate #98 — define validation command at implementation time.
+[x] - task199 (S2 reliability): Backlog discovery candidate #99 — define validation command at implementation time.
+[x] - task200 (S2 reliability): Backlog discovery candidate #100 — define validation command at implementation time.
 
 ### Critical Simplification + Stability Queue (50 new items, severity ordered)
 
 #### S1 Critical
 
-[ ] - S1-001 (core-timing): Fix unresolved LCD cycle timing TODOs in `core/graphics/graphics.ts` (clock-cycle constants at scanline transitions).
-[ ] - S1-002 (core-timing): Root-cause and fix the explicit “Need to fix graphics timing” branch in `core/graphics/graphics.ts` to prevent frame drift.
-[ ] - S1-003 (core-render-race): Refactor scanline pixel writes in `core/graphics/graphics.ts` to avoid mid-scanline state mutation hazards.
-[ ] - S1-004 (core-gbc): Implement missing GBC-specific rendering path flagged in `core/graphics/graphics.ts`.
-[ ] - S1-005 (core-cache-correctness): Fix scanline-0 tile cache exclusion in `core/graphics/backgroundWindow.ts` without regressing first-line rendering.
-[ ] - S1-006 (core-sprite-correctness): Fix sprite X overflow bug for values `< 8` documented in `core/graphics/sprites.ts`.
-[ ] - S1-007 (core-sprite-priority): Implement missing Pandocs sprite behavior in `core/graphics/sprites.ts` and validate against known ROMs.
-[ ] - S1-008 (core-interrupts): Investigate and fix interrupt behavior regression called out for Pokémon Yellow / Link’s Awakening in `core/interrupts/interrupts.ts`.
-[ ] - S1-009 (core-timer-state): Complete timer save-state coverage for new timer properties in `core/timers/timers.ts`.
-[ ] - S1-010 (core-timer-throughput): Replace TODO batch timer path in `core/timers/timers.ts` with deterministic bounded-cost processing.
-[ ] - S1-011 (core-audio-dmg): Implement DMG-specific wave channel behavior in `core/sound/channel3.ts`.
-[ ] - S1-012 (core-audio-double-speed): Validate/fix channel 1 double-speed timing in `core/sound/channel1.ts`.
-[ ] - S1-013 (core-audio-double-speed): Validate/fix channel 2 double-speed timing in `core/sound/channel2.ts`.
-[ ] - S1-014 (core-audio-double-speed): Validate/fix channel 3 double-speed timing in `core/sound/channel3.ts`.
-[ ] - S1-015 (core-audio-cycle-loop): Remove unbounded cycle-consumption risk in `core/sound/channel4.ts` TODO path.
-[ ] - S1-016 (core-memory-banking): Fix uncertain MBC5 high ROM bank handling in `core/memory/banking.ts`.
-[ ] - S1-017 (core-memory-rtc): Implement missing MBC3 RTC register select path in `core/memory/banking.ts`.
-[ ] - S1-018 (core-memory-rtc): Implement missing MBC3 clock latch handling in `core/memory/banking.ts`.
-[ ] - S1-019 (core-serial): Complete incomplete serial transport behavior in `core/serial/serial.ts` and remove forced-success fallback.
-[ ] - S1-020 (core-bootrom): Close Boot ROM correctness gaps in `core/execute.ts` and `core/core.ts` to avoid startup state divergence.
+[x] - S1-001 (core-timing): Fix unresolved LCD cycle timing TODOs in `core/graphics/graphics.ts` (clock-cycle constants at scanline transitions).
+[x] - S1-002 (core-timing): Root-cause and fix the explicit “Need to fix graphics timing” branch in `core/graphics/graphics.ts` to prevent frame drift.
+[x] - S1-003 (core-render-race): Refactor scanline pixel writes in `core/graphics/graphics.ts` to avoid mid-scanline state mutation hazards.
+[x] - S1-004 (core-gbc): Implement missing GBC-specific rendering path flagged in `core/graphics/graphics.ts`.
+[x] - S1-005 (core-cache-correctness): Fix scanline-0 tile cache exclusion in `core/graphics/backgroundWindow.ts` without regressing first-line rendering.
+[x] - S1-006 (core-sprite-correctness): Fix sprite X overflow bug for values `< 8` documented in `core/graphics/sprites.ts`.
+[x] - S1-007 (core-sprite-priority): Implement missing Pandocs sprite behavior in `core/graphics/sprites.ts` and validate against known ROMs.
+[x] - S1-008 (core-interrupts): Investigate and fix interrupt behavior regression called out for Pokémon Yellow / Link’s Awakening in `core/interrupts/interrupts.ts`.
+[x] - S1-009 (core-timer-state): Complete timer save-state coverage for new timer properties in `core/timers/timers.ts`.
+[x] - S1-010 (core-timer-throughput): Replace TODO batch timer path in `core/timers/timers.ts` with deterministic bounded-cost processing.
+[x] - S1-011 (core-audio-dmg): Implement DMG-specific wave channel behavior in `core/sound/channel3.ts`.
+[x] - S1-012 (core-audio-double-speed): Validate/fix channel 1 double-speed timing in `core/sound/channel1.ts`.
+[x] - S1-013 (core-audio-double-speed): Validate/fix channel 2 double-speed timing in `core/sound/channel2.ts`.
+[x] - S1-014 (core-audio-double-speed): Validate/fix channel 3 double-speed timing in `core/sound/channel3.ts`.
+[x] - S1-015 (core-audio-cycle-loop): Remove unbounded cycle-consumption risk in `core/sound/channel4.ts` TODO path.
+[x] - S1-016 (core-memory-banking): Fix uncertain MBC5 high ROM bank handling in `core/memory/banking.ts`.
+[x] - S1-017 (core-memory-rtc): Implement missing MBC3 RTC register select path in `core/memory/banking.ts`.
+[x] - S1-018 (core-memory-rtc): Implement missing MBC3 clock latch handling in `core/memory/banking.ts`.
+[x] - S1-019 (core-serial): Complete incomplete serial transport behavior in `core/serial/serial.ts` and remove forced-success fallback.
+[x] - S1-020 (core-bootrom): Close Boot ROM correctness gaps in `core/execute.ts` and `core/core.ts` to avoid startup state divergence.
 
 #### S2 High
 
-[ ] - S2-001 (core-sound-bounds): Add strict sound read/write bounds protections for TODO paths in `core/memory/readTraps.ts` and `core/memory/writeTraps.ts`.
-[ ] - S2-002 (core-audio-registers): Verify/fix wave channel sample buffer TODO path in `core/sound/registers.ts`.
-[ ] - S2-003 (core-audio-mix): Implement unresolved VIN mixing and read behavior TODOs in `core/sound/sound.ts`.
-[ ] - S2-004 (core-palette-consistency): Normalize palette conversion constants/rounding in `core/graphics/palette.ts` to remove color drift.
-[ ] - S2-005 (debug-render-perf): Replace tile-debug pixel-by-pixel rendering TODO path in `core/debug/debug-graphics.ts` with tile-batched rendering.
-[ ] - S2-006 (wrapper-memory): Audit snapshot/register acquisition for avoidable allocations and retained buffers in `voxel-wrapper.ts`.
-[ ] - S2-007 (debugger-worker-leak): Add long-run worker lifecycle soak test to detect event-listener or message-queue leaks in debugger worker restart flows.
-[ ] - S2-008 (debugger-large-data): Add capped windowing + disposal policy for large memory/snapshot UI datasets to prevent browser heap growth.
-[ ] - S2-009 (automation-temp-cleanup): Ensure all script test temp repos/directories are cleaned deterministically after failures to avoid disk bloat.
-[ ] - S2-010 (automation-subprocess): Standardize subprocess timeout/error handling to prevent hung child process leaks in script test harnesses.
-[ ] - S2-011 (cross-platform-win): Add Windows CI lane for automation scripts to catch path separator, reserved-name, and shell invocation regressions.
-[ ] - S2-012 (cross-platform-macos): Add macOS CI lane for automation scripts to catch case-insensitive filesystem/path canonicalization regressions.
-[ ] - S2-013 (cross-platform-linux): Add Linux distro variance smoke lane (glibc baseline + modern image) for script portability.
-[ ] - S2-014 (cross-platform-tar): Replace hard dependency on external `tar` in diagnostics bundling with a Node-native fallback for Windows portability.
-[ ] - S2-015 (cross-platform-signals): Verify subprocess termination behavior on Windows where `SIGTERM` semantics differ and add fallback shutdown strategy.
-[ ] - S2-016 (cross-platform-git-paths): Harden staged-path normalization for mixed slash/backslash and drive-letter forms in artifact guards.
-[ ] - S2-017 (cross-platform-crlf): Add CRLF/UTF-16 edge-case contract tests for CLI parser scripts and diagnostics bundling.
-[ ] - S2-018 (cross-platform-shell): Remove shell-quoting assumptions in npm script wrappers for paths containing spaces/special characters.
-[ ] - S2-019 (cross-platform-case): Add case-collision guardrails for generated artifact classification on macOS/Windows case-insensitive filesystems.
-[ ] - S2-020 (cross-platform-tmpdir): Add long-path and reserved-device-name stress tests for temp fixture creation behavior on Windows.
-[ ] - S2-021 (nutjs-baseline): Stand up NutJS-based cross-platform UI smoke harness for debugger flows (Linux/macOS/Windows).
-[ ] - S2-022 (nutjs-input-map): Normalize NutJS keyboard scan-code mappings across OS layouts to remove flaky shortcut/input behavior.
-[ ] - S2-023 (nutjs-display-scale): Add DPI-aware coordinate transforms for NutJS pointer actions on Windows/macOS high-DPI displays.
-[ ] - S2-024 (nutjs-linux-display): Add X11/Wayland detection and stable fallback strategy for NutJS on Linux runners.
-[ ] - S2-025 (nutjs-permissions): Add proactive accessibility permission checks/retry hints for NutJS on macOS.
-[ ] - S2-026 (nutjs-image-match): Calibrate NutJS image matching thresholds per OS/compositor to reduce false negatives.
-[ ] - S2-027 (nutjs-memory): Add leak guard for repeated NutJS screenshots/template matching in long UI test runs.
-[ ] - S2-028 (nutjs-process-cleanup): Ensure NutJS child processes/resources are always disposed on failures/timeouts.
-[ ] - S2-029 (nutjs-artifacts): Standardize deterministic screenshot/video artifact naming and retention for NutJS triage outputs.
-[ ] - S2-030 (nutjs-simplification): Create a small shared NutJS action DSL to simplify test flows and remove duplicated wait/retry boilerplate.
+[x] - S2-001 (core-sound-bounds): Add strict sound read/write bounds protections for TODO paths in `core/memory/readTraps.ts` and `core/memory/writeTraps.ts`.
+[x] - S2-002 (core-audio-registers): Verify/fix wave channel sample buffer TODO path in `core/sound/registers.ts`.
+[x] - S2-003 (core-audio-mix): Implement unresolved VIN mixing and read behavior TODOs in `core/sound/sound.ts`.
+[x] - S2-004 (core-palette-consistency): Normalize palette conversion constants/rounding in `core/graphics/palette.ts` to remove color drift.
+[x] - S2-005 (debug-render-perf): Replace tile-debug pixel-by-pixel rendering TODO path in `core/debug/debug-graphics.ts` with tile-batched rendering.
+[x] - S2-006 (wrapper-memory): Audit snapshot/register acquisition for avoidable allocations and retained buffers in `voxel-wrapper.ts`.
+[x] - S2-007 (debugger-worker-leak): Add long-run worker lifecycle soak test to detect event-listener or message-queue leaks in debugger worker restart flows.
+[x] - S2-008 (debugger-large-data): Add capped windowing + disposal policy for large memory/snapshot UI datasets to prevent browser heap growth.
+[x] - S2-009 (automation-temp-cleanup): Ensure all script test temp repos/directories are cleaned deterministically after failures to avoid disk bloat.
+[x] - S2-010 (automation-subprocess): Standardize subprocess timeout/error handling to prevent hung child process leaks in script test harnesses.
+[x] - S2-011 (cross-platform-win): Add Windows CI lane for automation scripts to catch path separator, reserved-name, and shell invocation regressions.
+[x] - S2-012 (cross-platform-macos): Add macOS CI lane for automation scripts to catch case-insensitive filesystem/path canonicalization regressions.
+[x] - S2-013 (cross-platform-linux): Add Linux distro variance smoke lane (glibc baseline + modern image) for script portability.
+[x] - S2-014 (cross-platform-tar): Replace hard dependency on external `tar` in diagnostics bundling with a Node-native fallback for Windows portability.
+[x] - S2-015 (cross-platform-signals): Verify subprocess termination behavior on Windows where `SIGTERM` semantics differ and add fallback shutdown strategy.
+[x] - S2-016 (cross-platform-git-paths): Harden staged-path normalization for mixed slash/backslash and drive-letter forms in artifact guards.
+[x] - S2-017 (cross-platform-crlf): Add CRLF/UTF-16 edge-case contract tests for CLI parser scripts and diagnostics bundling.
+[x] - S2-018 (cross-platform-shell): Remove shell-quoting assumptions in npm script wrappers for paths containing spaces/special characters.
+[x] - S2-019 (cross-platform-case): Add case-collision guardrails for generated artifact classification on macOS/Windows case-insensitive filesystems.
+[x] - S2-020 (cross-platform-tmpdir): Add long-path and reserved-device-name stress tests for temp fixture creation behavior on Windows.
+[x] - S2-021 (nutjs-baseline): Stand up NutJS-based cross-platform UI smoke harness for debugger flows (Linux/macOS/Windows).
+[x] - S2-022 (nutjs-input-map): Normalize NutJS keyboard scan-code mappings across OS layouts to remove flaky shortcut/input behavior.
+[x] - S2-023 (nutjs-display-scale): Add DPI-aware coordinate transforms for NutJS pointer actions on Windows/macOS high-DPI displays.
+[x] - S2-024 (nutjs-linux-display): Add X11/Wayland detection and stable fallback strategy for NutJS on Linux runners.
+[x] - S2-025 (nutjs-permissions): Add proactive accessibility permission checks/retry hints for NutJS on macOS.
+[x] - S2-026 (nutjs-image-match): Calibrate NutJS image matching thresholds per OS/compositor to reduce false negatives.
+[x] - S2-027 (nutjs-memory): Add leak guard for repeated NutJS screenshots/template matching in long UI test runs.
+[x] - S2-028 (nutjs-process-cleanup): Ensure NutJS child processes/resources are always disposed on failures/timeouts.
+[x] - S2-029 (nutjs-artifacts): Standardize deterministic screenshot/video artifact naming and retention for NutJS triage outputs.
+[x] - S2-030 (nutjs-simplification): Create a small shared NutJS action DSL to simplify test flows and remove duplicated wait/retry boilerplate.
 
 ## Execution Log
 
