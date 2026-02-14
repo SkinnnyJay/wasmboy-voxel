@@ -8,6 +8,16 @@ on:
         required: false
         type: boolean
         default: false
+      dry_run:
+        description: 'Skip publish/create-PR action and run verification-only release dry run'
+        required: false
+        type: boolean
+        default: true
+      approve_publish:
+        description: 'Manual approval gate for publish/create-PR action (required when dry_run=false)'
+        required: false
+        type: boolean
+        default: false
   push:
     branches: ['master']
     paths:
@@ -83,6 +93,32 @@ jobs:
       - name: Run npm publish dry-run checklist
         run: npm run release:checklist:npm-dry-run
 
+      - name: Resolve release mode
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            echo "RELEASE_MODE=dry-run" >> "$GITHUB_ENV"
+            echo "Release mode: dry-run (push trigger)."
+          elif [[ "${{ inputs.dry_run }}" == "true" ]]; then
+            echo "RELEASE_MODE=dry-run" >> "$GITHUB_ENV"
+            echo "Release mode: dry-run (workflow_dispatch input)."
+          else
+            echo "RELEASE_MODE=publish" >> "$GITHUB_ENV"
+            echo "Release mode: publish (workflow_dispatch input)."
+          fi
+
+      - name: Enforce manual publish approval gate
+        if: env.RELEASE_MODE == 'publish'
+        run: |
+          if [[ "${{ inputs.approve_publish }}" != "true" ]]; then
+            echo "Manual approval gate rejected: set approve_publish=true for publish mode." >&2
+            exit 1
+          fi
+          echo "Manual approval gate accepted."
+
+      - name: Skip publish/create-PR action in dry-run mode
+        if: env.RELEASE_MODE == 'dry-run'
+        run: echo "Dry-run mode enabled; skipping changesets publish/create-PR action."
+
       - name: Compress diagnostics payload
         if: ${{ failure() || cancelled() }}
         run: >
@@ -94,6 +130,7 @@ jobs:
           --pattern 'test/integration/headless-simple*.png'
 
       - name: Create release PR or publish
+        if: env.RELEASE_MODE == 'publish'
         uses: changesets/action@v1
         with:
           version: npm run changeset:version

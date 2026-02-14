@@ -442,7 +442,10 @@ Workflow notes:
 - CI/contract/release pipelines use path filters and manual dispatch triggers for better signal-to-noise.
 - Quality-gate workflows upload diagnostic artifacts on failure (logs and key generated screenshots).
 - CI and nightly manual dispatch support a `strict` boolean input to run `ci:local:strict` (no retry wrappers).
-- Release manual dispatch supports `strict=true` to run `release:verify:strict`.
+- Release manual dispatch supports:
+  - `strict=true` to run `release:verify:strict`
+  - `dry_run=true` (default) to run verification-only release flows without publish/create-PR
+  - `dry_run=false` + `approve_publish=true` to pass the manual publish approval gate and run changesets publish/create-PR
 - Contract manual dispatch supports `full_gate=true`, with optional `strict=true` to run `contract:ci:full:strict`.
 
 For local parity with CI, run:

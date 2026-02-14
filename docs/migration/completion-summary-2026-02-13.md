@@ -446,6 +446,7 @@ Workflow hardening applied:
 - migration follow-up ownership is now tracked in a dedicated technical debt register (`docs/migration/technical-debt-register-2026-02-14.md`) with severity tiers (S1-S4), subsystem owner tags, open/closed partitions, and triage cadence guidance
 - CI automation matrix jobs now bundle and upload node-version-specific `automation:test` logs on failure/cancellation, improving artifact-level triage for automation helper regressions in `automation-test-matrix`
 - CI automation matrix now includes one-step flaky rerun detection for `automation:test` (retry once after first failure), emits warning annotations for pass-on-retry outcomes, and records attempt/flake-marker logs for diagnostics bundles
+- release workflow now supports explicit dry-run/publish modes with manual approval gating (`dry_run` + `approve_publish` workflow-dispatch inputs): push-triggered releases run verification-only dry-runs, and changesets publish/create-PR is limited to approved manual publish runs
 
 ## Security posture at completion
 
