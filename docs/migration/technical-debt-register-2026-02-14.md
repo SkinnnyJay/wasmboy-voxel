@@ -91,6 +91,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C068 | Post-migration audit backlog bootstrap             | Completed an end-to-end repository audit and published a prioritized 100-task implementation backlog with evidence/fix/acceptance/verification contracts in `docs/migration/repository-audit-backlog-2026-02-14.md`.               | S2                | `@triage`             |
 | TD-C069 | Guard blocked-path locale-independent ordering     | Replaced locale-sensitive blocked-path sorting in generated-artifact guard evaluation with ordinal comparator semantics and added mixed-case contract coverage to keep machine-readable guard output deterministic across locales. | S4                | `@automation-tooling` |
 | TD-C070 | Dependency freshness report deterministic ordering | Sorted dependency-freshness package report entries using ordinal ordering and added report-format regression coverage to keep machine-readable/readable output stable across runtimes.                                             | S4                | `@automation-tooling` |
+| TD-C071 | Dependency freshness subprocess timeout guard      | Added configurable npm outdated timeout handling (`DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS`) with timeout-specific diagnostics and regression coverage, preventing indefinite dependency-freshness audit hangs.                        | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

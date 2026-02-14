@@ -539,3 +539,4 @@ Result at completion: **0 vulnerabilities**.
 - Added a full-repository audit deliverable (`docs/migration/repository-audit-backlog-2026-02-14.md`) with a risk summary, 100 concrete prioritized tasks, and a recommended first-10 execution sequence to drive the next hardening cycle.
 - Standardized generated-artifact guard blocked-path sorting to locale-independent ordinal ordering and added mixed-case contract coverage to keep machine-readable guard output deterministic across host locales.
 - Standardized dependency-freshness report package-row ordering to deterministic ordinal sorting and added regression coverage for formatted output ordering stability.
+- Added dependency-freshness subprocess timeout controls (`DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS`) with timeout-specific failure diagnostics and regression coverage to prevent indefinite npm outdated hangs.

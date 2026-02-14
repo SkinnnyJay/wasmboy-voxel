@@ -1,8 +1,11 @@
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
 
 const WORKSPACE_PATHS = ['.', 'packages/api', 'packages/cli', 'apps/debugger'];
+const DEPENDENCY_FRESHNESS_TIMEOUT_ENV_VARIABLE = 'DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS';
+const DEFAULT_OUTDATED_TIMEOUT_MS = 120000;
 
 /**
  * @param {unknown} value
@@ -38,16 +41,22 @@ export function parseOutdatedJson(rawOutput) {
 /**
  * @param {string} repoRoot
  * @param {string} workspacePath
+ * @param {number} timeoutMs
  */
-function runOutdatedForWorkspace(repoRoot, workspacePath) {
+function runOutdatedForWorkspace(repoRoot, workspacePath, timeoutMs) {
   const workspaceRoot = path.resolve(repoRoot, workspacePath);
   const result = spawnSync('npm', ['outdated', '--json', '--long'], {
     cwd: workspaceRoot,
     encoding: 'utf8',
     env: process.env,
+    timeout: timeoutMs,
+    killSignal: 'SIGTERM',
   });
 
   if (result.error) {
+    if (result.error.code === 'ETIMEDOUT') {
+      throw new Error(`npm outdated timed out in ${workspacePath} after ${String(timeoutMs)}ms.`);
+    }
     throw new Error(`Failed to run npm outdated in ${workspacePath}: ${result.error.message}`);
   }
 
@@ -64,21 +73,40 @@ function runOutdatedForWorkspace(repoRoot, workspacePath) {
 }
 
 /**
+ * @param {Record<string, unknown>} environment
+ */
+export function resolveDependencyFreshnessTimeoutFromEnv(environment) {
+  return resolveTimeoutFromCliAndEnv({
+    defaultValue: DEFAULT_OUTDATED_TIMEOUT_MS,
+    env: {
+      name: DEPENDENCY_FRESHNESS_TIMEOUT_ENV_VARIABLE,
+      rawValue: environment[DEPENDENCY_FRESHNESS_TIMEOUT_ENV_VARIABLE],
+    },
+    cli: {
+      name: '--dependency-freshness-timeout-ms',
+      rawValue: '',
+    },
+  });
+}
+
+/**
  * @param {{
  *   repoRoot?: string;
  *   workspacePaths?: string[];
- *   runOutdated?: (repoRoot: string, workspacePath: string) => { status: number; stdout: string };
+ *   runOutdated?: (repoRoot: string, workspacePath: string, timeoutMs: number) => { status: number; stdout: string };
+ *   outdatedTimeoutMs?: number;
  * }} [options]
  */
 export function collectDependencyFreshness(options = {}) {
   const repoRoot = options.repoRoot ?? process.cwd();
   const workspacePaths = options.workspacePaths ?? WORKSPACE_PATHS;
   const runOutdated = options.runOutdated ?? runOutdatedForWorkspace;
+  const outdatedTimeoutMs = options.outdatedTimeoutMs ?? resolveDependencyFreshnessTimeoutFromEnv(process.env);
   const workspaces = [];
   let totalOutdatedCount = 0;
 
   for (const workspacePath of workspacePaths) {
-    const outdatedResult = runOutdated(repoRoot, workspacePath);
+    const outdatedResult = runOutdated(repoRoot, workspacePath, outdatedTimeoutMs);
     const outdatedPackages = parseOutdatedJson(outdatedResult.stdout);
     const packageEntries = Object.entries(outdatedPackages);
     totalOutdatedCount += packageEntries.length;

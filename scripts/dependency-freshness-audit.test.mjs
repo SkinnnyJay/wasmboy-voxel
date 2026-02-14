@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { collectDependencyFreshness, formatFreshnessReport, parseOutdatedJson } from './dependency-freshness-audit.mjs';
+import {
+  collectDependencyFreshness,
+  formatFreshnessReport,
+  parseOutdatedJson,
+  resolveDependencyFreshnessTimeoutFromEnv,
+} from './dependency-freshness-audit.mjs';
 import { UNPRINTABLE_VALUE } from './test-helpers.mjs';
 
 test('parseOutdatedJson returns empty map for empty npm outdated output', () => {
@@ -27,7 +32,9 @@ test('parseOutdatedJson rejects invalid payload types and malformed json', () =>
 });
 
 test('collectDependencyFreshness aggregates outdated counts by workspace using runner results', () => {
+  const runOutdatedCalls = [];
   const runOutdated = (_repoRoot, workspacePath) => {
+    runOutdatedCalls.push(workspacePath);
     if (workspacePath === '.') {
       return { status: 0, stdout: '' };
     }
@@ -65,6 +72,7 @@ test('collectDependencyFreshness aggregates outdated counts by workspace using r
   assert.equal(report.workspaces[1]?.outdatedCount, 1);
   assert.equal(report.workspaces[2]?.workspacePath, 'packages/cli');
   assert.equal(report.workspaces[2]?.outdatedCount, 2);
+  assert.deepEqual(runOutdatedCalls, ['.', 'packages/api', 'packages/cli', 'apps/debugger']);
 });
 
 test('formatFreshnessReport sorts package entries deterministically', () => {
@@ -86,5 +94,35 @@ test('formatFreshnessReport sorts package entries deterministically', () => {
   assert.match(
     formatted,
     /\[dependency:freshness\]\s+- @types\/node wanted=22\.0\.0 latest=25\.0\.0 location=\/workspace\/packages\/cli\n\[dependency:freshness\]\s+- zod wanted=4\.1\.0 latest=4\.1\.11 location=\/workspace\/packages\/cli/u,
+  );
+});
+
+test('collectDependencyFreshness forwards configured timeout to workspace runner', () => {
+  const observedTimeoutValues = [];
+
+  const report = collectDependencyFreshness({
+    repoRoot: '/workspace',
+    workspacePaths: ['.', 'packages/api'],
+    outdatedTimeoutMs: 4321,
+    runOutdated: (_repoRoot, _workspacePath, timeoutMs) => {
+      observedTimeoutValues.push(timeoutMs);
+      return { status: 0, stdout: '' };
+    },
+  });
+
+  assert.equal(report.totalOutdatedCount, 0);
+  assert.deepEqual(observedTimeoutValues, [4321, 4321]);
+});
+
+test('resolveDependencyFreshnessTimeoutFromEnv parses and validates environment overrides', () => {
+  assert.equal(resolveDependencyFreshnessTimeoutFromEnv({}), 120000);
+  assert.equal(resolveDependencyFreshnessTimeoutFromEnv({ DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS: ' 9000 ' }), 9000);
+  assert.throws(
+    () => resolveDependencyFreshnessTimeoutFromEnv({ DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS: '0' }),
+    /Invalid DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS value: 0/u,
+  );
+  assert.throws(
+    () => resolveDependencyFreshnessTimeoutFromEnv({ DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS: 'not-a-number' }),
+    /Invalid DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS value: not-a-number/u,
   );
 });
