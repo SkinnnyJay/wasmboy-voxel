@@ -37,6 +37,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C014 | Core sound perf/clarity      | Consolidated repeated sound-channel frequency synchronization writes into shared `syncFrequencyFromRegisters()` helpers across channels 1-3, reducing redundant update sites while preserving behavior.    | S3                | `@core-audio`         |
 | TD-C015 | Core graphics perf           | Hoisted frame-stable config/mode branches out of background pixel loops and cached per-iteration scanline cycle budget in graphics update loop; validated with throughput + headless integration tests.    | S3                | `@core-graphics`      |
 | TD-C016 | Integration artifact hygiene | Updated headless integration output paths to `.output` artifacts and expanded cleanup automation to remove integration `.output` files, preventing accidental tracked screenshot churn during local tests. | S4                | `@repo-tooling`       |
+| TD-C017 | Integration cleanup defaults | Added cleanup-wrapped headless integration commands and routed aggregate integration scripts to use them by default, preventing residual output artifact accumulation in local/CI workflows.               | S4                | `@repo-tooling`       |
 
 ## Triage cadence
 
