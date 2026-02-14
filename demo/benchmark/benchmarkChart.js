@@ -8,7 +8,7 @@ export const getChartConfig = (title, xAxisTitle, yAxisTitle, isHigherBetter, th
       backgroundColor: coreObjectWithData.color,
       borderColor: coreObjectWithData.color,
       fill: false,
-      data: coreObjectWithData.data
+      data: coreObjectWithData.data,
     });
   });
 
@@ -16,7 +16,7 @@ export const getChartConfig = (title, xAxisTitle, yAxisTitle, isHigherBetter, th
     type: 'line',
     data: {
       labels: cycleNumberLabels,
-      datasets
+      datasets,
     },
     plugins: [ChartJsPluginDownsample],
     options: {
@@ -24,7 +24,7 @@ export const getChartConfig = (title, xAxisTitle, yAxisTitle, isHigherBetter, th
       maintainAspectRatio: false,
       title: {
         display: true,
-        text: title
+        text: title,
       },
       tooltips: {
         position: 'nearest',
@@ -57,12 +57,12 @@ export const getChartConfig = (title, xAxisTitle, yAxisTitle, isHigherBetter, th
             const fastestDataset = data.datasets[fastestItem.datasetIndex];
 
             return `Best: ${fastestDataset.label} ` + (isHigherBetter ? `(+${fastestDifference})` : `(${fastestDifference})`);
-          }
-        }
+          },
+        },
       },
       hover: {
         mode: 'average',
-        intersect: true
+        intersect: true,
       },
       scales: {
         xAxes: [
@@ -70,7 +70,7 @@ export const getChartConfig = (title, xAxisTitle, yAxisTitle, isHigherBetter, th
             display: true,
             scaleLabel: {
               display: true,
-              labelString: xAxisTitle
+              labelString: xAxisTitle,
             },
             ticks: {
               suggestedMin: 0,
@@ -79,27 +79,27 @@ export const getChartConfig = (title, xAxisTitle, yAxisTitle, isHigherBetter, th
                   return dataLabel;
                 }
                 return null;
-              }
-            }
-          }
+              },
+            },
+          },
         ],
         yAxes: [
           {
             display: true,
             scaleLabel: {
               display: true,
-              labelString: yAxisTitle
+              labelString: yAxisTitle,
             },
             ticks: {
-              suggestedMin: 0
-            }
-          }
-        ]
+              suggestedMin: 0,
+            },
+          },
+        ],
       },
       downsample: {
         enabled: true,
-        threshold: threshold // max number of points to display per dataset
-      }
-    }
+        threshold: threshold, // max number of points to display per dataset
+      },
+    },
   };
 };

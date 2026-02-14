@@ -25,8 +25,8 @@ let plugins = [
     limit: 1000000 * 1024, // Always inline
     include: ['**/*.wasm'],
     // Don't emit files, this will replace the worker build output
-    emitFiles: false
-  })
+    emitFiles: false,
+  }),
 ];
 
 if (!process.env.ES_NEXT) {
@@ -35,8 +35,8 @@ if (!process.env.ES_NEXT) {
     babel({
       // so Rollup can convert unsupported es6 code to es5
       exclude: ['node_modules/**'],
-      plugins: [['@babel/plugin-proposal-class-properties'], ['@babel/plugin-proposal-object-rest-spread']]
-    })
+      plugins: [['@babel/plugin-proposal-class-properties'], ['@babel/plugin-proposal-object-rest-spread']],
+    }),
   ];
 }
 
@@ -46,7 +46,7 @@ if (process.env.GET_CORE_CLOSURE) {
   if (process.env.CLOSURE_DEBUG) {
     closureCompilerOptions = {
       ...closureCompilerOptions,
-      debug: true
+      debug: true,
     };
   }
 
@@ -78,7 +78,7 @@ if (process.env.WASM) {
   let bundleMapObject = {
     name: 'WasmBoyWasmCore',
     input: 'core/portable/getWasmCore.js',
-    output: 'dist/core/getWasmBoyWasmCore'
+    output: 'dist/core/getWasmBoyWasmCore',
   };
 
   bundleMapObject.output = addDotIdentifiers(bundleMapObject.output);
@@ -90,7 +90,7 @@ if (process.env.TS) {
   let bundleMapObject = {
     name: 'WasmBoyTsCore',
     input: 'core/portable/getTsCore.js',
-    output: 'dist/core/getWasmBoyTsCore'
+    output: 'dist/core/getWasmBoyTsCore',
   };
 
   bundleMapObject.output = addDotIdentifiers(bundleMapObject.output);
@@ -107,10 +107,10 @@ bundleMap.forEach(bundleObject => {
       name: bundleObject.name,
       file: `${bundleObject.output}.umd.js`,
       format: 'umd',
-      sourcemap: true
+      sourcemap: true,
     },
     context: 'window',
-    plugins: plugins
+    plugins: plugins,
   });
   getCoreBundles.push({
     input: bundleObject.input,
@@ -118,10 +118,10 @@ bundleMap.forEach(bundleObject => {
       name: bundleObject.name,
       file: `${bundleObject.output}.iife.js`,
       format: 'iife',
-      sourcemap: true
+      sourcemap: true,
     },
     context: 'window',
-    plugins: plugins
+    plugins: plugins,
   });
   getCoreBundles.push({
     input: bundleObject.input,
@@ -129,10 +129,10 @@ bundleMap.forEach(bundleObject => {
       name: bundleObject.name,
       file: `${bundleObject.output}.esm.js`,
       format: 'es',
-      sourcemap: true
+      sourcemap: true,
     },
     context: 'window',
-    plugins: plugins
+    plugins: plugins,
   });
   getCoreBundles.push({
     input: bundleObject.input,
@@ -140,10 +140,10 @@ bundleMap.forEach(bundleObject => {
       name: bundleObject.name,
       file: `${bundleObject.output}.cjs.js`,
       format: 'cjs',
-      sourcemap: true
+      sourcemap: true,
     },
     context: 'global',
-    plugins: plugins
+    plugins: plugins,
   });
 });
 

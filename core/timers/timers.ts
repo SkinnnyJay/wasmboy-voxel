@@ -4,7 +4,7 @@ import {
   eightBitLoadFromGBMemory,
   eightBitStoreIntoGBMemory,
   loadBooleanDirectlyFromWasmMemory,
-  storeBooleanDirectlyToWasmMemory
+  storeBooleanDirectlyToWasmMemory,
 } from '../memory/index';
 import { requestTimerInterrupt } from '../interrupts/index';
 import { checkBitOnByte } from '../helpers/index';

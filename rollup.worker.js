@@ -16,11 +16,11 @@ if (process.env.PROD) {
 let filterImports;
 if (process.env.TS && !process.env.WASM) {
   filterImports = {
-    '../../../dist/core/getWasmBoyWasmCore.esm': ['default', '*']
+    '../../../dist/core/getWasmBoyWasmCore.esm': ['default', '*'],
   };
 } else if (process.env.WASM && !process.env.TS) {
   filterImports = {
-    '../../../dist/core/getWasmBoyTsCore.esm': ['default', '*']
+    '../../../dist/core/getWasmBoyTsCore.esm': ['default', '*'],
   };
 }
 
@@ -37,11 +37,11 @@ const plugins = [
       [
         'babel-plugin-filter-imports',
         {
-          imports: filterImports
-        }
-      ]
-    ]
-  })
+          imports: filterImports,
+        },
+      ],
+    ],
+  }),
 ];
 
 if (process.env.PROD) {
@@ -53,31 +53,31 @@ plugins.push(bundleSize());
 const workerFiles = [
   {
     input: 'lib/graphics/worker/graphics.worker.js',
-    output: 'dist/worker/graphics.worker.js'
+    output: 'dist/worker/graphics.worker.js',
   },
   {
     input: 'lib/audio/worker/audio.worker.js',
-    output: 'dist/worker/audio.worker.js'
+    output: 'dist/worker/audio.worker.js',
   },
   {
     input: 'lib/controller/worker/controller.worker.js',
-    output: 'dist/worker/controller.worker.js'
+    output: 'dist/worker/controller.worker.js',
   },
   {
     input: 'lib/memory/worker/memory.worker.js',
-    output: 'dist/worker/memory.worker.js'
-  }
+    output: 'dist/worker/memory.worker.js',
+  },
 ];
 if (process.env.TS) {
   workerFiles.push({
     input: 'lib/wasmboy/worker/wasmboy.worker.js',
-    output: 'dist/worker/wasmboy.ts.worker.js'
+    output: 'dist/worker/wasmboy.ts.worker.js',
   });
 }
 if (process.env.WASM) {
   workerFiles.push({
     input: 'lib/wasmboy/worker/wasmboy.worker.js',
-    output: 'dist/worker/wasmboy.wasm.worker.js'
+    output: 'dist/worker/wasmboy.wasm.worker.js',
   });
 }
 
@@ -89,10 +89,10 @@ workerFiles.forEach(workerFile => {
       file: workerFile.output,
       format: 'iife',
       name: 'WasmBoyWorker',
-      sourcemap: sourcemap
+      sourcemap: sourcemap,
     },
     context: 'self',
-    plugins: plugins
+    plugins: plugins,
   });
 });
 

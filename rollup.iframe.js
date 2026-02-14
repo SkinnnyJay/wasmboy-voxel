@@ -32,7 +32,7 @@ const serve = () => {
 
         require('child_process').spawn('npm', ['run', 'iframe:serve'], {
           stdio: ['ignore', 'inherit', 'inherit'],
-          shell: true
+          shell: true,
         });
 
         setTimeout(() => {
@@ -47,7 +47,7 @@ http://localhost:8080/?rom-name=Tobu%20Tobu%20Girl&play-poster=https://gbhh.aviv
           `);
         }, 500);
       }
-    }
+    },
   };
 };
 
@@ -58,7 +58,7 @@ const writeIndexToBuild = () => {
       indexHtml = indexHtml.replace('%CSS_BUNDLE%', cssBundle);
       indexHtml = indexHtml.replace('%JS_BUNDLE%', jsBundle);
       fs.writeFileSync('build/iframe/index.html', indexHtml, 'utf8');
-    }
+    },
   };
 };
 
@@ -67,11 +67,11 @@ const plugins = [
     dev: !production,
     css: css => {
       css.write(`build/iframe/${cssBundle}`);
-    }
+    },
   }),
   resolve({
     browser: true,
-    dedupe: ['svelte']
+    dedupe: ['svelte'],
   }),
   commonjs(),
   json(),
@@ -83,10 +83,10 @@ const plugins = [
     copy([
       {
         files: 'demo/iframe/assets/**/*',
-        dest: 'build/iframe/assets/'
-      }
+        dest: 'build/iframe/assets/',
+      },
     ]),
-  writeIndexToBuild()
+  writeIndexToBuild(),
 ];
 
 const iframeBundles = [
@@ -96,14 +96,14 @@ const iframeBundles = [
       sourcemap: true,
       format: 'iife',
       name: 'WasmBoyIframe',
-      file: `build/iframe/${jsBundle}`
+      file: `build/iframe/${jsBundle}`,
     },
     plugins,
     watch: {
       chokidar: false,
-      clearScreen: false
-    }
-  }
+      clearScreen: false,
+    },
+  },
 ];
 
 export default iframeBundles;

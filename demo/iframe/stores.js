@@ -19,12 +19,12 @@ let statusReadableSet;
 export const status = readable(
   {
     message: statusMessage,
-    timeout: statusTimeout
+    timeout: statusTimeout,
   },
   set => {
     statusReadableSet = set;
     return () => {};
-  }
+  },
 );
 export const setStatus = (message, timeout) => {
   if (!timeout) {
@@ -34,7 +34,7 @@ export const setStatus = (message, timeout) => {
   if (statusReadableSet) {
     statusReadableSet({
       message,
-      timeout
+      timeout,
     });
   }
 };

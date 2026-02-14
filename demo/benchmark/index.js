@@ -42,8 +42,8 @@ class WasmBoyBenchmarkApp extends Component {
       otherGBEmulators: false,
       running,
       browserInfo: {
-        ...browserInfo
-      }
+        ...browserInfo,
+      },
     };
   }
 
@@ -86,7 +86,7 @@ class WasmBoyBenchmarkApp extends Component {
           times: wasmTimes,
           resultTimes: [],
           timesStartIndexes: [],
-          data: []
+          data: [],
         },
         {
           label: 'WasmBoy',
@@ -97,7 +97,7 @@ class WasmBoyBenchmarkApp extends Component {
           times: tsTimes,
           resultTimes: [],
           timesStartIndexes: [],
-          data: []
+          data: [],
         },
         {
           label: 'WasmBoy',
@@ -108,8 +108,8 @@ class WasmBoyBenchmarkApp extends Component {
           times: tsClosureTimes,
           resultTimes: [],
           timesStartIndexes: [],
-          data: []
-        }
+          data: [],
+        },
       ];
       OtherCoreObjects = [
         {
@@ -121,7 +121,7 @@ class WasmBoyBenchmarkApp extends Component {
           times: binjgbTimes,
           resultTimes: [],
           timesStartIndexes: [],
-          data: []
+          data: [],
         },
         {
           label: 'GameBoy Online',
@@ -132,22 +132,22 @@ class WasmBoyBenchmarkApp extends Component {
           times: gameboyOnlineTimes,
           resultTimes: [],
           timesStartIndexes: [],
-          data: []
-        }
+          data: [],
+        },
       ];
 
       CoreObjects = [...WasmBoyCoreObjects];
 
       this.setState({
         ...this.state,
-        loading: false
+        loading: false,
       });
     };
     instantiateCoresTask();
 
     this.setState({
       ...this.state,
-      loading: true
+      loading: true,
     });
   }
 
@@ -240,7 +240,7 @@ class WasmBoyBenchmarkApp extends Component {
                   }
 
                   this.setState({
-                    otherGBEmulators: event.target.checked
+                    otherGBEmulators: event.target.checked,
                   });
                 }}
               />

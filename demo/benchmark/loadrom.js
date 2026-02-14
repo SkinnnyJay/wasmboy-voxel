@@ -18,7 +18,7 @@ export default class LoadROMSelector extends Component {
     this.state = {
       ROM: 'Please load a ROM...',
       showROMs: false,
-      loading: false
+      loading: false,
     };
   }
 
@@ -43,7 +43,7 @@ export default class LoadROMSelector extends Component {
       ...this.state,
       ROM: title,
       showROMs: false,
-      loading: true
+      loading: true,
     });
 
     const coreObjects = this.props.WasmBoyCoreObjects;
@@ -63,7 +63,7 @@ export default class LoadROMSelector extends Component {
         1, // audioAccumulateSamples
         0, // tileRendering
         1, // tileCaching
-        0 // enableAudioDebugging
+        0, // enableAudioDebugging
       ];
 
       // Clear Wasm memory
@@ -87,7 +87,7 @@ export default class LoadROMSelector extends Component {
 
       this.setState({
         ...this.state,
-        loading: false
+        loading: false,
       });
     };
     // Wrap in a set timeout to avoid setState weirdness

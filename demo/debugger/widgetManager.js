@@ -53,7 +53,7 @@ const components = {
   InterruptState: <InterruptState />,
   TimerState: <TimerState />,
   AboutComponent: <AboutComponent />,
-  HelpComponent: <HelpComponent />
+  HelpComponent: <HelpComponent />,
 };
 
 const LOCALSTORAGE_KEY = 'WASMBOY_DEBUGGER_WIDGET_MANAGER';
@@ -81,7 +81,7 @@ export default class WidgetManager {
     if (!splitConfig) {
       splitConfig = {
         mode: 'split-right',
-        ref: this.widgets[this.widgets.length - 1]
+        ref: this.widgets[this.widgets.length - 1],
       };
     }
 
@@ -167,37 +167,37 @@ export default class WidgetManager {
     this.addPreactWidget({
       component: <WasmBoyPlayer />,
       label: 'Player',
-      closable: false
+      closable: false,
     });
     this.addPreactWidget(
       {
         component: <HelpComponent />,
-        label: 'Help'
+        label: 'Help',
       },
       {
         mode: 'split-right',
-        refIndex: 0
-      }
+        refIndex: 0,
+      },
     );
     this.addPreactWidget(
       {
         component: <WasmBoyControls />,
-        label: 'Playback Controls'
+        label: 'Playback Controls',
       },
       {
         mode: 'split-bottom',
-        refIndex: 0
-      }
+        refIndex: 0,
+      },
     );
     this.addPreactWidget(
       {
         component: <AboutComponent />,
-        label: 'About'
+        label: 'About',
       },
       {
         mode: 'split-bottom',
-        refIndex: 1
-      }
+        refIndex: 1,
+      },
     );
   }
 

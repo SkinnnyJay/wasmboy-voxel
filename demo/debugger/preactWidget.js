@@ -19,7 +19,7 @@ const createPreactNodeObject = component => {
     containerNode,
     contentNode,
     preactNode,
-    destroyPreactNode
+    destroyPreactNode,
   };
 };
 
@@ -29,14 +29,14 @@ const defaultWidgetConfig = {
   classes: ['default-wasmboy-widget'],
   label: 'Preact Widget',
   closable: true,
-  caption: 'Description for Preact Widget'
+  caption: 'Description for Preact Widget',
 };
 
 export default class PreactWidget extends phosphorWidgets.Widget {
   constructor(passedWidgetConfig) {
     const widgetConfig = {
       ...defaultWidgetConfig,
-      ...passedWidgetConfig
+      ...passedWidgetConfig,
     };
 
     if (!widgetConfig.component) {
@@ -46,7 +46,7 @@ export default class PreactWidget extends phosphorWidgets.Widget {
     const preactNodeObject = createPreactNodeObject(widgetConfig.component);
 
     super({
-      node: preactNodeObject.containerNode
+      node: preactNodeObject.containerNode,
     });
     this.addClass('content');
 
@@ -67,14 +67,14 @@ export default class PreactWidget extends phosphorWidgets.Widget {
   toJSON() {
     // Make our widget config serializeable
     const widgetConfigAsJson = {
-      ...this.widgetConfig
+      ...this.widgetConfig,
     };
     widgetConfigAsJson.component = this.widgetConfig.component.nodeName.name;
 
     // Create a widget json object
     const jsonObject = {
       type: 'PreactWidget',
-      widgetConfig: widgetConfigAsJson
+      widgetConfig: widgetConfigAsJson,
     };
 
     return JSON.stringify(jsonObject);

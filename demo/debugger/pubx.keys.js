@@ -4,7 +4,7 @@ const PUBX_KEYS = {
   MODAL: 'MODAL',
   NOTIFICATION: 'NOTIFICATION',
   WASMBOY: 'WASMBOY',
-  WIDGET: 'WIDGET'
+  WIDGET: 'WIDGET',
 };
 
 export default PUBX_KEYS;

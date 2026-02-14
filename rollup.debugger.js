@@ -34,17 +34,17 @@ const babelPluginConfig = {
     ['@babel/plugin-proposal-class-properties'],
     ['@babel/plugin-proposal-object-rest-spread'],
     ['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
-    ['@babel/plugin-proposal-export-default-from']
-  ]
+    ['@babel/plugin-proposal-export-default-from'],
+  ],
 };
 
 let plugins = [
   postcss({
     extensions: ['.css'],
-    plugins: [postcssImport()]
+    plugins: [postcssImport()],
   }),
   resolve({
-    preferBuiltins: false
+    preferBuiltins: false,
   }),
   babel(babelPluginConfig),
   commonjs(),
@@ -52,8 +52,8 @@ let plugins = [
   url({
     limit: 0, // Always emit file
     include: ['**/*.gb', '**/*.gbc', '**/*.png', '**/*.jpg'],
-    emitFiles: true
-  })
+    emitFiles: true,
+  }),
 ];
 
 let sourcemap = false;
@@ -64,13 +64,13 @@ if (process.env.DEBUGGER && process.env.SERVE) {
       delimiters: ['', ''],
       values: {
         '/*ROLLUP_REPLACE_DEBUGGER_DEV': '',
-        'ROLLUP_REPLACE_DEBUGGER_DEV*/': ''
-      }
+        'ROLLUP_REPLACE_DEBUGGER_DEV*/': '',
+      },
     }),
     serve({
       contentBase: ['dist/', 'build/', 'demo/debugger/'],
-      port: 8080
-    })
+      port: 8080,
+    }),
   ];
   writeIndexHtmlToBuild('index.iife.js');
   sourcemap = 'inline';
@@ -87,27 +87,27 @@ if (process.env.DEBUGGER && process.env.SERVE) {
     }),
     */
     terser({
-      mangle: false
+      mangle: false,
     }),
     copy([
       {
         files: 'demo/debugger/assets/**/*',
-        dest: 'build/assets'
+        dest: 'build/assets',
       },
       {
         files: 'demo/debugger/manifest.json',
-        dest: 'build/'
-      }
+        dest: 'build/',
+      },
     ]),
     del({
-      targets: ['build/bundle.*.js']
+      targets: ['build/bundle.*.js'],
     }),
     hash({
       dest: 'build/bundle.[hash].js',
       callback: bundleName => {
         writeIndexHtmlToBuild(bundleName);
-      }
-    })
+      },
+    }),
   ];
 }
 
@@ -123,14 +123,14 @@ const debuggerBundles = [
       file: 'build/index.iife.js',
       format: 'iife',
       globals: {
-        crypto: 'crypto'
+        crypto: 'crypto',
       },
-      sourcemap: sourcemap
+      sourcemap: sourcemap,
     },
     external: ['crypto'],
     context: 'window',
-    plugins: plugins
-  }
+    plugins: plugins,
+  },
 ];
 
 export default debuggerBundles;

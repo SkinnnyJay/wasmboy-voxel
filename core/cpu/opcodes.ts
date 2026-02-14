@@ -11,7 +11,7 @@ import {
   setCarryFlag,
   getCarryFlag,
   checkAndSetEightBitHalfCarryFlag,
-  checkAndSetSixteenBitFlagsAddOverflow
+  checkAndSetSixteenBitFlagsAddOverflow,
 } from './flags';
 import {
   addARegister,
@@ -22,7 +22,7 @@ import {
   xorARegister,
   orARegister,
   cpARegister,
-  relativeJump
+  relativeJump,
 } from './instructions';
 import { syncCycles } from '../cycles';
 import {
@@ -35,7 +35,7 @@ import {
   splitLowByte,
   checkBitOnByte,
   resetBitOnByte,
-  setBitOnByte
+  setBitOnByte,
 } from '../helpers/index';
 import {
   Memory,
@@ -43,7 +43,7 @@ import {
   eightBitStoreIntoGBMemoryWithTraps,
   sixteenBitStoreIntoGBMemoryWithTraps,
   eightBitLoadFromGBMemory,
-  sixteenBitLoadFromGBMemory
+  sixteenBitLoadFromGBMemory,
 } from '../memory/index';
 import { setInterrupts } from '../interrupts/index';
 import { u8Portable, u16Portable, i8Portable } from '../portable/portable';

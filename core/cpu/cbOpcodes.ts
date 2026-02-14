@@ -10,7 +10,7 @@ import {
   swapNibblesOnRegister,
   shiftRightLogicalRegister,
   testBitOnRegister,
-  setBitOnRegister
+  setBitOnRegister,
 } from './instructions';
 import { eightBitLoadSyncCycles, eightBitStoreSyncCycles } from './opcodes';
 import { concatenateBytes } from '../helpers/index';

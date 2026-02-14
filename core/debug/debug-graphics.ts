@@ -12,7 +12,7 @@ import {
   getBlueFromHexColor,
   getRgbColorFromPalette,
   getColorComponentFromRgb,
-  loadFromVramBank
+  loadFromVramBank,
 } from '../graphics/index';
 import { Cpu } from '../cpu/index';
 import { eightBitLoadFromGBMemory, Memory } from '../memory/index';
@@ -251,7 +251,7 @@ export function drawTileDataToWasmMemory(): void {
 
           if (tileId === spriteTileId) {
             let currentSpriteAttributes: i32 = eightBitLoadFromGBMemory(
-              Graphics.memoryLocationSpriteAttributesTable + spriteTableIndex + 3
+              Graphics.memoryLocationSpriteAttributesTable + spriteTableIndex + 3,
             );
 
             let spriteVramBankId: i32 = 0;
@@ -319,7 +319,7 @@ export function drawTileDataToWasmMemory(): void {
           false, // shouldRepresentMonochromeColorByColorId
           paletteLocation, // paletteLocation
           bgMapAttributes, // bgMapAttributes
-          spriteAttributes // spriteAttributes
+          spriteAttributes, // spriteAttributes
         );
       }
     }
@@ -394,7 +394,7 @@ export function drawOamToWasmMemory(): void {
             false, // shouldRepresentMonochromeColorByColorId
             paletteLocation, // paletteLocation
             -1, // bgMapAttributes
-            spriteAttributes // spriteAttributes
+            spriteAttributes, // spriteAttributes
           );
         }
       }

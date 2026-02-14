@@ -62,7 +62,7 @@ export default class BenchmarkRunner extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cyclesToRun: 2500
+      cyclesToRun: 2500,
     };
   }
 
@@ -72,7 +72,7 @@ export default class BenchmarkRunner extends Component {
     this.props.running(true);
 
     sendAnalyticsEvent('ran_benchmark', {
-      cycles: `${this.state.cyclesToRun}`
+      cycles: `${this.state.cyclesToRun}`,
     });
 
     const asyncLoopCallback = async Core => {
@@ -81,9 +81,9 @@ export default class BenchmarkRunner extends Component {
       await new Promise(resolve => {
         this.setState(
           {
-            ...this.state
+            ...this.state,
           },
-          () => resolve()
+          () => resolve(),
         );
       });
     };
@@ -156,7 +156,7 @@ export default class BenchmarkRunner extends Component {
           <h1>Frames Run: {coreObject.times().length}</h1>
           <h1>Current FPS Average: {coreObject.times().length > 0 ? averageFpsFromTimes(coreObject.times()) : 0}</h1>
           <canvas id={coreObject.canvasId} />
-        </div>
+        </div>,
       );
     });
 

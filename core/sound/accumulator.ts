@@ -83,7 +83,7 @@ export function accumulateSound(numberOfCycles: i32): void {
         SoundAccumulator.channel1Sample,
         SoundAccumulator.channel2Sample,
         SoundAccumulator.channel3Sample,
-        SoundAccumulator.channel4Sample
+        SoundAccumulator.channel4Sample,
       );
     } else {
       Sound.downSampleCycleCounter = downSampleCycleCounter;
@@ -95,7 +95,7 @@ export function accumulateSound(numberOfCycles: i32): void {
     setLeftAndRightOutputForAudioQueue(
       SoundAccumulator.leftChannelSampleUnsignedByte + 1,
       SoundAccumulator.rightChannelSampleUnsignedByte + 1,
-      AUDIO_BUFFER_LOCATION
+      AUDIO_BUFFER_LOCATION,
     );
     let audioQueueIndex = Sound.audioQueueIndex + 1;
     // Don't allow our audioQueueIndex to overflow into other parts of the wasmBoy memory map

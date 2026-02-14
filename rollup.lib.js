@@ -26,44 +26,44 @@ const baseLibBundles = [
     output: {
       name: 'WasmBoy',
       format: 'umd',
-      sourcemap: true
+      sourcemap: true,
     },
-    context: 'window'
+    context: 'window',
   },
   {
     input: 'lib/index.js',
     output: {
       name: 'WasmBoy',
       format: 'iife',
-      sourcemap: true
+      sourcemap: true,
     },
-    context: 'window'
+    context: 'window',
   },
   {
     input: 'lib/index.js',
     output: {
       format: 'esm',
-      sourcemap: true
+      sourcemap: true,
     },
-    context: 'window'
+    context: 'window',
   },
   {
     input: 'lib/index.js',
     output: {
       file: pkg.main,
       format: 'cjs',
-      sourcemap: true
+      sourcemap: true,
     },
-    context: 'global'
-  }
+    context: 'global',
+  },
 ];
 
 // Plugin Options
 const filterImportsWasm = {
-  '../../dist/worker/wasmboy.wasm.worker.js': ['default', '*']
+  '../../dist/worker/wasmboy.wasm.worker.js': ['default', '*'],
 };
 const filterImportsTs = {
-  '../../dist/worker/wasmboy.ts.worker.js': ['default', '*']
+  '../../dist/worker/wasmboy.ts.worker.js': ['default', '*'],
 };
 
 // Our replace Options for node workers
@@ -72,32 +72,32 @@ const replaceNodeOptions = {
   delimiters: ['', ''],
   values: {
     '/*ROLLUP_REPLACE_NODE': '',
-    'ROLLUP_REPLACE_NODE*/': ''
-  }
+    'ROLLUP_REPLACE_NODE*/': '',
+  },
 };
 
 const replaceBrowserOptions = {
   delimiters: ['', ''],
   values: {
     '/*ROLLUP_REPLACE_BROWSER': '',
-    'ROLLUP_REPLACE_BROWSER*/': ''
-  }
+    'ROLLUP_REPLACE_BROWSER*/': '',
+  },
 };
 
 const replaceProdBrowserOptions = {
   delimiters: ['', ''],
   values: {
     '/*ROLLUP_REPLACE_PROD_BROWSER': '',
-    'ROLLUP_REPLACE_PROD_BROWSER*/': ''
-  }
+    'ROLLUP_REPLACE_PROD_BROWSER*/': '',
+  },
 };
 
 const replaceDevBrowserOptions = {
   delimiters: ['', ''],
   values: {
     '/*ROLLUP_REPLACE_DEV_BROWSER': '',
-    'ROLLUP_REPLACE_DEV_BROWSER*/': ''
-  }
+    'ROLLUP_REPLACE_DEV_BROWSER*/': '',
+  },
 };
 
 const babelPluginConfig = {
@@ -109,10 +109,10 @@ const babelPluginConfig = {
     [
       'babel-plugin-filter-imports',
       {
-        imports: {}
-      }
-    ]
-  ]
+        imports: {},
+      },
+    ],
+  ],
 };
 
 baseLibBundles.forEach(baseLibBundle => {
@@ -137,7 +137,7 @@ baseLibBundles.forEach(baseLibBundle => {
     ...plugins,
     resolve(), // so Rollup can find node modules
     commonjs(),
-    json()
+    json(),
   ];
 
   // For Sourcemapping, only url encode workers if we are building for PROD
@@ -152,18 +152,18 @@ baseLibBundles.forEach(baseLibBundle => {
       limit: workerUrlLimit,
       include: ['**/*.worker.js'],
       emitFiles: false,
-      fileName: 'worker/[name][extname]'
-    })
+      fileName: 'worker/[name][extname]',
+    }),
   ];
 
   // Start pushing bundles onto our lib bundles
   if (process.env.TS) {
     const tsBundle = {
-      ...baseLibBundle
+      ...baseLibBundle,
     };
 
     const tsBabelPluginConfig = {
-      ...babelPluginConfig
+      ...babelPluginConfig,
     };
     tsBabelPluginConfig.plugins[2][1].imports = filterImportsWasm;
 
@@ -175,11 +175,11 @@ baseLibBundles.forEach(baseLibBundle => {
 
   if (process.env.WASM) {
     const wasmBundle = {
-      ...baseLibBundle
+      ...baseLibBundle,
     };
 
     const wasmBabelPluginConfig = {
-      ...babelPluginConfig
+      ...babelPluginConfig,
     };
     wasmBabelPluginConfig.plugins[2][1].imports = filterImportsTs;
 

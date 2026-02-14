@@ -52,7 +52,7 @@ const WasmBoyDefaultOptions = {
       console.log(
         'Audio Callback Called! Only Logging this once... audioContext, audioBufferSourceNode:',
         audioContext,
-        audioBufferSourceNode
+        audioBufferSourceNode,
       );
       audioCallbackCalled = true;
     }
@@ -77,12 +77,12 @@ const WasmBoyDefaultOptions = {
   },
   onLoadedAndStarted: () => {
     console.log('onLoadedAndStarted Callback Called!');
-  }
+  },
 };
 
 export const WasmBoyDefaultDesktopOptions = {
   ...WasmBoyDefaultOptions,
-  enableAudioDebugging: true
+  enableAudioDebugging: true,
 };
 
 export const WasmBoyDefaultMobileOptions = {
@@ -91,7 +91,7 @@ export const WasmBoyDefaultMobileOptions = {
   audioBatchProcessing: true,
   audioAccumulateSamples: true,
   tileRendering: true,
-  tileCaching: true
+  tileCaching: true,
 };
 
 export const WasmBoyUpdateCanvas = (isMobile, stateUpdateCallback) => {
@@ -114,7 +114,7 @@ export const WasmBoyUpdateCanvas = (isMobile, stateUpdateCallback) => {
 
   const updateTask = async () => {
     const wasmboyOptions = {
-      ...defaultOptions
+      ...defaultOptions,
     };
 
     if (stateUpdateCallback) {
@@ -192,7 +192,7 @@ const DebuggerPlugin = {
   ready: () => console.log('Plugin "ready" called!'),
   play: () => console.log('Plugin "play" called!'),
   pause: () => console.log('Plugin "pause" called!'),
-  loadedAndStarted: () => console.log('Plugin "loadedAndStarted" called!')
+  loadedAndStarted: () => console.log('Plugin "loadedAndStarted" called!'),
 };
 
 WasmBoy.addPlugin(DebuggerPlugin);

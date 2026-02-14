@@ -157,7 +157,7 @@ export default class BenchmarkRunner extends Component {
     );
 
     this.setState({
-      ...this.state
+      ...this.state,
     });
   }
 
@@ -166,7 +166,7 @@ export default class BenchmarkRunner extends Component {
 
     WasmBoyCoreObjects.forEach(coreObject => {
       response.push({
-        ...coreObject
+        ...coreObject,
       });
     });
 
@@ -196,7 +196,7 @@ export default class BenchmarkRunner extends Component {
       coreObject.resultTimes.forEach((time, index) => {
         coreObject.data.push({
           x: index + 1,
-          y: time
+          y: time,
         });
       });
     });
@@ -213,8 +213,8 @@ export default class BenchmarkRunner extends Component {
         false,
         60,
         timesNumberLabels,
-        timesVsFramesCoreObjects
-      )
+        timesVsFramesCoreObjects,
+      ),
     );
 
     const framesPerSet = 30;
@@ -252,7 +252,7 @@ export default class BenchmarkRunner extends Component {
       coreObject.data.forEach((fps, index) => {
         fpsVsFramesCoreObjects[coreObjectIndex].data.push({
           x: index + 1,
-          y: fps
+          y: fps,
         });
       });
     });
@@ -269,8 +269,8 @@ export default class BenchmarkRunner extends Component {
         true,
         60,
         fpsNumberLabels,
-        fpsVsFramesCoreObjects
-      )
+        fpsVsFramesCoreObjects,
+      ),
     );
   }
 

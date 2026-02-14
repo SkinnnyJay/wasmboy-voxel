@@ -13,13 +13,13 @@ import bundleSize from 'rollup-plugin-bundle-size';
 const fs = require('fs');
 
 let typescriptPluginOptions = {
-  tsconfig: './core/tsconfig.json'
+  tsconfig: './core/tsconfig.json',
 };
 
 if (process.env.ES_NEXT) {
   typescriptPluginOptions = {
     ...typescriptPluginOptions,
-    target: 'ESNext'
+    target: 'ESNext',
   };
 }
 
@@ -46,9 +46,9 @@ const coreTsBundles = [
       file: `dist/core/core.esm.js`,
       format: 'esm',
       name: 'WasmBoyCore',
-      sourcemap: sourcemap
+      sourcemap: sourcemap,
     },
-    plugins: plugins
+    plugins: plugins,
   },
   {
     input: './core/index.ts',
@@ -59,9 +59,9 @@ const coreTsBundles = [
       file: `dist/core/core.umd.js`,
       format: 'umd',
       name: 'WasmBoyCore',
-      sourcemap: sourcemap
+      sourcemap: sourcemap,
     },
-    plugins: plugins
+    plugins: plugins,
   },
   {
     input: './core/index.ts',
@@ -72,10 +72,10 @@ const coreTsBundles = [
       file: `dist/core/core.cjs.js`,
       format: 'cjs',
       name: 'WasmBoyCore',
-      sourcemap: sourcemap
+      sourcemap: sourcemap,
     },
-    plugins: plugins
-  }
+    plugins: plugins,
+  },
 ];
 
 export default coreTsBundles;

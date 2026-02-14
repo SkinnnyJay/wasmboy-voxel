@@ -7,7 +7,7 @@ import {
   setCarryFlag,
   getCarryFlag,
   checkAndSetEightBitCarryFlag,
-  checkAndSetEightBitHalfCarryFlag
+  checkAndSetEightBitHalfCarryFlag,
 } from './flags';
 import { rotateByteLeft, rotateByteLeftThroughCarry, rotateByteRight, rotateByteRightThroughCarry } from '../helpers/index';
 import { u8Portable, u16Portable, i8Portable } from '../portable/portable';

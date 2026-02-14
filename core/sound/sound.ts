@@ -13,7 +13,7 @@ import {
   CHANNEL_1_BUFFER_LOCATION,
   CHANNEL_2_BUFFER_LOCATION,
   CHANNEL_3_BUFFER_LOCATION,
-  CHANNEL_4_BUFFER_LOCATION
+  CHANNEL_4_BUFFER_LOCATION,
 } from '../constants';
 import { getSaveStateMemoryOffset } from '../core';
 import { SoundAccumulator, initializeSoundAccumulator, accumulateSound } from './accumulator';
@@ -444,7 +444,7 @@ export function mixChannelSamples(
   channel1Sample: i32 = 15,
   channel2Sample: i32 = 15,
   channel3Sample: i32 = 15,
-  channel4Sample: i32 = 15
+  channel4Sample: i32 = 15,
 ): i32 {
   // Do Some Cool mixing
   // NR50 FF24 ALLL BRRR Vin L enable, Left vol, Vin R enable, Right vol

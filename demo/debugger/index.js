@@ -46,7 +46,7 @@ PUBX_INITIALIZE();
 // Set up our Widget Manager
 const widgetManager = new WidgetManager(dockPanel);
 Pubx.publish(PUBX_KEYS.WIDGET, {
-  widgetManager
+  widgetManager,
 });
 
 // Bind phosphor to DOM
@@ -74,7 +74,7 @@ WasmBoy.ResponsiveGamepad.onInputsChange(
   [
     WasmBoy.ResponsiveGamepad.RESPONSIVE_GAMEPAD_INPUTS.LEFT_TRIGGER,
     WasmBoy.ResponsiveGamepad.RESPONSIVE_GAMEPAD_INPUTS.RIGHT_TRIGGER,
-    WasmBoy.ResponsiveGamepad.RESPONSIVE_GAMEPAD_INPUTS.SPECIAL
+    WasmBoy.ResponsiveGamepad.RESPONSIVE_GAMEPAD_INPUTS.SPECIAL,
   ],
   state => {
     // Quick Speed
@@ -95,7 +95,7 @@ WasmBoy.ResponsiveGamepad.onInputsChange(
       WasmBoy.play();
       Pubx.get(PUBX_KEYS.NOTIFICATION).showNotification('Play/Pause Hotkey! ⏯️');
     }
-  }
+  },
 );
 
 // Prevent Enter/Space from activating the focused Play/Pause (or any) button so game keys

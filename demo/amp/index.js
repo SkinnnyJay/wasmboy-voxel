@@ -36,43 +36,43 @@ const runTask = async () => {
     1, // audioAccumulateSamples
     0, // tileRendering
     1, // tileCaching
-    0 // enableAudioDebugging
+    0, // enableAudioDebugging
   ];
   WasmBoy.instance.exports.config.apply(WasmBoy.instance, configParams);
 
   const keyMap = {
     A: {
       active: false,
-      keyCodes: [90]
+      keyCodes: [90],
     },
     B: {
       active: false,
-      keyCodes: [88]
+      keyCodes: [88],
     },
     UP: {
       active: false,
-      keyCodes: [38, 87]
+      keyCodes: [38, 87],
     },
     DOWN: {
       active: false,
-      keyCodes: [40, 83]
+      keyCodes: [40, 83],
     },
     LEFT: {
       active: false,
-      keyCodes: [37, 65]
+      keyCodes: [37, 65],
     },
     RIGHT: {
       active: false,
-      keyCodes: [39, 68]
+      keyCodes: [39, 68],
     },
     START: {
       active: false,
-      keyCodes: [13]
+      keyCodes: [13],
     },
     SELECT: {
       active: false,
-      keyCodes: [16]
-    }
+      keyCodes: [16],
+    },
   };
 
   let isPlaying = true;
@@ -154,7 +154,7 @@ const runTask = async () => {
       keyMap.A.active ? 1 : 0,
       keyMap.B.active ? 1 : 0,
       keyMap.SELECT.active ? 1 : 0,
-      keyMap.START.active ? 1 : 0
+      keyMap.START.active ? 1 : 0,
     );
 
     fpsCounter.textContent = `FPS: ${getFPS()}`;

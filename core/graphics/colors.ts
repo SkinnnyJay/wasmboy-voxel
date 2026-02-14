@@ -25,7 +25,7 @@ import {
   Table05Entry09Colors,
   Table05Entry11Colors,
   Table05Entry14Colors,
-  Table05Entry15Colors
+  Table05Entry15Colors,
 } from './colors.constants';
 import { Cpu } from '../cpu/cpu';
 import { eightBitLoadFromGBMemory } from '../memory/index';

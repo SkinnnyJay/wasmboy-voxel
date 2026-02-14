@@ -8,7 +8,7 @@ import {
   eightBitStoreIntoGBMemory,
   sixteenBitStoreIntoGBMemory,
   loadBooleanDirectlyFromWasmMemory,
-  storeBooleanDirectlyToWasmMemory
+  storeBooleanDirectlyToWasmMemory,
 } from '../memory/index';
 
 // http://www.codeslinger.co.uk/pages/projects/gameboy/joypad.html

@@ -9,12 +9,12 @@ export default function(file, fileName) {
     await WasmBoy.loadROM(file);
     // Save the loaded cartridge
     await WasmBoy.saveLoadedCartridge({
-      fileName
+      fileName,
     });
 
     Pubx.get(PUBX_KEYS.NOTIFICATION).showNotification('Game Loaded! 🎉');
     Pubx.publish(PUBX_KEYS.WASMBOY, {
-      filename: fileName
+      filename: fileName,
     });
 
     // Check if the Playback Control or CPU Control is open , if not, let's autoplay

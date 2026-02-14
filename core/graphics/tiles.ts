@@ -6,7 +6,7 @@ import {
   getMonochromeColorFromPalette,
   getColorizedGbHexColorFromPalette,
   getRgbColorFromPalette,
-  getColorComponentFromRgb
+  getColorComponentFromRgb,
 } from './palette';
 import { getRedFromHexColor, getGreenFromHexColor, getBlueFromHexColor } from './colors';
 import { addPriorityforPixel } from './priority';
@@ -42,7 +42,7 @@ export function drawPixelsFromLineOfTile(
   shouldRepresentMonochromeColorByColorId: boolean,
   paletteLocation: i32,
   bgMapAttributes: i32,
-  spriteAttributes: i32
+  spriteAttributes: i32,
 ): i32 {
   // Get our number of pixels drawn
   let pixelsDrawn = 0;

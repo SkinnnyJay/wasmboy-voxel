@@ -23,16 +23,16 @@ const babelPluginConfig = {
     ['@babel/plugin-proposal-class-properties'],
     ['@babel/plugin-proposal-object-rest-spread'],
     ['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
-    ['@babel/plugin-proposal-export-default-from']
-  ]
+    ['@babel/plugin-proposal-export-default-from'],
+  ],
 };
 
 let plugins = [
   postcss({
-    extensions: ['.css']
+    extensions: ['.css'],
   }),
   resolve({
-    preferBuiltins: false
+    preferBuiltins: false,
   }),
   babel(babelPluginConfig),
   commonjs(),
@@ -41,8 +41,8 @@ let plugins = [
     limit: 1000000 * 1024, // Always inline
     include: ['**/*.gb', '**/*.gbc', '**/*.png', '**/*.wasm'],
     // Don't emit files, this will replace the worker build output
-    emitFiles: false
-  })
+    emitFiles: false,
+  }),
 ];
 
 let sourcemap = false;
@@ -51,8 +51,8 @@ if (process.env.BENCHMARK && process.env.SERVE) {
     ...plugins,
     serve({
       contentBase: ['dist/', 'build/benchmark/', 'demo/benchmark/', 'demo/debugger/'],
-      port: 8080
-    })
+      port: 8080,
+    }),
   ];
   sourcemap = 'inline';
 } else {
@@ -63,16 +63,16 @@ if (process.env.BENCHMARK && process.env.SERVE) {
     copy([
       {
         files: 'demo/debugger/assets/**/*',
-        dest: 'build/benchmark/assets'
+        dest: 'build/benchmark/assets',
       },
       {
         files: 'demo/benchmark/index.html',
-        dest: 'build/benchmark/'
-      }
+        dest: 'build/benchmark/',
+      },
     ]),
     // TODO: Compiler gives Out of memory errors in node :(
     // compiler()
-    terser()
+    terser(),
   ];
 }
 
@@ -85,11 +85,11 @@ const benchmarkBundles = [
       name: 'WasmBoyBenchmark',
       file: 'build/benchmark/index.iife.js',
       format: 'iife',
-      sourcemap: sourcemap
+      sourcemap: sourcemap,
     },
     context: 'window',
-    plugins: plugins
-  }
+    plugins: plugins,
+  },
 ];
 
 export default benchmarkBundles;

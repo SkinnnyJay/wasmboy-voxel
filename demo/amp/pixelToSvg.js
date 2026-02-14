@@ -117,7 +117,7 @@ export default function(width, height, byteMemory, frameLocation) {
         // Push the point onto the color
         pointsSortedByColor[rgba].push({
           x,
-          y
+          y,
         });
       }
     }

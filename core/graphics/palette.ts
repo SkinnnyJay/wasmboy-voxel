@@ -50,7 +50,7 @@ export function initializePalette(): void {
 export function getMonochromeColorFromPalette(
   colorId: i32,
   paletteMemoryLocation: i32,
-  shouldRepresentColorByColorId: boolean = false
+  shouldRepresentColorByColorId: boolean = false,
 ): i32 {
   // Shift our paletteByte, 2 times for each color ID
   // And off any extra bytes

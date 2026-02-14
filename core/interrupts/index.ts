@@ -7,5 +7,5 @@ export {
   requestTimerInterrupt,
   requestJoypadInterrupt,
   requestVBlankInterrupt,
-  requestSerialInterrupt
+  requestSerialInterrupt,
 } from './interrupts';

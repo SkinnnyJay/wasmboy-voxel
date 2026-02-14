@@ -23,7 +23,7 @@ export function PUBX_INITIALIZE() {
     addControlPromise: (promise, loadPlayer) => {
       const newLoadingState = {
         controlLoading: true,
-        controlPromises: [...Pubx.get(PUBX_KEYS.LOADING).controlPromises, promise]
+        controlPromises: [...Pubx.get(PUBX_KEYS.LOADING).controlPromises, promise],
       };
 
       if (loadPlayer) {
@@ -46,12 +46,12 @@ export function PUBX_INITIALIZE() {
           controlLoading: controlPromises.length > 0,
           loadPlayer: loadPlayerPromises.length > 0,
           controlPromises,
-          loadPlayerPromises
+          loadPlayerPromises,
         });
       };
 
       promise.then(finallyCallback).catch(finallyCallback);
-    }
+    },
   });
 
   // MOBILE
@@ -107,9 +107,9 @@ export function PUBX_INITIALIZE() {
       Pubx.publish(PUBX_KEYS.MOBILE, {
         isMobile: mobile,
         isLandscape: landscape && mobile,
-        isPortrait: portrait && mobile
+        isPortrait: portrait && mobile,
       });
-    }
+    },
   });
 
   // MODAL
@@ -121,14 +121,14 @@ export function PUBX_INITIALIZE() {
       Pubx.publish(PUBX_KEYS.MODAL, {
         visible: 'modal--visible',
         component,
-        blockClosing: !!blockClosing
+        blockClosing: !!blockClosing,
       });
     },
     closeModal: () => {
       Pubx.publish(PUBX_KEYS.MODAL, {
-        visible: false
+        visible: false,
       });
-    }
+    },
   });
 
   // NOTIFICATION
@@ -143,9 +143,9 @@ export function PUBX_INITIALIZE() {
 
       Pubx.publish(PUBX_KEYS.NOTIFICATION, {
         text,
-        timeout
+        timeout,
       });
-    }
+    },
   });
 
   // WASMBOY
@@ -167,11 +167,11 @@ export function PUBX_INITIALIZE() {
           ready: WasmBoy.isReady(),
           loadedAndStarted: WasmBoy.isLoadedAndStarted(),
           core: WasmBoy.getCoreType(),
-          cartridge: cartridgeInfo
+          cartridge: cartridgeInfo,
         });
       };
       updateTask();
-    }
+    },
   });
 
   // WIDGET
@@ -227,6 +227,6 @@ export function PUBX_INITIALIZE() {
 
       const controlWidgetComponentNames = ['WasmBoyControls', 'Disassembler'];
       return controlWidgetComponentNames.some(componentName => pubxWidget.isWidgetOpen(componentName));
-    }
+    },
   });
 }

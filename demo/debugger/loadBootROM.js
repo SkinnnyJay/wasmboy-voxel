@@ -7,7 +7,7 @@ export default function(file, type, name) {
   const loadROMTask = async () => {
     await WasmBoy.pause();
     await WasmBoy.addBootROM(type, file, undefined, {
-      filename: name
+      filename: name,
     });
 
     Pubx.get(PUBX_KEYS.NOTIFICATION).showNotification('Boot ROM Added! 🎉');

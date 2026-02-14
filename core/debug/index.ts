@@ -10,7 +10,7 @@ export {
   getRegisterF,
   getProgramCounter,
   getStackPointer,
-  getOpcodeAtProgramCounter
+  getOpcodeAtProgramCounter,
 } from './debug-cpu';
 export { getLY, drawBackgroundMapToWasmMemory, drawTileDataToWasmMemory, drawOamToWasmMemory } from './debug-graphics';
 export { getDIV, getTIMA, getTMA, getTAC } from './debug-timer';
@@ -23,5 +23,5 @@ export {
   setWriteGbMemoryBreakpoint,
   resetWriteGbMemoryBreakpoint,
   getLastBreakpointAddress,
-  getLastBreakpointAccess
+  getLastBreakpointAccess,
 } from './breakpoints';

@@ -11,7 +11,7 @@ export {
   getMonochromeColorFromPalette,
   getColorizedGbHexColorFromPalette,
   getRgbColorFromPalette,
-  getColorComponentFromRgb
+  getColorComponentFromRgb,
 } from './palette';
 
 export { getTileDataAddress, drawPixelsFromLineOfTile } from './tiles';

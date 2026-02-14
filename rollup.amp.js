@@ -28,8 +28,8 @@ const babelPluginConfig = {
     ['@babel/plugin-proposal-class-properties'],
     ['@babel/plugin-proposal-object-rest-spread'],
     ['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
-    ['@babel/plugin-proposal-export-default-from']
-  ]
+    ['@babel/plugin-proposal-export-default-from'],
+  ],
 };
 
 let plugins = [
@@ -39,8 +39,8 @@ let plugins = [
   json(),
   url({
     limit: 1000000 * 1024,
-    include: ['**/*.gb', '**/*.gbc']
-  })
+    include: ['**/*.gb', '**/*.gbc'],
+  }),
 ];
 
 // If we are watching, also host a dev serve
@@ -54,10 +54,10 @@ if (process.env.AMP && process.env.SERVE) {
         'Access-Control-Allow-Origin': 'http://localhost:8080',
         'AMP-Access-Control-Allow-Source-Origin': 'http://localhost:8080',
         'Access-Control-Allow-Credentials': true,
-        'Access-Control-Expose-Headers': 'Access-Control-Expose-Headers'
-      }
+        'Access-Control-Expose-Headers': 'Access-Control-Expose-Headers',
+      },
     }),
-    writeIndexHtmlToBuild('wasmboy-amp.js')
+    writeIndexHtmlToBuild('wasmboy-amp.js'),
   ];
 } else {
   plugins = [
@@ -65,15 +65,15 @@ if (process.env.AMP && process.env.SERVE) {
     copy([
       {
         files: 'demo/amp/index.html',
-        dest: 'build/amp/'
-      }
+        dest: 'build/amp/',
+      },
     ]),
     {
       name: 'callback-plugin',
       generateBundle: () => {
         writeIndexHtmlToBuild('https://torch2424-amp-glitch-express.glitch.me/wasmboy-amp.min.js');
-      }
-    }
+      },
+    },
   ];
 }
 
@@ -87,19 +87,19 @@ const ampBundles = [
     output: {
       name: 'WasmBoyAmp',
       file: 'build/amp/wasmboy-amp.js',
-      format: 'iife'
+      format: 'iife',
     },
-    plugins
+    plugins,
   },
   {
     input: 'demo/amp/index.js',
     output: {
       name: 'WasmBoyAmp',
       file: 'build/amp/wasmboy-amp.min.js',
-      format: 'iife'
+      format: 'iife',
     },
-    plugins: minPlugins
-  }
+    plugins: minPlugins,
+  },
 ];
 
 export default ampBundles;

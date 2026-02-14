@@ -5,7 +5,7 @@ import {
   eightBitStoreIntoGBMemory,
   sixteenBitStoreIntoGBMemory,
   loadBooleanDirectlyFromWasmMemory,
-  storeBooleanDirectlyToWasmMemory
+  storeBooleanDirectlyToWasmMemory,
 } from '../memory/index';
 import { setBitOnByte, resetBitOnByte, checkBitOnByte } from '../helpers/index';
 
