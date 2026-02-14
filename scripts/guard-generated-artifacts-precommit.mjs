@@ -121,6 +121,7 @@ function runPrecommitGuard(options = {}) {
     isValid: validationResult.isValid,
     blockedPaths: validationResult.blockedPaths,
     stagedPathCount: stagedPaths.length,
+    timestampMs: Date.now(),
   };
 
   if (jsonOutput) {

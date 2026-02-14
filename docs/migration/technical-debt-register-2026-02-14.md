@@ -61,6 +61,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C038 | Guard JSON override-mode contract     | Added subprocess regression coverage for guard `--json` with `WASMBOY_ALLOW_GENERATED_EDITS=1`, ensuring machine-readable payload semantics remain correct when intentional generated-artifact overrides apply.          | S4                | `@automation-tooling` |
 | TD-C039 | CLI fixture deduplication             | Refactored artifact CLI contract tests to use shared temporary git-repo setup helpers for staged generated-artifact scenarios, reducing duplicated setup code and improving maintainability of executable tests.         | S4                | `@automation-tooling` |
 | TD-C040 | Artifact CLI duplicate-flag contracts | Enforced duplicate-flag rejection for cleanup/guard CLI parsers (`--dry-run`, `--json`, help aliases) with unit and executable regression coverage to keep argument handling deterministic and user-facing errors clear. | S4                | `@automation-tooling` |
+| TD-C041 | Artifact JSON timestamp metadata      | Added `timestampMs` fields to cleanup/guard JSON summaries with executable contract and policy-doc updates so machine-readable artifact diagnostics carry traceable emission timing metadata.                            | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

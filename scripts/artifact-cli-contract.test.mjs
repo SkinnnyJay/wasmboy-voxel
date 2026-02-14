@@ -135,12 +135,11 @@ test('clean artifact script emits JSON summary when --json is set', () => {
   assert.equal(result.status, 0);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
-  assert.deepEqual(parsedOutput, {
-    mode: 'dry-run',
-    removedCount: 1,
-    deletedDirectories: [],
-    deletedFiles: ['test/integration/headless.output'],
-  });
+  assert.equal(parsedOutput.mode, 'dry-run');
+  assert.equal(typeof parsedOutput.timestampMs, 'number');
+  assert.equal(parsedOutput.removedCount, 1);
+  assert.deepEqual(parsedOutput.deletedDirectories, []);
+  assert.deepEqual(parsedOutput.deletedFiles, ['test/integration/headless.output']);
   assert.equal(fs.existsSync(generatedOutputPath), true);
 });
 
@@ -151,6 +150,7 @@ test('generated artifact guard script emits JSON summary when --json is set', ()
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
   assert.equal(typeof parsedOutput.allowGeneratedEdits, 'boolean');
+  assert.equal(typeof parsedOutput.timestampMs, 'number');
   assert.equal(parsedOutput.isValid, true);
   assert.equal(parsedOutput.stagedPathCount, 0);
   assert.deepEqual(parsedOutput.blockedPaths, []);
@@ -164,12 +164,11 @@ test('generated artifact guard JSON output reports blocked staged artifacts', ()
   assert.equal(result.status, 1);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
-  assert.deepEqual(parsedOutput, {
-    allowGeneratedEdits: false,
-    isValid: false,
-    blockedPaths: [tempRepo.stagedGeneratedRelativePath],
-    stagedPathCount: 1,
-  });
+  assert.equal(parsedOutput.allowGeneratedEdits, false);
+  assert.equal(typeof parsedOutput.timestampMs, 'number');
+  assert.equal(parsedOutput.isValid, false);
+  assert.deepEqual(parsedOutput.blockedPaths, [tempRepo.stagedGeneratedRelativePath]);
+  assert.equal(parsedOutput.stagedPathCount, 1);
 });
 
 test('generated artifact guard JSON output honors generated-edit override', () => {
@@ -183,10 +182,9 @@ test('generated artifact guard JSON output honors generated-edit override', () =
   assert.equal(result.status, 0);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
-  assert.deepEqual(parsedOutput, {
-    allowGeneratedEdits: true,
-    isValid: true,
-    blockedPaths: [],
-    stagedPathCount: 1,
-  });
+  assert.equal(parsedOutput.allowGeneratedEdits, true);
+  assert.equal(typeof parsedOutput.timestampMs, 'number');
+  assert.equal(parsedOutput.isValid, true);
+  assert.deepEqual(parsedOutput.blockedPaths, []);
+  assert.equal(parsedOutput.stagedPathCount, 1);
 });

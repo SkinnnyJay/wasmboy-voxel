@@ -158,6 +158,7 @@ if (shouldRunAsScript) {
       const summaryVerb = args.dryRun ? 'would remove' : 'removed';
       const summary = {
         mode: args.dryRun ? 'dry-run' : 'apply',
+        timestampMs: Date.now(),
         removedCount,
         deletedDirectories: result.deletedDirectories,
         deletedFiles: result.deletedFiles,
