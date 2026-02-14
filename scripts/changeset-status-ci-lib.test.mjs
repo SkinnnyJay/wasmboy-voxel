@@ -66,6 +66,16 @@ test('filterChangesetStatusOutput returns suppressed warnings in deterministic o
   );
 });
 
+test('filterChangesetStatusOutput sorts suppressed warnings by deterministic code-point order', () => {
+  const zWarning = 'Package "@wasmboy/z-module" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api"';
+  const umlautWarning = 'Package "@wasmboy/ä-module" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api"';
+  const input = [umlautWarning, zWarning].join('\n');
+
+  const result = filterChangesetStatusOutput(input);
+
+  assert.deepEqual(result.suppressedWarnings, [zWarning, umlautWarning]);
+});
+
 test('filterChangesetStatusOutput handles CRLF output safely', () => {
   const workspaceWarning = 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api"';
   const input = `${workspaceWarning}\r\n🦋  info NO packages to be bumped at patch\r\n`;

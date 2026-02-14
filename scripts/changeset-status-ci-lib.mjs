@@ -12,6 +12,18 @@ function formatErrorValue(value) {
 }
 
 /**
+ * @param {string} left
+ * @param {string} right
+ */
+function compareByCodePoint(left, right) {
+  if (left === right) {
+    return 0;
+  }
+
+  return left < right ? -1 : 1;
+}
+
+/**
  * @param {string} rawOutput
  */
 export function filterChangesetStatusOutput(rawOutput) {
@@ -35,7 +47,7 @@ export function filterChangesetStatusOutput(rawOutput) {
   }
 
   return {
-    suppressedWarnings: [...suppressedWarnings].sort((left, right) => left.localeCompare(right)),
+    suppressedWarnings: [...suppressedWarnings].sort(compareByCodePoint),
     passthroughOutput: passthroughLines.join('\n').trimEnd(),
   };
 }
