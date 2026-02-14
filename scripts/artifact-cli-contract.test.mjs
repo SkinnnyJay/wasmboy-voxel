@@ -39,6 +39,20 @@ function runGit(args, cwd) {
   }
 }
 
+function createTempGitRepoWithStagedGeneratedArtifact(prefix) {
+  const tempRepoRoot = fs.mkdtempSync(path.join(os.tmpdir(), prefix));
+  runGit(['init', '--quiet'], tempRepoRoot);
+  const stagedGeneratedRelativePath = 'dist/generated.js';
+  const stagedGeneratedAbsolutePath = path.join(tempRepoRoot, stagedGeneratedRelativePath);
+  writeFileEnsuringParent(stagedGeneratedAbsolutePath, 'console.log("generated");');
+  runGit(['add', stagedGeneratedRelativePath], tempRepoRoot);
+
+  return {
+    tempRepoRoot,
+    stagedGeneratedRelativePath,
+  };
+}
+
 test('clean artifact script prints usage for --help', () => {
   const result = runScript(cleanArtifactsScriptPath, ['--help']);
 
@@ -129,13 +143,9 @@ test('generated artifact guard script emits JSON summary when --json is set', ()
 });
 
 test('generated artifact guard JSON output reports blocked staged artifacts', () => {
-  const tempRepoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'artifact-guard-json-'));
-  runGit(['init', '--quiet'], tempRepoRoot);
-  const stagedGeneratedPath = path.join(tempRepoRoot, 'dist', 'generated.js');
-  writeFileEnsuringParent(stagedGeneratedPath, 'console.log("generated");');
-  runGit(['add', 'dist/generated.js'], tempRepoRoot);
+  const tempRepo = createTempGitRepoWithStagedGeneratedArtifact('artifact-guard-json-');
 
-  const result = runScript(guardArtifactsScriptPath, ['--json'], { cwd: tempRepoRoot });
+  const result = runScript(guardArtifactsScriptPath, ['--json'], { cwd: tempRepo.tempRepoRoot });
 
   assert.equal(result.status, 1);
   assert.equal(result.stderr, '');
@@ -143,20 +153,16 @@ test('generated artifact guard JSON output reports blocked staged artifacts', ()
   assert.deepEqual(parsedOutput, {
     allowGeneratedEdits: false,
     isValid: false,
-    blockedPaths: ['dist/generated.js'],
+    blockedPaths: [tempRepo.stagedGeneratedRelativePath],
     stagedPathCount: 1,
   });
 });
 
 test('generated artifact guard JSON output honors generated-edit override', () => {
-  const tempRepoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'artifact-guard-json-override-'));
-  runGit(['init', '--quiet'], tempRepoRoot);
-  const stagedGeneratedPath = path.join(tempRepoRoot, 'dist', 'generated.js');
-  writeFileEnsuringParent(stagedGeneratedPath, 'console.log("generated");');
-  runGit(['add', 'dist/generated.js'], tempRepoRoot);
+  const tempRepo = createTempGitRepoWithStagedGeneratedArtifact('artifact-guard-json-override-');
 
   const result = runScript(guardArtifactsScriptPath, ['--json'], {
-    cwd: tempRepoRoot,
+    cwd: tempRepo.tempRepoRoot,
     env: { WASMBOY_ALLOW_GENERATED_EDITS: '1' },
   });
 
