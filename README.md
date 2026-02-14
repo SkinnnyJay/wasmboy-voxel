@@ -386,6 +386,12 @@ npm run release:verify:strict
 # Dependency audit check used by CI
 npm run audit:check
 
+# Workspace lockfile/transitive security scan report
+npm run security:scan:workspaces
+
+# Fail on any workspace vulnerability findings
+npm run security:scan:workspaces:strict
+
 # Workspace dependency freshness report (root + packages/apps)
 npm run dependency:freshness:audit
 
