@@ -32,6 +32,20 @@
   - removed unused vulnerable `uglifyjs-webpack-plugin`
   - `npm audit --omit=optional` now reports zero vulnerabilities
 
+### `@wasmboy/api` contract semver policy mapping
+
+- **Patch (`x.y.Z`)**
+  - Clarify docs/comments or tighten internal diagnostics without changing exported runtime/type symbols.
+  - Improve validation error phrasing where the contract accept/reject behavior is unchanged.
+- **Minor (`x.Y.0`)**
+  - Add new contract schemas or registry keys without breaking existing names.
+  - Add new optional fields that remain backward-compatible for existing payload producers/consumers.
+  - Expand helper APIs in additive ways (`validate*` wrappers, typed exports, metadata helpers).
+- **Major (`X.0.0`)**
+  - Remove or rename exported contract schemas, contract keys, or public validation helpers.
+  - Change required fields, accepted value domains, or payload shapes for existing contract versions.
+  - Introduce incompatible contract-version defaults or remove support for prior version entries.
+
 ## Current
 
 - AssemblyScript core (`core/`) compiled to WebAssembly for the emulator runtime.

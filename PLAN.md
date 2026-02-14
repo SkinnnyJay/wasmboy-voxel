@@ -499,3 +499,4 @@
 - 2026-02-13: Added `packages/api` debug-frame JSON serialization roundtrip regression coverage, asserting serialized+parsed payloads remain valid and structurally stable for both direct schema validation and registry-based validation paths.
 - 2026-02-13: Added `packages/api` validate-throughput smoke coverage for batched contract payloads (direct schema + registry validation) with explicit runtime budget guards to catch major validation performance regressions.
 - 2026-02-13: Expanded `packages/api` README with concrete invalid-payload handling examples for both direct schema validation and registry validation, documenting how to consume `errorMessage` diagnostics from failed validation envelopes.
+- 2026-02-13: Added a dedicated `@wasmboy/api` semantic-version policy mapping section in the changelog, explicitly documenting patch/minor/major contract-surface change categories for contract schemas, registry keys, and validation helpers.
