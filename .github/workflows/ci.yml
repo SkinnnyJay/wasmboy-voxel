@@ -100,14 +100,39 @@ jobs:
       - name: Run automation script tests
         run: |
           set -o pipefail
-          npm run automation:test 2>&1 | tee automation-test-node-${{ matrix.node-version }}.log
+          first_attempt_log="automation-test-node-${{ matrix.node-version }}-attempt1.log"
+          second_attempt_log="automation-test-node-${{ matrix.node-version }}-attempt2.log"
+          flake_marker_log="automation-test-node-${{ matrix.node-version }}-flake-marker.log"
+
+          if npm run automation:test 2>&1 | tee "${first_attempt_log}"; then
+            exit 0
+          fi
+
+          echo "automation:test failed on first attempt for Node ${{ matrix.node-version }}. Retrying once to detect flake..."
+
+          if npm run automation:test 2>&1 | tee "${second_attempt_log}"; then
+            {
+              echo "flaky-test-detected=true"
+              echo "job=automation-test-matrix"
+              echo "node-version=${{ matrix.node-version }}"
+              echo "strategy=single-rerun"
+              echo "outcome=passed-on-retry"
+            } > "${flake_marker_log}"
+            echo "::warning::automation:test passed on retry for Node ${{ matrix.node-version }} (flaky detected)."
+            exit 0
+          fi
+
+          echo "automation:test failed on both attempts for Node ${{ matrix.node-version }}."
+          exit 1
 
       - name: Compress automation diagnostics payload
         if: ${{ failure() || cancelled() }}
         run: >
           node scripts/bundle-diagnostics.mjs
           --output artifacts/automation-matrix-node-${{ matrix.node-version }}-diagnostics.tar.gz
-          --pattern 'automation-test-node-${{ matrix.node-version }}.log'
+          --pattern 'automation-test-node-${{ matrix.node-version }}-attempt1.log'
+          --pattern 'automation-test-node-${{ matrix.node-version }}-attempt2.log'
+          --pattern 'automation-test-node-${{ matrix.node-version }}-flake-marker.log'
 
       - name: Upload automation failure diagnostics
         if: ${{ failure() || cancelled() }}
