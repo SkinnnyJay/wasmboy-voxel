@@ -18,7 +18,7 @@ const plugins = [
 
 export default [
   {
-    input: 'lib/headless/index.js',
+    input: 'lib/headless/index.ts',
     output: {
       file: 'dist/wasmboy.headless.esm.js',
       format: 'es',
@@ -28,7 +28,7 @@ export default [
     plugins,
   },
   {
-    input: 'lib/headless/index.js',
+    input: 'lib/headless/index.ts',
     output: {
       file: 'dist/wasmboy.headless.cjs.cjs',
       format: 'cjs',

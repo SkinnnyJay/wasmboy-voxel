@@ -18,6 +18,8 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
     "allowJs": false,
     "checkJs": false,
     "types": ["node"]

@@ -141,7 +141,7 @@ _Source: PLAN.md. Sound bounds, wrapper memory, debugger soak/large-data, automa
 _Source: PLAN3.md, MIGRATE_TO_TYPESCRIPT.md. MIGRATE Phase 1 narrative mentions “Convert lib/ and voxel-wrapper.ts to strict TypeScript” but the checklist there covers only packages/api; full lib/ conversion is Phase 11 in PLAN3, not started. Do after S1/S2 critical items are under control. **Include headless:** `lib/headless/` (WasmBoyHeadless, mainThreadCore._), headless module types in `wasm-fork.d.ts`, and `voxel-wrapper.ts` `WasmBoyConfig.mainThread`.\*
 
 - [x] - Phase 11: Create `lib/` TypeScript config (strict; no `any`; project references if needed). _(Added `lib/tsconfig.json` as a strict composite TypeScript project scaffold for lib migration, wired to shared strict base options and ready for incremental `.ts` conversion.)_
-- [ ] - Phase 11: Convert lib entry points to `.ts` with explicit types.
+- [x] - Phase 11: Convert lib entry points to `.ts` with explicit types. _(Migrated main wrapper entry points to TypeScript (`lib/index.ts`, `lib/headless/index.ts`), added explicit public API declaration files for entry modules, and switched Rollup bundle entry inputs from `.js` to `.ts`.)_
 - [ ] - Phase 11: Convert worker entry points to `.ts`; type message schemas (align with Phase 0 docs).
 - [ ] - Phase 11: Type all snapshot and memory paths used by voxel-wrapper (use contracts from packages/api where applicable).
 - [ ] - Phase 11: Convert `lib/headless/` to `.ts`; align with `wasm-fork.d.ts` headless module and `WasmBoyHeadless` / `loadMainThreadWasm` types.

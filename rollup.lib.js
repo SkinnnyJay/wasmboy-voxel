@@ -22,7 +22,7 @@ const libBundles = [];
 
 const baseLibBundles = [
   {
-    input: 'lib/index.js',
+    input: 'lib/index.ts',
     output: {
       name: 'WasmBoy',
       format: 'umd',
@@ -31,7 +31,7 @@ const baseLibBundles = [
     context: 'window',
   },
   {
-    input: 'lib/index.js',
+    input: 'lib/index.ts',
     output: {
       name: 'WasmBoy',
       format: 'iife',
@@ -40,7 +40,7 @@ const baseLibBundles = [
     context: 'window',
   },
   {
-    input: 'lib/index.js',
+    input: 'lib/index.ts',
     output: {
       format: 'esm',
       sourcemap: true,
@@ -48,7 +48,7 @@ const baseLibBundles = [
     context: 'window',
   },
   {
-    input: 'lib/index.js',
+    input: 'lib/index.ts',
     output: {
       file: pkg.main,
       format: 'cjs',

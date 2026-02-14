@@ -48,7 +48,7 @@
     "stack:test:smoke:scope:debugger": "pnpm -r --if-present --filter \"./apps/debugger\" test -- --help",
     "stack:test:smoke:scopes": "run-s stack:test:smoke:scope:api stack:test:smoke:scope:cli stack:test:smoke:scope:debugger",
     "stack:typecheck": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" typecheck",
-    "lib:typecheck": "tsc -b lib/tsconfig.json --pretty false",
+    "lib:typecheck": "tsc -p lib/tsconfig.json --noEmit --pretty false",
     "typecheck": "run-s lib:typecheck stack:typecheck",
     "stack:lint": "pnpm -r --if-present --filter \"./packages/**\" --filter \"./apps/**\" lint",
     "changeset": "changeset",
