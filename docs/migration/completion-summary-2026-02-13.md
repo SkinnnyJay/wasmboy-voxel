@@ -377,6 +377,7 @@ Workflow hardening applied:
 - changeset-status filter coverage now includes large mixed-output payload handling, asserting passthrough line integrity is preserved while workspace warnings remain deduplicated and deterministically sorted
 - changeset-status warning suppression now requires fully formed workspace file-warning lines; malformed variants (missing terminating quotes or trailing tokens) are preserved in passthrough output
 - test-fixtures executable-name validation now includes explicit byte-length caps, with regression coverage for overlength names to avoid filesystem-dependent ENAMETOOLONG behavior
+- test-fixtures executable-body validation now includes explicit newline-only body regressions (`\\n\\n` and `\\r\\n\\r\\n`) to lock rejection of structurally empty shell scripts
 
 ## Security posture at completion
 

@@ -395,6 +395,18 @@ test('writeFakeExecutable rejects whitespace-only executable bodies', () => {
   assert.throws(() => writeFakeExecutable(tempDirectory, 'fixture-cmd', '   \n\t  '), /Invalid executable body for fixture-cmd/u);
 });
 
+test('writeFakeExecutable rejects newline-only executable bodies', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-newline-only-body-'));
+
+  assert.throws(() => writeFakeExecutable(tempDirectory, 'fixture-cmd', '\n\n'), /Invalid executable body for fixture-cmd/u);
+});
+
+test('writeFakeExecutable rejects carriage-return newline-only executable bodies', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-crlf-newline-only-body-'));
+
+  assert.throws(() => writeFakeExecutable(tempDirectory, 'fixture-cmd', '\r\n\r\n'), /Invalid executable body for fixture-cmd/u);
+});
+
 test('writeFakeExecutable rejects non-string executable bodies', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-non-string-body-'));
 
