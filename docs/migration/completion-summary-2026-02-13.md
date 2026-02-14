@@ -434,6 +434,7 @@ Workflow hardening applied:
 - automated memory-layout compatibility enforcement now validates core/wrapper coupling in CI (`scripts/core-wrapper-memory-layout-check*.mjs` + `memory:layout:check`), asserting required core constant exports, wrapper offset literals, `_getWasmConstant` lookups, and base-offset section-read formulas; this check is now part of `automation:check`
 - a repo-level pre-commit cleanup guard now removes accidental build artifacts before formatting (`scripts/clean-accidental-build-artifacts.mjs` via `clean:artifacts:precommit`), including transient `build/`, `apps/debugger/.next`, and non-golden generated test outputs/images, with regression coverage for safe keep/delete boundaries
 - pre-commit now also enforces a generated-artifact staging guard (`scripts/guard-generated-artifacts-precommit.mjs`), blocking staged `dist/**` and `build/**` edits unless explicitly overridden (`WASMBOY_ALLOW_GENERATED_EDITS=1`), with regression coverage for normalization and allow/deny semantics
+- automation now enforces accidental library `console.*` usage checks (`scripts/check-library-console-usage.mjs` + `lint:library:console`), with an explicit allowlist for intentional legacy logging paths and regression coverage for unexpected-console detection behavior
 
 ## Security posture at completion
 
