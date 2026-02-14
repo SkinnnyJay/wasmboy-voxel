@@ -9,6 +9,7 @@ const GENERATED_FILE_SCAN_ROOTS = [
   path.join('test', 'performance', 'testroms'),
   path.join('test', 'integration'),
 ];
+const SCRIPT_USAGE = `Usage: node scripts/clean-accidental-build-artifacts.mjs [--dry-run]\n\nOptions:\n  --dry-run  Print cleanup candidates without deleting files.\n  --help     Show this usage message.\n`;
 
 /**
  * @param {string} absolutePath
@@ -53,10 +54,12 @@ async function listFilesRecursively(absoluteRoot) {
 /**
  * @param {{
  *   repoRoot?: string;
+ *   dryRun?: boolean;
  * }} [options]
  */
 export async function cleanAccidentalBuildArtifacts(options = {}) {
   const repoRoot = options.repoRoot ?? process.cwd();
+  const dryRun = options.dryRun ?? false;
   const deletedDirectories = [];
   const deletedFiles = [];
 
@@ -66,7 +69,9 @@ export async function cleanAccidentalBuildArtifacts(options = {}) {
       continue;
     }
 
-    await rm(absoluteTargetDirectory, { recursive: true, force: true });
+    if (!dryRun) {
+      await rm(absoluteTargetDirectory, { recursive: true, force: true });
+    }
     deletedDirectories.push(targetDirectory);
   }
 
@@ -80,7 +85,9 @@ export async function cleanAccidentalBuildArtifacts(options = {}) {
         continue;
       }
 
-      await rm(absoluteCandidateFile, { force: true });
+      if (!dryRun) {
+        await rm(absoluteCandidateFile, { force: true });
+      }
       deletedFiles.push(normalizeArtifactPath(relativeCandidateFile));
     }
   }
@@ -91,23 +98,55 @@ export async function cleanAccidentalBuildArtifacts(options = {}) {
   };
 }
 
+/**
+ * @param {string[]} argv
+ */
+export function parseCleanArtifactsArgs(argv) {
+  let dryRun = false;
+
+  for (const token of argv) {
+    if (token === '--dry-run') {
+      dryRun = true;
+      continue;
+    }
+
+    if (token === '--help' || token === '-h') {
+      return { dryRun: false, shouldPrintUsage: true };
+    }
+
+    throw new Error(`[clean:artifacts] Unknown argument "${token}". Supported flags: --dry-run, --help.`);
+  }
+
+  return { dryRun, shouldPrintUsage: false };
+}
+
 const currentFilePath = fileURLToPath(import.meta.url);
 const invokedFilePath = process.argv[1] ? path.resolve(process.argv[1]) : null;
 const shouldRunAsScript = invokedFilePath === currentFilePath;
 
 if (shouldRunAsScript) {
   try {
-    const result = await cleanAccidentalBuildArtifacts();
-    const removedCount = result.deletedDirectories.length + result.deletedFiles.length;
+    const args = parseCleanArtifactsArgs(process.argv.slice(2));
 
-    process.stdout.write(`[clean:artifacts] removed ${removedCount} accidental build artifact target(s).\n`);
+    if (args.shouldPrintUsage) {
+      process.stdout.write(SCRIPT_USAGE);
+      process.exitCode = 0;
+    } else {
+      const result = await cleanAccidentalBuildArtifacts({ dryRun: args.dryRun });
+      const removedCount = result.deletedDirectories.length + result.deletedFiles.length;
+      const summaryVerb = args.dryRun ? 'would remove' : 'removed';
 
-    if (result.deletedDirectories.length > 0) {
-      process.stdout.write(`[clean:artifacts] removed directories: ${result.deletedDirectories.join(', ')}\n`);
-    }
+      process.stdout.write(`[clean:artifacts] ${summaryVerb} ${removedCount} accidental build artifact target(s).\n`);
 
-    if (result.deletedFiles.length > 0) {
-      process.stdout.write(`[clean:artifacts] removed files: ${result.deletedFiles.join(', ')}\n`);
+      if (result.deletedDirectories.length > 0) {
+        process.stdout.write(
+          `[clean:artifacts] ${args.dryRun ? 'candidate' : 'removed'} directories: ${result.deletedDirectories.join(', ')}\n`,
+        );
+      }
+
+      if (result.deletedFiles.length > 0) {
+        process.stdout.write(`[clean:artifacts] ${args.dryRun ? 'candidate' : 'removed'} files: ${result.deletedFiles.join(', ')}\n`);
+      }
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown accidental artifact cleanup error';

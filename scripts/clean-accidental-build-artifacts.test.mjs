@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
-import { cleanAccidentalBuildArtifacts } from './clean-accidental-build-artifacts.mjs';
+import { cleanAccidentalBuildArtifacts, parseCleanArtifactsArgs } from './clean-accidental-build-artifacts.mjs';
 
 function createTempRepoRoot(prefix) {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
@@ -89,4 +89,33 @@ test('cleanAccidentalBuildArtifacts removes integration output files and keeps g
   assert.equal(fs.existsSync(generatedOutputLog), false);
   assert.equal(fs.existsSync(goldenScreenshot), true);
   assert.deepEqual(result.deletedFiles, ['test/integration/headless-simple.golden.output.png', 'test/integration/headless-simple.output']);
+});
+
+test('cleanAccidentalBuildArtifacts dry-run reports candidates without deleting artifacts', async () => {
+  const repoRoot = createTempRepoRoot('clean-artifacts-dry-run-');
+  const buildFile = path.join(repoRoot, 'build', 'index.html');
+  const generatedOutputPath = path.join(repoRoot, 'test', 'integration', 'headless-simple.output');
+  writeFileSyncEnsuringParent(buildFile);
+  writeFileSyncEnsuringParent(generatedOutputPath);
+
+  const result = await cleanAccidentalBuildArtifacts({ repoRoot, dryRun: true });
+
+  assert.equal(fs.existsSync(path.join(repoRoot, 'build')), true);
+  assert.equal(fs.existsSync(generatedOutputPath), true);
+  assert.deepEqual(result.deletedDirectories, ['build']);
+  assert.deepEqual(result.deletedFiles, ['test/integration/headless-simple.output']);
+});
+
+test('parseCleanArtifactsArgs supports dry-run and usage flags', () => {
+  assert.deepEqual(parseCleanArtifactsArgs([]), { dryRun: false, shouldPrintUsage: false });
+  assert.deepEqual(parseCleanArtifactsArgs(['--dry-run']), { dryRun: true, shouldPrintUsage: false });
+  assert.deepEqual(parseCleanArtifactsArgs(['--help']), { dryRun: false, shouldPrintUsage: true });
+  assert.deepEqual(parseCleanArtifactsArgs(['-h']), { dryRun: false, shouldPrintUsage: true });
+});
+
+test('parseCleanArtifactsArgs rejects unknown flags', () => {
+  assert.throws(
+    () => parseCleanArtifactsArgs(['--unknown']),
+    /\[clean:artifacts\] Unknown argument "--unknown"\. Supported flags: --dry-run, --help\./u,
+  );
 });

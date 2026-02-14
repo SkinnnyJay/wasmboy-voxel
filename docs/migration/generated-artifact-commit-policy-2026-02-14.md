@@ -14,7 +14,9 @@ This protects the repo from accidental generated-output drift.
 
 ## Default behavior
 
-- `scripts/clean-accidental-build-artifacts.mjs` removes transient generated files.
+- `scripts/clean-accidental-build-artifacts.mjs` removes transient generated files
+  (use `node scripts/clean-accidental-build-artifacts.mjs --dry-run` to inspect
+  candidates without deleting).
 - `scripts/guard-generated-artifacts-precommit.mjs` blocks staged generated paths
   and integration output artifacts.
 

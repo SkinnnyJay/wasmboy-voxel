@@ -474,6 +474,7 @@ Workflow hardening applied:
 - next-cycle `task116` is now completed by adding cleanup-vs-guard parity regression tests that ensure generated test outputs are consistently blocked/cleaned while golden and baseline reference artifacts remain allowed
 - next-cycle `task117` is now completed by extracting shared artifact policy helpers used by both cleanup and pre-commit guard scripts, reducing policy duplication and preserving normalized cross-platform path handling with full automation regression validation
 - next-cycle `task118` is now completed by adding focused unit tests for artifact policy helpers, locking normalization and block/cleanup classification behavior at the source module boundary
+- next-cycle `task119` is now completed by adding dry-run/help CLI support for accidental artifact cleanup, including parser validation and non-destructive candidate reporting coverage to improve local review workflows
 
 ## Security posture at completion
 
