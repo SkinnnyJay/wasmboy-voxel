@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { shouldRemoveGeneratedFile } from './clean-accidental-build-artifacts.mjs';
+import { shouldRemoveGeneratedFile } from './artifact-policy.mjs';
 import { findBlockedArtifactPaths } from './guard-generated-artifacts-precommit.mjs';
 
 test('artifact cleanup and staging guard stay aligned for generated test outputs', () => {

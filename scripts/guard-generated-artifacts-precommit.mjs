@@ -1,74 +1,16 @@
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-const BLOCKED_ARTIFACT_PREFIXES = ['dist/', 'build/'];
-const BLOCKED_INTEGRATION_OUTPUT_PREFIX = 'test/integration/';
-const BLOCKED_ACCURACY_OUTPUT_PREFIX = 'test/accuracy/testroms/';
-const BLOCKED_PERFORMANCE_OUTPUT_PREFIX = 'test/performance/testroms/';
+import { normalizeArtifactPath, shouldBlockStagedArtifactPath } from './artifact-policy.mjs';
 const ALLOW_OVERRIDE_ENV_NAME = 'WASMBOY_ALLOW_GENERATED_EDITS';
-
-/**
- * @param {string} stagedPath
- */
-function normalizeStagedPath(stagedPath) {
-  return stagedPath.replaceAll('\\', '/').replace(/^\.?\//u, '');
-}
-
-/**
- * @param {string} stagedPath
- */
-function isBlockedIntegrationOutputPath(stagedPath) {
-  return stagedPath.startsWith(BLOCKED_INTEGRATION_OUTPUT_PREFIX) && (stagedPath.endsWith('.output') || stagedPath.endsWith('.output.png'));
-}
-
-/**
- * @param {string} stagedPath
- */
-function isBlockedAccuracyGeneratedPath(stagedPath) {
-  if (!stagedPath.startsWith(BLOCKED_ACCURACY_OUTPUT_PREFIX)) {
-    return false;
-  }
-
-  if (stagedPath.endsWith('.output')) {
-    return !stagedPath.endsWith('.golden.output');
-  }
-
-  if (stagedPath.endsWith('.png')) {
-    return !stagedPath.endsWith('.golden.png');
-  }
-
-  return false;
-}
-
-/**
- * @param {string} stagedPath
- */
-function isBlockedPerformanceGeneratedPath(stagedPath) {
-  if (!stagedPath.startsWith(BLOCKED_PERFORMANCE_OUTPUT_PREFIX)) {
-    return false;
-  }
-
-  if (stagedPath.endsWith('.png')) {
-    return !stagedPath.endsWith('.noPerformanceOptions.png');
-  }
-
-  return false;
-}
 
 /**
  * @param {string[]} stagedPaths
  */
 export function findBlockedArtifactPaths(stagedPaths) {
   return stagedPaths
-    .map(normalizeStagedPath)
-    .filter(
-      stagedPath =>
-        BLOCKED_ARTIFACT_PREFIXES.some(prefix => stagedPath.startsWith(prefix)) ||
-        isBlockedIntegrationOutputPath(stagedPath) ||
-        isBlockedAccuracyGeneratedPath(stagedPath) ||
-        isBlockedPerformanceGeneratedPath(stagedPath),
-    )
+    .map(normalizeArtifactPath)
+    .filter(stagedPath => shouldBlockStagedArtifactPath(stagedPath))
     .sort((left, right) => left.localeCompare(right));
 }
 
