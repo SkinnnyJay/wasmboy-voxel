@@ -106,6 +106,17 @@ test('validateGeneratedArtifactStaging supports explicit override for intentiona
   assert.deepEqual(result.blockedPaths, []);
 });
 
+test('validateGeneratedArtifactStaging validates options shape and types', () => {
+  assert.throws(
+    () => validateGeneratedArtifactStaging(['dist/wasmboy.wasm.esm.js'], null),
+    /\[guard:generated-artifacts\] Expected options to be an object\./u,
+  );
+  assert.throws(
+    () => validateGeneratedArtifactStaging(['dist/wasmboy.wasm.esm.js'], { allowGeneratedEdits: 'yes' }),
+    /\[guard:generated-artifacts\] Expected options\.allowGeneratedEdits to be a boolean when provided\./u,
+  );
+});
+
 test('parseGeneratedArtifactGuardArgs supports help flags', () => {
   assert.deepEqual(parseGeneratedArtifactGuardArgs([]), { jsonOutput: false, shouldPrintUsage: false });
   assert.deepEqual(parseGeneratedArtifactGuardArgs(['--json']), { jsonOutput: true, shouldPrintUsage: false });

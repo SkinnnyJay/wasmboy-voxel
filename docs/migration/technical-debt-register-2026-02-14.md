@@ -71,6 +71,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C048 | Artifact JSON metadata assertion reuse | Refactored artifact CLI executable contracts to centralize strict metadata assertions (`schemaVersion`, positive integer `timestampMs`), reducing duplicate test logic while hardening machine-readable payload checks.  | S4                | `@automation-tooling` |
 | TD-C049 | Artifact JSON tool attribution         | Added explicit `tool` identifiers to cleanup/guard JSON summaries with executable contract and policy-doc updates so machine-readable consumers can deterministically attribute payload sources.                         | S4                | `@automation-tooling` |
 | TD-C050 | Cleanup helper options input contracts | Added strict options-shape/type validation (`options`, `repoRoot`, `dryRun`) in `cleanAccidentalBuildArtifacts` with regression coverage, preventing malformed caller payloads from causing opaque runtime failures.     | S4                | `@automation-tooling` |
+| TD-C051 | Guard helper options input contracts   | Added strict options-shape/type validation (`options`, `allowGeneratedEdits`) in `validateGeneratedArtifactStaging` with regression coverage, preventing malformed caller payloads from causing opaque runtime failures. | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

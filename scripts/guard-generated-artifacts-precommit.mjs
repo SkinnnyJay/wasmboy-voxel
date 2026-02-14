@@ -36,6 +36,14 @@ export function findBlockedArtifactPaths(stagedPaths) {
  * }} [options]
  */
 export function validateGeneratedArtifactStaging(stagedPaths, options = {}) {
+  if (options === null || typeof options !== 'object') {
+    throw new TypeError('[guard:generated-artifacts] Expected options to be an object.');
+  }
+
+  if (options.allowGeneratedEdits !== undefined && typeof options.allowGeneratedEdits !== 'boolean') {
+    throw new TypeError('[guard:generated-artifacts] Expected options.allowGeneratedEdits to be a boolean when provided.');
+  }
+
   const allowGeneratedEdits = options.allowGeneratedEdits ?? false;
   const blockedPaths = findBlockedArtifactPaths(stagedPaths);
 
