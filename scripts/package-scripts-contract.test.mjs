@@ -9,6 +9,11 @@ function readPackageScripts() {
   return packageJson.scripts ?? {};
 }
 
+function readPrecommitPrettierIgnore() {
+  const ignorePath = path.resolve(process.cwd(), '.prettierignore.precommit');
+  return fs.readFileSync(ignorePath, 'utf8');
+}
+
 test('integration aggregate scripts route through headless cleanup wrappers', () => {
   const scripts = readPackageScripts();
 
@@ -49,4 +54,17 @@ test('generated artifact guard scripts expose default and json variants', () => 
 
   assert.equal(scripts['guard:generated-artifacts:precommit'], 'node scripts/guard-generated-artifacts-precommit.mjs');
   assert.equal(scripts['guard:generated-artifacts:precommit:json'], 'node scripts/guard-generated-artifacts-precommit.mjs --json');
+});
+
+test('precommit formatter excludes migration workspace packages and apps', () => {
+  const scripts = readPackageScripts();
+  assert.equal(
+    scripts['precommit:format'],
+    'pretty-quick --staged --ignore-path .prettierignore.precommit',
+    'precommit formatter should route through dedicated ignore file to avoid workspace formatting drift',
+  );
+
+  const ignoreContents = readPrecommitPrettierIgnore();
+  assert.match(ignoreContents, /^apps\/\*\*$/mu, '.prettierignore.precommit should exclude apps/**');
+  assert.match(ignoreContents, /^packages\/\*\*$/mu, '.prettierignore.precommit should exclude packages/**');
 });
