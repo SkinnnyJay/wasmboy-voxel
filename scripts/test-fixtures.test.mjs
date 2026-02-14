@@ -254,6 +254,23 @@ echo 'should not run'
   );
 });
 
+test('writeFakeExecutable rejects excessively long executable names', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-long-name-'));
+  const longExecutableName = 'x'.repeat(256);
+
+  assert.throws(
+    () =>
+      writeFakeExecutable(
+        tempDirectory,
+        longExecutableName,
+        `#!/usr/bin/env bash
+echo 'should not run'
+`,
+      ),
+    /Invalid executable name:/u,
+  );
+});
+
 test('writeFakeExecutable rejects non-string executable names', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-non-string-name-'));
 

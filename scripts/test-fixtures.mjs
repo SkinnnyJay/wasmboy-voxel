@@ -32,6 +32,7 @@ export function writeFakeExecutable(tempDirectory, executableName, body) {
 
   if (
     !executableName ||
+    Buffer.byteLength(executableName, 'utf8') > 255 ||
     executableName.includes('\0') ||
     /\s/u.test(executableName) ||
     executableName === '.' ||

@@ -478,3 +478,4 @@
 - 2026-02-13: Expanded runtime error-message contract coverage for `bundle-diagnostics`, asserting unexpected filesystem setup failures emit `[bundle-diagnostics]`-prefixed runtime diagnostics without usage-text noise.
 - 2026-02-13: Expanded `changeset-status` filter robustness coverage for large mixed outputs, asserting high-line-count payloads preserve passthrough line integrity while still deduplicating/sorting workspace warnings.
 - 2026-02-13: Tightened `changeset-status` workspace-warning matcher and added malformed-warning regressions so only fully-formed file-dependency warnings are suppressed (missing quote/trailing token variants now pass through).
+- 2026-02-13: Hardened `writeFakeExecutable` filename validation with explicit overlength-name rejection (byte-length guard) and added regression coverage for extremely long executable names.
