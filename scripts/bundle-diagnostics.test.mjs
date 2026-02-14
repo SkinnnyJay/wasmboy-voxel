@@ -11,6 +11,19 @@ const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirectory = path.dirname(currentFilePath);
 const bundlerScriptPath = path.join(currentDirectory, 'bundle-diagnostics.mjs');
 
+function isCaseInsensitiveFilesystem() {
+  try {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'case-check-'));
+    fs.writeFileSync(path.join(dir, 'a'), '');
+    fs.writeFileSync(path.join(dir, 'A'), '');
+    const names = fs.readdirSync(dir);
+    fs.rmSync(dir, { recursive: true });
+    return names.length !== 2;
+  } catch {
+    return true;
+  }
+}
+
 function runBundlerCommand(cwd, args, env = {}) {
   const result = runBundlerCommandRaw(cwd, args, env);
 
@@ -576,7 +589,7 @@ test('bundle-diagnostics archives matched files in deterministic sorted order', 
   assert.ok(aIndex < bIndex, 'archive entries should be stable and sorted lexicographically');
 });
 
-test('bundle-diagnostics keeps distinct case-variant filenames when deduplicating', () => {
+test('bundle-diagnostics keeps distinct case-variant filenames when deduplicating', { skip: isCaseInsensitiveFilesystem() }, () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-case-collision-'));
   const logsDirectory = path.join(tempDirectory, 'logs');
   fs.mkdirSync(logsDirectory, { recursive: true });
@@ -596,7 +609,7 @@ test('bundle-diagnostics keeps distinct case-variant filenames when deduplicatin
   );
 });
 
-test('bundle-diagnostics de-duplicates case-variant alias paths resolving to same file', () => {
+test('bundle-diagnostics de-duplicates case-variant alias paths resolving to same file', { skip: isCaseInsensitiveFilesystem() }, () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-case-alias-dedupe-'));
   const logsDirectory = path.join(tempDirectory, 'logs');
   const upperCaseAliasDirectory = path.join(tempDirectory, 'LOGS');

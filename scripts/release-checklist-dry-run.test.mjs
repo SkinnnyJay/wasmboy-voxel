@@ -13,7 +13,7 @@ function createTempWorkspace() {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'release-checklist-dry-run-'));
   fs.mkdirSync(path.join(tempDirectory, 'packages', 'api'), { recursive: true });
   fs.mkdirSync(path.join(tempDirectory, 'packages', 'cli'), { recursive: true });
-  return tempDirectory;
+  return fs.realpathSync(tempDirectory);
 }
 
 test('parseReleaseChecklistArgs supports timeout and help flags', () => {
@@ -77,8 +77,10 @@ exit 0
     .trim()
     .split('\n');
   assert.equal(commandLogLines.length, 2);
-  assert.equal(commandLogLines[0], `${path.join(tempDirectory, 'packages', 'api')}|publish --dry-run --access public`);
-  assert.equal(commandLogLines[1], `${path.join(tempDirectory, 'packages', 'cli')}|publish --dry-run --access public`);
+  const expectedApiCwd = path.join(tempDirectory, 'packages', 'api');
+  const expectedCliCwd = path.join(tempDirectory, 'packages', 'cli');
+  assert.equal(commandLogLines[0], `${expectedApiCwd}|publish --dry-run --access public`);
+  assert.equal(commandLogLines[1], `${expectedCliCwd}|publish --dry-run --access public`);
 });
 
 test('release checklist dry-run reports npm publish failures with package context', () => {
@@ -117,7 +119,8 @@ exit 0
     .trim()
     .split('\n');
   assert.equal(commandLogLines.length, 1);
-  assert.equal(commandLogLines[0], `${path.join(tempDirectory, 'packages', 'api')}|publish --dry-run --access public`);
+  const expectedApiCwd = path.join(tempDirectory, 'packages', 'api');
+  assert.equal(commandLogLines[0], `${expectedApiCwd}|publish --dry-run --access public`);
 });
 
 test('release checklist dry-run reports timeout failures with package context', () => {
