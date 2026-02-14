@@ -402,6 +402,7 @@ Workflow hardening applied:
 - packages/cli now enforces mutually exclusive alias pairs for output/current options (`--out` vs `-o`, `--current` vs `-c`) and includes regression tests for conflict diagnostics
 - packages/cli filesystem read/write failures are now surfaced through normalized `CliError` InvalidOperation messages (including errno + operation + path), with permission-denied formatting regressions for `run` and `snapshot`
 - packages/cli path resolution now handles Windows-style backslashes and wrapping quotes consistently; regression tests cover quoted/backslash ROM inputs and quoted/backslash snapshot output paths
+- packages/cli now supports stdin piping for ROM-bearing commands (`run` and `snapshot`) using `-` as the ROM path sentinel, with integration-style tests validating stdin reads and snapshot metadata outputs
 
 ## Security posture at completion
 

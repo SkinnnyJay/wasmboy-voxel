@@ -101,6 +101,14 @@ function readFileBuffer(filePath: string): Buffer {
   }
 }
 
+function readStdinBuffer(): Buffer {
+  try {
+    return fs.readFileSync(0);
+  } catch (error) {
+    throw createFilesystemCliError('read', 'stdin', error);
+  }
+}
+
 function sha256Hex(buffer: Buffer): string {
   return crypto
     .createHash('sha256')
@@ -113,43 +121,63 @@ export function printHelp(): void {
 WasmBoy-Voxel CLI
 
 Usage:
-  wasmboy-voxel run <rom>
-  wasmboy-voxel snapshot <rom> [--out <jsonPath> | -o <jsonPath>]
+  wasmboy-voxel run <rom|->
+  wasmboy-voxel snapshot <rom|-> [--out <jsonPath> | -o <jsonPath>]
   wasmboy-voxel compare <baselineSummary> [--current <summaryPath> | -c <summaryPath>]
   wasmboy-voxel contract-check --contract <name> --file <jsonPath>
 
 Examples:
   wasmboy-voxel run test/performance/testroms/tobutobugirl/tobutobugirl.gb
+  cat ./roms/tobutobugirl.gb | wasmboy-voxel run -
   wasmboy-voxel snapshot test/performance/testroms/back-to-color/back-to-color.gbc --out ./snapshot.json
+  cat ./roms/back-to-color.gbc | wasmboy-voxel snapshot - --out ./snapshot.json
   wasmboy-voxel compare test/baseline/snapshots/summary.json
   wasmboy-voxel contract-check --contract ppuSnapshot --file ./snapshot.json
 `;
   process.stdout.write(helpText);
 }
 
-export function runCommand(romPath: string): void {
+function readRomInput(romPath: string): { source: string; buffer: Buffer } {
+  if (romPath === '-') {
+    const stdinBuffer = readStdinBuffer();
+    if (stdinBuffer.length === 0) {
+      throw new CliError('InvalidInput', 'stdin ROM input is empty');
+    }
+    return {
+      source: 'stdin',
+      buffer: stdinBuffer,
+    };
+  }
+
   const resolvedRom = assertRomPath(romPath);
   const romBuffer = readFileBuffer(resolvedRom);
+  return {
+    source: resolvedRom,
+    buffer: romBuffer,
+  };
+}
+
+export function runCommand(romPath: string): void {
+  const romInput = readRomInput(romPath);
   log({
     level: 'info',
     message: 'run command completed',
     context: {
-      romPath: resolvedRom,
-      sizeBytes: romBuffer.length,
-      sha256: sha256Hex(romBuffer),
+      romPath: romInput.source,
+      sizeBytes: romInput.buffer.length,
+      sha256: sha256Hex(romInput.buffer),
     },
   });
 }
 
 export function snapshotCommand(romPath: string, outputPath?: string): void {
-  const resolvedRom = assertRomPath(romPath);
-  const romBuffer = readFileBuffer(resolvedRom);
+  const romInput = readRomInput(romPath);
 
   const payload = {
-    romPath: resolvedRom,
+    romPath: romInput.source,
     capturedAtUtc: new Date().toISOString(),
-    sizeBytes: romBuffer.length,
-    sha256: sha256Hex(romBuffer),
+    sizeBytes: romInput.buffer.length,
+    sha256: sha256Hex(romInput.buffer),
   };
 
   const serialized = JSON.stringify(payload, null, 2);

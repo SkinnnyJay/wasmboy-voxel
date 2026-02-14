@@ -45,6 +45,17 @@ describe('cli commands', () => {
     expect(() => runCommand(windowsStyleQuotedRomPath)).not.toThrow();
   });
 
+  it('run command supports stdin piping via "-" ROM path', () => {
+    const readSpy = vi.spyOn(fs, 'readFileSync').mockImplementation(() => Buffer.from([7, 8, 9]));
+
+    try {
+      expect(() => executeCli(['run', '-'])).not.toThrow();
+      expect(readSpy).toHaveBeenCalledWith(0);
+    } finally {
+      readSpy.mockRestore();
+    }
+  });
+
   it('snapshot command writes JSON payload', () => {
     const dir = createTempDir();
     const romPath = path.join(dir, 'sample.gbc');
@@ -69,6 +80,28 @@ describe('cli commands', () => {
     snapshotCommand(windowsStyleQuotedRomPath, windowsStyleQuotedOutPath);
 
     const parsed = JSON.parse(fs.readFileSync(outPath, 'utf8')) as { sha256?: string };
+    expect(typeof parsed.sha256).toBe('string');
+  });
+
+  it('snapshot command supports stdin piping via "-" ROM path', () => {
+    const dir = createTempDir();
+    const outPath = path.join(dir, 'snapshot.json');
+    const readSpy = vi.spyOn(fs, 'readFileSync').mockImplementation(() => Buffer.from([6, 5, 4]));
+
+    try {
+      expect(() => executeCli(['snapshot', '-', '--out', outPath])).not.toThrow();
+      expect(readSpy).toHaveBeenCalledWith(0);
+    } finally {
+      readSpy.mockRestore();
+    }
+
+    const parsed = JSON.parse(fs.readFileSync(outPath, 'utf8')) as {
+      romPath?: string;
+      sizeBytes?: number;
+      sha256?: string;
+    };
+    expect(parsed.romPath).toBe('stdin');
+    expect(parsed.sizeBytes).toBe(3);
     expect(typeof parsed.sha256).toBe('string');
   });
 
