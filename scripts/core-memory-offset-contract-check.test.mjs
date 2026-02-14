@@ -1,6 +1,60 @@
 import assert from 'node:assert/strict';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { runCoreMemoryOffsetContractCheck, validateGameBoyOffsetResolver } from './core-memory-offset-contract-check-lib.mjs';
+import { parseCoreMemoryOffsetCheckArgs } from './core-memory-offset-contract-check.mjs';
+
+const coreMemoryOffsetCheckScriptPath = path.resolve('scripts/core-memory-offset-contract-check.mjs');
+
+test('parseCoreMemoryOffsetCheckArgs supports repo-root and help flags', () => {
+  assert.deepEqual(parseCoreMemoryOffsetCheckArgs([]), {
+    showHelp: false,
+    repoRootOverride: '',
+  });
+  assert.deepEqual(parseCoreMemoryOffsetCheckArgs(['--repo-root', '/workspace']), {
+    showHelp: false,
+    repoRootOverride: '/workspace',
+  });
+  assert.deepEqual(parseCoreMemoryOffsetCheckArgs(['--repo-root=/workspace']), {
+    showHelp: false,
+    repoRootOverride: '/workspace',
+  });
+  assert.deepEqual(parseCoreMemoryOffsetCheckArgs(['--help']), {
+    showHelp: true,
+    repoRootOverride: '',
+  });
+  assert.deepEqual(parseCoreMemoryOffsetCheckArgs(['--repo-root', '/workspace', '--help']), {
+    showHelp: true,
+    repoRootOverride: '',
+  });
+});
+
+test('parseCoreMemoryOffsetCheckArgs rejects malformed and duplicate arguments', () => {
+  assert.throws(() => parseCoreMemoryOffsetCheckArgs('--help'), /Expected argv to be an array\./u);
+  assert.throws(() => parseCoreMemoryOffsetCheckArgs(['--help', 3]), /Expected argv\[1\] to be a string\./u);
+  assert.throws(() => parseCoreMemoryOffsetCheckArgs(['--unknown']), /Unknown argument: --unknown/u);
+  assert.throws(
+    () => parseCoreMemoryOffsetCheckArgs(['--repo-root', '/workspace', '--repo-root=/tmp/repo']),
+    /Duplicate --repo-root flag received\./u,
+  );
+  assert.throws(() => parseCoreMemoryOffsetCheckArgs(['--repo-root']), /Missing value for --repo-root argument\./u);
+  assert.throws(() => parseCoreMemoryOffsetCheckArgs(['--repo-root=']), /Missing value for --repo-root argument\./u);
+  assert.throws(() => parseCoreMemoryOffsetCheckArgs(['--repo-root==/workspace']), /Malformed inline value for --repo-root argument\./u);
+});
+
+test('core-memory-offset-contract-check script prints usage for --help', () => {
+  const result = spawnSync(process.execPath, [coreMemoryOffsetCheckScriptPath, '--help'], {
+    cwd: process.cwd(),
+    encoding: 'utf8',
+    env: process.env,
+  });
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Usage:/u);
+  assert.match(result.stdout, /--repo-root/u);
+  assert.equal(result.stderr, '');
+});
 
 test('validateGameBoyOffsetResolver accepts sentinel and boundary mappings', () => {
   const resolver = offset => {
