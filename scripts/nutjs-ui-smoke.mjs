@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { transformNutjsPointerCoordinate } from './nutjs-display-scale.mjs';
 import { resolveNutjsShortcutKeyNames, resolveNutjsShortcutScanCodes } from './nutjs-keyboard-layout-map.mjs';
 import { resolveNutjsLinuxDisplayStrategy } from './nutjs-linux-display.mjs';
+import { resolveNutjsMacOsPermissionState } from './nutjs-macos-permissions.mjs';
 
 const DEFAULT_NUTJS_PACKAGE_NAME = '@nut-tree-fork/nut-js';
 const SCRIPT_USAGE = `Usage: node scripts/nutjs-ui-smoke.mjs [--json] [--strict] [--help]\n\nOptions:\n  --json      Emit machine-readable JSON summary.\n  --strict    Fail when NutJS or host capabilities are unavailable.\n  --help, -h  Show this usage message.\n`;
@@ -68,6 +69,14 @@ export function resolveNutjsUiCapabilities(options = {}) {
     metadata.linuxDisplayStrategy = linuxDisplayStrategy;
     if (!linuxDisplayStrategy.isSupported) {
       reasons.push(...linuxDisplayStrategy.reasons);
+    }
+  }
+
+  if (platform === 'darwin') {
+    const macosPermissionState = resolveNutjsMacOsPermissionState({ platform, env: environment });
+    metadata.macosPermissionState = macosPermissionState;
+    if (!macosPermissionState.isSupported) {
+      reasons.push(...macosPermissionState.reasons);
     }
   }
 

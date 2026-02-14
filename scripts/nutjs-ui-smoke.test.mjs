@@ -42,8 +42,10 @@ test('resolveNutjsUiCapabilities reports linux display requirements', () => {
 
 test('runNutjsUiSmoke skips when nutjs module is unavailable', async () => {
   const summary = await runNutjsUiSmoke({
-    platform: 'darwin',
-    env: {},
+    platform: 'linux',
+    env: {
+      DISPLAY: ':99',
+    },
     loader: async () => {
       throw new Error('Cannot find module');
     },
@@ -109,7 +111,9 @@ test('runNutjsUiSmoke executes smoke action with loaded NutJS module', async () 
 test('runNutjsUiSmoke default smoke action reports platform shortcut mapping metadata', async () => {
   const summary = await runNutjsUiSmoke({
     platform: 'darwin',
-    env: {},
+    env: {
+      NUTJS_MACOS_ACCESSIBILITY_TRUSTED: '1',
+    },
     loader: async () => ({ keyboard: {}, mouse: {} }),
   });
 
@@ -124,4 +128,16 @@ test('runNutjsUiSmoke default smoke action reports platform shortcut mapping met
     x: 320,
     y: 180,
   });
+});
+
+test('runNutjsUiSmoke reports macOS accessibility retry hints when untrusted', async () => {
+  const summary = await runNutjsUiSmoke({
+    platform: 'darwin',
+    env: {},
+    loader: async () => ({ keyboard: {}, mouse: {} }),
+  });
+
+  assert.equal(summary.status, 'skipped');
+  assert.deepEqual(summary.reasons, ['macos-accessibility-untrusted']);
+  assert.ok(summary.capabilityMetadata.macosPermissionState.retryHints.length >= 3);
 });
