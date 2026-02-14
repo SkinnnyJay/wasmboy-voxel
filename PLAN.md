@@ -751,3 +751,4 @@
 - 2026-02-14: Re-ran strict release gate after latest plan-log updates (`npm run release:verify:strict`) to reconfirm no-build CI parity path plus changeset/audit checks stay green with a clean working tree.
 - 2026-02-14: Re-ran dual-build migration confidence gates (`npm run test:integration:dual-build:verify` and `npm run test:e2e:playwright:headless:nobuild`) to reconfirm both WASM/TS runtime paths and browser smoke execution remain green after final sign-off logging.
 - 2026-02-14: Re-ran Makefile aggregate orchestration (`make test-all`) to revalidate V1/V2 migration command wrappers invoke dual-build verification and no-build quality gates cleanly end-to-end after the final documentation/logging commits.
+- 2026-02-14: Re-ran release checklist package publish dry-run validation (`npm run release:checklist:npm-dry-run`) to reconfirm publishability checks for `@wasmboy/api` and `@wasmboy/cli` still pass after latest verification-log updates.
