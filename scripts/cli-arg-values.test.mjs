@@ -340,6 +340,18 @@ test('validateRequiredArgumentValue rejects empty known-args entries', () => {
   );
 });
 
+test('validateRequiredArgumentValue rejects whitespace-padded known-args entries', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: '--output',
+        knownArgs: new Set([' --help ']),
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args entries for --output/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects non-boolean allowDoubleDashValue options', () => {
   assert.throws(
     () =>
@@ -611,6 +623,20 @@ test('validateRequiredArgumentValue rejects whitespace-only allowedKnownValues e
         allowDoubleDashValue: true,
         allowWhitespaceOnly: true,
         allowedKnownValues: new Set(['  ']),
+      }),
+    /Invalid allowedKnownValues entries for --message/u,
+  );
+});
+
+test('validateRequiredArgumentValue rejects whitespace-padded allowedKnownValues entries', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('--help', {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: new Set([' --help ']),
       }),
     /Invalid allowedKnownValues entries for --message/u,
   );
@@ -1054,6 +1080,18 @@ test('readRequiredArgumentValue rejects whitespace-only known-args entries', () 
   );
 });
 
+test('readRequiredArgumentValue rejects whitespace-padded known-args entries', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: '--timeout-ms',
+        knownArgs: new Set([' --help ']),
+        allowDoubleDashValue: false,
+      }),
+    /Invalid known-args entries for --timeout-ms/u,
+  );
+});
+
 test('readRequiredArgumentValue rejects missing allowDoubleDashValue options', () => {
   assert.throws(
     () =>
@@ -1313,6 +1351,20 @@ test('readRequiredArgumentValue rejects whitespace-only allowedKnownValues entri
         allowDoubleDashValue: true,
         allowWhitespaceOnly: true,
         allowedKnownValues: new Set(['  ']),
+      }),
+    /Invalid allowedKnownValues entries for --message/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects whitespace-padded allowedKnownValues entries', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--message', '--help'], 0, {
+        flagName: '--message',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: true,
+        allowWhitespaceOnly: true,
+        allowedKnownValues: new Set([' --help ']),
       }),
     /Invalid allowedKnownValues entries for --message/u,
   );

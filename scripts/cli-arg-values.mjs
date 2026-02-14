@@ -60,7 +60,7 @@ function assertValidRequiredArgumentValueOptions(options) {
  */
 function assertStringSetValues(optionName, values, flagName) {
   for (const value of values) {
-    if (typeof value !== 'string' || value.trim().length === 0) {
+    if (typeof value !== 'string' || value.trim().length === 0 || value !== value.trim()) {
       throw new Error(`Invalid ${optionName} entries for ${formatErrorValue(flagName)}`);
     }
   }
