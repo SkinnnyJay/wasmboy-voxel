@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { buildNutjsArtifactNames, resolveNutjsArtifactTimestamp, selectNutjsArtifactsForRetention } from './nutjs-artifacts.mjs';
 import { transformNutjsPointerCoordinate } from './nutjs-display-scale.mjs';
 import { resolveNutjsImageMatchThreshold } from './nutjs-image-thresholds.mjs';
 import { resolveNutjsShortcutKeyNames, resolveNutjsShortcutScanCodes } from './nutjs-keyboard-layout-map.mjs';
@@ -155,6 +156,31 @@ async function runDefaultSmokeAction(nutjsModule, platform, environment) {
   const memoryGuardState = memoryGuard.getState();
   memoryGuard.dispose();
   const disposedGuardState = memoryGuard.getState();
+  const artifactTimestamp = resolveNutjsArtifactTimestamp(environment);
+  const artifactSample = buildNutjsArtifactNames({
+    scenario: 'smoke-run',
+    platform,
+    timestampMs: artifactTimestamp,
+    sequence: 1,
+  });
+  const retentionSample = selectNutjsArtifactsForRetention(
+    [
+      artifactSample.screenshot,
+      buildNutjsArtifactNames({
+        scenario: 'smoke-run',
+        platform,
+        timestampMs: artifactTimestamp - 1,
+        sequence: 1,
+      }).screenshot,
+      buildNutjsArtifactNames({
+        scenario: 'smoke-run',
+        platform,
+        timestampMs: artifactTimestamp - 2,
+        sequence: 1,
+      }).screenshot,
+    ],
+    2,
+  );
 
   return {
     exportedKeyCount: exportedKeys.length,
@@ -168,6 +194,8 @@ async function runDefaultSmokeAction(nutjsModule, platform, environment) {
       beforeDispose: memoryGuardState,
       afterDispose: disposedGuardState,
     },
+    artifactSample,
+    artifactRetentionSample: retentionSample,
   };
 }
 

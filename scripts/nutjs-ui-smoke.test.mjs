@@ -118,6 +118,7 @@ test('runNutjsUiSmoke default smoke action reports platform shortcut mapping met
     platform: 'darwin',
     env: {
       NUTJS_MACOS_ACCESSIBILITY_TRUSTED: '1',
+      NUTJS_ARTIFACT_TIMESTAMP_MS: '1700000000000',
     },
     loader: async () => ({ keyboard: {}, mouse: {} }),
   });
@@ -157,6 +158,16 @@ test('runNutjsUiSmoke default smoke action reports platform shortcut mapping met
   });
   assert.deepEqual(summary.smokeMetadata.resourceCleanup, {
     timeoutMs: 10000,
+  });
+  assert.deepEqual(summary.smokeMetadata.artifactSample, {
+    baseName: 'nutjs-smoke-run-darwin-local-manual-1700000000000-0001',
+    screenshot: 'nutjs-smoke-run-darwin-local-manual-1700000000000-0001.png',
+    video: 'nutjs-smoke-run-darwin-local-manual-1700000000000-0001.webm',
+    trace: 'nutjs-smoke-run-darwin-local-manual-1700000000000-0001.jsonl',
+  });
+  assert.deepEqual(summary.smokeMetadata.artifactRetentionSample, {
+    keep: ['nutjs-smoke-run-darwin-local-manual-1700000000000-0001.png', 'nutjs-smoke-run-darwin-local-manual-1699999999999-0001.png'],
+    prune: ['nutjs-smoke-run-darwin-local-manual-1699999999998-0001.png'],
   });
 });
 
