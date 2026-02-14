@@ -421,6 +421,7 @@ Workflow hardening applied:
 - voxel-wrapper integration coverage now includes worker-readiness retry/null semantics through a dedicated Node test (`test/integration/voxel-wrapper-readiness-test.mjs`), and the suite is wired into all integration script variants via `test:integration:voxel:wrapper`
 - voxel-wrapper fallback tests now cover `_getWasmConstant` failure semantics, including cached-base snapshot success when later constant lookups fail and explicit null fallback after cache clear forces retry exhaustion
 - voxel-wrapper regression coverage now includes unsupported-core detection paths, verifying snapshot capability checks return safe false/null results when required internal hooks are missing
+- voxel-wrapper snapshot fallback logic now tolerates partial memory-section read failures by converting thrown section-read errors into `null` snapshot responses (with error emission), with dedicated regression tests proving non-throwing failure behavior
 
 ## Security posture at completion
 

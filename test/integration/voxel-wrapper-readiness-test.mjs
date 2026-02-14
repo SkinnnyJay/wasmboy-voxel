@@ -170,3 +170,25 @@ test('getPpuSnapshot returns null when core lacks memory-section internals', asy
   const snapshot = await WasmBoy.getPpuSnapshot();
   assert.equal(snapshot, null);
 });
+
+test('getPpuSnapshot returns null when a partial section read fails', async () => {
+  let sectionReads = 0;
+  WasmBoy.clearPpuSnapshotCache();
+  WasmBoy._getWasmConstant = async () => 0x1000;
+  WasmBoy._getPpuSnapshotBuffer = undefined;
+  WasmBoy._parsePpuSnapshotBuffer = undefined;
+  WasmBoy._getWasmMemorySection = async (start, endExclusive) => {
+    sectionReads += 1;
+    const length = endExclusive - start;
+    if (sectionReads === 3) {
+      throw new Error('partial-read-failure');
+    }
+    if (length === 1) {
+      return new Uint8Array([0]);
+    }
+    return new Uint8Array(length).fill(1);
+  };
+
+  const snapshot = await WasmBoy.getPpuSnapshot();
+  assert.equal(snapshot, null);
+});
