@@ -40,6 +40,13 @@ function assertStringArray(candidateArray, parameterName) {
 }
 
 /**
+ * @param {string[]} values
+ */
+function sortedStringArray(values) {
+  return [...values].sort((left, right) => left.localeCompare(right));
+}
+
+/**
  * @param {string} tool
  * @param {{
  *   timestampMs?: number;
@@ -84,17 +91,19 @@ export function buildCleanupArtifactSummary(options) {
   assertStringArray(options.deletedDirectories, 'options.deletedDirectories');
   assertStringArray(options.deletedFiles, 'options.deletedFiles');
 
-  const removedCount = options.deletedDirectories.length + options.deletedFiles.length;
+  const deletedDirectories = sortedStringArray(options.deletedDirectories);
+  const deletedFiles = sortedStringArray(options.deletedFiles);
+  const removedCount = deletedDirectories.length + deletedFiles.length;
 
   return {
     ...buildArtifactSummaryMetadata(CLEAN_ARTIFACT_SUMMARY_TOOL, { timestampMs: options.timestampMs }),
     mode: options.dryRun ? 'dry-run' : 'apply',
     removedCount,
     hasRemovals: removedCount > 0,
-    deletedDirectoryCount: options.deletedDirectories.length,
-    deletedFileCount: options.deletedFiles.length,
-    deletedDirectories: options.deletedDirectories,
-    deletedFiles: options.deletedFiles,
+    deletedDirectoryCount: deletedDirectories.length,
+    deletedFileCount: deletedFiles.length,
+    deletedDirectories,
+    deletedFiles,
   };
 }
 
@@ -121,16 +130,17 @@ export function buildGuardArtifactSummary(options) {
   }
 
   assertStringArray(options.blockedPaths, 'options.blockedPaths');
+  const blockedPaths = sortedStringArray(options.blockedPaths);
 
   if (!Number.isInteger(options.stagedPathCount) || options.stagedPathCount < 0) {
     throw new TypeError('Expected options.stagedPathCount to be a non-negative integer.');
   }
 
-  if (options.blockedPaths.length > options.stagedPathCount) {
+  if (blockedPaths.length > options.stagedPathCount) {
     throw new RangeError('Expected options.stagedPathCount to be >= blocked path count.');
   }
 
-  if (options.isValid && options.blockedPaths.length > 0) {
+  if (options.isValid && blockedPaths.length > 0) {
     throw new RangeError('Expected valid guard summaries to contain zero blocked paths.');
   }
 
@@ -138,9 +148,9 @@ export function buildGuardArtifactSummary(options) {
     ...buildArtifactSummaryMetadata(GUARD_ARTIFACT_SUMMARY_TOOL, { timestampMs: options.timestampMs }),
     allowGeneratedEdits: options.allowGeneratedEdits,
     isValid: options.isValid,
-    blockedPaths: options.blockedPaths,
-    blockedPathCount: options.blockedPaths.length,
-    hasBlockedPaths: options.blockedPaths.length > 0,
+    blockedPaths,
+    blockedPathCount: blockedPaths.length,
+    hasBlockedPaths: blockedPaths.length > 0,
     stagedPathCount: options.stagedPathCount,
   };
 }

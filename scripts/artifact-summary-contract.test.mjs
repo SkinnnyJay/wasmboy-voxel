@@ -91,8 +91,8 @@ test('resolveArtifactSummaryTimestampOverride validates environment and timestam
 test('buildCleanupArtifactSummary emits derived count fields and mode', () => {
   const summary = buildCleanupArtifactSummary({
     dryRun: true,
-    deletedDirectories: ['build'],
-    deletedFiles: ['test/integration/headless.output'],
+    deletedDirectories: ['dist', 'build'],
+    deletedFiles: ['test/integration/z.output', 'test/integration/a.output'],
     timestampMs: 789,
   });
 
@@ -102,12 +102,12 @@ test('buildCleanupArtifactSummary emits derived count fields and mode', () => {
     timestampSource: SUMMARY_TIMESTAMP_SOURCE_ENV_OVERRIDE,
     timestampMs: 789,
     mode: 'dry-run',
-    removedCount: 2,
+    removedCount: 4,
     hasRemovals: true,
-    deletedDirectoryCount: 1,
-    deletedFileCount: 1,
-    deletedDirectories: ['build'],
-    deletedFiles: ['test/integration/headless.output'],
+    deletedDirectoryCount: 2,
+    deletedFileCount: 2,
+    deletedDirectories: ['build', 'dist'],
+    deletedFiles: ['test/integration/a.output', 'test/integration/z.output'],
   });
 });
 
@@ -131,7 +131,7 @@ test('buildGuardArtifactSummary emits derived blocked count fields', () => {
   const summary = buildGuardArtifactSummary({
     allowGeneratedEdits: false,
     isValid: false,
-    blockedPaths: ['build/a-generated.js'],
+    blockedPaths: ['dist/generated.js', 'build/a-generated.js'],
     stagedPathCount: 2,
     timestampMs: 789,
   });
@@ -143,8 +143,8 @@ test('buildGuardArtifactSummary emits derived blocked count fields', () => {
     timestampMs: 789,
     allowGeneratedEdits: false,
     isValid: false,
-    blockedPaths: ['build/a-generated.js'],
-    blockedPathCount: 1,
+    blockedPaths: ['build/a-generated.js', 'dist/generated.js'],
+    blockedPathCount: 2,
     hasBlockedPaths: true,
     stagedPathCount: 2,
   });
