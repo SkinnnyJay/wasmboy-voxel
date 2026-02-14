@@ -477,6 +477,7 @@ Workflow hardening applied:
 - next-cycle `task119` is now completed by adding dry-run/help CLI support for accidental artifact cleanup, including parser validation and non-destructive candidate reporting coverage to improve local review workflows
 - next-cycle `task120` is now completed by adding a first-class npm dry-run command for artifact cleanup and enforcing/documenting that script contract so engineers can inspect generated artifact candidates without mutating workspace state
 - next-cycle `task121` is now completed by adding argument parser/help support to the generated-artifact guard script with regression coverage, making manual guard invocation behavior explicit and contract-tested
+- next-cycle `task122` is now completed by adding subprocess-level CLI contract tests for cleanup/guard scripts so usage and unknown-flag error behaviors are validated end-to-end at the executable boundary
 
 ## Security posture at completion
 
