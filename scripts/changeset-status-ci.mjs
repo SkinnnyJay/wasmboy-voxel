@@ -136,6 +136,11 @@ if (statusResult.error) {
     process.exit(1);
   }
 
+  if (statusResult.error.code === 'ENOENT') {
+    console.error('[changeset:status:ci] changeset command was not found in PATH.');
+    process.exit(1);
+  }
+
   console.error('[changeset:status:ci] Failed to execute changeset status.');
   console.error(statusResult.error);
   process.exit(1);

@@ -123,11 +123,11 @@ exit 3
   assert.match(result.stdout, /🦋  error status failure/u);
 });
 
-test('changeset-status-ci reports command execution failure', () => {
+test('changeset-status-ci reports missing changeset command clearly', () => {
   const result = runStatusScript(createNodeOnlyPath());
 
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /Failed to execute changeset status/u);
+  assert.match(result.stderr, /changeset command was not found in PATH/u);
 });
 
 test('changeset-status-ci prints usage with --help', () => {
