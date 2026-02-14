@@ -545,3 +545,4 @@ Result at completion: **0 vulnerabilities**.
 - Added generated-artifact guard staged-git timeout controls (`GUARD_GENERATED_ARTIFACTS_GIT_TIMEOUT_MS`) with timeout diagnostics and regression coverage to prevent indefinite precommit guard hangs.
 - Replaced locale-sensitive ordering in library console-usage violation sorting with ordinal comparators and added mixed-case path ordering regression coverage to keep lint output deterministic across locales.
 - Replaced locale-sensitive diagnostics-bundling path ordering tie-breaks with ordinal comparators and added mixed-case argument-order regression coverage to keep archive input ordering deterministic across locales.
+- Hardened dependency-freshness CLI parsing with strict unknown/duplicate argument rejection, help usage output, and timeout CLI override wiring through shared timeout resolution.

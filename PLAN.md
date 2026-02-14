@@ -149,7 +149,7 @@
 [x] - task170 (S2 reliability): Backlog discovery candidate #70 — define validation command at implementation time.
 [x] - task171 (S2 reliability): Backlog discovery candidate #71 — define validation command at implementation time.
 [x] - task172 (S2 reliability): Backlog discovery candidate #72 — define validation command at implementation time.
-[ ] - task173 (S2 reliability): Backlog discovery candidate #73 — define validation command at implementation time.
+[x] - task173 (S2 reliability): Backlog discovery candidate #73 — define validation command at implementation time.
 [ ] - task174 (S2 reliability): Backlog discovery candidate #74 — define validation command at implementation time.
 [ ] - task175 (S2 reliability): Backlog discovery candidate #75 — define validation command at implementation time.
 [ ] - task176 (S2 reliability): Backlog discovery candidate #76 — define validation command at implementation time.
@@ -728,3 +728,4 @@
 - 2026-02-14: Addressed next-cycle `task170` by adding configurable staged-git inspection timeout handling in generated-artifact precommit guard (`GUARD_GENERATED_ARTIFACTS_GIT_TIMEOUT_MS`) with timeout diagnostics and helper coverage; validated via `node --test "scripts/guard-generated-artifacts-precommit.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs"`; marked `task170` completed.
 - 2026-02-14: Addressed next-cycle `task171` by replacing locale-sensitive violation sorting in library console-usage linting with locale-independent ordinal comparators and adding mixed-case path ordering regression coverage; validated via `node --test "scripts/check-library-console-usage.test.mjs"`; marked `task171` completed.
 - 2026-02-14: Addressed next-cycle `task172` by replacing locale-sensitive path ordering in diagnostics bundling canonicalization with ordinal comparators and adding subprocess argument-order regression coverage for mixed-case file names; validated via `node --test "scripts/bundle-diagnostics.test.mjs"`; marked `task172` completed.
+- 2026-02-14: Addressed next-cycle `task173` by hardening dependency-freshness CLI argument parsing (strict argv contracts, duplicate/unknown flag rejection, help usage, and timeout override support) while wiring CLI timeout overrides through shared timeout resolution; validated via `node --test "scripts/dependency-freshness-audit.test.mjs"`; marked `task173` completed.

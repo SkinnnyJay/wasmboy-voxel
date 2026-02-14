@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   collectDependencyFreshness,
   formatFreshnessReport,
+  parseDependencyFreshnessArgs,
   parseOutdatedJson,
   resolveDependencyFreshnessTimeoutFromEnv,
 } from './dependency-freshness-audit.mjs';
@@ -29,6 +30,56 @@ test('parseOutdatedJson rejects invalid payload types and malformed json', () =>
   assert.throws(() => parseOutdatedJson(UNPRINTABLE_VALUE), /Invalid npm outdated output: \[unprintable\]/u);
   assert.throws(() => parseOutdatedJson('[]'), /Invalid npm outdated JSON structure/u);
   assert.throws(() => parseOutdatedJson('{this-is-not-json'), /JSON|Unexpected|invalid/u);
+});
+
+test('parseDependencyFreshnessArgs supports fail and timeout flags', () => {
+  assert.deepEqual(parseDependencyFreshnessArgs([]), {
+    showHelp: false,
+    shouldFailOnOutdated: false,
+    timeoutMsOverride: '',
+  });
+  assert.deepEqual(parseDependencyFreshnessArgs(['--fail-on-outdated']), {
+    showHelp: false,
+    shouldFailOnOutdated: true,
+    timeoutMsOverride: '',
+  });
+  assert.deepEqual(parseDependencyFreshnessArgs(['--timeout-ms', '5000']), {
+    showHelp: false,
+    shouldFailOnOutdated: false,
+    timeoutMsOverride: '5000',
+  });
+  assert.deepEqual(parseDependencyFreshnessArgs(['--timeout-ms=7000']), {
+    showHelp: false,
+    shouldFailOnOutdated: false,
+    timeoutMsOverride: '7000',
+  });
+  assert.deepEqual(parseDependencyFreshnessArgs(['--help']), {
+    showHelp: true,
+    shouldFailOnOutdated: false,
+    timeoutMsOverride: '',
+  });
+  assert.deepEqual(parseDependencyFreshnessArgs(['--fail-on-outdated', '--help', '--timeout-ms', '2000']), {
+    showHelp: true,
+    shouldFailOnOutdated: false,
+    timeoutMsOverride: '',
+  });
+});
+
+test('parseDependencyFreshnessArgs rejects malformed and duplicate arguments', () => {
+  assert.throws(() => parseDependencyFreshnessArgs('--help'), /Expected argv to be an array\./u);
+  assert.throws(() => parseDependencyFreshnessArgs(['--help', 3]), /Expected argv\[1\] to be a string\./u);
+  assert.throws(() => parseDependencyFreshnessArgs(['--unknown']), /Unknown argument: --unknown/u);
+  assert.throws(
+    () => parseDependencyFreshnessArgs(['--fail-on-outdated', '--fail-on-outdated']),
+    /Duplicate --fail-on-outdated flag received\./u,
+  );
+  assert.throws(
+    () => parseDependencyFreshnessArgs(['--timeout-ms', '5000', '--timeout-ms=6000']),
+    /Duplicate --timeout-ms flag received\./u,
+  );
+  assert.throws(() => parseDependencyFreshnessArgs(['--timeout-ms']), /Missing value for --timeout-ms argument\./u);
+  assert.throws(() => parseDependencyFreshnessArgs(['--timeout-ms=']), /Missing value for --timeout-ms argument\./u);
+  assert.throws(() => parseDependencyFreshnessArgs(['--timeout-ms==5000']), /Malformed inline value for --timeout-ms argument\./u);
 });
 
 test('collectDependencyFreshness aggregates outdated counts by workspace using runner results', () => {
@@ -117,10 +168,13 @@ test('collectDependencyFreshness forwards configured timeout to workspace runner
 test('resolveDependencyFreshnessTimeoutFromEnv parses and validates environment overrides', () => {
   assert.equal(resolveDependencyFreshnessTimeoutFromEnv({}), 120000);
   assert.equal(resolveDependencyFreshnessTimeoutFromEnv({ DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS: ' 9000 ' }), 9000);
+  assert.equal(resolveDependencyFreshnessTimeoutFromEnv({}, '7000'), 7000);
+  assert.equal(resolveDependencyFreshnessTimeoutFromEnv({ DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS: '9000' }, '7000'), 7000);
   assert.throws(
     () => resolveDependencyFreshnessTimeoutFromEnv({ DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS: '0' }),
     /Invalid DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS value: 0/u,
   );
+  assert.throws(() => resolveDependencyFreshnessTimeoutFromEnv({}, '0'), /Invalid --timeout-ms value: 0/u);
   assert.throws(
     () => resolveDependencyFreshnessTimeoutFromEnv({ DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS: 'not-a-number' }),
     /Invalid DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS value: not-a-number/u,

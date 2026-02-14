@@ -2,10 +2,112 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
+import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
 
 const WORKSPACE_PATHS = ['.', 'packages/api', 'packages/cli', 'apps/debugger'];
 const DEPENDENCY_FRESHNESS_TIMEOUT_ENV_VARIABLE = 'DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS';
 const DEFAULT_OUTDATED_TIMEOUT_MS = 120000;
+const FAIL_ON_OUTDATED_FLAG = '--fail-on-outdated';
+const CLI_TIMEOUT_FLAG = '--timeout-ms';
+const HELP_SHORT_FLAG = '-h';
+const HELP_LONG_FLAG = '--help';
+const HELP_ARGS = new Set([HELP_LONG_FLAG, HELP_SHORT_FLAG]);
+const KNOWN_ARGS = new Set([FAIL_ON_OUTDATED_FLAG, CLI_TIMEOUT_FLAG, HELP_LONG_FLAG, HELP_SHORT_FLAG]);
+const USAGE_TEXT = `Usage:
+node scripts/dependency-freshness-audit.mjs [--fail-on-outdated] [--timeout-ms <ms>] [--help]
+
+Options:
+  --fail-on-outdated          Exit non-zero when any outdated dependency is detected
+  --timeout-ms <ms>           Override npm outdated timeout in milliseconds for this invocation
+  --timeout-ms=<ms>           Inline timeout override variant
+  -h, --help                  Show this help message
+
+Environment:
+  ${DEPENDENCY_FRESHNESS_TIMEOUT_ENV_VARIABLE}=<ms>  npm outdated timeout in milliseconds (default: ${DEFAULT_OUTDATED_TIMEOUT_MS})`;
+
+/**
+ * @param {string[]} argv
+ */
+export function parseDependencyFreshnessArgs(argv) {
+  if (!Array.isArray(argv)) {
+    throw new Error('Expected argv to be an array.');
+  }
+
+  for (let index = 0; index < argv.length; index += 1) {
+    if (typeof argv[index] !== 'string') {
+      throw new Error(`Expected argv[${String(index)}] to be a string.`);
+    }
+  }
+
+  if (argv.some(token => HELP_ARGS.has(token))) {
+    return {
+      showHelp: true,
+      shouldFailOnOutdated: false,
+      timeoutMsOverride: '',
+    };
+  }
+
+  /** @type {{showHelp: boolean; shouldFailOnOutdated: boolean; timeoutMsOverride: string}} */
+  const parsed = {
+    showHelp: false,
+    shouldFailOnOutdated: false,
+    timeoutMsOverride: '',
+  };
+  let failOnOutdatedConfigured = false;
+  let timeoutConfigured = false;
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const token = argv[index];
+
+    if (token === FAIL_ON_OUTDATED_FLAG) {
+      if (failOnOutdatedConfigured) {
+        throw new Error(`Duplicate ${FAIL_ON_OUTDATED_FLAG} flag received.`);
+      }
+      parsed.shouldFailOnOutdated = true;
+      failOnOutdatedConfigured = true;
+      continue;
+    }
+
+    if (token === CLI_TIMEOUT_FLAG) {
+      if (timeoutConfigured) {
+        throw new Error(`Duplicate ${CLI_TIMEOUT_FLAG} flag received.`);
+      }
+      const timeoutValue = readRequiredArgumentValue(argv, index, {
+        flagName: CLI_TIMEOUT_FLAG,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      });
+      parsed.timeoutMsOverride = timeoutValue;
+      timeoutConfigured = true;
+      index += 1;
+      continue;
+    }
+
+    if (token.startsWith(`${CLI_TIMEOUT_FLAG}=`)) {
+      if (timeoutConfigured) {
+        throw new Error(`Duplicate ${CLI_TIMEOUT_FLAG} flag received.`);
+      }
+      const timeoutValue = token.slice(`${CLI_TIMEOUT_FLAG}=`.length);
+      if (timeoutValue.startsWith('=')) {
+        throw new Error(`Malformed inline value for ${CLI_TIMEOUT_FLAG} argument.`);
+      }
+      validateRequiredArgumentValue(timeoutValue, {
+        flagName: CLI_TIMEOUT_FLAG,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      });
+      parsed.timeoutMsOverride = timeoutValue;
+      timeoutConfigured = true;
+      continue;
+    }
+
+    throw new Error(`Unknown argument: ${token}`);
+  }
+
+  return parsed;
+}
 
 /**
  * @param {unknown} value
@@ -74,8 +176,9 @@ function runOutdatedForWorkspace(repoRoot, workspacePath, timeoutMs) {
 
 /**
  * @param {Record<string, unknown>} environment
+ * @param {string} [cliTimeoutMsOverride]
  */
-export function resolveDependencyFreshnessTimeoutFromEnv(environment) {
+export function resolveDependencyFreshnessTimeoutFromEnv(environment, cliTimeoutMsOverride = '') {
   return resolveTimeoutFromCliAndEnv({
     defaultValue: DEFAULT_OUTDATED_TIMEOUT_MS,
     env: {
@@ -83,8 +186,8 @@ export function resolveDependencyFreshnessTimeoutFromEnv(environment) {
       rawValue: environment[DEPENDENCY_FRESHNESS_TIMEOUT_ENV_VARIABLE],
     },
     cli: {
-      name: '--dependency-freshness-timeout-ms',
-      rawValue: '',
+      name: CLI_TIMEOUT_FLAG,
+      rawValue: cliTimeoutMsOverride,
     },
   });
 }
@@ -156,21 +259,27 @@ export function formatFreshnessReport(report) {
 const currentFilePath = fileURLToPath(import.meta.url);
 const invokedFilePath = process.argv[1] ? path.resolve(process.argv[1]) : null;
 const shouldRunAsScript = invokedFilePath === currentFilePath;
-const FAIL_ON_OUTDATED_FLAG = '--fail-on-outdated';
 
 if (shouldRunAsScript) {
   try {
-    const shouldFailOnOutdated = process.argv.slice(2).includes(FAIL_ON_OUTDATED_FLAG);
-    const report = collectDependencyFreshness();
+    const parsedArgs = parseDependencyFreshnessArgs(process.argv.slice(2));
+    if (parsedArgs.showHelp) {
+      process.stdout.write(`${USAGE_TEXT}\n`);
+      process.exit(0);
+    }
+
+    const report = collectDependencyFreshness({
+      outdatedTimeoutMs: resolveDependencyFreshnessTimeoutFromEnv(process.env, parsedArgs.timeoutMsOverride),
+    });
     process.stdout.write(`${formatFreshnessReport(report)}\n`);
 
-    if (shouldFailOnOutdated && report.totalOutdatedCount > 0) {
+    if (parsedArgs.shouldFailOnOutdated && report.totalOutdatedCount > 0) {
       process.stderr.write(`[dependency:freshness] Found ${String(report.totalOutdatedCount)} outdated dependencies across workspaces.\n`);
       process.exitCode = 1;
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown dependency freshness audit error';
-    process.stderr.write(`[dependency:freshness] ${message}\n`);
+    process.stderr.write(`[dependency:freshness] ${message}\n${USAGE_TEXT}\n`);
     process.exitCode = 1;
   }
 }
