@@ -1,12 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { filterChangesetStatusOutput } from './changeset-status-ci-lib.mjs';
-
-const UNPRINTABLE_VALUE = {
-  toString() {
-    throw new Error('cannot stringify');
-  },
-};
+import { UNPRINTABLE_VALUE } from './test-helpers.mjs';
 
 test('filterChangesetStatusOutput suppresses expected workspace file warnings', () => {
   const input = [

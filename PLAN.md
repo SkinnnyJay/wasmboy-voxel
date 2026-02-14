@@ -482,3 +482,4 @@
 - 2026-02-13: Expanded `writeFakeExecutable` body validation coverage for newline-only payloads (`\\n\\n`, `\\r\\n\\r\\n`), locking trim-based rejection semantics for structurally empty scripts.
 - 2026-02-13: Hardened `writeFakeExecutable` cross-platform filename semantics by rejecting Windows reserved device names (`CON`, `PRN`, etc.) and adding dedicated regression coverage.
 - 2026-02-13: Added `writeFakeExecutable` fake-bin idempotency coverage, asserting repeated fixture writes against an existing `fake-bin` directory preserve path stability and command executability.
+- 2026-02-13: Refactored scripts test fixtures to centralize shared `UNPRINTABLE_VALUE` test input in a reusable helper module, reducing duplicated fixture boilerplate across argument/timeout/filter/fixture test suites.

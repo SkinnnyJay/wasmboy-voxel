@@ -5,12 +5,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { writeFakeExecutable } from './test-fixtures.mjs';
-
-const UNPRINTABLE_VALUE = {
-  toString() {
-    throw new Error('cannot stringify');
-  },
-};
+import { UNPRINTABLE_VALUE } from './test-helpers.mjs';
 
 test('writeFakeExecutable creates runnable command in fake-bin directory', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-'));

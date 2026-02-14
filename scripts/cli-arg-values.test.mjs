@@ -1,14 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
+import { UNPRINTABLE_VALUE } from './test-helpers.mjs';
 
 const KNOWN_ARGS = new Set(['--help', '-h', '--output', '--pattern', '--timeout-ms']);
 const HELP_ARGS = new Set(['--help', '-h']);
-const UNPRINTABLE_VALUE = {
-  toString() {
-    throw new Error('cannot stringify');
-  },
-};
 
 test('validateRequiredArgumentValue accepts ordinary values', () => {
   assert.doesNotThrow(() => {
