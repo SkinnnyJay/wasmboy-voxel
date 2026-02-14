@@ -128,6 +128,12 @@ test('runNutjsUiSmoke default smoke action reports platform shortcut mapping met
     x: 320,
     y: 180,
   });
+  assert.deepEqual(summary.smokeMetadata.imageMatchThreshold, {
+    platform: 'darwin',
+    profile: 'darwin',
+    threshold: 0.94,
+    source: 'default',
+  });
 });
 
 test('runNutjsUiSmoke reports macOS accessibility retry hints when untrusted', async () => {

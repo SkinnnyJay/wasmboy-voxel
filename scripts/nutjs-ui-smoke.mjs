@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { transformNutjsPointerCoordinate } from './nutjs-display-scale.mjs';
+import { resolveNutjsImageMatchThreshold } from './nutjs-image-thresholds.mjs';
 import { resolveNutjsShortcutKeyNames, resolveNutjsShortcutScanCodes } from './nutjs-keyboard-layout-map.mjs';
 import { resolveNutjsLinuxDisplayStrategy } from './nutjs-linux-display.mjs';
 import { resolveNutjsMacOsPermissionState } from './nutjs-macos-permissions.mjs';
@@ -149,6 +150,7 @@ async function runDefaultSmokeAction(nutjsModule, platform, environment) {
     defaultShortcutScanCodes: resolveNutjsShortcutScanCodes('open-devtools', platform),
     defaultShortcutKeyNames: resolveNutjsShortcutKeyNames('open-devtools', platform),
     pointerTransformSample: transformNutjsPointerCoordinate({ x: 320, y: 180 }, { platform, env: environment }),
+    imageMatchThreshold: resolveNutjsImageMatchThreshold({ platform, env: environment }),
   };
 }
 
