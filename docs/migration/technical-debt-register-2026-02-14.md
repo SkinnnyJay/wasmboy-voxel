@@ -43,6 +43,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C020 | Accuracy/perf staging guard    | Extended generated-artifact pre-commit guard to block non-golden `test/accuracy/testroms` outputs and non-baseline `test/performance/testroms` PNG artifacts while allowing golden/baseline files.         | S4                | `@repo-tooling`       |
 | TD-C021 | Artifact policy parity         | Added artifact-policy parity regressions to ensure cleanup and staging-guard behavior remain aligned across generated test outputs and approved baseline artifacts.                                        | S4                | `@automation-tooling` |
 | TD-C022 | Artifact policy centralization | Consolidated generated-artifact policy rules into a shared module (`scripts/artifact-policy.mjs`) consumed by both cleanup and pre-commit guard scripts, reducing duplicated logic and drift risk.         | S4                | `@automation-tooling` |
+| TD-C023 | Artifact policy source tests   | Added direct unit coverage for shared artifact-policy helper predicates and path normalization to lock generated-artifact classification behavior independent of wrapper scripts.                          | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

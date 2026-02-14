@@ -473,6 +473,7 @@ Workflow hardening applied:
 - next-cycle `task115` is now completed by expanding pre-commit generated-artifact blocking to non-golden accuracy outputs and non-baseline performance PNG outputs, with regression tests ensuring intentional golden/baseline artifacts remain allowed
 - next-cycle `task116` is now completed by adding cleanup-vs-guard parity regression tests that ensure generated test outputs are consistently blocked/cleaned while golden and baseline reference artifacts remain allowed
 - next-cycle `task117` is now completed by extracting shared artifact policy helpers used by both cleanup and pre-commit guard scripts, reducing policy duplication and preserving normalized cross-platform path handling with full automation regression validation
+- next-cycle `task118` is now completed by adding focused unit tests for artifact policy helpers, locking normalization and block/cleanup classification behavior at the source module boundary
 
 ## Security posture at completion
 

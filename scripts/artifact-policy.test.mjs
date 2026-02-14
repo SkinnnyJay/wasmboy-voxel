@@ -1,0 +1,29 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { normalizeArtifactPath, shouldBlockStagedArtifactPath, shouldRemoveGeneratedFile } from './artifact-policy.mjs';
+
+test('normalizeArtifactPath normalizes windows and relative path prefixes', () => {
+  assert.equal(normalizeArtifactPath('./dist\\worker\\audio.worker.js'), 'dist/worker/audio.worker.js');
+  assert.equal(normalizeArtifactPath('.\\test\\integration\\headless.output.png'), 'test/integration/headless.output.png');
+});
+
+test('shouldRemoveGeneratedFile matches generated test output patterns', () => {
+  assert.equal(shouldRemoveGeneratedFile('test/integration/headless.output.png'), true);
+  assert.equal(shouldRemoveGeneratedFile('test/accuracy/testroms/suite/frame.output'), true);
+  assert.equal(shouldRemoveGeneratedFile('test/accuracy/testroms/suite/frame.png'), true);
+  assert.equal(shouldRemoveGeneratedFile('test/performance/testroms/suite/frame.png'), true);
+});
+
+test('shouldRemoveGeneratedFile preserves golden and baseline reference files', () => {
+  assert.equal(shouldRemoveGeneratedFile('test/integration/headless.golden.png'), false);
+  assert.equal(shouldRemoveGeneratedFile('test/accuracy/testroms/suite/frame.golden.output'), false);
+  assert.equal(shouldRemoveGeneratedFile('test/accuracy/testroms/suite/frame.golden.png'), false);
+  assert.equal(shouldRemoveGeneratedFile('test/performance/testroms/suite/frame.noPerformanceOptions.png'), false);
+});
+
+test('shouldBlockStagedArtifactPath blocks dist/build plus generated outputs', () => {
+  assert.equal(shouldBlockStagedArtifactPath('dist/wasmboy.wasm.esm.js'), true);
+  assert.equal(shouldBlockStagedArtifactPath('build/assets/core.untouched.wasm'), true);
+  assert.equal(shouldBlockStagedArtifactPath('test/integration/headless.output'), true);
+  assert.equal(shouldBlockStagedArtifactPath('README.md'), false);
+});
