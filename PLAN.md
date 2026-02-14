@@ -476,3 +476,4 @@
 - 2026-02-13: Hardened `bundle-diagnostics` placeholder cleanup failure handling by covering tar-side placeholder deletion and cleanup unlink failures, preserving primary archive errors while surfacing explicit cleanup diagnostics.
 - 2026-02-13: Expanded `bundle-diagnostics` timeout precedence coverage around empty/whitespace env values, locking CLI-invalid/empty-env behavior and env-whitespace rejection even when CLI overrides are otherwise valid.
 - 2026-02-13: Expanded runtime error-message contract coverage for `bundle-diagnostics`, asserting unexpected filesystem setup failures emit `[bundle-diagnostics]`-prefixed runtime diagnostics without usage-text noise.
+- 2026-02-13: Expanded `changeset-status` filter robustness coverage for large mixed outputs, asserting high-line-count payloads preserve passthrough line integrity while still deduplicating/sorting workspace warnings.

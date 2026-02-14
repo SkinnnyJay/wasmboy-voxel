@@ -96,6 +96,26 @@ test('filterChangesetStatusOutput handles mixed CRLF and LF output safely', () =
   assert.equal(result.passthroughOutput, ['🦋  info section header', '🦋  info NO packages to be bumped at patch'].join('\n'));
 });
 
+test('filterChangesetStatusOutput handles large mixed-output payloads without dropping passthrough lines', () => {
+  const cliWarning = 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api"';
+  const debuggerWarning =
+    'Package "@wasmboy/debugger-app" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../../packages/api"';
+  const passthroughLines = Array.from({ length: 4000 }, (_, index) => `🦋  info line ${index}`);
+  const outputLines = [];
+
+  for (const line of passthroughLines) {
+    outputLines.push(cliWarning, line, debuggerWarning);
+  }
+
+  const result = filterChangesetStatusOutput(outputLines.join('\n'));
+  const passthroughOutputLines = result.passthroughOutput.split('\n');
+
+  assert.deepEqual(result.suppressedWarnings, [cliWarning, debuggerWarning]);
+  assert.equal(passthroughOutputLines.length, passthroughLines.length);
+  assert.equal(passthroughOutputLines[0], '🦋  info line 0');
+  assert.equal(passthroughOutputLines[passthroughOutputLines.length - 1], '🦋  info line 3999');
+});
+
 test('filterChangesetStatusOutput suppresses warnings with surrounding whitespace', () => {
   const workspaceWarning = 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "0.7.1" vs "file:../api"';
   const input = `  ${workspaceWarning}  \n🦋  info NO packages to be bumped at patch`;

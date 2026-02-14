@@ -374,6 +374,7 @@ Workflow hardening applied:
 - bundle-diagnostics placeholder cleanup handling now includes failure-mode coverage for tar-side placeholder removal and cleanup unlink errors, with explicit cleanup diagnostics that do not mask primary archive failures
 - bundle-diagnostics timeout precedence coverage now explicitly includes empty-env + invalid-CLI overrides and whitespace-only env timeout rejection even when split/inline CLI overrides are otherwise valid
 - bundle-diagnostics runtime error-message contract now includes unexpected filesystem setup failures (e.g. mkdir against file paths), ensuring diagnostics remain prefixed and avoid argument-usage output
+- changeset-status filter coverage now includes large mixed-output payload handling, asserting passthrough line integrity is preserved while workspace warnings remain deduplicated and deterministically sorted
 
 ## Security posture at completion
 
