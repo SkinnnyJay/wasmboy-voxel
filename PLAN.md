@@ -497,3 +497,4 @@
 - 2026-02-13: Expanded `packages/api` numeric-type strictness coverage with bigint rejection regressions across register, snapshot, memory section, and debug frame numeric fields.
 - 2026-02-13: Expanded `packages/api` numeric validation coverage for non-finite values (NaN/±Infinity) across register bytes, snapshot byte arrays, memory-section numeric spans, and debug-frame numeric fields; tightened debug-frame `timestampMs`/`fps` schemas with finite-number constraints.
 - 2026-02-13: Added `packages/api` debug-frame JSON serialization roundtrip regression coverage, asserting serialized+parsed payloads remain valid and structurally stable for both direct schema validation and registry-based validation paths.
+- 2026-02-13: Added `packages/api` validate-throughput smoke coverage for batched contract payloads (direct schema + registry validation) with explicit runtime budget guards to catch major validation performance regressions.

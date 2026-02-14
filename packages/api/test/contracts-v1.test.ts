@@ -33,6 +33,8 @@ const REGISTER_KEYS: (keyof Registers)[] = [
   'obp1',
 ];
 const NON_FINITE_NUMBERS = [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
+const VALIDATE_BATCH_ITERATIONS = 2000;
+const VALIDATE_THROUGHPUT_BUDGET_MS = 2500;
 
 const makeValidDebugFrame = () => ({
   version: 'v1',
@@ -332,5 +334,73 @@ describe('contracts v1', () => {
     expect(
       validateRegistryPayload(CONTRACT_VERSION_V1, 'debugFrame', makeValidDebugFrame()).success,
     ).toBe(true);
+  });
+
+  it('keeps validate() throughput within smoke budget for batched payloads', () => {
+    const directValidationBatch = [
+      { schema: V1Schemas.RegistersSchema, payload: makeValidRegisters() },
+      {
+        schema: V1Schemas.MemorySectionSchema,
+        payload: {
+          version: 'v1',
+          start: 0x8000,
+          endExclusive: 0x8004,
+          bytes: [1, 2, 3, 4],
+        },
+      },
+      { schema: V1Schemas.DebugFrameSchema, payload: makeValidDebugFrame() },
+      {
+        schema: V1Schemas.ContractVersionMetadataSchema,
+        payload: {
+          version: 'v1',
+          generatedBy: '@wasmboy/api',
+        },
+      },
+    ] as const;
+
+    const registryValidationBatch = [
+      { contractName: 'registers', payload: makeValidRegisters() },
+      {
+        contractName: 'memorySection',
+        payload: {
+          version: 'v1',
+          start: 0x8000,
+          endExclusive: 0x8004,
+          bytes: [1, 2, 3, 4],
+        },
+      },
+      { contractName: 'debugFrame', payload: makeValidDebugFrame() },
+      {
+        contractName: 'metadata',
+        payload: {
+          version: 'v1',
+          generatedBy: '@wasmboy/api',
+        },
+      },
+    ] as const;
+
+    const startTime = process.hrtime.bigint();
+
+    for (let index = 0; index < VALIDATE_BATCH_ITERATIONS; index += 1) {
+      for (const validationCase of directValidationBatch) {
+        const result = validateContractPayload(validationCase.schema, validationCase.payload);
+        if (!result.success) {
+          throw new Error(`direct validation failed during throughput smoke run: ${index}`);
+        }
+      }
+      for (const validationCase of registryValidationBatch) {
+        const result = validateRegistryPayload(
+          CONTRACT_VERSION_V1,
+          validationCase.contractName,
+          validationCase.payload,
+        );
+        if (!result.success) {
+          throw new Error(`registry validation failed during throughput smoke run: ${index}`);
+        }
+      }
+    }
+
+    const elapsedMilliseconds = Number(process.hrtime.bigint() - startTime) / 1_000_000;
+    expect(elapsedMilliseconds).toBeLessThan(VALIDATE_THROUGHPUT_BUDGET_MS);
   });
 });
