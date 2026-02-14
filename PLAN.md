@@ -791,3 +791,4 @@
 - 2026-02-14: Re-ran workspace aggregate test gate (`npm run stack:test`) to reconfirm package/app Vitest suites for API/CLI/debugger workspaces remain green with a clean working tree.
 - 2026-02-14: Re-ran core memory-offset contract gate (`npm run core:memory-offset:check`) to reconfirm core constant-to-wrapper offset mapping invariants remain valid with a clean working tree.
 - 2026-02-14: Re-ran wrapper memory-layout contract gate (`npm run memory:layout:check`) to reconfirm `core/constants.ts` and `voxel-wrapper.ts` address compatibility invariants remain valid with a clean working tree.
+- 2026-02-14: Re-ran workflow/scripts formatting contract gate (`npm run workflow:check`) to reconfirm workflow YAML and repository script formatting invariants remain green with a clean working tree.
