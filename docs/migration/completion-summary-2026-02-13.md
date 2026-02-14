@@ -388,6 +388,7 @@ Workflow hardening applied:
 - CI now runs `automation:test` in a Node LTS matrix (20 and 22) through a dedicated workflow job, improving cross-version confidence for script automation behavior
 - CI now enforces a tracked-artifact guard for `apps/debugger/.next/**`, failing fast when generated Next.js output is accidentally committed
 - CI now enforces post-install lockfile drift checks across root/api/cli/debugger lockfiles, preventing hidden dependency graph mutations from passing automation jobs
+- packages/api public exports were audited and documented with backward-compatibility guarantees/risks (entrypoint symbols, registry keys, export-map scope), establishing a baseline for future API stability checks
 
 ## Security posture at completion
 

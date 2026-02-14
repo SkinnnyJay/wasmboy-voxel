@@ -490,3 +490,4 @@
 - 2026-02-13: Added CI Node LTS matrix coverage for `automation:test` via a dedicated `automation-test-matrix` GitHub Actions job (Node 20 + 22), with shared workspace install/caching semantics.
 - 2026-02-13: Added CI guard steps to fail builds if tracked artifacts appear under `apps/debugger/.next/**`, preventing accidental commits of generated Next.js build output.
 - 2026-02-13: Added CI lockfile drift checks after workspace install in both CI jobs, failing builds when `package-lock.json` files mutate unexpectedly across root/api/cli/debugger workspaces.
+- 2026-02-13: Audited `packages/api` public export surface and documented backward-compatibility guarantees/risks in `docs/migration/packages-api-export-audit-2026-02-13.md` (root export map, runtime/type symbols, registry keys, follow-up guardrail recommendations).
