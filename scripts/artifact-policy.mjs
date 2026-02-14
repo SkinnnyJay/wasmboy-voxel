@@ -6,9 +6,20 @@ const BLOCKED_ACCURACY_OUTPUT_PREFIX = 'test/accuracy/testroms/';
 const BLOCKED_PERFORMANCE_OUTPUT_PREFIX = 'test/performance/testroms/';
 
 /**
+ * @param {unknown} candidatePath
+ * @param {string} parameterName
+ */
+function assertPathString(candidatePath, parameterName) {
+  if (typeof candidatePath !== 'string') {
+    throw new TypeError(`[artifact-policy] Expected ${parameterName} to be a string path.`);
+  }
+}
+
+/**
  * @param {string} candidatePath
  */
 export function normalizeArtifactPath(candidatePath) {
+  assertPathString(candidatePath, 'candidatePath');
   return candidatePath
     .replaceAll('\\', '/')
     .split(path.sep)
@@ -75,6 +86,7 @@ function matchesGeneratedArtifactPolicy(normalizedPath) {
  * @param {string} relativePath
  */
 export function shouldRemoveGeneratedFile(relativePath) {
+  assertPathString(relativePath, 'relativePath');
   const normalizedPath = normalizeArtifactPath(relativePath);
   return matchesGeneratedArtifactPolicy(normalizedPath);
 }
@@ -83,6 +95,7 @@ export function shouldRemoveGeneratedFile(relativePath) {
  * @param {string} stagedPath
  */
 export function shouldBlockStagedArtifactPath(stagedPath) {
+  assertPathString(stagedPath, 'stagedPath');
   const normalizedPath = normalizeArtifactPath(stagedPath);
   return BLOCKED_ARTIFACT_PREFIXES.some(prefix => normalizedPath.startsWith(prefix)) || matchesGeneratedArtifactPolicy(normalizedPath);
 }

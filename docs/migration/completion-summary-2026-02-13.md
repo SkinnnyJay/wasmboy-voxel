@@ -482,6 +482,7 @@ Workflow hardening applied:
 - next-cycle `task124` is now completed by de-duplicating normalized blocked-path results in the generated-artifact guard, ensuring concise deterministic pre-commit diagnostics even when duplicate path aliases are staged
 - next-cycle `task125` is now completed by consolidating generated-artifact policy evaluation internals to avoid duplicate normalization while adding explicit windows-path blocking coverage for generated integration outputs
 - next-cycle `task126` is now completed by adding subprocess dry-run/cleanup behavior tests for the cleanup CLI, proving candidate reporting and real deletion semantics in isolated temp-workspace executions
+- next-cycle `task127` is now completed by adding explicit type guards to shared artifact-policy path helpers with regression tests for non-string inputs, improving failure clarity and input-contract robustness
 
 ## Security posture at completion
 

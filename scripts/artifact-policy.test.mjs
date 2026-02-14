@@ -7,6 +7,12 @@ test('normalizeArtifactPath normalizes windows and relative path prefixes', () =
   assert.equal(normalizeArtifactPath('.\\test\\integration\\headless.output.png'), 'test/integration/headless.output.png');
 });
 
+test('artifact policy path helpers reject non-string path inputs', () => {
+  assert.throws(() => normalizeArtifactPath(42), /\[artifact-policy\] Expected candidatePath to be a string path\./u);
+  assert.throws(() => shouldRemoveGeneratedFile(null), /\[artifact-policy\] Expected relativePath to be a string path\./u);
+  assert.throws(() => shouldBlockStagedArtifactPath(undefined), /\[artifact-policy\] Expected stagedPath to be a string path\./u);
+});
+
 test('shouldRemoveGeneratedFile matches generated test output patterns', () => {
   assert.equal(shouldRemoveGeneratedFile('test/integration/headless.output.png'), true);
   assert.equal(shouldRemoveGeneratedFile('test/accuracy/testroms/suite/frame.output'), true);
