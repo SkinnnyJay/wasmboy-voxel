@@ -31,6 +31,17 @@ const ALLOWED_CONSOLE_LINES = new Map([
 const IGNORED_DIRECTORY_PREFIXES = ['lib/3p/'];
 
 /**
+ * @param {string} left
+ * @param {string} right
+ */
+function compareOrdinalStrings(left, right) {
+  if (left === right) {
+    return 0;
+  }
+  return left < right ? -1 : 1;
+}
+
+/**
  * @param {string} relativePath
  */
 function normalizePath(relativePath) {
@@ -164,12 +175,12 @@ export async function runLibraryConsoleUsageCheck(options = {}) {
 
   violations.sort((left, right) => {
     if (left.filePath !== right.filePath) {
-      return left.filePath.localeCompare(right.filePath);
+      return compareOrdinalStrings(left.filePath, right.filePath);
     }
     if (left.lineNumber !== right.lineNumber) {
       return left.lineNumber - right.lineNumber;
     }
-    return left.lineText.localeCompare(right.lineText);
+    return compareOrdinalStrings(left.lineText, right.lineText);
   });
 
   return {

@@ -81,6 +81,36 @@ export function log() {
   });
 });
 
+test('runLibraryConsoleUsageCheck sorts violations with ordinal path ordering', async () => {
+  const repoRoot = createTempRepoRoot('lint-library-console-ordering-');
+  writeFileSyncEnsuringParent(
+    path.join(repoRoot, 'lib', 'runtime', 'a.js'),
+    `
+export function lowerCasePathViolation() {
+  console.error('lower');
+}
+`,
+  );
+  writeFileSyncEnsuringParent(
+    path.join(repoRoot, 'lib', 'runtime', 'B.js'),
+    `
+export function upperCasePathViolation() {
+  console.error('upper');
+}
+`,
+  );
+  writeFileSyncEnsuringParent(path.join(repoRoot, 'voxel-wrapper.ts'), 'export const noop = true;\n');
+
+  const result = await runLibraryConsoleUsageCheck({ repoRoot });
+
+  assert.equal(result.isValid, false);
+  assert.equal(result.violations.length, 2);
+  assert.deepEqual(
+    result.violations.map(violation => violation.filePath),
+    ['lib/runtime/B.js', 'lib/runtime/a.js'],
+  );
+});
+
 test('runLibraryConsoleUsageCheck passes for current repository sources', async () => {
   const result = await runLibraryConsoleUsageCheck({ repoRoot: process.cwd() });
 
