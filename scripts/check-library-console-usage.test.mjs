@@ -5,11 +5,13 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
 import { findConsoleUsageViolations, parseLibraryConsoleUsageArgs, runLibraryConsoleUsageCheck } from './check-library-console-usage.mjs';
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirectory = path.dirname(currentFilePath);
 const checkLibraryConsoleUsageScriptPath = path.join(currentDirectory, 'check-library-console-usage.mjs');
+installTempDirectoryCleanup(fs);
 
 function createTempRepoRoot(prefix) {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));

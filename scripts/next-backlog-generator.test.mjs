@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
+import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
 import {
   createNextHundredBacklogMarkdown,
   generateNextBacklogFile,
@@ -28,6 +29,7 @@ const SAMPLE_DEBT_REGISTER = `
 `;
 
 const NEXT_BACKLOG_GENERATOR_SCRIPT_PATH = path.resolve('scripts/next-backlog-generator.mjs');
+installTempDirectoryCleanup(fs);
 
 test('parseOpenDebtItems extracts only open debt table rows', () => {
   const parsed = parseOpenDebtItems(SAMPLE_DEBT_REGISTER);

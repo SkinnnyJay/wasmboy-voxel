@@ -5,10 +5,12 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
+import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
 
 const scriptsDirectory = path.dirname(fileURLToPath(import.meta.url));
 const cleanArtifactsScriptPath = path.join(scriptsDirectory, 'clean-accidental-build-artifacts.mjs');
 const guardArtifactsScriptPath = path.join(scriptsDirectory, 'guard-generated-artifacts-precommit.mjs');
+installTempDirectoryCleanup(fs);
 
 function runScript(scriptPath, args, options = {}) {
   return spawnSync(process.execPath, [scriptPath, ...args], {

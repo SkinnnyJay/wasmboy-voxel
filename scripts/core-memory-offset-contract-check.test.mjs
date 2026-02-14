@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
+import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
 import {
   loadCoreFromDist,
   runCoreMemoryOffsetContractCheck,
@@ -12,6 +13,7 @@ import {
 import { parseCoreMemoryOffsetCheckArgs } from './core-memory-offset-contract-check.mjs';
 
 const coreMemoryOffsetCheckScriptPath = path.resolve('scripts/core-memory-offset-contract-check.mjs');
+installTempDirectoryCleanup(fs);
 
 test('parseCoreMemoryOffsetCheckArgs supports repo-root and help flags', () => {
   assert.deepEqual(parseCoreMemoryOffsetCheckArgs([]), {

@@ -5,7 +5,10 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { writeFakeExecutable } from './test-fixtures.mjs';
+import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
 import { UNPRINTABLE_VALUE } from './test-helpers.mjs';
+
+installTempDirectoryCleanup(fs);
 
 test('writeFakeExecutable creates runnable command in fake-bin directory', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-'));

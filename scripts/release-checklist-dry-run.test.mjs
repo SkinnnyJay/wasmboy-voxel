@@ -5,9 +5,11 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { writeFakeExecutable } from './test-fixtures.mjs';
+import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
 import { parseReleaseChecklistArgs, resolveReleaseChecklistTimeoutFromEnv } from './release-checklist-dry-run.mjs';
 
 const RELEASE_CHECKLIST_SCRIPT_PATH = path.resolve('scripts/release-checklist-dry-run.mjs');
+installTempDirectoryCleanup(fs);
 
 function createTempWorkspace() {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'release-checklist-dry-run-'));

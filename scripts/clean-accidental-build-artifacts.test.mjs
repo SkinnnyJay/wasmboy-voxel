@@ -3,7 +3,10 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
+import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
 import { cleanAccidentalBuildArtifacts, parseCleanArtifactsArgs } from './clean-accidental-build-artifacts.mjs';
+
+installTempDirectoryCleanup(fs);
 
 function createTempRepoRoot(prefix) {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));

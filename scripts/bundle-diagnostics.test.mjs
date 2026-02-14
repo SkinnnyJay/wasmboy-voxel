@@ -5,11 +5,13 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
 import { writeFakeExecutable } from './test-fixtures.mjs';
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirectory = path.dirname(currentFilePath);
 const bundlerScriptPath = path.join(currentDirectory, 'bundle-diagnostics.mjs');
+installTempDirectoryCleanup(fs);
 
 function isCaseInsensitiveFilesystem() {
   try {

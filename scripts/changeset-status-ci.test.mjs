@@ -5,11 +5,13 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
 import { writeFakeExecutable } from './test-fixtures.mjs';
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirectory = path.dirname(currentFilePath);
 const statusScriptPath = path.join(currentDirectory, 'changeset-status-ci.mjs');
+installTempDirectoryCleanup(fs);
 
 function runStatusScript(customPath, extraEnv = {}) {
   return spawnSync('node', [statusScriptPath], {

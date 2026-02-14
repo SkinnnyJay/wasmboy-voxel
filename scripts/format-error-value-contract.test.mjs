@@ -6,8 +6,11 @@ import test from 'node:test';
 import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
 import { filterChangesetStatusOutput } from './changeset-status-ci-lib.mjs';
 import { resolveStrictPositiveIntegerEnv, resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
+import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
 import { writeFakeExecutable } from './test-fixtures.mjs';
 import { UNPRINTABLE_VALUE } from './test-helpers.mjs';
+
+installTempDirectoryCleanup(fs);
 
 test('script helpers consistently format unprintable values in diagnostics', () => {
   assert.throws(
