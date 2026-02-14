@@ -489,3 +489,4 @@
 - 2026-02-13: Added parser-latency smoke benchmarks (`parser-latency-smoke.test.mjs`) covering `cli-arg-values` and `cli-timeout` hot loops with explicit runtime budgets to catch major performance regressions.
 - 2026-02-13: Added CI Node LTS matrix coverage for `automation:test` via a dedicated `automation-test-matrix` GitHub Actions job (Node 20 + 22), with shared workspace install/caching semantics.
 - 2026-02-13: Added CI guard steps to fail builds if tracked artifacts appear under `apps/debugger/.next/**`, preventing accidental commits of generated Next.js build output.
+- 2026-02-13: Added CI lockfile drift checks after workspace install in both CI jobs, failing builds when `package-lock.json` files mutate unexpectedly across root/api/cli/debugger workspaces.

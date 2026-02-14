@@ -88,6 +88,15 @@ jobs:
       - name: Install workspace dependencies
         run: npm run install:stack:ci
 
+      - name: Verify lockfile drift
+        run: |
+          set -o pipefail
+          git diff --exit-code -- \
+            package-lock.json \
+            packages/api/package-lock.json \
+            packages/cli/package-lock.json \
+            apps/debugger/package-lock.json
+
       - name: Run automation script tests
         run: npm run automation:test
 
@@ -132,6 +141,15 @@ jobs:
 
       - name: Install workspace dependencies
         run: npm run install:stack:ci
+
+      - name: Verify lockfile drift
+        run: |
+          set -o pipefail
+          git diff --exit-code -- \
+            package-lock.json \
+            packages/api/package-lock.json \
+            packages/cli/package-lock.json \
+            apps/debugger/package-lock.json
 
       - name: Run full no-build quality suite
         run: |

@@ -387,6 +387,7 @@ Workflow hardening applied:
 - scripts automation now includes parser-latency smoke tests with bounded runtime budgets for `cli-arg-values` and `cli-timeout`, providing early warning for argument-parsing performance regressions
 - CI now runs `automation:test` in a Node LTS matrix (20 and 22) through a dedicated workflow job, improving cross-version confidence for script automation behavior
 - CI now enforces a tracked-artifact guard for `apps/debugger/.next/**`, failing fast when generated Next.js output is accidentally committed
+- CI now enforces post-install lockfile drift checks across root/api/cli/debugger lockfiles, preventing hidden dependency graph mutations from passing automation jobs
 
 ## Security posture at completion
 
