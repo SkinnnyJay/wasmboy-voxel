@@ -13,6 +13,7 @@ export {
 export { getCyclesPerCycleSet, getCycleSets, getCycles } from './cycles';
 export { setJoypadState } from './joypad/joypad';
 export { getNumberOfSamplesInAudioBuffer, clearAudioBuffer, setVinInputSample } from './sound/sound';
+export { getColorComponentFromRgb } from './graphics/palette';
 export { setManualColorizationPalette } from './graphics/colors';
 export {
   WASMBOY_MEMORY_LOCATION,

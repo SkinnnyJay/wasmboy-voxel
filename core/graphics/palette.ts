@@ -5,6 +5,12 @@ import { checkBitOnByte, resetBitOnByte, setBitOnByte, concatenateBytes } from '
 
 import { Colors } from './colors';
 
+const RGB_COMPONENT_BIT_WIDTH: i32 = 5;
+const RGB_COMPONENT_MASK: i32 = 0x1f;
+const RGB_COMPONENT_MAX_8BIT: i32 = 0xff;
+const RGB_COMPONENT_MAX_5BIT: i32 = 0x1f;
+const RGB_COMPONENT_ROUNDING_BIAS: i32 = RGB_COMPONENT_MAX_5BIT >> 1;
+
 // Class for GBC Color palletes
 // http://gbdev.gg8.se/wiki/articles/Video_Display#FF68_-_BCPS.2FBGPI_-_CGB_Mode_Only_-_Background_Palette_Index
 export class Palette {
@@ -201,14 +207,13 @@ export function getRgbColorFromPalette(paletteId: i32, colorId: i32, isSprite: b
 // Function to return the color from a passed 16 bit color pallette
 export function getColorComponentFromRgb(colorId: i32, colorRgb: i32): i32 {
   // Get our bitmask for the color ID
-  // bit mask tested good :)
-  colorId *= 5;
-  let bitMask = 0x1f << colorId;
-  let colorValue = (colorRgb & bitMask) >> colorId;
+  let componentShift = colorId * RGB_COMPONENT_BIT_WIDTH;
+  let bitMask = RGB_COMPONENT_MASK << componentShift;
+  let colorValue = (colorRgb & bitMask) >> componentShift;
 
-  // Goal is to reach 254 for each color, so 255 / 31 (0x1F) ~8 TODO: Make exact
-  // Want 5 bits for each
-  return colorValue * 8;
+  // Convert 5-bit GBC channel to 8-bit output with integer rounding.
+  // Equivalent to round((value / 31) * 255), keeping max white at 255.
+  return (colorValue * RGB_COMPONENT_MAX_8BIT + RGB_COMPONENT_ROUNDING_BIAS) / RGB_COMPONENT_MAX_5BIT;
 }
 
 // Function to load a byte from our Gbc Palette memory
