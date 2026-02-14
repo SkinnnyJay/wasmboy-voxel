@@ -114,6 +114,7 @@ Guides:
 - CLI usage: `docs/migration/cli-usage-guide.md`
 - Troubleshooting FAQ: `docs/migration/troubleshooting-faq.md`
 - Repository architecture map: `docs/migration/repository-architecture-map-2026-02-14.md`
+- Performance budgets: `docs/migration/performance-budgets-2026-02-14.md`
 
 # In-Game Screenshots
 
