@@ -28,6 +28,9 @@ class MockFilesystemError extends Error {
   }
 }
 
+const CLI_STARTUP_SMOKE_ITERATIONS = 2000;
+const CLI_STARTUP_LATENCY_BUDGET_MS = 2000;
+
 describe('cli commands', () => {
   it('run command validates ROM input and logs metadata', () => {
     const dir = createTempDir();
@@ -379,6 +382,22 @@ describe('cli commands', () => {
       }
     } finally {
       readSpy.mockRestore();
+    }
+  });
+
+  it('keeps startup help dispatch within smoke latency budget', () => {
+    const stdoutSpy = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+
+    try {
+      const startTime = process.hrtime.bigint();
+      for (let index = 0; index < CLI_STARTUP_SMOKE_ITERATIONS; index += 1) {
+        executeCli(['--help']);
+      }
+
+      const elapsedMilliseconds = Number(process.hrtime.bigint() - startTime) / 1_000_000;
+      expect(elapsedMilliseconds).toBeLessThan(CLI_STARTUP_LATENCY_BUDGET_MS);
+    } finally {
+      stdoutSpy.mockRestore();
     }
   });
 });
