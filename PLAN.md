@@ -769,3 +769,4 @@
 - 2026-02-14: Re-ran release-checklist dry-run script unit coverage (`node --test "scripts/release-checklist-dry-run.test.mjs"`) to reconfirm parser/help/timeout/failure handling contracts and package-context diagnostics remain green.
 - 2026-02-14: Re-ran standalone changeset status check (`npm run changeset:status:ci`) to reconfirm expected workspace dependency notices remain suppressed and release bump classification output stays stable.
 - 2026-02-14: Re-ran audit umbrella command (`npm run audit:check`) to reconfirm strict workspace vulnerability scanning remains green via the documented audit entrypoint.
+- 2026-02-14: Re-ran dual-build verification pipeline (`npm run test:integration:dual-build:verify`) to reconfirm sequential WASM bundle build + headless main-thread integration + TS bundle build + TS runtime smoke execution all remain green with a clean working tree.
