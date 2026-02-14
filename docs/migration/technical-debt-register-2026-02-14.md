@@ -78,6 +78,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C055 | Artifact summary metadata contract reuse  | Introduced shared summary-contract helpers/constants for cleanup/guard JSON metadata (`schemaVersion`, tool IDs, timestamp validation) with direct helper tests, reducing duplicate contract logic and schema drift risk. | S4                | `@automation-tooling` |
 | TD-C056 | Artifact summary timestamp override       | Added shared support for deterministic summary timestamps via `WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS`, with helper validation and executable contracts proving override behavior for cleanup/guard JSON payloads.         | S4                | `@automation-tooling` |
 | TD-C057 | Timestamp override failure-mode contracts | Added subprocess contracts for malformed `WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS` values to ensure cleanup/guard CLIs fail deterministically with non-zero exits and actionable diagnostics.                               | S4                | `@automation-tooling` |
+| TD-C058 | Timestamp override whitespace tolerance   | Added whitespace normalization for `WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS` parsing with helper/executable regression coverage, improving operator ergonomics while preserving strict positive-integer validation.         | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

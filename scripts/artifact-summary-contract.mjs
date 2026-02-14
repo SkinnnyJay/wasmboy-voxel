@@ -61,11 +61,12 @@ export function resolveArtifactSummaryTimestampOverride(environment) {
     throw new TypeError(`Expected ${ARTIFACT_SUMMARY_TIMESTAMP_ENV_NAME} to be a string when provided.`);
   }
 
-  if (!/^[0-9]+$/u.test(rawTimestamp)) {
+  const normalizedTimestamp = rawTimestamp.trim();
+  if (!/^[0-9]+$/u.test(normalizedTimestamp)) {
     throw new Error(`${ARTIFACT_SUMMARY_TIMESTAMP_ENV_NAME} must be a positive integer when provided.`);
   }
 
-  const parsedTimestamp = Number(rawTimestamp);
+  const parsedTimestamp = Number(normalizedTimestamp);
   if (!Number.isSafeInteger(parsedTimestamp) || parsedTimestamp <= 0) {
     throw new Error(`${ARTIFACT_SUMMARY_TIMESTAMP_ENV_NAME} must be a positive integer when provided.`);
   }

@@ -179,7 +179,7 @@ test('clean artifact script emits JSON summary when --json is set', () => {
 
 test('clean artifact script honors summary timestamp override environment variable', () => {
   const result = runScript(cleanArtifactsScriptPath, ['--json'], {
-    env: { WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS: '789' },
+    env: { WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS: ' 789 ' },
   });
 
   assert.equal(result.status, 0);
@@ -257,7 +257,7 @@ test('generated artifact guard script emits JSON summary when --json is set', ()
 
 test('generated artifact guard script honors summary timestamp override environment variable', () => {
   const result = runScript(guardArtifactsScriptPath, ['--json'], {
-    env: { WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS: '789' },
+    env: { WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS: ' 789 ' },
   });
 
   assert.equal(result.status, 0);

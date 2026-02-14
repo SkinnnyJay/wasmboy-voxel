@@ -50,6 +50,14 @@ test('resolveArtifactSummaryTimestampOverride returns parsed override when set',
   assert.equal(parsed, 456);
 });
 
+test('resolveArtifactSummaryTimestampOverride trims whitespace around overrides', () => {
+  const parsed = resolveArtifactSummaryTimestampOverride({
+    [ARTIFACT_SUMMARY_TIMESTAMP_ENV_NAME]: ' 456 ',
+  });
+
+  assert.equal(parsed, 456);
+});
+
 test('resolveArtifactSummaryTimestampOverride supports unset override', () => {
   assert.equal(resolveArtifactSummaryTimestampOverride({}), undefined);
 });
@@ -62,6 +70,10 @@ test('resolveArtifactSummaryTimestampOverride validates environment and timestam
   );
   assert.throws(
     () => resolveArtifactSummaryTimestampOverride({ [ARTIFACT_SUMMARY_TIMESTAMP_ENV_NAME]: 'abc' }),
+    /WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS must be a positive integer when provided\./u,
+  );
+  assert.throws(
+    () => resolveArtifactSummaryTimestampOverride({ [ARTIFACT_SUMMARY_TIMESTAMP_ENV_NAME]: '   ' }),
     /WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS must be a positive integer when provided\./u,
   );
   assert.throws(

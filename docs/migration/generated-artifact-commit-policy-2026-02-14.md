@@ -21,7 +21,8 @@ This protects the repo from accidental generated-output drift.
   metadata for traceability plus explicit `deletedDirectoryCount` /
   `deletedFileCount` totals; `--help`/`-h` always prints usage even when mixed
   with other flags; set `WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS` to emit a
-  deterministic timestamp in JSON output when needed (invalid values fail with
+  deterministic timestamp in JSON output when needed (leading/trailing
+  whitespace is ignored; invalid values fail with
   non-zero exit and a clear diagnostic));
   npm shortcuts: `clean:artifacts:precommit:dry-run` and
   `clean:artifacts:precommit:json`).
@@ -32,8 +33,8 @@ This protects the repo from accidental generated-output drift.
   prints usage even when mixed with other flags; payloads also expose
   `blockedPathCount` alongside `blockedPaths`; set
   `WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS` to emit a deterministic timestamp in
-  JSON output when needed (invalid values fail with non-zero exit and a clear
-  diagnostic); npm shortcut:
+  JSON output when needed (leading/trailing whitespace is ignored; invalid
+  values fail with non-zero exit and a clear diagnostic); npm shortcut:
   `guard:generated-artifacts:precommit:json`).
 
 ## Intentional exception path
