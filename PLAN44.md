@@ -176,8 +176,8 @@ _Ensure we have confidence in headless, mainThread, WasmBoyHeadless, and voxel s
 
 _Confirm the current JS (WASM) build and the TypeScript (TS core) build both work and are tested._
 
-- [ ] - **JS (WASM) path:** Document that `npm run build` (lib:build:wasm) produces `dist/wasmboy.wasm.*` and `dist/wasmboy.headless.*`; `test:integration:nobuild` uses CJS WASM runtime. Ensure all headless integration tests pass with WASM build.
-- [ ] - **TS path:** Run `npm run lib:build:ts` and confirm `dist/wasmboy.ts.*` (or equivalent) builds; add or run integration test that loads the TS-built lib (if entry differs) and runs a minimal headless or snapshot check. If TS lib is not consumed by current integration tests, add a smoke test or document in MIGRATION.md.
+- [x] - **JS (WASM) path:** Document that `npm run build` (lib:build:wasm) produces `dist/wasmboy.wasm.*` and `dist/wasmboy.headless.*`; `test:integration:nobuild` uses CJS WASM runtime. Ensure all headless integration tests pass with WASM build. _(Documented outputs + verification commands in `docs/migration/build-path-verification-2026-02-14.md`; revalidated WASM path with `npm run lib:build:wasm` and headless main-thread integration smoke.)_
+- [x] - **TS path:** Run `npm run lib:build:ts` and confirm `dist/wasmboy.ts.*` (or equivalent) builds; add or run integration test that loads the TS-built lib (if entry differs) and runs a minimal headless or snapshot check. If TS lib is not consumed by current integration tests, add a smoke test or document in MIGRATION.md. _(Fixed TS build-path config/runtime blockers, verified `npm run lib:build:ts`, and added `test:integration:lib:ts` smoke coverage using new TS runtime loader helper.)_
 - [ ] - **Dual-version sign-off:** If both builds must ship, add a CI job or Makefile target that builds and tests both WASM and TS versions and document in README/MIGRATION.
 
 ### 4.8 Release layout: V1 / V2 isolation and Makefile
