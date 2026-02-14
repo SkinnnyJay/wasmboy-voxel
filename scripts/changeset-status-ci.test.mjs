@@ -14,9 +14,10 @@ const statusScriptPath = path.join(currentDirectory, 'changeset-status-ci.mjs');
 installTempDirectoryCleanup(fs);
 
 function runStatusScript(customPath, extraEnv = {}) {
+  const normalizedPath = normalizePathOverride(customPath);
   return runSubprocess(process.execPath, [statusScriptPath], {
     env: {
-      PATH: customPath,
+      PATH: normalizedPath,
       ...extraEnv,
     },
     description: 'changeset-status-ci command',
@@ -24,9 +25,10 @@ function runStatusScript(customPath, extraEnv = {}) {
 }
 
 function runStatusScriptWithArgs(customPath, args, extraEnv = {}) {
+  const normalizedPath = normalizePathOverride(customPath);
   return runSubprocess(process.execPath, [statusScriptPath, ...args], {
     env: {
-      PATH: customPath,
+      PATH: normalizedPath,
       ...extraEnv,
     },
     description: 'changeset-status-ci command',
@@ -35,6 +37,20 @@ function runStatusScriptWithArgs(customPath, args, extraEnv = {}) {
 
 function createNodeOnlyPath() {
   return path.dirname(process.execPath);
+}
+
+function normalizePathOverride(customPath) {
+  if (path.delimiter !== ';') {
+    return customPath;
+  }
+
+  const existingPath = process.env.PATH ?? '';
+  const legacySuffix = existingPath.length > 0 ? `:${existingPath}` : '';
+  if (!legacySuffix || !customPath.endsWith(legacySuffix)) {
+    return customPath;
+  }
+
+  return `${customPath.slice(0, -legacySuffix.length)}${path.delimiter}${existingPath}`;
 }
 
 function writeFakeChangeset(tempDirectory, body) {

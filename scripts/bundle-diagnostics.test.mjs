@@ -35,9 +35,14 @@ function runBundlerCommand(cwd, args, env = {}) {
 }
 
 function runBundlerCommandRaw(cwd, args, env = {}) {
+  const normalizedEnv = { ...env };
+  if (typeof normalizedEnv.PATH === 'string') {
+    normalizedEnv.PATH = normalizePathOverride(normalizedEnv.PATH);
+  }
+
   return runSubprocess(process.execPath, [bundlerScriptPath, ...args], {
     cwd,
-    env,
+    env: normalizedEnv,
     description: 'bundle-diagnostics command',
   });
 }
@@ -76,6 +81,20 @@ function readArchiveEntry(cwd, archivePath, entryPath) {
   }
 
   return result.stdout;
+}
+
+function normalizePathOverride(customPath) {
+  if (path.delimiter !== ';') {
+    return customPath;
+  }
+
+  const existingPath = process.env.PATH ?? '';
+  const legacySuffix = existingPath.length > 0 ? `:${existingPath}` : '';
+  if (!legacySuffix || !customPath.endsWith(legacySuffix)) {
+    return customPath;
+  }
+
+  return `${customPath.slice(0, -legacySuffix.length)}${path.delimiter}${existingPath}`;
 }
 
 function writeDelayedFakeTar(tempDirectory, delaySeconds = '0.1') {

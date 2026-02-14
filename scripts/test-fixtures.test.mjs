@@ -10,6 +10,10 @@ import { UNPRINTABLE_VALUE } from './test-helpers.mjs';
 
 installTempDirectoryCleanup(fs);
 
+function prependPath(pathEntry) {
+  return [pathEntry, process.env.PATH ?? ''].filter(value => value.length > 0).join(path.delimiter);
+}
+
 test('writeFakeExecutable creates runnable command in fake-bin directory', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-'));
   const fakeBinDirectory = writeFakeExecutable(
@@ -24,7 +28,7 @@ echo 'fixture command executed'
     encoding: 'utf8',
     env: {
       ...process.env,
-      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      PATH: prependPath(fakeBinDirectory),
     },
   });
 
@@ -53,7 +57,7 @@ echo 'fixture command two'
 
   const envWithFakeBinPath = {
     ...process.env,
-    PATH: `${secondFakeBinDirectory}:${process.env.PATH ?? ''}`,
+    PATH: prependPath(secondFakeBinDirectory),
   };
   const firstResult = spawnSync('fixture-cmd-one', [], { encoding: 'utf8', env: envWithFakeBinPath });
   const secondResult = spawnSync('fixture-cmd-two', [], { encoding: 'utf8', env: envWithFakeBinPath });

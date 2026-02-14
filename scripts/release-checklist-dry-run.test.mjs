@@ -18,6 +18,10 @@ function createTempWorkspace() {
   return fs.realpathSync(tempDirectory);
 }
 
+function prependPath(pathEntry) {
+  return [pathEntry, process.env.PATH ?? ''].filter(value => value.length > 0).join(path.delimiter);
+}
+
 test('parseReleaseChecklistArgs supports timeout and help flags', () => {
   assert.deepEqual(parseReleaseChecklistArgs([]), { showHelp: false, timeoutMsOverride: '' });
   assert.deepEqual(parseReleaseChecklistArgs(['--timeout-ms', '5000']), { showHelp: false, timeoutMsOverride: '5000' });
@@ -62,7 +66,7 @@ exit 0
   const result = runSubprocess(process.execPath, [RELEASE_CHECKLIST_SCRIPT_PATH], {
     cwd: tempDirectory,
     env: {
-      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      PATH: prependPath(fakeBinDirectory),
       RELEASE_DRY_RUN_LOG: executionLogPath,
     },
     description: 'release-checklist dry-run success fixture',
@@ -102,7 +106,7 @@ exit 0
   const result = runSubprocess(process.execPath, [RELEASE_CHECKLIST_SCRIPT_PATH], {
     cwd: tempDirectory,
     env: {
-      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      PATH: prependPath(fakeBinDirectory),
       RELEASE_DRY_RUN_LOG: executionLogPath,
     },
     description: 'release-checklist dry-run failure fixture',
@@ -136,7 +140,7 @@ exit 0
   const result = runSubprocess(process.execPath, [RELEASE_CHECKLIST_SCRIPT_PATH], {
     cwd: tempDirectory,
     env: {
-      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      PATH: prependPath(fakeBinDirectory),
       RELEASE_CHECKLIST_NPM_TIMEOUT_MS: '50',
     },
     description: 'release-checklist dry-run timeout fixture',
