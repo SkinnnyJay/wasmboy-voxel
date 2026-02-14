@@ -779,3 +779,4 @@
 - 2026-02-14: Re-ran strict CI alias command (`npm run ci:local:strict`) to reconfirm the full no-build strict quality chain (automation, stack smoke/lint/typecheck/test, integration/core/performance/security) remains green with a clean working tree.
 - 2026-02-14: Re-ran integration no-build CI aggregate (`npm run test:integration:nobuild:ci`) to reconfirm lib/voxel/headless/compat/memory/tick/baseline integration suites plus cleanup-wrapped headless artifact hygiene remain green with a clean working tree.
 - 2026-02-14: Re-ran core no-build CI aggregate (`npm run test:core:nobuild:ci`) to reconfirm save-state/isolation/timer/interrupt/audio/memory/graphics regression suites remain green with a clean working tree.
+- 2026-02-14: Re-ran full build-inclusive aggregate command (`npm run test:all`) to reconfirm end-to-end build + strict no-build quality composition remains green with zero vulnerabilities and a clean working tree.
