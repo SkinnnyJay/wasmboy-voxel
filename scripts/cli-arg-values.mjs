@@ -26,7 +26,7 @@ function assertValidRequiredArgumentValueOptions(options) {
     throw new Error('Invalid required argument options.');
   }
 
-  if (typeof options.flagName !== 'string' || options.flagName.trim().length === 0) {
+  if (typeof options.flagName !== 'string' || options.flagName.trim().length === 0 || options.flagName !== options.flagName.trim()) {
     throw new Error(`Invalid flag name: ${formatErrorValue(options.flagName)}`);
   }
 

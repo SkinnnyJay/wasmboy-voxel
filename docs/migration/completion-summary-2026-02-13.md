@@ -360,6 +360,7 @@ Workflow hardening applied:
 - changeset-status parser now rejects malformed inline timeout forms with double equals (`--timeout-ms==...`) at parse time, with explicit usage-guidance regression coverage
 - timeout options-container validation coverage now includes unprintable non-plain object fixtures (Date instances with throwing `toString`) across direct and composed top-level/env/cli container guards
 - changeset-status spawn failures now classify missing-command (`ENOENT`) cases into deterministic “changeset command was not found in PATH” diagnostics, replacing generic execution-failure output for missing-binary scenarios
+- shared required-argument option validation now rejects whitespace-padded `flagName` values, with validate/read helper regression coverage to lock canonical flag-label semantics
 
 ## Security posture at completion
 

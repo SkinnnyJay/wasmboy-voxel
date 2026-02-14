@@ -462,3 +462,4 @@
 - 2026-02-13: Hardened `changeset-status-ci` inline-timeout argument parsing by rejecting malformed double-equals forms (`--timeout-ms==...`) with explicit parse-time diagnostics, aligning timeout parser semantics with other automation scripts.
 - 2026-02-13: Expanded timeout options-container hardening coverage with unprintable non-plain object fixtures (Date instances with throwing `toString`) across direct env parsing and composed top-level/env/cli option-container validation paths.
 - 2026-02-13: Hardened `changeset-status-ci` spawn error classification by mapping `ENOENT` failures to deterministic “changeset command was not found in PATH” diagnostics, replacing generic execution-failure messaging for missing-binary scenarios.
+- 2026-02-13: Hardened shared required-argument option validation by rejecting whitespace-padded `flagName` values (`flagName !== flagName.trim()`), adding regression coverage for both validate/read helper entrypoints.

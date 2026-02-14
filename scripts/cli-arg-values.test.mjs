@@ -149,6 +149,18 @@ test('validateRequiredArgumentValue rejects empty flag names', () => {
   );
 });
 
+test('validateRequiredArgumentValue rejects whitespace-padded flag names', () => {
+  assert.throws(
+    () =>
+      validateRequiredArgumentValue('value', {
+        flagName: ' --output ',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid flag name:\s+--output\s+/u,
+  );
+});
+
 test('validateRequiredArgumentValue rejects null flag names', () => {
   assert.throws(
     () =>
@@ -908,6 +920,18 @@ test('readRequiredArgumentValue rejects numeric flag names', () => {
         allowDoubleDashValue: false,
       }),
     /Invalid flag name: 1234/u,
+  );
+});
+
+test('readRequiredArgumentValue rejects whitespace-padded flag names', () => {
+  assert.throws(
+    () =>
+      readRequiredArgumentValue(['--timeout-ms', '50'], 0, {
+        flagName: ' --timeout-ms ',
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+      }),
+    /Invalid flag name:\s+--timeout-ms\s+/u,
   );
 });
 
