@@ -434,6 +434,9 @@ npm run automation:check
 # Preview generated artifact cleanup targets without deleting files
 npm run clean:artifacts:precommit:dry-run
 
+# Show generated artifact guard usage/help
+node scripts/guard-generated-artifacts-precommit.mjs --help
+
 # Show helper usage/flags for diagnostics archive bundling
 node scripts/bundle-diagnostics.mjs --help
 # Optional: override tar timeout per invocation

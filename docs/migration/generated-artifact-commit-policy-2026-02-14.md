@@ -18,7 +18,7 @@ This protects the repo from accidental generated-output drift.
   (use `node scripts/clean-accidental-build-artifacts.mjs --dry-run` to inspect
   candidates without deleting).
 - `scripts/guard-generated-artifacts-precommit.mjs` blocks staged generated paths
-  and integration output artifacts.
+  and integration output artifacts (use `--help` for invocation/usage details).
 
 ## Intentional exception path
 

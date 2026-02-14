@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { findBlockedArtifactPaths, validateGeneratedArtifactStaging } from './guard-generated-artifacts-precommit.mjs';
+import {
+  findBlockedArtifactPaths,
+  parseGeneratedArtifactGuardArgs,
+  validateGeneratedArtifactStaging,
+} from './guard-generated-artifacts-precommit.mjs';
 
 test('findBlockedArtifactPaths flags staged dist and build paths', () => {
   const blockedPaths = findBlockedArtifactPaths(['dist/wasmboy.wasm.esm.js', 'build/assets/core.untouched.wasm', 'lib/index.js']);
@@ -83,4 +87,17 @@ test('validateGeneratedArtifactStaging supports explicit override for intentiona
 
   assert.equal(result.isValid, true);
   assert.deepEqual(result.blockedPaths, []);
+});
+
+test('parseGeneratedArtifactGuardArgs supports help flags', () => {
+  assert.deepEqual(parseGeneratedArtifactGuardArgs([]), { shouldPrintUsage: false });
+  assert.deepEqual(parseGeneratedArtifactGuardArgs(['--help']), { shouldPrintUsage: true });
+  assert.deepEqual(parseGeneratedArtifactGuardArgs(['-h']), { shouldPrintUsage: true });
+});
+
+test('parseGeneratedArtifactGuardArgs rejects unknown flags', () => {
+  assert.throws(
+    () => parseGeneratedArtifactGuardArgs(['--dry-run']),
+    /\[guard:generated-artifacts\] Unknown argument "--dry-run"\. Supported flags: --help\./u,
+  );
 });

@@ -46,6 +46,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C023 | Artifact policy source tests    | Added direct unit coverage for shared artifact-policy helper predicates and path normalization to lock generated-artifact classification behavior independent of wrapper scripts.                            | S4                | `@automation-tooling` |
 | TD-C024 | Cleanup dry-run ergonomics      | Added `clean-accidental-build-artifacts` CLI flag parsing (`--dry-run`, `--help`) with dry-run candidate reporting and parser regressions to support safer local artifact policy verification workflows.     | S4                | `@automation-tooling` |
 | TD-C025 | Cleanup dry-run discoverability | Added package script and contract coverage for `clean:artifacts:precommit:dry-run` plus README/policy docs so dry-run artifact inspection stays visible and regression-checked across contributor workflows. | S4                | `@automation-tooling` |
+| TD-C026 | Guard CLI usability             | Added generated-artifact guard CLI parser/help contract (`--help`, unknown-flag rejection) with regression tests so manual pre-commit guard invocation has explicit, validated usage behavior.               | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

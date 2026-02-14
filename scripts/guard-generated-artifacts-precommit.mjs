@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { normalizeArtifactPath, shouldBlockStagedArtifactPath } from './artifact-policy.mjs';
 const ALLOW_OVERRIDE_ENV_NAME = 'WASMBOY_ALLOW_GENERATED_EDITS';
+const SCRIPT_USAGE = `Usage: node scripts/guard-generated-artifacts-precommit.mjs [--help]\n\nOptions:\n  --help, -h  Show this usage message.\n`;
 
 /**
  * @param {string[]} stagedPaths
@@ -57,6 +58,21 @@ function readStagedPathsFromGit() {
     .filter(line => line.length > 0);
 }
 
+/**
+ * @param {string[]} argv
+ */
+export function parseGeneratedArtifactGuardArgs(argv) {
+  for (const token of argv) {
+    if (token === '--help' || token === '-h') {
+      return { shouldPrintUsage: true };
+    }
+
+    throw new Error(`[guard:generated-artifacts] Unknown argument "${token}". Supported flags: --help.`);
+  }
+
+  return { shouldPrintUsage: false };
+}
+
 function runPrecommitGuard() {
   const allowGeneratedEdits = process.env[ALLOW_OVERRIDE_ENV_NAME] === '1';
   const stagedPaths = readStagedPathsFromGit();
@@ -85,7 +101,13 @@ const shouldRunAsScript = invokedFilePath === currentFilePath;
 
 if (shouldRunAsScript) {
   try {
-    runPrecommitGuard();
+    const args = parseGeneratedArtifactGuardArgs(process.argv.slice(2));
+    if (args.shouldPrintUsage) {
+      process.stdout.write(SCRIPT_USAGE);
+      process.exitCode = 0;
+    } else {
+      runPrecommitGuard();
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown generated-artifact guard error';
     process.stderr.write(`[guard:generated-artifacts] ${message}\n`);
