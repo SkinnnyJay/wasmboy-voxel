@@ -8,78 +8,26 @@
  * tilemaps, and PPU registers directly from WASM memory.
  */
 import { WasmBoy as BaseWasmBoy } from './dist/wasmboy.wasm.esm.js';
+type ApiMemorySection = import('./packages/api/src/index.js').MemorySection;
+type ApiPpuSnapshot = import('./packages/api/src/index.js').PpuSnapshot;
+type ApiRegisters = import('./packages/api/src/index.js').Registers;
+type ForkWasmBoyApi = import('./dist/wasmboy.wasm.esm.js').WasmBoyApi;
+type ForkWasmBoyConfig = import('./dist/wasmboy.wasm.esm.js').WasmBoyConfig;
+type ForkWasmBoyJoypadState = import('./dist/wasmboy.wasm.esm.js').WasmBoyJoypadState;
 
 /** Base API type for the vendored WasmBoy fork (mirrors wasm-fork.d.ts). */
-export interface WasmBoyApi {
-  config(options?: WasmBoyConfig, canvasElement?: HTMLCanvasElement): Promise<void>;
-  getConfig(): WasmBoyConfig;
-  setCanvas(canvasElement: HTMLCanvasElement): Promise<void>;
-  getCanvas(): HTMLCanvasElement | undefined;
-  addBootROM(type: string, file: ArrayBuffer): Promise<void>;
-  getBootROMs(): Promise<unknown[]>;
-  loadROM(rom: ArrayBuffer | Uint8Array): Promise<void>;
-  play(): Promise<void>;
-  pause(): Promise<void>;
-  reset(options?: WasmBoyConfig): Promise<void>;
-  addPlugin(plugin: unknown): void;
-  isPlaying(): boolean;
-  isPaused(): boolean;
-  isReady(): boolean;
-  isLoadedAndStarted(): boolean;
-  getVersion(): string;
-  getSavedMemory(): Promise<unknown[]>;
-  saveLoadedCartridge(additionalInfo?: Record<string, unknown>): Promise<unknown>;
-  deleteSavedCartridge(cartridge: unknown): Promise<void>;
-  saveState(): Promise<unknown>;
-  getSaveStates(): Promise<unknown[]>;
-  loadState(state: unknown): Promise<void>;
-  deleteState(state: unknown): Promise<void>;
-  getFPS(): number;
-  setSpeed(speed: number): void;
-  isGBC(): Promise<boolean>;
-  enableDefaultJoypad(): void;
-  disableDefaultJoypad(): void;
-  setJoypadState(state: WasmBoyJoypadState): void;
-  resumeAudioContext(): void;
-  _getWasmMemorySection(start: number, end: number): Promise<Uint8Array>;
+export interface WasmBoyApi extends ForkWasmBoyApi {
   _getWasmMemoryBuffer?(): ArrayBuffer | null;
   _getWasmMemoryView?(offset: number, length: number): Uint8Array | null;
-  _setWasmMemorySection?(start: number, data: Uint8Array | ArrayBuffer): Promise<boolean>;
-  setWasmMemorySection?(start: number, data: Uint8Array | ArrayBuffer): Promise<boolean>;
-  _getWasmConstant(name: string): Promise<number>;
   _getPpuSnapshotBuffer?(): Promise<ArrayBuffer | null>;
   _parsePpuSnapshotBuffer?(buffer: ArrayBuffer): WasmBoyPpuSnapshot | null;
-  _runWasmExport(name: string, parameters?: readonly number[]): Promise<number>;
-  _getCartridgeRam?(): Promise<Uint8Array>;
-  getWRAM?(): Promise<Uint8Array>;
-  setWRAM?(payload: Uint8Array): Promise<void>;
-  getWorkRAM?(): Promise<Uint8Array>;
-  setWorkRAM?(payload: Uint8Array): Promise<void>;
-  writeRAM?(address: number, payload: Uint8Array): Promise<boolean>;
-  getFullMemory?(): Promise<Uint8Array>;
-  readMemory?(address: number, length: number): Promise<Uint8Array>;
 }
 
-export interface WasmBoyConfig {
-  headless?: boolean;
-  mainThread?: boolean;
-  disablePauseOnHidden?: boolean;
-  isAudioEnabled?: boolean;
-  isGbcEnabled?: boolean;
-  updateGraphicsCallback?: ((imageDataArray: Uint8ClampedArray) => void) | null;
+export interface WasmBoyConfig extends ForkWasmBoyConfig {
   [key: string]: unknown;
 }
 
-export interface WasmBoyJoypadState {
-  UP: boolean;
-  RIGHT: boolean;
-  DOWN: boolean;
-  LEFT: boolean;
-  A: boolean;
-  B: boolean;
-  SELECT: boolean;
-  START: boolean;
-}
+export type WasmBoyJoypadState = ForkWasmBoyJoypadState;
 
 /** WASM export for the base of the 64K Game Boy memory mirror (core/constants.ts). */
 const GAME_MEMORY_BASE_CONSTANT = 'DEBUG_GAMEBOY_MEMORY_LOCATION';
@@ -105,7 +53,7 @@ const LCDC_WINDOW_TILEMAP_SELECT_BIT = 0x40;
 
 const SUPPORT_CHECK_RETRY_DELAY_MS = 200;
 const SUPPORT_CHECK_MAX_RETRIES = 5;
-const CONTRACT_VERSION = 'v1';
+const CONTRACT_VERSION: ApiMemorySection['version'] = 'v1';
 const BYTE_MIN = 0;
 const BYTE_MAX = 0xff;
 
@@ -114,24 +62,12 @@ interface WasmBoyInternalSnapshotApi extends WasmBoyApi {
   _getWasmConstant(name: string): Promise<number>;
 }
 
-interface MemorySectionContractPayload {
-  version: 'v1';
-  start: number;
-  endExclusive: number;
+interface MemorySectionContractPayload extends Omit<ApiMemorySection, 'bytes'> {
   bytes: Uint8Array;
 }
 
-export interface WasmBoyPpuSnapshot {
-  registers: {
-    scx: number;
-    scy: number;
-    wx: number;
-    wy: number;
-    lcdc: number;
-    bgp: number;
-    obp0: number;
-    obp1: number;
-  };
+export interface WasmBoyPpuSnapshot extends Omit<ApiPpuSnapshot, 'version' | 'tileData' | 'bgTileMap' | 'windowTileMap' | 'oamData'> {
+  registers: ApiRegisters;
   tileData: Uint8Array;
   bgTileMap: Uint8Array;
   windowTileMap: Uint8Array;
