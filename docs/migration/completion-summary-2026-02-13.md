@@ -428,6 +428,7 @@ Workflow hardening applied:
 - core suite now includes divider-overflow boundary coverage for timers (`test/core/timer-overflow-boundary-test.cjs`), validating 16-bit DIV wrap behavior remains bounded and stable near overflow edges
 - core suite now includes interrupt-priority ordering regressions (`test/core/interrupt-priority-ordering-test.cjs`) that assert simultaneous pending flags are serviced in hardware-priority order (VBlank → LCD → Timer → Serial → Joypad)
 - core suite now includes serialization determinism coverage (`test/core/serialization-determinism-test.cjs`) asserting cartridge/gameboy/palette memory snapshots remain byte-stable across repeated save/load cycles
+- memory banking/write-trap control flow was audited for branch-heavy repeated checks (`docs/migration/core-memory-banking-branch-audit-2026-02-14.md`), including branch-density hotspots and low-risk refactor candidates for MBC flag caching and trap-path decomposition
 
 ## Security posture at completion
 
