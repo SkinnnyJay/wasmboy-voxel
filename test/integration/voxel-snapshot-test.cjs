@@ -5,7 +5,7 @@
  * after the emulator has run.
  */
 
-const WasmBoy = require('../../dist/wasmboy.wasm.cjs.cjs').WasmBoy;
+const WasmBoy = require('../load-wasmboy-runtime.cjs');
 const fs = require('fs');
 const assert = require('assert');
 

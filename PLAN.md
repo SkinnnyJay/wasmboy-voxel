@@ -13,122 +13,727 @@
 
 ## Tasks (0% → 100%)
 
-[ ] - Milestone 0: Baseline - Inventory public exports in `index.ts`
-[ ] - Milestone 0: Baseline - Inventory public exports in `voxel-wrapper.ts`
-[ ] - Milestone 0: Baseline - Inventory public exports in `lib/` entry points
-[ ] - Milestone 0: Baseline - List worker entry points and message schemas
-[ ] - Milestone 0: Baseline - Map current snapshot fields to memory sources
-[ ] - Milestone 0: Baseline - Document current null/undefined behaviors
-[ ] - Milestone 0: Baseline - List ROMs used by existing tests/demos
-[ ] - Milestone 0: Baseline - Capture baseline snapshot JSON for each ROM
-[ ] - Milestone 0: Baseline - Record baseline checksums for VRAM/OAM
-[ ] - Milestone 0: Baseline - Record baseline timing/accuracy metrics
-[ ] - Milestone 0: Baseline - Write initial contract table (function → payload)
+[x] - Milestone 0: Baseline - Inventory public exports in `index.ts` (see `docs/migration/milestone-0-baseline-api-inventory.md`)
+[x] - Milestone 0: Baseline - Inventory public exports in `voxel-wrapper.ts` (see `docs/migration/milestone-0-baseline-api-inventory.md`)
+[x] - Milestone 0: Baseline - Inventory public exports in `lib/` entry points (see `docs/migration/milestone-0-baseline-api-inventory.md`)
+[x] - Milestone 0: Baseline - List worker entry points and message schemas (see `docs/migration/milestone-0-baseline-api-inventory.md`)
+[x] - Milestone 0: Baseline - Map current snapshot fields to memory sources (see `docs/migration/milestone-0-baseline-api-inventory.md`)
+[x] - Milestone 0: Baseline - Document current null/undefined behaviors (see `docs/migration/milestone-0-baseline-api-inventory.md`)
+[x] - Milestone 0: Baseline - List ROMs used by existing tests/demos (see `docs/migration/milestone-0-baseline-api-inventory.md`)
+[x] - Milestone 0: Baseline - Capture baseline snapshot JSON for each ROM (available local ROMs; see `test/baseline/snapshots/*.snapshot.json`)
+[x] - Milestone 0: Baseline - Record baseline checksums for VRAM/OAM (see `test/baseline/snapshots/summary.json`)
+[x] - Milestone 0: Baseline - Record baseline timing/accuracy metrics (see `test/baseline/snapshots/summary.json`)
+[x] - Milestone 0: Baseline - Write initial contract table (function → payload) (see `docs/migration/milestone-0-baseline-api-inventory.md`)
 
-[ ] - Milestone 0.5: Repo Scaffolding - Decide workspace tool (pnpm vs turborepo)
-[ ] - Milestone 0.5: Repo Scaffolding - Add workspace config file(s)
-[ ] - Milestone 0.5: Repo Scaffolding - Add root `tsconfig.base.json` (strict)
-[ ] - Milestone 0.5: Repo Scaffolding - Add root TS project references
-[ ] - Milestone 0.5: Repo Scaffolding - Add root ESLint config (TS + React)
-[ ] - Milestone 0.5: Repo Scaffolding - Add root Prettier config for new packages
-[ ] - Milestone 0.5: Repo Scaffolding - Add `.editorconfig` for whitespace rules
-[ ] - Milestone 0.5: Repo Scaffolding - Add Node version pin (`.nvmrc` or `engines`)
-[ ] - Milestone 0.5: Repo Scaffolding - Add root scripts for new stack tasks
-[ ] - Milestone 0.5: Repo Scaffolding - Add `changeset` config (if publishing)
+[x] - Milestone 0.5: Repo Scaffolding - Decide workspace tool (pnpm vs turborepo) (see `docs/migration/milestone-0.5-scaffolding.md`)
+[x] - Milestone 0.5: Repo Scaffolding - Add workspace config file(s) (`pnpm-workspace.yaml`)
+[x] - Milestone 0.5: Repo Scaffolding - Add root `tsconfig.base.json` (strict)
+[x] - Milestone 0.5: Repo Scaffolding - Add root TS project references (`tsconfig.json`)
+[x] - Milestone 0.5: Repo Scaffolding - Add root ESLint config (TS + React) (`.eslintrc.cjs`)
+[x] - Milestone 0.5: Repo Scaffolding - Add root Prettier config for new packages (`.prettierrc` update)
+[x] - Milestone 0.5: Repo Scaffolding - Add `.editorconfig` for whitespace rules
+[x] - Milestone 0.5: Repo Scaffolding - Add Node version pin (`.nvmrc` or `engines`) (`.nvmrc`)
+[x] - Milestone 0.5: Repo Scaffolding - Add root scripts for new stack tasks (`package.json` scripts)
+[x] - Milestone 0.5: Repo Scaffolding - Add `changeset` config (if publishing) (`.changeset/config.json`)
 
-[ ] - Milestone 1: Contracts + Types - Create `packages/api` skeleton
-[ ] - Milestone 1: Contracts + Types - Add `contracts/v1` directory
-[ ] - Milestone 1: Contracts + Types - Define `PpuSnapshot` schema in Zod
-[ ] - Milestone 1: Contracts + Types - Define `Registers` schema in Zod
-[ ] - Milestone 1: Contracts + Types - Define `MemorySection` schema in Zod
-[ ] - Milestone 1: Contracts + Types - Define `DebugFrame` schema in Zod
-[ ] - Milestone 1: Contracts + Types - Add schema version metadata
-[ ] - Milestone 1: Contracts + Types - Export inferred TS types from schemas
-[ ] - Milestone 1: Contracts + Types - Add schema validation helper
-[ ] - Milestone 1: Contracts + Types - Add contract registry (map of versions)
-[ ] - Milestone 1: Contracts + Types - Document contract usage in README
+[x] - Milestone 1: Contracts + Types - Create `packages/api` skeleton
+[x] - Milestone 1: Contracts + Types - Add `contracts/v1` directory
+[x] - Milestone 1: Contracts + Types - Define `PpuSnapshot` schema in Zod
+[x] - Milestone 1: Contracts + Types - Define `Registers` schema in Zod
+[x] - Milestone 1: Contracts + Types - Define `MemorySection` schema in Zod
+[x] - Milestone 1: Contracts + Types - Define `DebugFrame` schema in Zod
+[x] - Milestone 1: Contracts + Types - Add schema version metadata
+[x] - Milestone 1: Contracts + Types - Export inferred TS types from schemas
+[x] - Milestone 1: Contracts + Types - Add schema validation helper
+[x] - Milestone 1: Contracts + Types - Add contract registry (map of versions)
+[x] - Milestone 1: Contracts + Types - Document contract usage in README
 
-[ ] - Milestone 2: Wrapper Integration - Identify all public wrapper entry points
-[ ] - Milestone 2: Wrapper Integration - Add contract gate for `getPpuSnapshot()`
-[ ] - Milestone 2: Wrapper Integration - Add contract gate for `getRegisters()`
-[ ] - Milestone 2: Wrapper Integration - Add contract gate for `getMemorySection()`
-[ ] - Milestone 2: Wrapper Integration - Add contract gate for debug events
-[ ] - Milestone 2: Wrapper Integration - Ensure `supportsPpuSnapshot()` guards
-[ ] - Milestone 2: Wrapper Integration - Keep null return on worker readiness
-[ ] - Milestone 2: Wrapper Integration - Add dev-only contract validation flag
-[ ] - Milestone 2: Wrapper Integration - Add `compat` wrapper for old API
+[x] - Milestone 2: Wrapper Integration - Identify all public wrapper entry points (see `docs/migration/milestone-2-wrapper-integration.md`)
+[x] - Milestone 2: Wrapper Integration - Add contract gate for `getPpuSnapshot()`
+[x] - Milestone 2: Wrapper Integration - Add contract gate for `getRegisters()`
+[x] - Milestone 2: Wrapper Integration - Add contract gate for `getMemorySection()`
+[x] - Milestone 2: Wrapper Integration - Add contract gate for debug events
+[x] - Milestone 2: Wrapper Integration - Ensure `supportsPpuSnapshot()` guards
+[x] - Milestone 2: Wrapper Integration - Keep null return on worker readiness
+[x] - Milestone 2: Wrapper Integration - Add dev-only contract validation flag
+[x] - Milestone 2: Wrapper Integration - Add `compat` wrapper for old API
 
-[ ] - Milestone 2.5: Build + Packaging - Add tsup/esbuild config for packages
-[ ] - Milestone 2.5: Build + Packaging - Configure ESM/CJS outputs + `types`
-[ ] - Milestone 2.5: Build + Packaging - Add `exports` maps for new packages
-[ ] - Milestone 2.5: Build + Packaging - Add `typecheck` script for packages
-[ ] - Milestone 2.5: Build + Packaging - Add `test` runner (vitest/jest)
-[ ] - Milestone 2.5: Build + Packaging - Add publish metadata (name/version/files)
-[ ] - Milestone 2.5: Build + Packaging - Add `sideEffects` metadata if needed
-[ ] - Milestone 2.5: Build + Packaging - Add `tsconfig.build.json` per package
+[x] - Milestone 2.5: Build + Packaging - Add tsup/esbuild config for packages (`packages/api/tsup.config.ts`)
+[x] - Milestone 2.5: Build + Packaging - Configure ESM/CJS outputs + `types` (`tsup` outputs + d.ts)
+[x] - Milestone 2.5: Build + Packaging - Add `exports` maps for new packages (`packages/api/package.json`)
+[x] - Milestone 2.5: Build + Packaging - Add `typecheck` script for packages
+[x] - Milestone 2.5: Build + Packaging - Add `test` runner (vitest/jest) (vitest)
+[x] - Milestone 2.5: Build + Packaging - Add publish metadata (name/version/files)
+[x] - Milestone 2.5: Build + Packaging - Add `sideEffects` metadata if needed
+[x] - Milestone 2.5: Build + Packaging - Add `tsconfig.build.json` per package
 
-[ ] - Milestone 3: Next.js Debugger - Create `apps/debugger` skeleton
-[ ] - Milestone 3: Next.js Debugger - Configure Next.js (app router)
-[ ] - Milestone 3: Next.js Debugger - Add global styles and layout
-[ ] - Milestone 3: Next.js Debugger - Add top-level routing and nav
-[ ] - Milestone 3: Next.js Debugger - Add error boundary and fallback UI
-[ ] - Milestone 3: Next.js Debugger - Configure WASM asset handling
-[ ] - Milestone 3: Next.js Debugger - Configure worker loading strategy
-[ ] - Milestone 3: Next.js Debugger - Add ROM loader UI
-[ ] - Milestone 3: Next.js Debugger - Add emulator view panel component
-[ ] - Milestone 3: Next.js Debugger - Add registers panel component
-[ ] - Milestone 3: Next.js Debugger - Add memory viewer component
-[ ] - Milestone 3: Next.js Debugger - Add snapshot timeline component
-[ ] - Milestone 3: Next.js Debugger - Add event log panel component
-[ ] - Milestone 3: Next.js Debugger - Wire typed client to `packages/api`
+[x] - Milestone 3: Next.js Debugger - Create `apps/debugger` skeleton
+[x] - Milestone 3: Next.js Debugger - Configure Next.js (app router)
+[x] - Milestone 3: Next.js Debugger - Add global styles and layout
+[x] - Milestone 3: Next.js Debugger - Add top-level routing and nav
+[x] - Milestone 3: Next.js Debugger - Add error boundary and fallback UI
+[x] - Milestone 3: Next.js Debugger - Configure WASM asset handling
+[x] - Milestone 3: Next.js Debugger - Configure worker loading strategy
+[x] - Milestone 3: Next.js Debugger - Add ROM loader UI
+[x] - Milestone 3: Next.js Debugger - Add emulator view panel component
+[x] - Milestone 3: Next.js Debugger - Add registers panel component
+[x] - Milestone 3: Next.js Debugger - Add memory viewer component
+[x] - Milestone 3: Next.js Debugger - Add snapshot timeline component
+[x] - Milestone 3: Next.js Debugger - Add event log panel component
+[x] - Milestone 3: Next.js Debugger - Wire typed client to `packages/api`
 
-[ ] - Milestone 4: State + Events - Add Zustand store for debugger state
-[ ] - Milestone 4: State + Events - Add selectors and actions for UI panels
-[ ] - Milestone 4: State + Events - Add frame metadata (timestamp/frame ID)
-[ ] - Milestone 4: State + Events - Add snapshot checksums
-[ ] - Milestone 4: State + Events - Add event stream for inputs/interrupts
-[ ] - Milestone 4: State + Events - Add read-only AI debug endpoint
-[ ] - Milestone 4: State + Events - Add JSONL export for events/snapshots
-[ ] - Milestone 4: State + Events - Add debug sandbox mode (no mutations)
-[ ] - Milestone 4: State + Events - Add rate limiting for snapshot capture
+[x] - Milestone 4: State + Events - Add Zustand store for debugger state
+[x] - Milestone 4: State + Events - Add selectors and actions for UI panels
+[x] - Milestone 4: State + Events - Add frame metadata (timestamp/frame ID)
+[x] - Milestone 4: State + Events - Add snapshot checksums
+[x] - Milestone 4: State + Events - Add event stream for inputs/interrupts
+[x] - Milestone 4: State + Events - Add read-only AI debug endpoint
+[x] - Milestone 4: State + Events - Add JSONL export for events/snapshots
+[x] - Milestone 4: State + Events - Add debug sandbox mode (no mutations)
+[x] - Milestone 4: State + Events - Add rate limiting for snapshot capture
 
-[ ] - Milestone 5: CLI - Create `packages/cli` skeleton
-[ ] - Milestone 5: CLI - Add CLI argument parser and command router
-[ ] - Milestone 5: CLI - Implement `run <rom>` command
-[ ] - Milestone 5: CLI - Implement `snapshot <rom>` command
-[ ] - Milestone 5: CLI - Implement `compare <baseline>` command
-[ ] - Milestone 5: CLI - Implement `contract-check` command
-[ ] - Milestone 5: CLI - Add structured logging output
-[ ] - Milestone 5: CLI - Add ROM path validation and safe errors
-[ ] - Milestone 5: CLI - Add `bin` entry + packaging metadata
-[ ] - Milestone 5: CLI - Add help text and usage examples
+[x] - Milestone 5: CLI - Create `packages/cli` skeleton
+[x] - Milestone 5: CLI - Add CLI argument parser and command router
+[x] - Milestone 5: CLI - Implement `run <rom>` command
+[x] - Milestone 5: CLI - Implement `snapshot <rom>` command
+[x] - Milestone 5: CLI - Implement `compare <baseline>` command
+[x] - Milestone 5: CLI - Implement `contract-check` command
+[x] - Milestone 5: CLI - Add structured logging output
+[x] - Milestone 5: CLI - Add ROM path validation and safe errors
+[x] - Milestone 5: CLI - Add `bin` entry + packaging metadata
+[x] - Milestone 5: CLI - Add help text and usage examples
 
-[ ] - Milestone 6: Regression Safety - Add golden snapshot tests
-[ ] - Milestone 6: Regression Safety - Add checksum regression tests
-[ ] - Milestone 6: Regression Safety - Add contract validation tests
-[ ] - Milestone 6: Regression Safety - Add headless CLI regression tests
-[ ] - Milestone 6: Regression Safety - Add Next.js debugger smoke tests
-[ ] - Milestone 6: Regression Safety - Add CI job for contract checks
-[ ] - Milestone 6: Regression Safety - Ensure existing test suites still pass
+[x] - Milestone 6: Regression Safety - Add golden snapshot tests
+[x] - Milestone 6: Regression Safety - Add checksum regression tests
+[x] - Milestone 6: Regression Safety - Add contract validation tests
+[x] - Milestone 6: Regression Safety - Add headless CLI regression tests
+[x] - Milestone 6: Regression Safety - Add Next.js debugger smoke tests
+[x] - Milestone 6: Regression Safety - Add CI job for contract checks
+[x] - Milestone 6: Regression Safety - Ensure existing test suites still pass
 
-[ ] - Milestone 7: Compatibility - Add deprecation warnings (dev-only)
-[ ] - Milestone 7: Compatibility - Add migration notes for `gameboy-remix`
-[ ] - Milestone 7: Compatibility - Add backwards-compat test coverage
-[ ] - Milestone 7: Compatibility - Document breaking change policy
+[x] - Milestone 7: Compatibility - Add deprecation warnings (dev-only)
+[x] - Milestone 7: Compatibility - Add migration notes for `gameboy-remix`
+[x] - Milestone 7: Compatibility - Add backwards-compat test coverage
+[x] - Milestone 7: Compatibility - Document breaking change policy
 
-[ ] - Milestone 8: Tooling - Add workspace scripts (`dev`, `build`, `test`)
-[ ] - Milestone 8: Tooling - Add lint + prettier for new packages
-[ ] - Milestone 8: Tooling - Add strict TS config per package
-[ ] - Milestone 8: Tooling - Add CI workflow for lint/typecheck/tests
-[ ] - Milestone 8: Tooling - Add build caching for workspace tasks
-[ ] - Milestone 8: Tooling - Add release automation (changesets)
+[x] - Milestone 8: Tooling - Add workspace scripts (`dev`, `build`, `test`)
+[x] - Milestone 8: Tooling - Add lint + prettier for new packages
+[x] - Milestone 8: Tooling - Add strict TS config per package
+[x] - Milestone 8: Tooling - Add CI workflow for lint/typecheck/tests
+[x] - Milestone 8: Tooling - Add build caching for workspace tasks
+[x] - Milestone 8: Tooling - Add release automation (changesets)
 
-[ ] - Milestone 9: Documentation - Update `MIGRATE_TO_TYPESCRIPT.md` progress links
-[ ] - Milestone 9: Documentation - Add `packages/api` usage guide
-[ ] - Milestone 9: Documentation - Add debugger usage guide
-[ ] - Milestone 9: Documentation - Add CLI usage guide
-[ ] - Milestone 9: Documentation - Add troubleshooting FAQ
+[x] - Milestone 9: Documentation - Update `MIGRATE_TO_TYPESCRIPT.md` progress links
+[x] - Milestone 9: Documentation - Add `packages/api` usage guide
+[x] - Milestone 9: Documentation - Add debugger usage guide
+[x] - Milestone 9: Documentation - Add CLI usage guide
+[x] - Milestone 9: Documentation - Add troubleshooting FAQ
 
-[ ] - Milestone 10: Finalization - Verify all tests + contract checks pass
-[ ] - Milestone 10: Finalization - Tag release and update changelog
-[ ] - Milestone 10: Finalization - Remove deprecated code after grace period
+[x] - Milestone 10: Finalization - Verify all tests + contract checks pass
+[x] - Milestone 10: Finalization - Tag release and update changelog
+[x] - Milestone 10: Finalization - Remove deprecated code after grace period
+
+### Imported Incomplete Backlog Tasks (next-100)
+
+[x] - task159 (S2 reliability): Backlog discovery candidate #59 — define validation command at implementation time.
+[x] - task160 (S2 reliability): Backlog discovery candidate #60 — define validation command at implementation time.
+[x] - task161 (S2 reliability): Backlog discovery candidate #61 — define validation command at implementation time.
+[x] - task162 (S2 reliability): Backlog discovery candidate #62 — define validation command at implementation time.
+[x] - task163 (S2 reliability): Backlog discovery candidate #63 — define validation command at implementation time.
+[x] - task164 (S2 reliability): Backlog discovery candidate #64 — define validation command at implementation time.
+[x] - task165 (S2 reliability): Backlog discovery candidate #65 — define validation command at implementation time.
+[x] - task166 (S2 reliability): Backlog discovery candidate #66 — define validation command at implementation time.
+[x] - task167 (S2 reliability): Backlog discovery candidate #67 — define validation command at implementation time.
+[x] - task168 (S2 reliability): Backlog discovery candidate #68 — define validation command at implementation time.
+[x] - task169 (S2 reliability): Backlog discovery candidate #69 — define validation command at implementation time.
+[x] - task170 (S2 reliability): Backlog discovery candidate #70 — define validation command at implementation time.
+[x] - task171 (S2 reliability): Backlog discovery candidate #71 — define validation command at implementation time.
+[x] - task172 (S2 reliability): Backlog discovery candidate #72 — define validation command at implementation time.
+[x] - task173 (S2 reliability): Backlog discovery candidate #73 — define validation command at implementation time.
+[x] - task174 (S2 reliability): Backlog discovery candidate #74 — define validation command at implementation time.
+[x] - task175 (S2 reliability): Backlog discovery candidate #75 — define validation command at implementation time.
+[x] - task176 (S2 reliability): Backlog discovery candidate #76 — define validation command at implementation time.
+[x] - task177 (S2 reliability): Backlog discovery candidate #77 — define validation command at implementation time.
+[x] - task178 (S2 reliability): Backlog discovery candidate #78 — define validation command at implementation time.
+[x] - task179 (S2 reliability): Backlog discovery candidate #79 — define validation command at implementation time.
+[x] - task180 (S2 reliability): Backlog discovery candidate #80 — define validation command at implementation time.
+[x] - task181 (S2 reliability): Backlog discovery candidate #81 — define validation command at implementation time.
+[ ] - task182 (S2 reliability): Backlog discovery candidate #82 — define validation command at implementation time.
+[ ] - task183 (S2 reliability): Backlog discovery candidate #83 — define validation command at implementation time.
+[ ] - task184 (S2 reliability): Backlog discovery candidate #84 — define validation command at implementation time.
+[ ] - task185 (S2 reliability): Backlog discovery candidate #85 — define validation command at implementation time.
+[ ] - task186 (S2 reliability): Backlog discovery candidate #86 — define validation command at implementation time.
+[ ] - task187 (S2 reliability): Backlog discovery candidate #87 — define validation command at implementation time.
+[ ] - task188 (S2 reliability): Backlog discovery candidate #88 — define validation command at implementation time.
+[ ] - task189 (S2 reliability): Backlog discovery candidate #89 — define validation command at implementation time.
+[ ] - task190 (S2 reliability): Backlog discovery candidate #90 — define validation command at implementation time.
+[ ] - task191 (S2 reliability): Backlog discovery candidate #91 — define validation command at implementation time.
+[ ] - task192 (S2 reliability): Backlog discovery candidate #92 — define validation command at implementation time.
+[ ] - task193 (S2 reliability): Backlog discovery candidate #93 — define validation command at implementation time.
+[ ] - task194 (S2 reliability): Backlog discovery candidate #94 — define validation command at implementation time.
+[ ] - task195 (S2 reliability): Backlog discovery candidate #95 — define validation command at implementation time.
+[ ] - task196 (S2 reliability): Backlog discovery candidate #96 — define validation command at implementation time.
+[ ] - task197 (S2 reliability): Backlog discovery candidate #97 — define validation command at implementation time.
+[ ] - task198 (S2 reliability): Backlog discovery candidate #98 — define validation command at implementation time.
+[ ] - task199 (S2 reliability): Backlog discovery candidate #99 — define validation command at implementation time.
+[ ] - task200 (S2 reliability): Backlog discovery candidate #100 — define validation command at implementation time.
+
+### Critical Simplification + Stability Queue (50 new items, severity ordered)
+
+#### S1 Critical
+
+[ ] - S1-001 (core-timing): Fix unresolved LCD cycle timing TODOs in `core/graphics/graphics.ts` (clock-cycle constants at scanline transitions).
+[ ] - S1-002 (core-timing): Root-cause and fix the explicit “Need to fix graphics timing” branch in `core/graphics/graphics.ts` to prevent frame drift.
+[ ] - S1-003 (core-render-race): Refactor scanline pixel writes in `core/graphics/graphics.ts` to avoid mid-scanline state mutation hazards.
+[ ] - S1-004 (core-gbc): Implement missing GBC-specific rendering path flagged in `core/graphics/graphics.ts`.
+[ ] - S1-005 (core-cache-correctness): Fix scanline-0 tile cache exclusion in `core/graphics/backgroundWindow.ts` without regressing first-line rendering.
+[ ] - S1-006 (core-sprite-correctness): Fix sprite X overflow bug for values `< 8` documented in `core/graphics/sprites.ts`.
+[ ] - S1-007 (core-sprite-priority): Implement missing Pandocs sprite behavior in `core/graphics/sprites.ts` and validate against known ROMs.
+[ ] - S1-008 (core-interrupts): Investigate and fix interrupt behavior regression called out for Pokémon Yellow / Link’s Awakening in `core/interrupts/interrupts.ts`.
+[ ] - S1-009 (core-timer-state): Complete timer save-state coverage for new timer properties in `core/timers/timers.ts`.
+[ ] - S1-010 (core-timer-throughput): Replace TODO batch timer path in `core/timers/timers.ts` with deterministic bounded-cost processing.
+[ ] - S1-011 (core-audio-dmg): Implement DMG-specific wave channel behavior in `core/sound/channel3.ts`.
+[ ] - S1-012 (core-audio-double-speed): Validate/fix channel 1 double-speed timing in `core/sound/channel1.ts`.
+[ ] - S1-013 (core-audio-double-speed): Validate/fix channel 2 double-speed timing in `core/sound/channel2.ts`.
+[ ] - S1-014 (core-audio-double-speed): Validate/fix channel 3 double-speed timing in `core/sound/channel3.ts`.
+[ ] - S1-015 (core-audio-cycle-loop): Remove unbounded cycle-consumption risk in `core/sound/channel4.ts` TODO path.
+[ ] - S1-016 (core-memory-banking): Fix uncertain MBC5 high ROM bank handling in `core/memory/banking.ts`.
+[ ] - S1-017 (core-memory-rtc): Implement missing MBC3 RTC register select path in `core/memory/banking.ts`.
+[ ] - S1-018 (core-memory-rtc): Implement missing MBC3 clock latch handling in `core/memory/banking.ts`.
+[ ] - S1-019 (core-serial): Complete incomplete serial transport behavior in `core/serial/serial.ts` and remove forced-success fallback.
+[ ] - S1-020 (core-bootrom): Close Boot ROM correctness gaps in `core/execute.ts` and `core/core.ts` to avoid startup state divergence.
+
+#### S2 High
+
+[ ] - S2-001 (core-sound-bounds): Add strict sound read/write bounds protections for TODO paths in `core/memory/readTraps.ts` and `core/memory/writeTraps.ts`.
+[ ] - S2-002 (core-audio-registers): Verify/fix wave channel sample buffer TODO path in `core/sound/registers.ts`.
+[ ] - S2-003 (core-audio-mix): Implement unresolved VIN mixing and read behavior TODOs in `core/sound/sound.ts`.
+[ ] - S2-004 (core-palette-consistency): Normalize palette conversion constants/rounding in `core/graphics/palette.ts` to remove color drift.
+[ ] - S2-005 (debug-render-perf): Replace tile-debug pixel-by-pixel rendering TODO path in `core/debug/debug-graphics.ts` with tile-batched rendering.
+[ ] - S2-006 (wrapper-memory): Audit snapshot/register acquisition for avoidable allocations and retained buffers in `voxel-wrapper.ts`.
+[ ] - S2-007 (debugger-worker-leak): Add long-run worker lifecycle soak test to detect event-listener or message-queue leaks in debugger worker restart flows.
+[ ] - S2-008 (debugger-large-data): Add capped windowing + disposal policy for large memory/snapshot UI datasets to prevent browser heap growth.
+[ ] - S2-009 (automation-temp-cleanup): Ensure all script test temp repos/directories are cleaned deterministically after failures to avoid disk bloat.
+[ ] - S2-010 (automation-subprocess): Standardize subprocess timeout/error handling to prevent hung child process leaks in script test harnesses.
+[ ] - S2-011 (cross-platform-win): Add Windows CI lane for automation scripts to catch path separator, reserved-name, and shell invocation regressions.
+[ ] - S2-012 (cross-platform-macos): Add macOS CI lane for automation scripts to catch case-insensitive filesystem/path canonicalization regressions.
+[ ] - S2-013 (cross-platform-linux): Add Linux distro variance smoke lane (glibc baseline + modern image) for script portability.
+[ ] - S2-014 (cross-platform-tar): Replace hard dependency on external `tar` in diagnostics bundling with a Node-native fallback for Windows portability.
+[ ] - S2-015 (cross-platform-signals): Verify subprocess termination behavior on Windows where `SIGTERM` semantics differ and add fallback shutdown strategy.
+[ ] - S2-016 (cross-platform-git-paths): Harden staged-path normalization for mixed slash/backslash and drive-letter forms in artifact guards.
+[ ] - S2-017 (cross-platform-crlf): Add CRLF/UTF-16 edge-case contract tests for CLI parser scripts and diagnostics bundling.
+[ ] - S2-018 (cross-platform-shell): Remove shell-quoting assumptions in npm script wrappers for paths containing spaces/special characters.
+[ ] - S2-019 (cross-platform-case): Add case-collision guardrails for generated artifact classification on macOS/Windows case-insensitive filesystems.
+[ ] - S2-020 (cross-platform-tmpdir): Add long-path and reserved-device-name stress tests for temp fixture creation behavior on Windows.
+[ ] - S2-021 (nutjs-baseline): Stand up NutJS-based cross-platform UI smoke harness for debugger flows (Linux/macOS/Windows).
+[ ] - S2-022 (nutjs-input-map): Normalize NutJS keyboard scan-code mappings across OS layouts to remove flaky shortcut/input behavior.
+[ ] - S2-023 (nutjs-display-scale): Add DPI-aware coordinate transforms for NutJS pointer actions on Windows/macOS high-DPI displays.
+[ ] - S2-024 (nutjs-linux-display): Add X11/Wayland detection and stable fallback strategy for NutJS on Linux runners.
+[ ] - S2-025 (nutjs-permissions): Add proactive accessibility permission checks/retry hints for NutJS on macOS.
+[ ] - S2-026 (nutjs-image-match): Calibrate NutJS image matching thresholds per OS/compositor to reduce false negatives.
+[ ] - S2-027 (nutjs-memory): Add leak guard for repeated NutJS screenshots/template matching in long UI test runs.
+[ ] - S2-028 (nutjs-process-cleanup): Ensure NutJS child processes/resources are always disposed on failures/timeouts.
+[ ] - S2-029 (nutjs-artifacts): Standardize deterministic screenshot/video artifact naming and retention for NutJS triage outputs.
+[ ] - S2-030 (nutjs-simplification): Create a small shared NutJS action DSL to simplify test flows and remove duplicated wait/retry boilerplate.
+
+## Execution Log
+
+- 2026-02-13: Completed M0-01, M0-02, M0-03 by creating baseline API inventory doc. Reason: lock down current public contract surfaces before migration refactors.
+- 2026-02-13: Completed M0-04 by documenting worker entry points and message payload schemas. Reason: preserve worker protocol compatibility during refactors.
+- 2026-02-13: Completed M0-05 and M0-06 by documenting snapshot memory mapping and null/undefined baseline behavior. Reason: prevent accidental behavior drift in migration.
+- 2026-02-13: Completed M0-07 by cataloging ROMs used in tests/demos (including optional fixtures and derived accuracy identifiers). Reason: establish reproducible baseline ROM coverage.
+- 2026-02-13: Completed M0-08, M0-09, M0-10 by adding a snapshot-capture script and committed JSON/checksum/timing artifacts for local test ROMs. Reason: create executable baseline evidence for migration regression checks.
+- 2026-02-13: Completed M0-11 with initial function-to-payload contract table for snapshot/debug APIs. Reason: establish explicit migration contract targets before adding Zod schemas.
+- 2026-02-13: Completed all M0.5 scaffolding tasks (workspace, strict TS base, lint/format/editor configs, node pin, stack scripts, changeset config). Reason: establish monorepo-ready foundations before adding new packages.
+- 2026-02-13: Completed all M1 tasks by creating `packages/api` + `contracts/v1`, implementing Zod schemas/metadata/registry/validation helpers, and adding contract tests plus usage docs. Reason: establish typed runtime contracts before wrapper integration.
+- 2026-02-13: Completed all M2 tasks by adding snapshot/register/memory contract gates, debug event validation, explicit support guards, dev-toggle validation controls, and `WasmBoyCompat` export. Reason: preserve compatibility while introducing contract-first wrapper behavior.
+- 2026-02-13: Completed all M2.5 tasks by moving `packages/api` to tsup (ESM/CJS+d.ts), adding exports/publish metadata/sideEffects, and switching tests to vitest. Reason: make new package production-consumable and verifiable.
+- 2026-02-13: Completed all M3 tasks by scaffolding `apps/debugger` (Next app-router), adding layout/routes/error UI/panel components, wiring typed contract client usage, and validating with `next build`.
+- 2026-02-13: Completed all M4 tasks by introducing a Zustand debugger store with selectors/actions, frame metadata + checksums, input/interrupt event stream, JSONL export helper, sandbox mode, rate-limited snapshot capture, and a read-only AI debug API route.
+- 2026-02-13: Completed all M5 tasks by creating `packages/cli` with command routing (`run/snapshot/compare/contract-check`), structured JSON logging, safe path validation, bin metadata, help text/examples, and vitest coverage.
+- 2026-02-13: Completed all M6 tasks by adding baseline checksum/golden regression tests, debugger smoke tests, expanded CLI regression coverage, a CI contract-check workflow, and by re-running integration/core suites to confirm pass status.
+- 2026-02-13: Completed all M7 tasks by adding dev-only deprecation warnings, publishing migration/breaking-change docs for `gameboy-remix`, and adding explicit compatibility API integration tests.
+- 2026-02-13: Completed all M8 tasks by enabling workspace lint/typecheck/test scripts across packages/apps, wiring Prettier checks, and adding CI/release workflows with cache + changesets automation.
+- 2026-02-13: Completed all M9 tasks by adding migration progress links and dedicated usage/troubleshooting guides for API package, debugger app, and CLI workflows.
+- 2026-02-13: Completed all M10 tasks by running final build/lint/typecheck/tests + integration/core/contract checks, updating changelog release notes, and removing deprecated `.cjs.cjs` test runtime references in favor of the unified loader helper.
+- 2026-02-13: Added release changeset metadata for `@wasmboy/api` and `@wasmboy/cli` (`.changeset/strong-llamas-juggle.md`) so release automation has explicit version intent for the migration rollout.
+- 2026-02-13: Audited legacy test dependency surface and replaced `pngjs-image` + `request` usage with direct `pngjs` integration in test helpers, reducing audit pressure while preserving integration/core snapshot behavior.
+- 2026-02-13: Continued dependency hardening by removing direct `np` dependency, switching deploy publish script to `npx np`, and pinning mocha to `11.3.0`, reducing `npm audit --omit=optional` findings from 13 to 5 while keeping all workspace/integration/core checks passing.
+- 2026-02-13: Added PyBoy-rigor headless throughput baseline test (`test:performance:throughput`) with JSON-configured FPS threshold and validated runtime output (~834 FPS locally).
+- 2026-02-13: Added core multi-instance isolation regression (`test:core:isolation`) and wired it into `test:core` / `test:core:nobuild` to enforce no shared mutable memory between parallel core instances.
+- 2026-02-13: Added memory view bounds regression coverage (`test:integration:memorybounds`) and integrated it into `test:integration` pipelines, asserting valid range reads and explicit out-of-bounds error behavior.
+- 2026-02-13: Added CLI/error-taxonomy rigor by introducing typed CLI error codes (`InvalidInput`, `InvalidOperation`, `OutOfBounds`) with regression tests and entrypoint-safe execution export for direct command-router testing.
+- 2026-02-13: Added PyBoy-rigor tick/frame equivalence/input-delay regression coverage (`test:integration:tick`) to validate tick contract input checks, `tick(1)xN` vs `tick(N)` determinism, and queued delayed input scheduling behavior.
+- 2026-02-13: Applied `npm audit fix --omit=optional --legacy-peer-deps` to pick up safe transitive updates; post-change audit moved to 4 high findings (from 5 total), with remaining issues isolated to legacy webpack-era minifier dependency chains.
+- 2026-02-13: Completed Phase 8 dependency audit hardening by removing unused vulnerable `uglifyjs-webpack-plugin`, rerunning full workspace/integration/core suites, and reaching `npm audit --omit=optional` = 0 vulnerabilities.
+- 2026-02-13: Added consolidated root quality-gate scripts (`test:all`, `test:all:nobuild`, `audit:check`) and updated CI to run the unified no-build quality suite end-to-end.
+- 2026-02-13: Added migration completion summary doc capturing final validation script, audit posture, and release markers for quick downstream reference.
+- 2026-02-13: Added scheduled nightly regression workflow to run `test:all:nobuild` on CI daily (plus manual trigger) for ongoing post-migration drift detection.
+- 2026-02-13: Updated contract-check CI workflow to reuse the unified `test:all:nobuild` quality gate and include `changeset:status`, reducing duplicate workflow logic while enforcing release metadata checks.
+- 2026-02-13: Extended migration completion summary with CI mapping details, documenting how push/PR, contract-check, and nightly workflows share the same consolidated quality gate.
+- 2026-02-13: Added `ci:local` root alias and README guidance so contributors can run the exact CI no-build quality gate locally with one command.
+- 2026-02-13: Added reusable sample contract fixture/script for CI contract validation and removed CLI `import.meta` CJS build warning by switching to path-based entrypoint detection.
+- 2026-02-13: Removed Next.js multi-lockfile root warning in debugger builds by setting `outputFileTracingRoot` explicitly in app config.
+- 2026-02-13: Hardened GitHub Actions workflows with explicit least-privilege permissions and concurrency cancellation guards across CI, contract-check, nightly, and release pipelines.
+- 2026-02-13: Updated README and completion summary with explicit CI workflow map + hardening notes so contributors can mirror and reason about automation behavior locally.
+- 2026-02-13: Added explicit job timeouts to CI, contract-check, and release workflows to prevent runaway minutes and align pipeline reliability with nightly timeout behavior.
+- 2026-02-13: Added root `install:stack` script and migrated all workflows to it, reducing duplicated dependency install logic and keeping CI/release setup behavior aligned.
+- 2026-02-13: Strengthened release automation by requiring `test:all:nobuild` and `changeset:status` prior to the changesets publish/create-PR action.
+- 2026-02-13: Optimized contract-check automation by introducing `stack:build:packages` and using it in the contract workflow, avoiding unnecessary debugger app build work before contract validation.
+- 2026-02-13: Improved workflow cache determinism by configuring `setup-node` cache dependency paths with all workspace lockfiles across CI, contract, nightly, and release pipelines.
+- 2026-02-13: Migrated all workflows from install to lockfile-driven `install:stack:ci` for deterministic dependency resolution while preserving existing build/test behavior.
+- 2026-02-13: Optimized CI dependency bootstrap by running lockfile installs with `--ignore-scripts`, removing redundant prepare-time builds while keeping explicit quality/build stages authoritative.
+- 2026-02-13: Added Next.js cache step to release workflow to speed repeated debugger app builds during release validations.
+- 2026-02-13: Introduced `release:build` script and switched release workflow to it, aligning release build scope with publish artifacts (root emulator/lib + workspace packages) while avoiding unnecessary app builds.
+- 2026-02-13: Added consolidated `release:verify` and `contract:ci` scripts and updated workflows to call them, improving local parity and reducing per-workflow command duplication.
+- 2026-02-13: Reduced CI install overhead by disabling install-time audit/funding output in `install:stack:ci`; security audit remains enforced by `audit:check` in the unified quality gate.
+- 2026-02-13: Refined `contract:ci` scope to package-level build/typecheck/tests plus contract and changeset checks, reducing duplicate full-stack validation while preserving contract workflow intent.
+- 2026-02-13: Added path filters to `contract-checks.yml` so contract CI only triggers when relevant package/contract/changeset files change, reducing redundant workflow executions.
+- 2026-02-13: Added reusable `ci:packages` script and composed `contract:ci` from it, further reducing command duplication and improving local/workflow parity for package-focused validation.
+- 2026-02-13: Extended contract workflow path filters to include debugger package metadata files consumed by changeset validation, preventing missed contract/release-metadata checks on app package updates.
+- 2026-02-13: Added push path filters to release workflow so release automation only runs on changes that can affect published artifacts or release metadata, reducing unnecessary master-branch release jobs.
+- 2026-02-13: Added manual dispatch support and path filters to main CI workflow, plus manual dispatch to contract checks, improving operational control while reducing redundant runs on irrelevant changes.
+- 2026-02-13: Cleaned CI/contract path filter lists to remove stale `pnpm-workspace.yaml` references, keeping workflow trigger rules aligned with actual repo files.
+- 2026-02-13: Added `workflow:lint` and wired it into `test:all:nobuild` so GitHub Actions YAML formatting is validated as part of the standard quality gate.
+- 2026-02-13: Added `workflow:format` helper command for local auto-fix of workflow YAML formatting, complementing required `workflow:lint` checks.
+- 2026-02-13: Added `scripts:lint`/`scripts:format` for automation helpers and wired `scripts:lint` into `test:all:nobuild` to keep CI helper scripts formatting-gated alongside workflows.
+- 2026-02-13: Added `workflow:check` to compose workflow/script format checks and reused it in `test:all:nobuild` + `contract:ci`, reducing duplicated script chains while preserving gate coverage.
+- 2026-02-13: Added `automation:test` with Node-based tests for CI helper scripts (including diagnostics bundling), and wired it into both strict and CI-flavored full quality gates.
+- 2026-02-13: Added reusable `automation:check` (`workflow:check + automation:test`) and switched quality-gate scripts (`test:all:nobuild*`, `contract:ci`) to use the consolidated automation preflight.
+- 2026-02-13: Expanded diagnostics bundler automation tests with duplicate-pattern deduplication coverage, complementing existing matched-file and empty-placeholder assertions.
+- 2026-02-13: Expanded diagnostics bundler automation coverage for custom placeholder message handling when no diagnostics files are present.
+- 2026-02-13: Updated diagnostics bundling to clean up temporary placeholder files after archive creation, with automation coverage validating placeholder content via archive extraction and on-disk cleanup.
+- 2026-02-13: Added diagnostics bundler coverage to ensure directory glob matches are ignored, preserving file-only archive semantics.
+- 2026-02-13: Made diagnostics bundling deterministic by lexicographically sorting matched files before archive creation, and added automation coverage for archive ordering stability.
+- 2026-02-13: Hardened diagnostics file deduplication to use canonical resolved paths so equivalent relative/absolute glob matches cannot produce duplicate archive entries.
+- 2026-02-13: Hardened diagnostics archive creation by passing `--` to tar before file arguments, preventing option-parsing issues for dash-prefixed filenames (with regression coverage).
+- 2026-02-13: Added diagnostics bundler protection to exclude the output archive path from matched input files, preventing self-archiving with broad artifact patterns.
+- 2026-02-13: Improved diagnostics archive path selection so absolute matches under the working directory are normalized to relative archive entries, reducing host-path leakage and preserving deterministic artifact structure.
+- 2026-02-13: Added configurable tar timeout protection to diagnostics bundler (`BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS`, default 120000ms), including regression coverage for invalid timeout config and timeout failure reporting.
+- 2026-02-13: Reduced timeout-fixture sleep durations in automation tests to keep suite runtime lower while retaining timeout-path validation for both diagnostics and changeset wrappers.
+- 2026-02-13: Tightened timeout env parsing to strict numeric-only values for both automation wrappers, adding regression coverage for suffix-style invalid values (e.g. `50ms`).
+- 2026-02-13: Extended README helper references with timeout override examples for both automation wrappers to improve operational discoverability during CI triage.
+- 2026-02-13: Tightened diagnostics helper argument handling so unknown flags still fail even when help is requested, preserving strict invocation semantics across automation scripts.
+- 2026-02-13: Standardized diagnostics helper failure output with `[bundle-diagnostics]` prefixed error lines and usage-on-parse-failure behavior for clearer CI troubleshooting logs.
+- 2026-02-13: Extended helper failure UX so invalid timeout-config errors also print usage context (not just parse errors), improving operator guidance in CI logs.
+- 2026-02-13: Added regression assertions for helper error-prefix contracts (`[bundle-diagnostics]`, `[changeset:status:ci]`) to keep automation troubleshooting output stable.
+- 2026-02-13: Expanded bundle CLI regression assertions so missing/unknown argument failures must include usage text, preserving operator guidance quality in error output.
+- 2026-02-13: Tightened diagnostics helper CLI semantics by rejecting mixed help + operational argument combinations, reducing ambiguous invocation modes.
+- 2026-02-13: Added regression coverage ensuring `changeset-status-ci` rejects unknown arguments even when mixed with help flags, aligning strict invocation guarantees across both automation helpers.
+- 2026-02-13: Expanded `changeset-status-ci` timeout-suffix regression assertions to require usage-text output for timeout-config failures, preserving operator guidance guarantees.
+- 2026-02-13: Tightened helper arg parsing to reject duplicate help-flag combinations (`--help -h`) in both wrappers, with regression coverage for strict help-flag semantics.
+- 2026-02-13: Added regression coverage for unknown short-flag arguments (`-x`) across both helpers to preserve strict short-option handling contracts.
+- 2026-02-13: Extracted shared strict timeout env parsing into `scripts/cli-timeout.mjs` and wired both automation wrappers to it, with dedicated helper unit coverage to reduce duplicated parsing logic.
+- 2026-02-13: Added timeout upper-bound validation (`<= 2147483647ms`) in shared timeout parsing helper, with regression coverage to prevent out-of-range process timeout configuration.
+- 2026-02-13: Expanded shared timeout helper coverage to reject whitespace-only env values, ensuring invalid CI timeout config is surfaced explicitly.
+- 2026-02-13: Added shared timeout helper coverage for empty-string env values to confirm default-timeout fallback semantics remain stable.
+- 2026-02-13: Expanded shared timeout helper coverage for plus-prefixed and negative numeric strings, confirming strict positive-integer-only timeout input semantics.
+- 2026-02-13: Added wrapper-level regression coverage for above-ceiling timeout env values in both helpers so shared timeout-bound enforcement remains visible through CLI behavior.
+- 2026-02-13: Updated README helper usage examples to explicitly document timeout env bounds (`1..2147483647`) for both automation wrappers.
+- 2026-02-13: Refined diagnostics argument parsing so values starting with `--` are accepted when valid (e.g. custom message text) while true flag-missing cases still fail reliably.
+- 2026-02-13: Tightened diagnostics value parsing for `--output` / `--pattern` so unknown long-flag tokens are treated as missing values (while `--message` still allows dash-prefixed content), reducing accidental argument-swallowing risk.
+- 2026-02-13: Expanded diagnostics parser regression coverage around dash-prefixed tokens to explicitly lock intended boundary behavior (accepted for message payloads, rejected for path-value positions).
+- 2026-02-13: Extended token-capture regression assertions so malformed path-value flag tokens (`--output/--pattern`) must surface usage guidance alongside missing-value errors.
+- 2026-02-13: Extended diagnostics value guards to reject short-flag-like tokens (e.g. `-x`) for `--output` / `--pattern`, with regression coverage to prevent accidental option-token capture in path-value slots.
+- 2026-02-13: Added wrapper-level regression coverage for empty-string timeout env behavior in both helpers, verifying default-timeout fallback semantics at CLI boundaries.
+- 2026-02-13: Added equals-form argument support for diagnostics helper (`--output=`, `--pattern=`, `--message=`), with regression coverage for valid equals flows and empty inline-value guardrails.
+- 2026-02-13: Added mixed split/equals duplicate-flag regression coverage (`--output`, `--message`) to ensure duplicate detection semantics remain consistent across argument styles.
+- 2026-02-13: Refactored `changeset:status:ci` filtering into a reusable module and added automation tests for warning suppression/dedup behavior, improving confidence in CI log-sanitization correctness.
+- 2026-02-13: Generalized `changeset:status:ci` suppression matching to support future `@wasmboy/*` workspace package names and non-`0.0.0` expected versions while still only filtering `file:`-based notices.
+- 2026-02-13: Added direct automation tests for `changeset-status-ci.mjs` wrapper behavior, covering filtered output reporting, non-zero exit pass-through, and missing-command error handling.
+- 2026-02-13: Stabilized `changeset:status:ci` warning reporting by sorting suppressed warnings lexicographically, plus added deterministic-order assertions in library tests.
+- 2026-02-13: Expanded changeset warning filter/wrapper coverage to ensure non-`@wasmboy/*` `file:` warnings are never suppressed while suppressed workspace warnings remain deterministically ordered in wrapper output.
+- 2026-02-13: Added `--help`/`-h` support to `changeset-status-ci` wrapper with automation tests for both help entrypoints.
+- 2026-02-13: Added CRLF-focused regression coverage for changeset warning filtering to validate cross-platform output parsing behavior.
+- 2026-02-13: Tightened `changeset-status-ci` argument handling to fail on unknown flags (with usage output), plus added automation coverage for the strict-arg error path.
+- 2026-02-13: Added configurable timeout protection to `changeset-status-ci` (`CHANGESET_STATUS_CI_TIMEOUT_MS`, default 120000ms), with regression coverage for invalid timeout config and explicit timeout failures.
+- 2026-02-13: Added diagnostics bundler negative-path tests for required CLI arguments (`--output`, `--pattern`), strengthening guardrail coverage for automation script misuse.
+- 2026-02-13: Expanded diagnostics bundler negative-path automation coverage for unknown flags and missing flag values, hardening script argument-validation guarantees.
+- 2026-02-13: Expanded diagnostics bundler negative-path coverage for missing `--output` and `--message` flag values to lock down strict argument parsing semantics.
+- 2026-02-13: Hardened diagnostics bundler argument parsing against duplicate `--output` / `--message` flags, with regression tests for both duplicate-flag failure paths.
+- 2026-02-13: Added `--help` usage output support to diagnostics bundler and covered it via automation tests for CLI discoverability.
+- 2026-02-13: Added `-h` short-help alias support to diagnostics bundler (with automation coverage) for standard CLI ergonomics parity.
+- 2026-02-13: Updated README command reference with direct `--help` usage examples for both automation helper scripts to improve discoverability for maintainers.
+- 2026-02-13: Added failure-diagnostics artifact uploads (quality logs + generated screenshots) to CI and nightly workflows to improve regression triage speed when quality gates fail.
+- 2026-02-13: Extended failure-diagnostics artifact support to contract and release workflows by teeing gate logs and uploading them on failure for consistent cross-pipeline observability.
+- 2026-02-13: Expanded release failure artifact payloads to include generated core/headless screenshots from verification failures, aligning triage depth with CI/nightly diagnostics.
+- 2026-02-13: Updated `contract:ci` to include `workflow:lint`, ensuring contract workflow changes also enforce YAML formatting standards before package-level validation.
+- 2026-02-13: Updated README CI section with trigger/filter and failure-artifact behavior notes so contributors can better understand when workflows run and where diagnostics appear.
+- 2026-02-13: Added 14-day retention policies to CI/contract/nightly/release failure artifacts, standardizing diagnostics lifecycle management across workflows.
+- 2026-02-13: Expanded CI path filters to include `.github/workflows/*.yml`, ensuring workflow-only edits still execute the full quality gate.
+- 2026-02-13: Set explicit `shell: bash` on log-capturing workflow steps so `set -o pipefail` behavior is guaranteed across CI, nightly, contract, and release gates.
+- 2026-02-13: Updated diagnostic artifact names to include GitHub run id/attempt, improving failure-trace disambiguation across reruns and repeated pipeline executions.
+- 2026-02-13: Added `changeset:status:ci` wrapper to suppress repeated known workspace file-dependency notices and switched release/contract verification scripts to use cleaner CI status output.
+- 2026-02-13: Updated CI/contract/release path filters to include `scripts/**`, ensuring workflow runs are triggered when shared automation scripts (including changeset CI wrappers) are modified.
+- 2026-02-13: Expanded diagnostics artifact upload conditions to run on cancellations as well as failures, preserving partial logs/screenshots from interrupted CI runs.
+- 2026-02-13: Added job-level `defaults.run.shell: bash` to all workflows and removed per-step shell overrides, simplifying workflow definitions while keeping consistent pipefail-compatible shell behavior.
+- 2026-02-13: Expanded contract workflow path filters with `contracts/**` so contract-schema/documentation changes trigger contract CI validation consistently.
+- 2026-02-13: Added `install:packages:ci` and switched contract workflow to package-only deterministic installs, reducing unnecessary debugger app dependency bootstrap during contract CI.
+- 2026-02-13: Refined contract workflow npm cache inputs to package-only lockfiles, improving cache relevance after adopting package-only deterministic installs.
+- 2026-02-13: Switched CI and nightly workflows to execute the shared `ci:local` alias directly, tightening local/remote command parity for the no-build quality gate.
+- 2026-02-13: Updated `release:verify` to compose `ci:local + changeset:status:ci`, aligning release verification command flow with the same shared quality gate used by CI/nightly.
+- 2026-02-13: Added `release:verify:strict` and release workflow manual `strict` input path, enabling opt-in no-retry release verification while retaining default CI-retry behavior.
+- 2026-02-13: Refactored `install:stack:ci` to compose `install:packages:ci` plus debugger install, reducing duplication between stack-level and package-level deterministic install commands.
+- 2026-02-13: Added `contract:ci:full` and a `full_gate` manual-dispatch input in contract workflow, enabling optional full-gate verification runs while keeping default contract checks package-focused.
+- 2026-02-13: Added `automation:test` into default `contract:ci` path so contract workflow validates helper-script behavior in addition to workflow/script formatting and package contract checks.
+- 2026-02-13: Added `contract:ci:full:strict` and contract workflow `strict` manual input (when `full_gate=true`) to support optional no-retry full-gate contract verification.
+- 2026-02-13: Added fast-fail validation for contract workflow dispatch input combinations so `strict=true` without `full_gate=true` exits with a clear configuration error.
+- 2026-02-13: Updated contributor docs to explicitly map manual dispatch input options across CI/nightly (`strict`), release (`strict`), and contract (`full_gate`, optional `strict`) workflows.
+- 2026-02-13: Added a single retry to `test:integration:headless` (`--retries 1`) to mitigate occasional golden-frame flake in CI while retaining strict pixel-diff assertions.
+- 2026-02-13: Added a single retry to `test:core:savestate` (`--retries 1`) to reduce occasional screenshot-timing flakes while preserving strict save-state golden comparisons.
+- 2026-02-13: Refined retry strategy by restoring strict default local headless/save-state commands and introducing CI-specific retry scripts (`test:integration:headless:ci`, `test:core:savestate:ci`) used by `test:all:nobuild`.
+- 2026-02-13: Added compression steps for CI/contract/nightly/release diagnostics and upload archived tarballs, keeping failure artifacts compact and easier to fetch/inspect while retaining log+screenshot coverage.
+- 2026-02-13: Added `ci:local:strict` and `test:all:nobuild:strict` for full-gate strict single-run verification, while keeping `ci:local` aligned with CI retry-scoped commands.
+- 2026-02-13: Hardened diagnostics bundling steps to archive only existing files (and emit placeholder manifests when none exist), reducing tar warning noise on early-cancel/early-fail workflow exits.
+- 2026-02-13: Introduced shared `scripts/bundle-diagnostics.mjs` and switched all workflows to use it for diagnostics archive creation, eliminating duplicated bash bundling logic and keeping behavior consistent across pipelines.
+- 2026-02-13: Added `strict` manual-dispatch inputs to CI and nightly workflows so maintainers can optionally run strict no-retry quality-gate variants directly in GitHub Actions.
+- 2026-02-13: Added per-invocation timeout override support to `changeset-status-ci` (`--timeout-ms` / `--timeout-ms=<ms>`) with strict parse guards (duplicate/missing/help-mixed) and regression coverage for CLI-over-env precedence.
+- 2026-02-13: Added per-invocation tar-timeout override support to `bundle-diagnostics` (`--tar-timeout-ms` / `--tar-timeout-ms=<ms>`) with strict parse guards and regression coverage for CLI-over-env timeout precedence.
+- 2026-02-13: Hardened `changeset-status-ci` timeout argument parsing to treat unknown/short flag tokens as missing timeout values (instead of swallowing them), with regression coverage for those malformed-value paths.
+- 2026-02-13: Extended `changeset-status-ci` timeout hardening so inline-equals timeout values (`--timeout-ms=...`) also reject unknown/short flag tokens as missing values, matching split-arg guard behavior.
+- 2026-02-13: Expanded `bundle-diagnostics` timeout parsing regression coverage for malformed flag-token values across split/inline forms (`--tar-timeout-ms --unexpected`, `--tar-timeout-ms=-x`) to keep timeout missing-value semantics locked down.
+- 2026-02-13: Expanded wrapper timeout-override regression coverage to include whitespace-only CLI values for both helpers, ensuring invalid timeout input handling remains explicit at command-entry boundaries.
+- 2026-02-13: Expanded wrapper timeout-override regression coverage with plus-prefixed and negative CLI values (`+5000`, `-5`) for both helpers, preserving strict numeric timeout validation behavior at CLI boundaries.
+- 2026-02-13: Added split/inline parity regression coverage for wrapper timeout overrides (whitespace/plus/negative values) across both helpers, locking equivalent strict-validation behavior for `--flag value` and `--flag=value` forms.
+- 2026-02-13: Expanded help-mixed timeout regression coverage to include inline timeout forms for both helpers, preserving strict help-flag exclusivity semantics across split and equals argument styles.
+- 2026-02-13: Expanded help-mode strictness regression coverage with unknown short-flag mixes (`--help -x`) for both helpers, preserving unknown-short rejection guarantees even when help is present.
+- 2026-02-13: Expanded timeout-value token-guard regression coverage with help-alias tokens (`--help`, `-h`) across split/inline timeout value positions for both helpers, preserving missing-value semantics when option tokens are misused as timeout values.
+- 2026-02-13: Expanded duplicate-timeout regression coverage with inline-first ordering (`--flag=...` then `--flag ...`) in both helpers, preserving ordering-agnostic duplicate detection across split and equals argument forms.
+- 2026-02-13: Expanded help-timeout exclusivity regression coverage with short-help alias scenarios (`-h --flag ...`, `-h --flag=...`) for both helpers, preserving help-flag exclusivity semantics across both help aliases and timeout argument styles.
+- 2026-02-13: Expanded help-mode unknown-argument regression coverage with short-help alias scenarios (`-h --unknown`, `-h -x`) for both helpers, preserving strict unknown-argument rejection behavior even when help alias mode is active.
+- 2026-02-13: Hardened `bundle-diagnostics` path-value parsing so whitespace-only `--output` / `--pattern` values are treated as missing (split and equals forms), with regression coverage to prevent blank path-value acceptance.
+- 2026-02-13: Expanded duplicate-help regression coverage with short-first alias ordering (`-h --help`) for both helpers, preserving ordering-agnostic duplicate-help detection semantics.
+- 2026-02-13: Expanded duplicate-timeout regression coverage to include split-only and inline-only duplicates for both helpers, preserving syntax/order-agnostic duplicate-timeout detection semantics across split, equals, and mixed forms.
+- 2026-02-13: Expanded timeout-override precedence regression coverage with inline CLI override forms for both helpers, preserving env-override precedence parity between split (`--flag value`) and equals (`--flag=value`) styles.
+- 2026-02-13: Expanded diagnostics placeholder-message regression coverage with whitespace-only message values in split and equals forms, preserving intended whitespace payload semantics for custom empty-artifact notes.
+- 2026-02-13: Updated `bundle-diagnostics` message parsing to allow help-token literals (`--help`, `-h`) as intentional message payloads (split and equals forms), with regression coverage for both literal cases.
+- 2026-02-13: Expanded diagnostics help-token message regression coverage to full split/equals parity (`--message --help`, `--message -h`, `--message=--help`, `--message=-h`) so intentional help-literal placeholder text remains stable across argument styles.
+- 2026-02-13: Expanded timeout-value token-guard regression coverage with self-flag misuse cases (`--timeout-ms --timeout-ms`, `--timeout-ms=--timeout-ms`, plus diagnostics equivalents), preserving missing-value semantics when timeout flag tokens are repeated in value positions.
+- 2026-02-13: Expanded diagnostics duplicate-flag regression coverage with equals-only duplicate cases for `--output` and `--message`, preserving duplicate-detection semantics across split-only, equals-only, and mixed argument forms.
+- 2026-02-13: Expanded diagnostics path-value token-guard regression coverage with help-token cases for `--output`/`--pattern` in split and equals forms, preserving missing-value semantics when help tokens are misused as path values.
+- 2026-02-13: Expanded help-timeout exclusivity regression coverage with trailing-help permutations (timeout args preceding help in split and inline forms, across both long and short help aliases) for both helper wrappers.
+- 2026-02-13: Refactored `changeset-status-ci` timeout argument parsing to use a reusable value-validation helper (known-token + prefix guards), aligning parser structure with diagnostics helper semantics while preserving existing timeout error behavior.
+- 2026-02-13: Expanded diagnostics path-value token-guard regression coverage with timeout-flag token misuse cases for `--output`/`--pattern` (split and equals forms), preserving missing-value semantics for known timeout flag tokens in path-value positions.
+- 2026-02-13: Expanded diagnostics message-value token-guard regression coverage with timeout-flag token misuse cases in split and equals forms, preserving current known-token missing-value semantics for non-whitelisted message-token inputs.
+- 2026-02-13: Expanded diagnostics message-value token-guard regression coverage with operational known-flag misuse cases (`--output` / `--pattern`) in split and equals forms, preserving non-whitelisted known-token missing-value semantics while retaining explicit help-token message allowances.
+- 2026-02-13: Refactored `bundle-diagnostics` parser internals to use shared flag-name constants for known-token registration, split/equals parsing branches, and duplicate-argument errors, reducing literal drift risk while preserving existing CLI semantics.
+- 2026-02-13: Expanded diagnostics timeout-value token-guard regression coverage with known operational-flag misuse cases (`--output`, `--pattern`, `--message`) in split and equals forms, preserving missing-value semantics when known flags appear in timeout value positions.
+- 2026-02-13: Expanded diagnostics help-literal message regression coverage with explicit-help follow-up permutations (split/equals forms for `--help` and `-h` literals), preserving help-flag exclusivity semantics even when help-token literals are intentionally used as message payloads.
+- 2026-02-13: Expanded diagnostics help-literal message regression coverage with timeout-coexistence permutations (split and equals forms), preserving intentional help-literal message payload semantics when timeout override arguments are also provided.
+- 2026-02-13: Expanded duplicate-help regression coverage with same-alias permutations (`--help --help` and `-h -h`) across both wrappers, preserving duplicate-help failure semantics independent of alias mixing order.
+- 2026-02-13: Refactored `changeset-status-ci` split-form timeout argument parsing to use a shared required-value helper, aligning helper structure with diagnostics parser internals while preserving existing timeout validation behavior.
+- 2026-02-13: Expanded wrapper-level CLI timeout boundary regression coverage with zero, non-numeric suffix, and above-ceiling override values (split and inline forms) across both helper wrappers.
+- 2026-02-13: Expanded wrapper-level timeout-environment boundary regression coverage with explicit zero-value env rejection cases for both helper wrappers, preserving strict positive-timeout semantics at wrapper entry points.
+- 2026-02-13: Expanded wrapper-level timeout-environment boundary regression coverage with plus-prefixed and negative env-value rejection cases across both helper wrappers, preserving strict positive integer timeout semantics at wrapper entry points.
+- 2026-02-13: Expanded wrapper-level CLI timeout boundary regression coverage with maximum supported timeout acceptance cases (`2147483647`) in split and inline forms across both helper wrappers, preserving inclusive upper-bound semantics.
+- 2026-02-13: Expanded wrapper-level timeout-environment boundary regression coverage with maximum supported timeout acceptance cases (`2147483647`) across both helper wrappers, preserving inclusive upper-bound semantics for env-driven timeout resolution.
+- 2026-02-13: Expanded timeout-override precedence regression coverage with invalid-CLI/valid-env failure-path cases (split and inline forms) across both wrappers, preserving strict CLI timeout validation semantics under precedence rules.
+- 2026-02-13: Refactored diagnostics timeout automation fixtures to use a shared delayed-fake-tar helper, reducing duplicated test setup while preserving timeout regression behavior.
+- 2026-02-13: Refactored changeset timeout automation fixtures to use shared fake-changeset helpers for delayed and no-bump outputs, reducing duplicated test setup while preserving timeout and success-path regression behavior.
+- 2026-02-13: Expanded timeout-override precedence regression coverage with empty-timeout-env permutations (split and inline CLI overrides) across both wrappers, preserving CLI override behavior when env timeout inputs fall back to defaults.
+- 2026-02-13: Expanded timeout-override regression coverage with leading-zero CLI override permutations (`00050`) in split and inline forms across both wrappers, preserving numeric parsing semantics while enforcing configured timeout behavior.
+- 2026-02-13: Expanded timeout parsing regression coverage with whitespace-padded timeout values (`' 50 '`) across env and CLI override paths (split and inline) for both wrappers, preserving trimmed numeric parsing semantics while enforcing configured timeout behavior.
+- 2026-02-13: Expanded timeout-override precedence regression coverage with invalid-env/valid-CLI permutations (split and inline forms) across both wrappers, preserving current env-first timeout resolution semantics.
+- 2026-02-13: Expanded timeout-environment regression coverage with leading-zero acceptance cases (`00050`) across both wrappers, preserving trimmed numeric parsing semantics for canonicalizable integer env inputs.
+- 2026-02-13: Reduced delayed-timeout fixture defaults in automation tests from `0.2s` to `0.1s` for both wrapper harness helpers, preserving timeout assertions while improving automation runtime.
+- 2026-02-13: Expanded timeout-environment boundary regression coverage with whitespace-padded max-int acceptance cases (`' 2147483647 '`) across both wrappers, preserving trim semantics at the upper supported timeout boundary.
+- 2026-02-13: Refactored wrapper argument-value parsing internals to use a shared `cli-arg-values` helper (`validateRequiredArgumentValue` / `readRequiredArgumentValue`) across both wrappers, reducing duplicate parser logic while preserving existing token-guard semantics; added focused helper unit tests.
+- 2026-02-13: Refactored wrapper timeout resolution internals to use shared `resolveTimeoutFromCliAndEnv` helper across both wrappers, reducing duplicate env/CLI timeout scaffolding while preserving current env-first validation + CLI override semantics; added focused helper unit tests for precedence and invalid-input failure paths.
+- 2026-02-13: Expanded wrapper-level CLI timeout boundary regression coverage with whitespace-padded max-int override acceptance cases (`' 2147483647 '`) in split and inline forms across both wrappers, preserving trim semantics at the upper supported CLI timeout boundary.
+- 2026-02-13: Refactored automation test harness internals to use shared `test-fixtures` fake-executable helper across changeset/diagnostics wrappers, reducing duplicated fake command setup logic; added focused helper unit coverage for runnable fake-bin command creation.
+- 2026-02-13: Expanded shared `cli-arg-values` helper unit coverage with unknown-long-token rejection, explicit whitespace-allowed acceptance, and allowed-known-token read-path assertions, further locking parser-helper semantics used by both wrappers.
+- 2026-02-13: Expanded shared `resolveTimeoutFromCliAndEnv` helper unit coverage with empty-env+CLI override resolution, whitespace-padded max-int CLI override acceptance, and whitespace-only CLI rejection with valid env fallback, further locking timeout-precedence semantics used by both wrappers.
+- 2026-02-13: Refactored shared `cli-arg-values` helper internals to centralize missing-value error creation, reducing repeated error-construction logic while preserving existing error text contracts and parser behavior.
+- 2026-02-13: Expanded `changeset-status-ci-lib` regression coverage with whitespace-padded warning suppression and passthrough blank-line preservation cases, locking output-format behavior for mixed warning/info streams.
+- 2026-02-13: Expanded `changeset-status-ci-lib` regression coverage with whitespace-variant warning deduplication and empty-output handling cases, locking normalization behavior for duplicate-heavy and sparse output streams.
+- 2026-02-13: Hardened shared `test-fixtures` helper with executable-name validation (reject empty and path-segment names) to prevent fake-bin escape paths; added focused unit coverage for invalid-name rejection.
+- 2026-02-13: Extended shared `test-fixtures` executable-name validation to reject backslash path separators for cross-platform path safety; added focused unit coverage for backslash-separated invalid names.
+- 2026-02-13: Extended shared `test-fixtures` executable-name validation to reject dot-segment names (`.` / `..`) to avoid invalid directory-like executable identifiers; added focused unit coverage for dot-segment rejection.
+- 2026-02-13: Extended shared `test-fixtures` executable-name validation to reject whitespace-containing names, reducing ambiguous shell-token fixture command identifiers; added focused unit coverage for whitespace-only and embedded-space invalid names.
+- 2026-02-13: Hardened shared `test-fixtures` input contracts by validating non-string executable-name rejection and empty-body rejection, preventing ambiguous fixture helper inputs; added focused unit coverage for both invalid-input paths.
+- 2026-02-13: Expanded shared `resolveStrictPositiveIntegerEnv` helper unit coverage with max-boundary acceptance (`2147483647`) and leading-zero acceptance (`00050`) cases, locking canonicalizable upper-bound timeout semantics directly at helper level.
+- 2026-02-13: Extended shared `test-fixtures` body-validation semantics to reject whitespace-only executable bodies (in addition to empty bodies), preventing ambiguous no-op fixture scripts; added focused unit coverage for whitespace-only body rejection.
+- 2026-02-13: Hardened shared timeout parser internals to validate default timeout values (`defaultValue`) as strict positive safe integers within supported bounds; expanded helper unit coverage with invalid-default rejection cases (zero, non-integer, above-ceiling) to lock fallback contract semantics.
+- 2026-02-13: Expanded `changeset-status-ci-lib` regression coverage with an only-warnings output case asserting empty passthrough output, locking filtered-output behavior when warning suppression removes all lines.
+- 2026-02-13: Expanded shared timeout default-validation unit coverage with non-finite (`NaN`) default rejection, locking finite-number constraints in helper fallback semantics.
+- 2026-02-13: Hardened shared `test-fixtures` temp-directory input validation (non-string and empty-string rejection), preventing ambiguous path inputs before fake-bin filesystem operations; added focused unit coverage for invalid temp-directory paths.
+- 2026-02-13: Expanded shared timeout default-validation regression coverage with explicit `Infinity` rejection in both `resolveStrictPositiveIntegerEnv` and `resolveTimeoutFromCliAndEnv` helper tests, locking finite default constraints across direct and composed timeout resolution paths.
+- 2026-02-13: Expanded shared `test-fixtures` regression coverage with non-string executable-body rejection, locking helper body-type input contract semantics in addition to empty/whitespace body guards.
+- 2026-02-13: Hardened shared timeout parser option-metadata validation with explicit option-name guards (rejecting empty/non-string names) and expanded helper unit coverage for direct/composed invalid-name rejection paths.
+- 2026-02-13: Hardened shared `cli-arg-values` helper option-contract validation (flag-name, known-args set, boolean option toggles, allowed-known-values set) and expanded helper unit coverage for invalid-option rejection paths.
+- 2026-02-13: Hardened shared timeout parser raw-value input contract by rejecting non-string timeout values before normalization and expanded helper unit coverage for direct/composed non-string raw-value rejection.
+- 2026-02-13: Hardened shared timeout precedence helper composed-options contract validation (required `env`/`cli` option objects) and expanded helper unit coverage for missing option-object rejection paths.
+- 2026-02-13: Hardened `readRequiredArgumentValue` call-site contract validation in shared `cli-arg-values` helper (`argv` array + non-negative integer index) and expanded helper unit coverage for invalid argv/index rejection paths.
+- 2026-02-13: Hardened shared `test-fixtures` path-token sanitization by rejecting null-byte temp-directory/executable-name inputs and expanded helper unit coverage for null-byte rejection paths.
+- 2026-02-13: Hardened shared `cli-arg-values` top-level options-object contract validation (missing/non-object options rejection) and expanded helper unit coverage for direct/read-path invalid-options rejection.
+- 2026-02-13: Expanded shared timeout precedence helper options-shape coverage with missing top-level options and non-object `env`/`cli` option rejection paths.
+- 2026-02-13: Hardened shared `test-fixtures` script-payload sanitization by rejecting null-byte executable-body inputs and expanded helper unit coverage for null-byte body rejection.
+- 2026-02-13: Hardened shared timeout precedence helper options-shape validation by rejecting array-shaped `options`/`env`/`cli` containers and expanded helper unit coverage for array-shape rejection paths.
+- 2026-02-13: Hardened shared `cli-arg-values` options-shape validation by rejecting array-shaped options containers and expanded helper unit coverage for array-options rejection across direct/read-path entrypoints.
+- 2026-02-13: Expanded shared timeout default-validation coverage with non-numeric default-type (`string`) rejection paths for both direct and composed timeout-resolution helpers.
+- 2026-02-13: Hardened shared `cli-arg-values` token-set contract validation by enforcing string-only entries in `knownArgs`/`allowedKnownValues` and expanded helper unit coverage for non-string set-entry rejection.
+- 2026-02-13: Hardened shared `cli-arg-values` value-type contract by rejecting non-string required argument values before string-token operations and expanded helper unit coverage for direct/read-path non-string value rejection.
+- 2026-02-13: Hardened shared `cli-arg-values` token-set entry contract by rejecting empty/whitespace `knownArgs`/`allowedKnownValues` entries and expanded helper unit coverage for blank token-entry rejection paths.
+- 2026-02-13: Hardened shared timeout env-resolution helper top-level options contract (missing/array options rejection before destructuring) and expanded helper unit coverage for malformed options-object rejection paths.
+- 2026-02-13: Hardened shared timeout parser error-value formatting with safe string conversion (Symbol-safe) and expanded helper unit coverage for Symbol invalid option-name/default/raw-value rejection paths.
+- 2026-02-13: Hardened shared `cli-arg-values` error-value formatting with safe string conversion (Symbol-safe) and expanded helper unit coverage for Symbol invalid value/flag-name/index rejection paths.
+- 2026-02-13: Hardened shared `test-fixtures` error-value formatting with safe string conversion (Symbol-safe) and expanded helper unit coverage for Symbol temp-directory/executable-name/body rejection paths.
+- 2026-02-13: Expanded shared timeout precedence helper coverage with composed Symbol option-name rejection for `env.name` and `cli.name`.
+- 2026-02-13: Expanded shared timeout parser error-format coverage with unprintable (`toString`-throwing) option-name/default/raw-value inputs, locking `[unprintable]` fallback semantics.
+- 2026-02-13: Expanded shared `cli-arg-values` error-format coverage with unprintable (`toString`-throwing) value/flag-name/index inputs, locking `[unprintable]` fallback semantics.
+- 2026-02-13: Expanded shared `test-fixtures` error-format coverage with unprintable (`toString`-throwing) temp-directory/executable-name/body inputs, locking `[unprintable]` fallback semantics.
+- 2026-02-13: Expanded shared timeout precedence helper coverage with unprintable (`toString`-throwing) composed `env.name`/`cli.name` option-name rejection paths.
+- 2026-02-13: Hardened shared `readRequiredArgumentValue` cursor-bounds validation by rejecting out-of-range indexes (`index >= argv.length`) and expanded helper unit coverage for out-of-range index rejection.
+- 2026-02-13: Hardened `changeset-status-ci-lib` input contract with explicit non-string output rejection and expanded helper unit coverage for non-string/symbol/unprintable output rejection paths.
+- 2026-02-13: Expanded shared timeout-helper coverage with explicit `null` invalid-input rejection paths (direct raw timeout + composed env-name + composed cli raw timeout cases).
+- 2026-02-13: Expanded shared `cli-arg-values` coverage with explicit `null` invalid-input rejection paths (value token, `flagName`, options object, argument index).
+- 2026-02-13: Expanded shared `test-fixtures` coverage with explicit `null` invalid-input rejection paths (`tempDirectory`, executable name, executable body).
+- 2026-02-13: Expanded `changeset-status-ci-lib` coverage with explicit `null` output rejection, locking null-input contract semantics for filter helper entrypoints.
+- 2026-02-13: Hardened shared `cli-arg-values` option-contract validation by requiring `allowedKnownValues` entries to be a subset of `knownArgs`, with focused helper unit coverage for mismatched token-set rejection paths.
+- 2026-02-13: Expanded shared timeout precedence helper coverage with explicit `null` environment raw-timeout rejection, locking null-value contract semantics alongside existing composed env/cli option guards.
+- 2026-02-13: Expanded shared timeout-helper coverage with explicit `null` default-timeout rejection and `null` composed CLI option-name rejection paths, locking additional null-input contract semantics in direct/composed timeout resolution.
+- 2026-02-13: Expanded shared `cli-arg-values` token-set coverage with explicit `null` entry rejection for both `knownArgs` and `allowedKnownValues`, locking null token-entry contract semantics in helper option validation.
+- 2026-02-13: Expanded `changeset-status-ci-lib` filter-helper coverage with explicit `undefined` output rejection, locking undefined-input contract semantics alongside existing non-string/null/symbol/unprintable guards.
+- 2026-02-13: Expanded shared timeout precedence-helper coverage with explicit Symbol raw-timeout rejection for composed `env.rawValue` and `cli.rawValue`, locking symbol-input contract semantics in composed timeout resolution paths.
+- 2026-02-13: Expanded shared timeout precedence-helper coverage with explicit unprintable (`toString`-throwing) raw-timeout rejection for composed `env.rawValue` and `cli.rawValue`, locking `[unprintable]` formatting semantics in composed timeout-resolution error paths.
+- 2026-02-13: Expanded shared `test-fixtures` helper coverage with explicit `undefined` input rejection paths (`tempDirectory`, executable name, executable body), locking undefined-input contract semantics alongside existing null/symbol/unprintable guards.
+- 2026-02-13: Expanded shared `cli-arg-values` options-contract coverage with explicit `undefined` flag-name rejection and missing `allowDoubleDashValue` rejection, locking required-option semantics in parser-helper validation.
+- 2026-02-13: Expanded shared timeout-helper coverage with explicit `undefined` default-timeout rejection in direct and composed helpers, locking undefined default-value contract semantics in timeout fallback validation.
+- 2026-02-13: Expanded shared `cli-arg-values` options-contract coverage with explicit missing/null `knownArgs` set rejection, locking required known-token set semantics in parser-helper validation.
+- 2026-02-13: Expanded shared parser-helper set-option coverage with explicit `Symbol`/`bigint` non-Set rejection for `knownArgs` and `allowedKnownValues` across direct/read entrypoints, locking non-Set primitive option semantics.
+- 2026-02-13: Expanded shared timeout precedence-helper coverage with explicit `undefined` composed option-name rejection for both `env.name` and `cli.name`, locking undefined option-name contract semantics in composed timeout resolution.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` options-contract coverage with explicit missing `knownArgs` and missing `allowDoubleDashValue` rejection, locking required parser-option semantics across read-path helper validation.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` options-contract coverage with explicit null `knownArgs` and null `allowDoubleDashValue` rejection, locking null-option contract semantics on read-path parser helper entrypoints.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` allowed-known-token contract coverage with explicit invalid `allowedKnownValues` set-shape rejection and subset-enforcement rejection paths, further locking read-path option validation semantics.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` allowed-known-token entry coverage with explicit null and whitespace-only `allowedKnownValues` entry rejection paths, locking token-entry contract semantics on parser read-path validation.
+- 2026-02-13: Added focused read-path regression assertions for null/whitespace `allowedKnownValues` entries in `readRequiredArgumentValue`, aligning test implementation with documented parser-helper token-entry contracts.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` allowed-known-token entry coverage with explicit non-string (`number`) `allowedKnownValues` entry rejection, locking read-path token-type contract semantics for allowed-known-value validation.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` known-token set entry coverage with explicit non-string and whitespace-only `knownArgs` entry rejection paths, locking read-path known-token contract semantics for parser option validation.
+- 2026-02-13: Expanded parser-helper option-contract coverage with explicit non-boolean `allowWhitespaceOnly` rejection for both direct and read-path validation entrypoints, plus explicit read-path `argv` null/undefined rejection assertions.
+- 2026-02-13: Expanded read-path parser-helper argv-shape coverage with explicit `bigint` argv rejection, locking non-array primitive argv-container semantics.
+- 2026-02-13: Expanded read-path parser-helper argv-shape coverage with explicit `Symbol` and unprintable argv rejection assertions, locking non-array primitive/object argv-container semantics.
+- 2026-02-13: Expanded shared timeout-helper options-shape coverage with explicit `null` options-object rejection across direct/composed entrypoints (`options`, `env`, `cli`), locking null-container contract semantics in timeout-resolution helpers.
+- 2026-02-13: Expanded shared timeout-helper options-shape coverage with explicit non-object (`number`) options-object rejection across direct/composed entrypoints, locking primitive-container contract semantics in timeout-resolution helper guards.
+- 2026-02-13: Expanded shared timeout-helper default-value coverage with explicit `-Infinity` default-timeout rejection across direct/composed timeout helpers, locking negative-infinite default-value contract semantics.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` options-shape coverage with explicit primitive non-object (`number`) options rejection, locking read-path helper options-container contract semantics.
+- 2026-02-13: Expanded shared parser-helper options-shape coverage with explicit `Symbol` options rejection across direct/read entrypoints, locking primitive symbol options-container semantics.
+- 2026-02-13: Expanded shared parser-helper options-shape coverage with explicit `bigint` options rejection across direct/read entrypoints, locking primitive bigint options-container semantics.
+- 2026-02-13: Expanded shared `validateRequiredArgumentValue` options-contract coverage with explicit `null` `allowDoubleDashValue` rejection, locking nullability semantics for required boolean parser options.
+- 2026-02-13: Expanded shared parser-helper options-contract coverage with explicit `null` `allowWhitespaceOnly` rejection across direct/read validation entrypoints, locking nullable optional-boolean contract semantics.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` value-type coverage with explicit `null`, `Symbol`, and unprintable following-token rejection assertions, locking read-path value-type error-format contract semantics.
+- 2026-02-13: Expanded shared composed-timeout default-value coverage with explicit `null`, `Symbol`, and unprintable default-timeout rejection assertions, locking composed default-type/error-format contract semantics.
+- 2026-02-13: Expanded shared parser-helper boolean-option coverage with explicit `Symbol` rejection for `allowDoubleDashValue` and `allowWhitespaceOnly` across direct/read entrypoints, locking non-boolean symbol contract semantics.
+- 2026-02-13: Expanded shared parser-helper boolean-option coverage with explicit `bigint` rejection for `allowDoubleDashValue` and `allowWhitespaceOnly` across direct/read entrypoints, locking non-boolean primitive contract semantics.
+- 2026-02-13: Expanded shared parser-helper boolean-option coverage with explicit unprintable-object rejection for `allowDoubleDashValue` and `allowWhitespaceOnly` across direct/read entrypoints, locking non-boolean unprintable contract semantics.
+- 2026-02-13: Expanded shared `changeset-status` output-type coverage with explicit `bigint` rejection assertions, locking non-string primitive output contract semantics and error formatting.
+- 2026-02-13: Expanded shared timeout helper type-guard coverage with explicit `bigint` rejection for direct/composed default values and env/CLI raw timeout inputs, locking non-string/non-number primitive contract semantics.
+- 2026-02-13: Expanded shared timeout option-name coverage with explicit `bigint` name rejection across direct/composed helpers (`name`, `env.name`, `cli.name`), locking non-string primitive option-name semantics.
+- 2026-02-13: Expanded shared timeout options-shape coverage with explicit `Symbol` options-container rejection across direct/composed helper entrypoints (`options`, composed `env`, composed `cli`), locking primitive symbol container semantics.
+- 2026-02-13: Expanded shared timeout options-shape coverage with explicit `bigint` options-container rejection across direct/composed helper entrypoints (`options`, composed `env`, composed `cli`), locking primitive bigint container semantics.
+- 2026-02-13: Expanded shared argument-value type-guard coverage with explicit `bigint` rejection for direct and read-path value validation, locking non-string primitive argument contract semantics.
+- 2026-02-13: Expanded shared test-fixture input-type coverage with explicit `bigint` rejection for temp-directory, executable-name, and executable-body parameters, locking non-string primitive fixture-input semantics.
+- 2026-02-13: Expanded shared set-entry type-guard coverage with explicit `bigint` entry rejection for `knownArgs` and `allowedKnownValues` across direct/read parser entrypoints, locking non-string token-entry semantics.
+- 2026-02-13: Expanded shared set-entry type-guard coverage with explicit `Symbol` entry rejection for `knownArgs` and `allowedKnownValues` across direct/read parser entrypoints, locking non-string token-entry semantics.
+- 2026-02-13: Expanded shared set-entry type-guard coverage with explicit unprintable-entry rejection for `knownArgs` and `allowedKnownValues` across direct/read parser entrypoints, locking non-string token-entry semantics.
+- 2026-02-13: Expanded shared timeout-helper option-name coverage with explicit `null` and `undefined` direct `name` rejection in `resolveStrictPositiveIntegerEnv`, locking direct option-name nullability contract semantics.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` index-contract coverage with explicit `undefined` argument-index rejection, locking undefined-index contract semantics alongside existing null/symbol/non-integer/out-of-range guards.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` index-contract coverage with explicit `bigint` argument-index rejection, locking non-number primitive index contract semantics.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` index-contract coverage with explicit `NaN` argument-index rejection, locking non-finite index contract semantics alongside existing null/undefined/symbol/non-integer/out-of-range guards.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` index-contract coverage with explicit `Infinity` argument-index rejection, locking infinite-index contract semantics alongside existing null/undefined/NaN/symbol/non-integer/out-of-range guards.
+- 2026-02-13: Expanded shared `readRequiredArgumentValue` index-contract coverage with explicit `-Infinity` argument-index rejection, locking negative-infinite index contract semantics alongside existing null/undefined/NaN/symbol/non-integer/out-of-range guards.
+- 2026-02-13: Expanded shared parser-helper option-name coverage with explicit `bigint` `flagName` rejection in `validateRequiredArgumentValue`, locking non-string primitive flag-name contract semantics.
+- 2026-02-13: Expanded shared parser-helper option-name coverage with explicit `bigint` `flagName` rejection in `readRequiredArgumentValue`, locking non-string primitive flag-name contract semantics in read-path parser validation.
+- 2026-02-13: Expanded shared parser-helper option-name coverage with explicit `number` `flagName` rejection in `validateRequiredArgumentValue`, locking numeric primitive flag-name contract semantics in direct parser validation.
+- 2026-02-13: Expanded shared parser-helper option-name coverage with explicit `number` `flagName` rejection in `readRequiredArgumentValue`, locking numeric primitive flag-name contract semantics in read-path parser validation.
+- 2026-02-13: Expanded shared parser-helper option-name coverage with explicit unprintable `flagName` rejection in `readRequiredArgumentValue`, locking `[unprintable]` error-format contract semantics in read-path parser validation.
+- 2026-02-13: Expanded shared read-path index-contract coverage with symbol index rejection in upper-bound cursor scenarios (`argv.length - 1`), locking invalid-index-type precedence before missing-value boundary handling.
+- 2026-02-13: Expanded shared read-path value-token coverage with empty-string following-token rejection for required flags, locking missing-value semantics for explicit empty argv payloads.
+- 2026-02-13: Added read-path inline-equals parity regression coverage by asserting `validateRequiredArgumentValue` acceptance for extracted `--flag=value` payloads and equality with `readRequiredArgumentValue` split-form reads, locking parser helper consistency across inline/split argument styles.
+- 2026-02-13: Hardened timeout option-name validation by rejecting whitespace-padded option labels (`name !== name.trim()`) and expanded helper coverage across direct/composed env/cli timeout resolution entrypoints.
+- 2026-02-13: Hardened timeout options-container shape guards with plain-object validation (`Object`/`null` prototype only), adding direct/composed Date/Map/Set rejection coverage for top-level, env, and cli timeout option containers.
+- 2026-02-13: Expanded timeout default-value boundary coverage with explicit `-0` rejection assertions in direct and composed timeout resolution helpers, locking negative-zero default semantics alongside existing non-positive default guards.
+- 2026-02-13: Expanded timeout raw-value overflow coverage with max-safe-integer overflow string rejection (`9007199254740992`) across direct env parsing and composed env/cli precedence paths, locking overflow guard semantics beyond ceiling-only checks.
+- 2026-02-13: Expanded composed timeout precedence coverage with plus-prefixed raw-timeout rejection (`+5000`, `+50`) for env and CLI override paths, locking strict digit-only semantics in override resolution.
+- 2026-02-13: Expanded timeout Unicode-whitespace coverage by asserting trim behavior for padded numeric values and rejection behavior for Unicode-whitespace-only values across direct and composed env/cli timeout resolution helpers.
+- 2026-02-13: Hardened `bundle-diagnostics` equals-form argument parsing by rejecting malformed double-equals inline values for `--output`, `--pattern`, and `--tar-timeout-ms`, with dedicated parse-failure regression coverage and usage guidance assertions.
+- 2026-02-13: Hardened `bundle-diagnostics` file deduplication canonicalization by resolving real paths before keying matched files, eliminating symlink-path duplicate archive entries and adding symlinked-path dedupe regression coverage.
+- 2026-02-13: Expanded `bundle-diagnostics` dedupe/collision coverage with case-variant filename assertions (`Case.log` vs `case.log`) to lock distinct-entry behavior on case-sensitive filesystems.
+- 2026-02-13: Hardened `bundle-diagnostics` placeholder cleanup failure handling by replacing immediate `process.exit(1)` with `process.exitCode = 1` in archive-failure paths so `finally` cleanup executes, with regression coverage asserting placeholder removal when tar exits non-zero.
+- 2026-02-13: Expanded `changeset-status-ci` filter coverage with mixed newline payload assertions (CRLF + LF in one output stream), locking cross-platform line-ending normalization semantics.
+- 2026-02-13: Hardened `bundle-diagnostics` tar spawn error classification by mapping `ENOENT` failures to a deterministic “tar command was not found in PATH” error, with regression coverage and placeholder cleanup assertions for PATH-misconfiguration failures.
+- 2026-02-13: Hardened `changeset-status-ci` suppressed-warning sort determinism by replacing locale-sensitive sort behavior with code-point ordering and adding locale-sensitive warning fixture coverage (`z-module` vs `ä-module`).
+- 2026-02-13: Hardened `changeset-status-ci` inline-timeout argument parsing by rejecting malformed double-equals forms (`--timeout-ms==...`) with explicit parse-time diagnostics, aligning timeout parser semantics with other automation scripts.
+- 2026-02-13: Expanded timeout options-container hardening coverage with unprintable non-plain object fixtures (Date instances with throwing `toString`) across direct env parsing and composed top-level/env/cli option-container validation paths.
+- 2026-02-13: Hardened `changeset-status-ci` spawn error classification by mapping `ENOENT` failures to deterministic “changeset command was not found in PATH” diagnostics, replacing generic execution-failure messaging for missing-binary scenarios.
+- 2026-02-13: Hardened shared required-argument option validation by rejecting whitespace-padded `flagName` values (`flagName !== flagName.trim()`), adding regression coverage for both validate/read helper entrypoints.
+- 2026-02-13: Hardened required-argument set-entry validation by rejecting whitespace-padded `knownArgs` and `allowedKnownValues` entries, adding validate/read regression coverage for canonical token-set semantics.
+- 2026-02-13: Hardened required-argument options-container validation with plain-object guards (`Object`/`null` prototype only), adding Date/Map/Set options-object rejection coverage for both validate/read helper entrypoints.
+- 2026-02-13: Hardened `bundle-diagnostics` message parser parity by rejecting malformed inline double-equals message tokens (`--message==...`), aligning malformed-inline semantics across output/pattern/message/timeout equals-form flags.
+- 2026-02-13: Expanded `changeset-status-ci` duplicate-flag matrix with precedence regression coverage for duplicate-vs-malformed inline timeout collisions, locking deterministic duplicate-first behavior when first timeout token is valid and malformed-first behavior otherwise.
+- 2026-02-13: Expanded `bundle-diagnostics` duplicate-flag matrix with duplicate-vs-malformed inline precedence coverage for timeout/output/message flags, locking deterministic duplicate-first behavior when the first inline flag is valid and malformed-first behavior otherwise.
+- 2026-02-13: Added `changeset-status-ci` non-ENOENT spawn-failure regression coverage, asserting generic execution-failure diagnostics remain distinct from missing-command classification when `changeset` is present but non-executable.
+- 2026-02-13: Added missing-default-value regression coverage for `resolveTimeoutFromCliAndEnv`, ensuring omitted `defaultValue` fields fail fast with explicit invalid-default diagnostics.
+- 2026-02-13: Expanded help-alias collision coverage for `bundle-diagnostics` message literals, adding long/short cross-alias trailing-help regressions for both split and equals-form message values (`--help` ↔ `-h`).
+- 2026-02-13: Added null-byte timeout-value regressions in `cli-timeout` helpers, covering both direct env parsing and composed env+cli resolution precedence paths.
+- 2026-02-13: Expanded `bundle-diagnostics` dedupe regression coverage for case-variant alias collisions, asserting symlinked `logs/` ↔ `LOGS/` path aliases that resolve to the same file collapse to a single canonical archive entry.
+- 2026-02-13: Hardened `bundle-diagnostics` placeholder cleanup failure handling by covering tar-side placeholder deletion and cleanup unlink failures, preserving primary archive errors while surfacing explicit cleanup diagnostics.
+- 2026-02-13: Expanded `bundle-diagnostics` timeout precedence coverage around empty/whitespace env values, locking CLI-invalid/empty-env behavior and env-whitespace rejection even when CLI overrides are otherwise valid.
+- 2026-02-13: Expanded runtime error-message contract coverage for `bundle-diagnostics`, asserting unexpected filesystem setup failures emit `[bundle-diagnostics]`-prefixed runtime diagnostics without usage-text noise.
+- 2026-02-13: Expanded `changeset-status` filter robustness coverage for large mixed outputs, asserting high-line-count payloads preserve passthrough line integrity while still deduplicating/sorting workspace warnings.
+- 2026-02-13: Tightened `changeset-status` workspace-warning matcher and added malformed-warning regressions so only fully-formed file-dependency warnings are suppressed (missing quote/trailing token variants now pass through).
+- 2026-02-13: Hardened `writeFakeExecutable` filename validation with explicit overlength-name rejection (byte-length guard) and added regression coverage for extremely long executable names.
+- 2026-02-13: Expanded `writeFakeExecutable` body validation coverage for newline-only payloads (`\\n\\n`, `\\r\\n\\r\\n`), locking trim-based rejection semantics for structurally empty scripts.
+- 2026-02-13: Hardened `writeFakeExecutable` cross-platform filename semantics by rejecting Windows reserved device names (`CON`, `PRN`, etc.) and adding dedicated regression coverage.
+- 2026-02-13: Added `writeFakeExecutable` fake-bin idempotency coverage, asserting repeated fixture writes against an existing `fake-bin` directory preserve path stability and command executability.
+- 2026-02-13: Refactored scripts test fixtures to centralize shared `UNPRINTABLE_VALUE` test input in a reusable helper module, reducing duplicated fixture boilerplate across argument/timeout/filter/fixture test suites.
+- 2026-02-13: Refactored duplicate argument parser test fixtures in `changeset-status-ci.test.mjs` into reusable constant maps for help and timeout duplicate/malformed matrices, reducing fixture duplication while preserving coverage semantics.
+- 2026-02-13: Added `format-error-value-contract.test.mjs` to enforce cross-script diagnostics consistency, asserting helper modules render unprintable inputs as `[unprintable]` via `formatErrorValue`-backed error messages.
+- 2026-02-13: Completed synchronous I/O hotspot audit for script utilities and documented tradeoffs in `docs/migration/scripts-sync-io-audit-2026-02-13.md`, concluding current sync usage is acceptable for short-lived CI/test workflows.
+- 2026-02-13: Added parser-latency smoke benchmarks (`parser-latency-smoke.test.mjs`) covering `cli-arg-values` and `cli-timeout` hot loops with explicit runtime budgets to catch major performance regressions.
+- 2026-02-13: Added CI Node LTS matrix coverage for `automation:test` via a dedicated `automation-test-matrix` GitHub Actions job (Node 20 + 22), with shared workspace install/caching semantics.
+- 2026-02-13: Added CI guard steps to fail builds if tracked artifacts appear under `apps/debugger/.next/**`, preventing accidental commits of generated Next.js build output.
+- 2026-02-13: Added CI lockfile drift checks after workspace install in both CI jobs, failing builds when `package-lock.json` files mutate unexpectedly across root/api/cli/debugger workspaces.
+- 2026-02-13: Audited `packages/api` public export surface and documented backward-compatibility guarantees/risks in `docs/migration/packages-api-export-audit-2026-02-13.md` (root export map, runtime/type symbols, registry keys, follow-up guardrail recommendations).
+- 2026-02-13: Expanded `packages/api` contract tests for register bounds and coercion rejection, asserting all register fields reject out-of-range values (`<0`, `>0xff`) and non-numeric coercible payloads (string/boolean).
+- 2026-02-13: Added snapshot schema stability regression coverage in `packages/api`, asserting all `PpuSnapshotSchema` fields remain non-optional and any single-field omission fails validation.
+- 2026-02-13: Expanded `packages/api` contract validation coverage for non-object payloads across all v1 entrypoints (`registers`, `ppuSnapshot`, `memorySection`, `debugFrame`, `metadata`) for both registry-based and direct schema validation paths.
+- 2026-02-13: Expanded `packages/api` numeric-type strictness coverage with bigint rejection regressions across register, snapshot, memory section, and debug frame numeric fields.
+- 2026-02-13: Expanded `packages/api` numeric validation coverage for non-finite values (NaN/±Infinity) across register bytes, snapshot byte arrays, memory-section numeric spans, and debug-frame numeric fields; tightened debug-frame `timestampMs`/`fps` schemas with finite-number constraints.
+- 2026-02-13: Added `packages/api` debug-frame JSON serialization roundtrip regression coverage, asserting serialized+parsed payloads remain valid and structurally stable for both direct schema validation and registry-based validation paths.
+- 2026-02-13: Added `packages/api` validate-throughput smoke coverage for batched contract payloads (direct schema + registry validation) with explicit runtime budget guards to catch major validation performance regressions.
+- 2026-02-13: Expanded `packages/api` README with concrete invalid-payload handling examples for both direct schema validation and registry validation, documenting how to consume `errorMessage` diagnostics from failed validation envelopes.
+- 2026-02-13: Added a dedicated `@wasmboy/api` semantic-version policy mapping section in the changelog, explicitly documenting patch/minor/major contract-surface change categories for contract schemas, registry keys, and validation helpers.
+- 2026-02-13: Completed `packages/cli` parser error-phrasing audit and documented inconsistent message patterns, code-path inventory, and normalization recommendations in `docs/migration/packages-cli-error-phrasing-audit-2026-02-13.md`.
+- 2026-02-13: Added `packages/cli` unknown-option suggestion handling/tests for `snapshot`, `compare`, and `contract-check` commands, including typo-to-flag hints (`--ot`→`--out`, `--currnt`→`--current`, `--contrct`→`--contract`).
+- 2026-02-13: Added mutually exclusive flag enforcement/tests for CLI alias pairs (`snapshot`: `--out` vs `-o`, `compare`: `--current` vs `-c`) with explicit InvalidInput diagnostics on conflicting usage.
+- 2026-02-13: Hardened CLI filesystem error formatting by wrapping read/write failures in `CliError(InvalidOperation)` envelopes with normalized `read/write failed for "<path>": <ERRNO>: <message>` diagnostics; added permission-denied regression tests.
+- 2026-02-13: Added Windows-style path + quoted-path CLI coverage by normalizing backslash separators and stripping wrapping quotes in path resolution; added regression tests for quoted/backslash ROM and output paths.
+- 2026-02-13: Added stdin piping integration support/tests for CLI ROM commands (`run`/`snapshot`) via `<rom> = "-"`, including help-text examples and regression assertions for stdin-sourced snapshot payload metadata.
+- 2026-02-13: Added CLI startup-dispatch smoke benchmark coverage (`executeCli --help` loop with stdout mocking) and explicit latency budget assertions to catch major cold-path regressions.
+- 2026-02-13: Refactored CLI logger hot path to avoid spread/newline concatenation allocations (explicit record serialization + direct stream writes) and added dedicated logger output contract tests for stdout/stderr JSONL behavior.
+- 2026-02-13: Expanded CLI package documentation with non-zero exit code semantics and troubleshooting guidance, including failure JSON envelope examples and `InvalidInput`/`InvalidOperation`/`OutOfBounds` code interpretation.
+- 2026-02-13: Added release checklist automation for package publish dry-runs via `scripts/release-checklist-dry-run.mjs`, wired to `release:checklist:npm-dry-run` and the release workflow, with automation tests for success/failure command execution paths.
+- 2026-02-14: Completed debugger worker boot-path race-condition audit and documented readiness/handshake/lifecycle risks plus mitigation sequence in `docs/migration/debugger-worker-boot-race-audit-2026-02-14.md`.
+- 2026-02-14: Added debugger worker lifecycle stability regression coverage with repeated init/dispose cycle tests for `createDebuggerWorker`, asserting no active-worker accumulation and consistent worker-constructor options across cycles.
+- 2026-02-14: Added debugger panel rendering regression coverage for large event logs by mocking store payloads and asserting `EventLogPanel` renders high-volume event entries without falling back to empty-state messaging.
+- 2026-02-14: Added malformed-frame resilience coverage for debugger AI route payloads, including sanitization of invalid frame metadata/checksum/event/snapshot entries and regression tests verifying `GET /api/ai/debug` returns safe normalized envelopes.
+- 2026-02-14: Added debugger frame-render performance instrumentation via capture/render marks + latency measures, wired into snapshot capture/UI frame effects, with dedicated utility tests for mark/measure behavior and failure fallback paths.
+- 2026-02-14: Added runaway timeline safeguards by clamping snapshot selector output and panel render windows, plus regression tests proving oversized snapshot arrays render only the latest bounded timeline segment with truncation notice messaging.
+- 2026-02-14: Added ROM loader recovery UX coverage by validating unsupported/empty file selection errors and ensuring valid follow-up selections clear error state and resume load-event payload emission.
+- 2026-02-14: Added debugger worker crash auto-restart coverage and runtime handling via restartable worker controller logic (`maxRestarts` budget + crash listener rebinds), with regression tests for error/messageerror restart paths and post-dispose no-restart guarantees.
+- 2026-02-14: Refactored debugger selector usage to scalar frame selectors (`frameId`/`frameTimestampMs`) to avoid object-selector rerender churn; added selector stability regression coverage across unrelated store updates.
+- 2026-02-14: Documented debugger memory panel constraints for large dumps in the debugger usage guide, including bounded-render rationale and guidance to prefer paginated/exported workflows for high-volume memory inspection.
+- 2026-02-14: Completed voxel-wrapper snapshot allocation audit and documented per-frame allocation hotspots (1-byte register section reads, full-snapshot layer overread, `Array.from` memory validation copy) plus mitigation sequence in `docs/migration/voxel-wrapper-snapshot-allocation-audit-2026-02-14.md`.
+- 2026-02-14: Added voxel-wrapper worker-readiness regression tests (`test/integration/voxel-wrapper-readiness-test.mjs`) validating support-check retry behavior and null snapshot fallback when readiness retries are exhausted; wired the new suite into all integration test script variants via `test:integration:voxel:wrapper`.
+- 2026-02-14: Expanded voxel-wrapper fallback regression coverage for `_getWasmConstant` failure semantics, asserting cached-base snapshot reads still succeed when constant lookup later fails and cache-clear paths return null after retry exhaustion.
+- 2026-02-14: Added unsupported-core detection regressions for voxel wrapper internals, asserting `supportsPpuSnapshot()` and `getPpuSnapshot()` fail safely (false/null) when `_getWasmConstant` or `_getWasmMemorySection` capabilities are absent.
+- 2026-02-14: Added partial memory-read failure resilience for voxel snapshots by catching section-read exceptions in fallback snapshot assembly and returning `null` with emitted error events; added regression coverage for partial section failure handling.
+- 2026-02-14: Completed core graphics branch-churn profile (`docs/migration/core-graphics-branch-churn-profile-2026-02-14.md`) with throughput baseline evidence and hot-path branch inventory/reduction candidates across scanline, background/window, and sprite render loops.
+- 2026-02-14: Completed core sound duplicate-write audit (`docs/migration/core-sound-duplicate-state-write-audit-2026-02-14.md`), identifying repeat frequency-field synchronization, accumulator flag resets, and NR52 reset fan-out tradeoffs with prioritized low-risk reduction targets.
+- 2026-02-14: Added execute-loop microbenchmark guard (`test/core/execute-loop-microbench.cjs` + baseline JSON) and wired it into all core suite variants (`test:core`, `test:core:nobuild`, `test:core:nobuild:ci`) to detect core execution regressions early.
+- 2026-02-14: Added core timer divider-overflow boundary regression coverage (`test/core/timer-overflow-boundary-test.cjs`) and wired it into core suite scripts, asserting 16-bit DIV wrap behavior remains bounded and stable across overflow edges.
+- 2026-02-14: Added interrupt-priority ordering regressions (`test/core/interrupt-priority-ordering-test.cjs`) using deterministic ROM fixtures with simultaneous IF/IE flags to verify highest-priority interrupt vectors are serviced first.
+- 2026-02-14: Added save/load serialization determinism regression coverage (`test/core/serialization-determinism-test.cjs`) to ensure core memory snapshots (cartridge/gameboy/palette regions) remain byte-stable across repeated save/load cycles.
+- 2026-02-14: Completed memory banking branch audit (`docs/migration/core-memory-banking-branch-audit-2026-02-14.md`), documenting branch fan-out hotspots in `handleBanking`/`checkWriteTraps` and prioritizing low-risk flag-caching/flow-splitting candidates.
+- 2026-02-14: Hardened invalid Game Boy address handling by returning a sentinel (`-1`) from `getWasmBoyOffsetFromGameBoyOffset` for out-of-range offsets and guarding load/store helpers against negative wasm offsets (`0xff` read fallback + ignored writes), with regression coverage in `test/core/invalid-memory-trap-address-test.cjs` and wiring into all core suite script variants.
+- 2026-02-14: Added explicit core-to-wrapper memory dependency documentation (`docs/migration/core-wrapper-offset-dependency-map-2026-02-14.md`) mapping `core/constants.ts` symbols (`DEBUG_GAMEBOY_MEMORY_LOCATION`, `GBC_PALETTE_LOCATION`, `GBC_PALETTE_SIZE`) to voxel-wrapper offset math and compatibility checklist requirements.
+- 2026-02-14: Added automated core/wrapper memory-layout drift enforcement via `scripts/core-wrapper-memory-layout-check*.mjs` (constant export checks, wrapper offset literal checks, required `_getWasmConstant` lookups, base-offset section-read guards), wired into `memory:layout:check` and `automation:check` with dedicated regression coverage.
+- 2026-02-14: Added repo-level accidental artifact cleanup automation (`scripts/clean-accidental-build-artifacts.mjs`) and wired it into pre-commit (`clean:artifacts:precommit` before staged formatting) to remove transient `build/`, `apps/debugger/.next`, and generated non-golden test image/output artifacts prior to commit; added focused cleanup regressions.
+- 2026-02-14: Added a pre-commit generated-artifact staging guard (`scripts/guard-generated-artifacts-precommit.mjs`) that blocks staged `dist/**` and `build/**` edits by default (with explicit override env), wired into the pre-commit chain and covered with path-normalization + validation regressions.
+- 2026-02-14: Added library console-usage lint enforcement (`scripts/check-library-console-usage.mjs`) with explicit allowlist + third-party exclusions, wired into `automation:check` (`lint:library:console`) and backed by violation/allowlist regression coverage to prevent accidental new `console.*` usage in library modules.
+- 2026-02-14: Added selective workspace test smoke matrix commands (`stack:test:smoke:scope:*`, `stack:test:smoke:scopes`) and wired them into both `test:all:nobuild` variants to continuously validate package/app scope filtering command paths (`packages/api`, `packages/cli`, `apps/debugger`) before full stack test execution.
+- 2026-02-14: Consolidated duplicated migration doc/reporting entries into normalized subsystem sections (`docs/migration/migration-docs-normalized-sections-2026-02-14.md`) and linked the index from the completion summary for faster high-signal review.
+- 2026-02-14: Added a technical debt register (`docs/migration/technical-debt-register-2026-02-14.md`) with severity tiers (S1-S4), subsystem ownership tags, open/closed debt partitions, and triage cadence guidance to track post-migration follow-up work.
+- 2026-02-14: Extended CI diagnostics in the Node automation matrix job to tee per-node automation test logs and upload bundled failure artifacts (`automation-test-node-*.log` archives) on failure/cancellation, improving triage for `automation:test` regressions.
+- 2026-02-14: Added flaky-test detection rerun strategy in CI automation matrix: `automation:test` now reruns once after initial failure, writes per-attempt logs + flake marker metadata, emits warning annotations on pass-after-retry, and preserves bundled attempt logs for failure/cancel diagnostics.
+- 2026-02-14: Added release workflow mode controls with dry-run support and manual approval gating (`workflow_dispatch` inputs: `dry_run`, `approve_publish`): push-triggered runs are now verification-only dry-runs, while publish/create-PR action executes only in approved manual publish mode.
+- 2026-02-14: Added workspace-scoped dependency freshness auditing (`scripts/dependency-freshness-audit.mjs`) with per-workspace `npm outdated` reporting and optional strict-fail mode (`dependency:freshness:audit:strict`), plus parser/aggregation regression tests.
+- 2026-02-14: Added workspace lockfile/transitive advisory security scan automation (`scripts/security-scan-workspaces.mjs`) with strict failure mode and wired `audit:check` to the strict multi-workspace scan, ensuring root/api/cli/debugger advisories are enforced in CI quality gates.
+- 2026-02-14: Added onboarding architecture map diagram (`docs/migration/repository-architecture-map-2026-02-14.md`) with core/runtime/package/app/quality-layer relationships and linked it from README migration guides.
+- 2026-02-14: Defined cross-subsystem performance budgets in `docs/migration/performance-budgets-2026-02-14.md` (scripts parser, CLI startup, debugger frame instrumentation, core execute-loop FPS) and added debugger budget smoke enforcement (`apps/debugger/test/performance-budget.test.ts`).
+- 2026-02-14: Added a weekly regression operations checklist (`docs/migration/weekly-regression-checklist-2026-02-14.md`) tying CI workflow health, local command gates, performance budgets, docs/debt sync, and release-readiness checks into one repeatable review routine.
+- 2026-02-14: Established iterative “next 100” backlog generation process (`docs/migration/iterative-backlog-process-2026-02-14.md`) with candidate source streams, scoring model, execution protocol, completion gate, and a reusable 100-item template (`docs/migration/next-100-backlog-template.md`).
+- 2026-02-14: Migrated husky pre-commit wiring from deprecated `scripts.precommit` discovery to explicit `husky.hooks.pre-commit` + `precommit:hook` script chain, eliminating deprecation warnings while preserving cleanup/guard/format pre-commit behavior.
+- 2026-02-14: Added explicit generated-artifact commit policy docs (`docs/migration/generated-artifact-commit-policy-2026-02-14.md`) covering guarded override usage (`WASMBOY_ALLOW_GENERATED_EDITS=1`) and required safeguards for intentional `dist/build` commits; closed corresponding debt register item.
+- 2026-02-14: Added automated next-cycle backlog bootstrapping (`scripts/next-backlog-generator.mjs`, `backlog:generate:next100`) with parser/generation tests and generated a first dated draft (`docs/migration/next-100-backlog-draft-2026-02-14.md`) seeded from open debt items.
+- 2026-02-14: Addressed next-cycle `task101` by adding periodic core memory-offset wasm-export contract enforcement (`scripts/core-memory-offset-contract-check*.mjs`, `core:memory-offset:check`) and wiring it into `automation:check`; closed TD-001 in debt register and marked `task101` completed in the generated next-100 draft.
+- 2026-02-14: Addressed next-cycle `task102` by classifying volatile `WASMBOY_STATE` save/load bytes and enforcing non-volatile determinism in `test/core/serialization-determinism-test.cjs`; documented volatile indices in `docs/migration/core-save-state-volatile-field-classification-2026-02-14.md`, closed TD-002, and marked `task102` completed.
+- 2026-02-14: Addressed next-cycle `task110` by introducing a shared schema-driven throw-case helper (`scripts/test-schema-helpers.mjs`) and migrating repetitive parser validation tests in `cli-arg-values` and `cli-timeout` suites; validated with `npm run automation:test`, closed TD-010, and marked `task110` completed.
+- 2026-02-14: Addressed next-cycle `task106` by optimizing wrapper snapshot fallback reads: `getPpuSnapshot` now batches register fetches, while `getPpuSnapshotLayers` now performs selective layer reads (no forced full snapshot for partial requests); added integration regressions in `test/integration/voxel-wrapper-readiness-test.mjs`, closed TD-006, and marked `task106` completed.
+- 2026-02-14: Addressed next-cycle `task107` by replacing the `getDirectMemoryAccess()` stub with capability-based sync memory access (`_getWasmMemoryView` / `_getWasmMemoryBuffer`), including bounds/type guards and integration coverage for unavailable, buffer-backed, and explicit-view-provider paths; closed TD-007 and marked `task107` completed.
+- 2026-02-14: Addressed next-cycle `task108` by extending debugger worker auto-restart with telemetry events and capped exponential backoff tuning, then surfacing those diagnostics in the debugger UI (`apps/debugger/app/page.tsx`); validated with `npm --prefix apps/debugger test`, closed TD-008, and marked `task108` completed.
+- 2026-02-14: Addressed next-cycle `task109` by adding paginated snapshot timeline deep-inspection UX (oldest/older/newer/newest controls) plus deterministic page-window helper coverage in debugger tests; validated with `npm --prefix apps/debugger test`, closed TD-009, and marked `task109` completed.
+- 2026-02-14: Addressed next-cycle `task105` by refactoring core `handleBanking` branch fan-out into focused helper paths (RAM enable, ROM lower bits, RAM/upper ROM select, mode updates) while preserving behavior; validated via `npm run core:build && npm run lib:build:wasm && npm run test:core:memorytraps && npm run test:integration:memorybounds`, closed TD-005, and marked `task105` completed.
+- 2026-02-14: Addressed next-cycle `task104` by consolidating repeated channel frequency sync paths into per-channel `syncFrequencyFromRegisters()` helpers across sound channels 1–3; validated via `npm run core:build && npm run lib:build:wasm && npm run test:core:serialization && npm run test:integration:headless`, closed TD-004, and marked `task104` completed.
+- 2026-02-14: Addressed next-cycle `task103` by hoisting frame-stable graphics branch checks out of background per-pixel loops and caching scanline-cycle budget per update iteration; validated via `npm run core:build && npm run lib:build:wasm && npm run test:performance:throughput && npm run test:integration:headless`, closed TD-003, and marked `task103` completed.
+- 2026-02-14: Addressed next-cycle `task111` by hardening integration artifact hygiene: headless integration screenshots now write to `.output` files, and accidental-artifact cleanup now scans `test/integration/**` for `.output` artifacts with regression coverage; validated via `npm run automation:test && npm run test:integration:headless && npm run clean:artifacts:precommit`, and marked `task111` completed.
+- 2026-02-14: Addressed next-cycle `task112` by introducing cleanup-wrapped headless integration commands (`test:integration:headless:clean`, `test:integration:headless:clean:ci`) and wiring integration aggregates to use them, preventing local/CI output artifact accumulation by default; validated via `npm run test:integration:headless:clean`, and marked `task112` completed.
+- 2026-02-14: Addressed next-cycle `task113` by adding package-script contract regression tests (`scripts/package-scripts-contract.test.mjs`) to enforce cleanup-wrapped headless integration wiring in `package.json`; validated via `npm run scripts:format && npm run automation:test`, and marked `task113` completed.
+- 2026-02-14: Addressed next-cycle `task114` by extending pre-commit generated-artifact guarding to block staged `test/integration/*.output(.png)` artifacts and documenting the expanded policy, with guard regression coverage updates validated via `npm run scripts:format && npm run automation:test`; marked `task114` completed.
+- 2026-02-14: Addressed next-cycle `task115` by expanding generated-artifact pre-commit enforcement to block non-golden `test/accuracy/testroms` outputs and non-baseline `test/performance/testroms` PNG artifacts, with extended guard regression coverage validated via `npm run scripts:format && npm run automation:test`; marked `task115` completed.
+- 2026-02-14: Addressed next-cycle `task116` by adding artifact-policy parity regressions (`scripts/artifact-policy-parity.test.mjs`) that enforce alignment between cleanup and pre-commit guard behavior for generated test artifacts vs golden/baseline files; validated via `npm run scripts:format && npm run automation:test`; marked `task116` completed.
+- 2026-02-14: Addressed next-cycle `task117` by centralizing generated-artifact policy logic into shared tooling (`scripts/artifact-policy.mjs`) consumed by both cleanup and pre-commit guard scripts, removing duplicate rule implementations and preserving windows-path normalization behavior; validated via `npm run scripts:format && npm run automation:test`; marked `task117` completed.
+- 2026-02-14: Addressed next-cycle `task118` by adding direct unit coverage for shared artifact policy helpers (`scripts/artifact-policy.test.mjs`) to lock normalization and generated-artifact classification behavior independent of downstream script wrappers; validated via `npm run scripts:format && npm run automation:test`; marked `task118` completed.
+- 2026-02-14: Addressed next-cycle `task119` by adding `--dry-run`/`--help` CLI support to `clean-accidental-build-artifacts`, wiring parser validation with regression coverage, and verifying non-destructive candidate reporting for generated artifact cleanup flows; validated via `npm run scripts:format && node --test "scripts/clean-accidental-build-artifacts.test.mjs" && npm run automation:test`; marked `task119` completed.
+- 2026-02-14: Addressed next-cycle `task120` by wiring a dedicated `clean:artifacts:precommit:dry-run` package script, extending package script contracts for dry-run discoverability, and documenting the non-destructive inspection command in README/policy docs; validated via `npm run scripts:format && npm run automation:test`; marked `task120` completed.
+- 2026-02-14: Addressed next-cycle `task121` by adding explicit CLI argument parsing/help mode to the generated-artifact staging guard (`--help`, unknown-flag validation) with regression coverage, improving guard script usability and error clarity for local debugging; validated via `npm run scripts:format && npm run automation:test`; marked `task121` completed.
+- 2026-02-14: Addressed next-cycle `task122` by adding CLI contract tests that execute cleanup and guard scripts via Node subprocess (`--help`, unknown-flag errors), ensuring script-level usage/error behavior is regression-tested beyond function-level unit coverage; validated via `npm run scripts:format && npm run automation:test`; marked `task122` completed.
+- 2026-02-14: Addressed next-cycle `task123` by normalizing cleanup/guard parser error payloads to avoid duplicated log prefixes and updating CLI contract tests accordingly, improving actionable CLI diagnostics while preserving existing guard behavior; validated via `npm run scripts:format && npm run automation:test`; marked `task123` completed.
+- 2026-02-14: Addressed next-cycle `task124` by de-duplicating normalized blocked paths in generated-artifact staging guard detection, adding regression coverage for equivalent path aliases, and keeping deterministic sorted output for pre-commit diagnostics; validated via `npm run scripts:format && npm run automation:test`; marked `task124` completed.
+- 2026-02-14: Addressed next-cycle `task125` by refactoring shared artifact policy evaluation to avoid redundant path normalization work between block/remove helpers and extending coverage for windows-path generated output blocking; validated via `npm run scripts:format && npm run automation:test`; marked `task125` completed.
+- 2026-02-14: Addressed next-cycle `task126` by expanding executable CLI contract coverage with dry-run/non-dry-run cleanup behavior checks in temporary workspaces, proving script-level candidate reporting and destructive cleanup semantics from the actual command boundary; validated via `npm run scripts:format && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task126` completed.
+- 2026-02-14: Addressed next-cycle `task127` by adding explicit string-input validation to shared artifact policy helpers and extending tests for non-string rejection paths, preventing opaque runtime failures from invalid consumer inputs; validated via `npm run scripts:format && npm run automation:test`; marked `task127` completed.
+- 2026-02-14: Addressed next-cycle `task128` by validating `findBlockedArtifactPaths` input contracts (array + per-item string guards) with dedicated regression tests, improving fail-fast behavior for malformed guard consumers and helper misuse; validated via `npm run scripts:format && npm run automation:test`; marked `task128` completed.
+- 2026-02-14: Addressed next-cycle `task129` by adding cleanup script `--json` support with parser/test coverage and subprocess contract validation for machine-readable dry-run summaries, enabling stable automation parsing without scraping log text; validated via `npm run scripts:format && node --test "scripts/clean-accidental-build-artifacts.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task129` completed.
+- 2026-02-14: Addressed next-cycle `task130` by adding generated-artifact guard `--json` output mode with parser/help contract updates and subprocess-level JSON summary coverage, enabling deterministic machine-readable staged-artifact validation output for automation workflows; validated via `npm run scripts:format && node --test "scripts/guard-generated-artifacts-precommit.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task130` completed.
+- 2026-02-14: Addressed next-cycle `task131` by adding package-script shortcuts for cleanup/guard JSON artifact-policy views (`clean:artifacts:precommit:json`, `guard:generated-artifacts:precommit:json`) with script-contract coverage and documentation updates for contributor discoverability; validated via `npm run scripts:format && npm run automation:test`; marked `task131` completed.
+- 2026-02-14: Addressed next-cycle `task132` by extending guard CLI executable-contract tests to validate `--json` behavior when blocked generated artifacts are staged in an isolated git repo, proving exit-code and payload correctness under failing pre-commit scenarios; validated via `npm run scripts:format && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task132` completed.
+- 2026-02-14: Addressed next-cycle `task133` by extending guard CLI executable contracts to cover `WASMBOY_ALLOW_GENERATED_EDITS=1` override behavior in `--json` mode with staged generated artifacts, ensuring machine-readable payloads reflect override-driven success semantics; validated via `npm run scripts:format && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task133` completed.
+- 2026-02-14: Addressed next-cycle `task134` by refactoring CLI contract tests to use a shared helper for creating temporary git repos with staged generated artifacts, reducing duplicate setup logic while preserving explicit failure/override JSON validation scenarios; validated via `npm run scripts:format && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task134` completed.
+- 2026-02-14: Addressed next-cycle `task135` by hardening cleanup/guard CLI parsers to reject duplicate flags (`--dry-run`, `--json`, help) and extending both unit-level and executable contract coverage to lock duplicate-flag failure diagnostics; validated via `npm run scripts:format && node --test "scripts/clean-accidental-build-artifacts.test.mjs" && node --test "scripts/guard-generated-artifacts-precommit.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task135` completed.
+- 2026-02-14: Addressed next-cycle `task136` by adding `timestampMs` metadata to cleanup/guard JSON summaries and extending executable contract assertions plus policy documentation so machine-readable artifact diagnostics include traceable emission timing; validated via `npm run scripts:format && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task136` completed.
+- 2026-02-14: Addressed next-cycle `task137` by adding argv-shape and per-token string validation to cleanup/guard argument parsers with dedicated regression coverage, preventing malformed internal caller payloads from producing opaque runtime errors; validated via `npm run scripts:format && node --test "scripts/clean-accidental-build-artifacts.test.mjs" && node --test "scripts/guard-generated-artifacts-precommit.test.mjs" && npm run automation:test`; marked `task137` completed.
+- 2026-02-14: Addressed next-cycle `task138` by versioning machine-readable artifact CLI summaries with `schemaVersion: 1` across cleanup/guard JSON modes and extending executable contract assertions plus policy docs for explicit payload evolution semantics; validated via `npm run scripts:format && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task138` completed.
+- 2026-02-14: Addressed next-cycle `task139` by extending executable contracts to cover cleanup `--json` apply-mode behavior (payload + destructive semantics), ensuring machine-readable summary fields remain correct when cleanup actually removes generated outputs; validated via `npm run scripts:format && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task139` completed.
+- 2026-02-14: Addressed next-cycle `task140` by adding executable coverage for cleanup `--json` zero-removal scenarios, ensuring apply-mode summaries remain deterministic (`removedCount: 0`, empty deletion lists) when no accidental artifacts are present; validated via `npm run scripts:format && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task140` completed.
+- 2026-02-14: Addressed next-cycle `task141` by extending guard executable contracts for no-op override runs (`WASMBOY_ALLOW_GENERATED_EDITS=1`) so JSON summaries explicitly preserve override metadata and success semantics even with zero staged paths; validated via `npm run scripts:format && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task141` completed.
+- 2026-02-14: Addressed next-cycle `task142` by adding guard executable contracts for deterministic blocked-path ordering with multi-file staged artifact scenarios, ensuring machine-readable JSON summaries remain stable for downstream automation diffs/parsers; validated via `npm run scripts:format && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task142` completed.
+- 2026-02-14: Addressed next-cycle `task143` by refactoring artifact CLI executable contracts to centralize schema/timestamp metadata assertions (`schemaVersion`, integer positive `timestampMs`), reducing duplication while strengthening payload validation strictness across all JSON summary scenarios; validated via `npm run scripts:format && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task143` completed.
+- 2026-02-14: Addressed next-cycle `task144` by adding explicit `tool` identifiers to cleanup/guard JSON summaries and extending executable contract assertions/documentation so machine-readable consumers can attribute payloads deterministically across artifact-policy scripts; validated via `npm run scripts:format && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task144` completed.
+- 2026-02-14: Addressed next-cycle `task145` by adding explicit options-shape/type guards to `cleanAccidentalBuildArtifacts` (`options` object, `repoRoot` string, `dryRun` boolean) plus regression coverage for malformed invocation payloads to prevent opaque runtime failures in automation callers; validated via `npm run scripts:format && node --test "scripts/clean-accidental-build-artifacts.test.mjs" && npm run automation:test`; marked `task145` completed.
+- 2026-02-14: Addressed next-cycle `task146` by adding strict `validateGeneratedArtifactStaging` options-shape/type guards (`options` object, boolean `allowGeneratedEdits`) with regression coverage so malformed automation payloads fail fast with actionable diagnostics; validated via `npm run scripts:format && node --test "scripts/guard-generated-artifacts-precommit.test.mjs" && npm run automation:test`; marked `task146` completed.
+- 2026-02-14: Addressed next-cycle `task147` by prioritizing `--help/-h` parsing in cleanup/guard CLIs (usage output now wins over unknown/mixed flags) and extending parser + executable contracts to lock deterministic help-first behavior for operator workflows; validated via `npm run scripts:format && node --test "scripts/clean-accidental-build-artifacts.test.mjs" && node --test "scripts/guard-generated-artifacts-precommit.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task147` completed.
+- 2026-02-14: Addressed next-cycle `task148` by enriching machine-readable summaries with explicit count fields (`deletedDirectoryCount`, `deletedFileCount`, `blockedPathCount`) and extending executable contracts/docs to ensure downstream automation can consume pre-aggregated totals without recomputing array lengths; validated via `npm run scripts:format && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task148` completed.
+- 2026-02-14: Addressed next-cycle `task149` by centralizing JSON summary count-consistency assertions in executable contracts, ensuring count fields always match corresponding list lengths across cleanup/guard scenarios and reducing duplicated contract logic drift risk; validated via `npm run scripts:format && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task149` completed.
+- 2026-02-14: Addressed next-cycle `task150` by introducing shared artifact-summary contract helpers/constants (`schemaVersion`, tool identifiers, timestamp validation) and wiring cleanup/guard JSON emitters to the shared metadata builder to reduce contract drift across scripts; validated via `npm run scripts:format && node --test "scripts/artifact-summary-contract.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task150` completed.
+- 2026-02-14: Addressed next-cycle `task151` by adding shared env-driven timestamp override support (`WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS`) in artifact summary metadata with parser/helper validation and executable contracts proving deterministic JSON timestamps for cleanup/guard scripts; validated via `npm run scripts:format && node --test "scripts/artifact-summary-contract.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task151` completed.
+- 2026-02-14: Addressed next-cycle `task152` by adding subprocess failure-mode contracts for invalid timestamp override values so cleanup/guard CLIs surface deterministic non-zero exits and clear diagnostics when `WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS` is malformed; validated via `npm run scripts:format && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task152` completed.
+- 2026-02-14: Addressed next-cycle `task153` by normalizing whitespace around `WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS` values in shared summary parsing and extending helper + subprocess contracts so timestamp overrides remain user-friendly without sacrificing strict positive-integer validation; validated via `npm run scripts:format && node --test "scripts/artifact-summary-contract.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task153` completed.
+- 2026-02-14: Addressed next-cycle `task154` by adding explicit `timestampSource` metadata (`system-clock` vs `env-override`) to artifact JSON summaries and extending helper/executable contract coverage to preserve deterministic provenance semantics for downstream consumers; validated via `npm run scripts:format && node --test "scripts/artifact-summary-contract.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task154` completed.
+- 2026-02-14: Addressed next-cycle `task155` by centralizing cleanup/guard JSON payload composition in shared summary builders (`buildCleanupArtifactSummary`, `buildGuardArtifactSummary`) with strict input contracts and direct helper tests, reducing duplicated summary assembly logic across scripts; validated via `npm run scripts:format && node --test "scripts/artifact-summary-contract.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task155` completed.
+- 2026-02-14: Addressed next-cycle `task156` by adding boolean convenience fields to artifact JSON summaries (`hasRemovals`, `hasBlockedPaths`) plus helper/executable contract coverage, enabling downstream automation consumers to branch on outcome state without recalculating counts; validated via `npm run scripts:format && node --test "scripts/artifact-summary-contract.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs" && npm run automation:test`; marked `task156` completed.
+- 2026-02-14: Addressed next-cycle `task157` by enforcing shared guard-summary invariants (`stagedPathCount >= blockedPathCount`) inside summary builders with regression coverage, preventing impossible payload combinations from leaking into machine-readable automation outputs; validated via `npm run scripts:format && node --test "scripts/artifact-summary-contract.test.mjs" && npm run automation:test`; marked `task157` completed.
+- 2026-02-14: Addressed next-cycle `task158` by enforcing shared guard-summary validity invariants (`isValid => blockedPathCount === 0`) with regression coverage, preventing contradictory “valid with blocked paths” payloads from reaching machine-readable automation consumers; validated via `npm run scripts:format && node --test "scripts/artifact-summary-contract.test.mjs" && npm run automation:test`; marked `task158` completed.
+- 2026-02-14: Addressed next-cycle `task159` by making artifact summary list field ordering deterministic via shared summary builders (`deletedDirectories`, `deletedFiles`, `blockedPaths`) and locking the behavior in summary + CLI contract tests; validated via `node --test "scripts/artifact-summary-contract.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs"`; marked `task159` completed.
+- 2026-02-14: Addressed next-cycle `task160` by switching artifact summary path sorting to locale-independent ordinal comparison and adding regression coverage for mixed-case ordering to ensure cross-platform deterministic machine-readable output semantics; validated via `node --test "scripts/artifact-summary-contract.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs"`; marked `task160` completed.
+- 2026-02-14: Addressed next-cycle `task161` by de-duplicating repeated path entries in shared cleanup/guard artifact summary builders before deriving count fields, with regression coverage ensuring canonical unique machine-readable path lists and consistent totals; validated via `node --test "scripts/artifact-summary-contract.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs"`; marked `task161` completed.
+- 2026-02-14: Addressed next-cycle `task162` by normalizing windows-style path separators before shared artifact summary sorting/de-duplication, with regression coverage proving canonicalized slash output and stable counts for mixed separator inputs; validated via `node --test "scripts/artifact-summary-contract.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs"`; marked `task162` completed.
+- 2026-02-14: Addressed next-cycle `task163` by normalizing dot-path segments (`./`, `../` simplification) before summary list de-dup/sort processing so machine-readable artifact payloads remain canonical across equivalent relative path forms; validated via `node --test "scripts/artifact-summary-contract.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs"`; marked `task163` completed.
+- 2026-02-14: Addressed next-cycle `task164` by executing an end-to-end repository audit and publishing a prioritized 100-task backlog with per-task evidence/fix/acceptance/verification fields in `docs/migration/repository-audit-backlog-2026-02-14.md`; validated via `npx prettier --check "docs/migration/repository-audit-backlog-2026-02-14.md" && rg "## 2\\) Prioritized backlog \\(100 tasks\\)" docs/migration/repository-audit-backlog-2026-02-14.md`; marked `task164` completed.
+- 2026-02-14: Addressed next-cycle `task165` by switching generated-artifact guard blocked-path sorting to locale-independent ordinal ordering and extending unit + executable contracts for mixed-case deterministic ordering semantics; validated via `node --test "scripts/guard-generated-artifacts-precommit.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs"`; marked `task165` completed.
+- 2026-02-14: Addressed next-cycle `task166` by sorting dependency-freshness package report rows deterministically in ordinal order and adding direct report-format coverage to lock stable output ordering across runtime environments; validated via `node --test "scripts/dependency-freshness-audit.test.mjs"`; marked `task166` completed.
+- 2026-02-14: Addressed next-cycle `task167` by adding configurable per-workspace npm outdated timeout handling in dependency-freshness audits (env override + timeout-specific diagnostics) with focused helper/runner coverage; validated via `node --test "scripts/dependency-freshness-audit.test.mjs"`; marked `task167` completed.
+- 2026-02-14: Addressed next-cycle `task168` by adding configurable per-workspace npm audit timeout handling in workspace security scans (`SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS`) with timeout diagnostics and dedicated helper/runner regression coverage; validated via `node --test "scripts/security-scan-workspaces.test.mjs"`; marked `task168` completed.
+- 2026-02-14: Addressed next-cycle `task169` by adding configurable timeout handling to release checklist npm publish dry-runs (`RELEASE_CHECKLIST_NPM_TIMEOUT_MS`) with timeout-specific package-context diagnostics and dedicated timeout/env parsing coverage; validated via `node --test "scripts/release-checklist-dry-run.test.mjs"`; marked `task169` completed.
+- 2026-02-14: Addressed next-cycle `task170` by adding configurable staged-git inspection timeout handling in generated-artifact precommit guard (`GUARD_GENERATED_ARTIFACTS_GIT_TIMEOUT_MS`) with timeout diagnostics and helper coverage; validated via `node --test "scripts/guard-generated-artifacts-precommit.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs"`; marked `task170` completed.
+- 2026-02-14: Addressed next-cycle `task171` by replacing locale-sensitive violation sorting in library console-usage linting with locale-independent ordinal comparators and adding mixed-case path ordering regression coverage; validated via `node --test "scripts/check-library-console-usage.test.mjs"`; marked `task171` completed.
+- 2026-02-14: Addressed next-cycle `task172` by replacing locale-sensitive path ordering in diagnostics bundling canonicalization with ordinal comparators and adding subprocess argument-order regression coverage for mixed-case file names; validated via `node --test "scripts/bundle-diagnostics.test.mjs"`; marked `task172` completed.
+- 2026-02-14: Addressed next-cycle `task173` by hardening dependency-freshness CLI argument parsing (strict argv contracts, duplicate/unknown flag rejection, help usage, and timeout override support) while wiring CLI timeout overrides through shared timeout resolution; validated via `node --test "scripts/dependency-freshness-audit.test.mjs"`; marked `task173` completed.
+- 2026-02-14: Addressed next-cycle `task174` by hardening workspace security-scan CLI argument parsing (strict argv contracts, duplicate/unknown flag rejection, help usage, and timeout override support) while wiring CLI timeout overrides through shared timeout resolution; validated via `node --test "scripts/security-scan-workspaces.test.mjs"`; marked `task174` completed.
+- 2026-02-14: Addressed next-cycle `task175` by hardening release checklist dry-run CLI argument parsing (strict argv contracts, duplicate/unknown flag rejection, help usage, and timeout override support) while wiring CLI timeout overrides through shared timeout resolution; validated via `node --test "scripts/release-checklist-dry-run.test.mjs"`; marked `task175` completed.
+- 2026-02-14: Addressed next-cycle `task176` by hardening next-backlog generation option contracts (options object shape, positive-integer `backlogSize`/`startTaskNumber` validation) with regression coverage for invalid-size/invalid-start cases; validated via `node --test "scripts/next-backlog-generator.test.mjs"`; marked `task176` completed.
+- 2026-02-14: Addressed next-cycle `task177` by hardening next-backlog generator CLI argument parsing (`--backlog-size` / `--start-task-number` / `--help`) with strict duplicate/unknown rejection, numeric override validation, and override-aware generation coverage; validated via `node --test "scripts/next-backlog-generator.test.mjs"`; marked `task177` completed.
+- 2026-02-14: Addressed next-cycle `task178` by hardening library console-usage lint CLI argument parsing (`--repo-root` / `--help`) with strict duplicate/unknown rejection and script-level usage handling coverage; validated via `node --test "scripts/check-library-console-usage.test.mjs"`; marked `task178` completed.
+- 2026-02-14: Addressed next-cycle `task179` by hardening core memory-offset contract-check CLI argument parsing (`--repo-root` / `--help`) with strict duplicate/unknown rejection and direct-invocation guarding for import-safe helper testing; validated via `node --test "scripts/core-memory-offset-contract-check.test.mjs"`; marked `task179` completed.
+- 2026-02-14: Addressed next-cycle `task180` by hardening core-wrapper memory-layout check CLI argument parsing (`--core-constants-path` / `--wrapper-path` / `--help`) with strict duplicate/unknown rejection, custom path override support, and import-safe direct-invocation guarding; validated via `node --test "scripts/core-wrapper-memory-layout-check.test.mjs"`; marked `task180` completed.
+- 2026-02-14: Addressed next-cycle `task181` by eliminating temp-directory leakage in core-memory-offset dist loading via guaranteed cleanup (`rm` in `finally`) and adding regression coverage that asserts no residual `core-memory-offset-contract-*` temp directories remain after load; validated via `node --test "scripts/core-memory-offset-contract-check.test.mjs"`; marked `task181` completed.

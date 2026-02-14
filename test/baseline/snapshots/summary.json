@@ -1,0 +1,21 @@
+{
+  "generatedAtUtc": "2026-02-13T11:08:19.801Z",
+  "roms": [
+    {
+      "rom": "test/performance/testroms/back-to-color/back-to-color.gbc",
+      "outputFile": "test/baseline/snapshots/back-to-color.snapshot.json",
+      "executeFramesMs": 255.815,
+      "snapshotReadMs": 1.082,
+      "tileDataSha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0",
+      "oamDataSha256": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4"
+    },
+    {
+      "rom": "test/performance/testroms/tobutobugirl/tobutobugirl.gb",
+      "outputFile": "test/baseline/snapshots/tobutobugirl.snapshot.json",
+      "executeFramesMs": 252.64,
+      "snapshotReadMs": 0.924,
+      "tileDataSha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0",
+      "oamDataSha256": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4"
+    }
+  ]
+}

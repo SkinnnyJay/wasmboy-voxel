@@ -1,0 +1,150 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      strict:
+        description: 'Run strict no-retry verification gate before release'
+        required: false
+        type: boolean
+        default: false
+      dry_run:
+        description: 'Skip publish/create-PR action and run verification-only release dry run'
+        required: false
+        type: boolean
+        default: true
+      approve_publish:
+        description: 'Manual approval gate for publish/create-PR action (required when dry_run=false)'
+        required: false
+        type: boolean
+        default: false
+  push:
+    branches: ['master']
+    paths:
+      - '.changeset/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'core/**'
+      - 'lib/**'
+      - 'packages/**'
+      - 'scripts/**'
+      - 'contracts/**'
+      - 'index.ts'
+      - 'voxel-wrapper.ts'
+      - 'fork-api-spec.ts'
+      - '.github/workflows/release.yml'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            packages/api/package-lock.json
+            packages/cli/package-lock.json
+            apps/debugger/package-lock.json
+
+      - name: Cache Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            apps/debugger/.next/cache
+          key: ${{ runner.os }}-next-release-cache-${{ hashFiles('apps/debugger/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-next-release-cache-
+
+      - name: Install workspace dependencies
+        run: npm run install:stack:ci
+
+      - name: Build release artifacts
+        run: set -o pipefail && npm run release:build 2>&1 | tee release-build.log
+
+      - name: Run release verification gate
+        run: |
+          set -o pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.strict }}" == "true" ]]; then
+            npm run release:verify:strict 2>&1 | tee release-verify.log
+          else
+            npm run release:verify 2>&1 | tee release-verify.log
+          fi
+
+      - name: Run npm publish dry-run checklist
+        run: npm run release:checklist:npm-dry-run
+
+      - name: Resolve release mode
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            echo "RELEASE_MODE=dry-run" >> "$GITHUB_ENV"
+            echo "Release mode: dry-run (push trigger)."
+          elif [[ "${{ inputs.dry_run }}" == "true" ]]; then
+            echo "RELEASE_MODE=dry-run" >> "$GITHUB_ENV"
+            echo "Release mode: dry-run (workflow_dispatch input)."
+          else
+            echo "RELEASE_MODE=publish" >> "$GITHUB_ENV"
+            echo "Release mode: publish (workflow_dispatch input)."
+          fi
+
+      - name: Enforce manual publish approval gate
+        if: env.RELEASE_MODE == 'publish'
+        run: |
+          if [[ "${{ inputs.approve_publish }}" != "true" ]]; then
+            echo "Manual approval gate rejected: set approve_publish=true for publish mode." >&2
+            exit 1
+          fi
+          echo "Manual approval gate accepted."
+
+      - name: Skip publish/create-PR action in dry-run mode
+        if: env.RELEASE_MODE == 'dry-run'
+        run: echo "Dry-run mode enabled; skipping changesets publish/create-PR action."
+
+      - name: Compress diagnostics payload
+        if: ${{ failure() || cancelled() }}
+        run: >
+          node scripts/bundle-diagnostics.mjs
+          --output artifacts/release-diagnostics.tar.gz
+          --pattern 'release-build.log'
+          --pattern 'release-verify.log'
+          --pattern 'test/core/save-state/*.png'
+          --pattern 'test/integration/headless-simple*.png'
+
+      - name: Create release PR or publish
+        if: env.RELEASE_MODE == 'publish'
+        uses: changesets/action@v1
+        with:
+          version: npm run changeset:version
+          publish: npm run changeset:publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Upload failure diagnostics
+        if: ${{ failure() || cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-failure-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 14
+          if-no-files-found: ignore
+          path: |
+            artifacts/release-diagnostics.tar.gz

@@ -10,7 +10,7 @@ import {
   eightBitLoadFromGBMemory,
   eightBitStoreIntoGBMemory,
   loadBooleanDirectlyFromWasmMemory,
-  storeBooleanDirectlyToWasmMemory
+  storeBooleanDirectlyToWasmMemory,
 } from '../memory/index';
 import { checkBitOnByte, log, logTimeout } from '../helpers/index';
 
@@ -88,11 +88,12 @@ export class Channel2 {
   static readonly memoryLocationNRx3: i32 = 0xff18;
   // FFFF FFFF Frequency LSB
   static NRx3FrequencyLSB: i32 = 0;
+  static syncFrequencyFromRegisters(): void {
+    Channel2.frequency = (Channel2.NRx4FrequencyMSB << 8) | Channel2.NRx3FrequencyLSB;
+  }
   static updateNRx3(value: i32): void {
     Channel2.NRx3FrequencyLSB = value;
-
-    // Update Channel Frequency
-    Channel2.frequency = (Channel2.NRx4FrequencyMSB << 8) | value;
+    Channel2.syncFrequencyFromRegisters();
   }
 
   // NR24 -> Frequency hi (R/W)
@@ -105,7 +106,7 @@ export class Channel2 {
     // As this is modified if we trigger for length.
     let frequencyMSB = value & 0x07;
     Channel2.NRx4FrequencyMSB = frequencyMSB;
-    Channel2.frequency = (frequencyMSB << 8) | Channel2.NRx3FrequencyLSB;
+    Channel2.syncFrequencyFromRegisters();
 
     // Obscure behavior
     // http://gbdev.gg8.se/wiki/articles/Gameboy_sound_hardware#Obscure_Behavior
@@ -424,7 +425,7 @@ export class Channel2 {
     // Save the frequency for ourselves without triggering memory traps
     Channel2.NRx3FrequencyLSB = passedFrequencyLowBits;
     Channel2.NRx4FrequencyMSB = passedFrequencyHighBits;
-    Channel2.frequency = (passedFrequencyHighBits << 8) | passedFrequencyLowBits;
+    Channel2.syncFrequencyFromRegisters();
   }
   // Done!
 }

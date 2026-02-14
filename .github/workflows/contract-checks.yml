@@ -1,0 +1,109 @@
+name: contract-checks
+
+on:
+  workflow_dispatch:
+    inputs:
+      full_gate:
+        description: 'Run full ci:local quality gate before contract checks'
+        required: false
+        type: boolean
+        default: false
+      strict:
+        description: 'Use strict no-retry full gate when full_gate is enabled'
+        required: false
+        type: boolean
+        default: false
+  push:
+    branches: ['master', 'cursor/**']
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'packages/api/**'
+      - 'packages/cli/**'
+      - 'contracts/**'
+      - 'apps/debugger/package.json'
+      - 'apps/debugger/package-lock.json'
+      - 'scripts/**'
+      - 'test/fixtures/contracts/**'
+      - '.changeset/**'
+      - '.github/workflows/contract-checks.yml'
+  pull_request:
+    branches: ['master']
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'packages/api/**'
+      - 'packages/cli/**'
+      - 'contracts/**'
+      - 'apps/debugger/package.json'
+      - 'apps/debugger/package-lock.json'
+      - 'scripts/**'
+      - 'test/fixtures/contracts/**'
+      - '.changeset/**'
+      - '.github/workflows/contract-checks.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            packages/api/package-lock.json
+            packages/cli/package-lock.json
+
+      - name: Install workspace dependencies
+        run: npm run install:packages:ci
+
+      - name: Run contract CI gate
+        run: |
+          set -o pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.strict }}" == "true" && "${{ inputs.full_gate }}" != "true" ]]; then
+            echo "Invalid workflow_dispatch inputs: strict=true requires full_gate=true." >&2
+            exit 1
+          fi
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.full_gate }}" == "true" ]]; then
+            if [[ "${{ inputs.strict }}" == "true" ]]; then
+              npm run contract:ci:full:strict 2>&1 | tee contract-ci.log
+            else
+              npm run contract:ci:full 2>&1 | tee contract-ci.log
+            fi
+          else
+            npm run contract:ci 2>&1 | tee contract-ci.log
+          fi
+
+      - name: Compress diagnostics payload
+        if: ${{ failure() || cancelled() }}
+        run: >
+          node scripts/bundle-diagnostics.mjs
+          --output artifacts/contract-diagnostics.tar.gz
+          --pattern 'contract-ci.log'
+
+      - name: Upload failure diagnostics
+        if: ${{ failure() || cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: contract-failure-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 14
+          if-no-files-found: ignore
+          path: |
+            artifacts/contract-diagnostics.tar.gz

@@ -4,7 +4,7 @@
 const commonTest = require('../common-test.cjs');
 
 // Wasm Boy library
-const WasmBoy = require('../../dist/wasmboy.wasm.cjs.cjs').WasmBoy;
+const WasmBoy = require('../load-wasmboy-runtime.cjs');
 
 // File management
 const fs = require('fs');

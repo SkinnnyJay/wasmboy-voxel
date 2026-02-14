@@ -79,7 +79,7 @@ function drawBackgroundWindowScanline(
   tileMapMemoryLocation: i32,
   pixelYPositionInMap: i32,
   iStart: i32,
-  xOffset: i32
+  xOffset: i32,
 ): void {
   // Get our tile Y position in the map
   let tileYPositionInMap = pixelYPositionInMap >> 3;
@@ -88,6 +88,9 @@ function drawBackgroundWindowScanline(
   let lastTileXPositionInMap: i32 = -1;
   let tileMapAddress: i32 = 0;
   let tileIdFromTileMap: i32 = 0;
+  let tileCachingEnabled = Config.tileCaching;
+  let tileRenderingEnabled = Config.tileRendering;
+  let gbcEnabled = Cpu.GBCEnabled;
 
   // Loop through x to draw the line like a CRT
   for (let i = iStart; i < 160; ++i) {
@@ -109,7 +112,7 @@ function drawBackgroundWindowScanline(
 
     // Now that we have our Tile Id, let's check our Tile Cache
     let usedTileCache = false;
-    if (Config.tileCaching) {
+    if (tileCachingEnabled) {
       let pixelsDrawn: i32 = drawLineOfTileFromTileCache(
         i,
         scanlineRegister,
@@ -117,7 +120,7 @@ function drawBackgroundWindowScanline(
         pixelYPositionInMap,
         tileMapAddress,
         tileDataMemoryLocation,
-        tileIdFromTileMap
+        tileIdFromTileMap,
       );
       // Increment i by 7, not 8 because i will be incremented at end of for loop
       if (pixelsDrawn > 0) {
@@ -126,7 +129,7 @@ function drawBackgroundWindowScanline(
       }
     }
 
-    if (Config.tileRendering && !usedTileCache) {
+    if (tileRenderingEnabled && !usedTileCache) {
       let pixelsDrawn: i32 = drawLineOfTileFromTileId(
         i,
         scanlineRegister,
@@ -134,7 +137,7 @@ function drawBackgroundWindowScanline(
         pixelYPositionInMap,
         tileMapAddress,
         tileDataMemoryLocation,
-        tileIdFromTileMap
+        tileIdFromTileMap,
       );
       // A line of a tile is 8 pixels wide, therefore increase i by (pixelsDrawn - 1), and then the for loop will increment by 1
       // For a net increment for 8
@@ -142,7 +145,7 @@ function drawBackgroundWindowScanline(
         i += pixelsDrawn - 1;
       }
     } else if (!usedTileCache) {
-      if (Cpu.GBCEnabled) {
+      if (gbcEnabled) {
         // Draw the individual pixel
         drawColorPixelFromTileId(
           i,
@@ -151,7 +154,7 @@ function drawBackgroundWindowScanline(
           pixelYPositionInMap,
           tileMapAddress,
           tileDataMemoryLocation,
-          tileIdFromTileMap
+          tileIdFromTileMap,
         );
       } else {
         // Draw the individual pixel
@@ -161,7 +164,7 @@ function drawBackgroundWindowScanline(
           pixelXPositionInMap,
           pixelYPositionInMap,
           tileDataMemoryLocation,
-          tileIdFromTileMap
+          tileIdFromTileMap,
         );
       }
     }
@@ -176,7 +179,7 @@ function drawMonochromePixelFromTileId(
   pixelXPositionInMap: i32,
   pixelYPositionInMap: i32,
   tileDataMemoryLocation: i32,
-  tileIdFromTileMap: i32
+  tileIdFromTileMap: i32,
 ): void {
   // Now we can process the the individual bytes that represent the pixel on a tile
 
@@ -259,7 +262,7 @@ function drawColorPixelFromTileId(
   pixelYPositionInMap: i32,
   tileMapAddress: i32,
   tileDataMemoryLocation: i32,
-  tileIdFromTileMap: i32
+  tileIdFromTileMap: i32,
 ): void {
   // Now get our tileDataAddress for the corresponding tileID we found in the map
   // Read the comments in _getTileDataAddress() to see what's going on.
@@ -346,7 +349,7 @@ function drawLineOfTileFromTileCache(
   pixelYPositionInMap: i32,
   tileMapAddress: i32,
   tileDataMemoryLocation: i32,
-  tileIdFromTileMap: i32
+  tileIdFromTileMap: i32,
 ): i32 {
   // First, initialize how many pixels we have drawn
   let pixelsDrawn: i32 = 0;
@@ -412,7 +415,7 @@ function drawLineOfTileFromTileId(
   pixelYPositionInMap: i32,
   tileMapAddress: i32,
   tileDataMemoryLocation: i32,
-  tileIdFromTileMap: i32
+  tileIdFromTileMap: i32,
 ): i32 {
   // Get the which line of the tile we are rendering
   let tileLineY: i32 = i32Portable(pixelYPositionInMap & 7);
@@ -459,6 +462,6 @@ function drawLineOfTileFromTileId(
     false,
     0,
     bgMapAttributes,
-    -1
+    -1,
   );
 }

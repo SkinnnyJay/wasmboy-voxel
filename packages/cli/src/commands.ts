@@ -1,0 +1,289 @@
+import fs from 'node:fs';
+import crypto from 'node:crypto';
+import { CONTRACT_VERSION_V1, ContractRegistry, validateRegistryPayload } from '@wasmboy/api';
+import { CliError } from './errors.js';
+import { log } from './logger.js';
+import { assertFilePath, assertRomPath, resolveInputPath } from './paths.js';
+
+function levenshteinDistance(left: string, right: string): number {
+  const columns = right.length + 1;
+  const previousRow = Array.from({ length: columns }, (_, columnIndex) => columnIndex);
+
+  for (let leftIndex = 1; leftIndex <= left.length; leftIndex += 1) {
+    let diagonal = previousRow[0] ?? 0;
+    previousRow[0] = leftIndex;
+
+    for (let rightIndex = 1; rightIndex <= right.length; rightIndex += 1) {
+      const cached = previousRow[rightIndex] ?? 0;
+      const insertion = (previousRow[rightIndex - 1] ?? 0) + 1;
+      const deletion = cached + 1;
+      const substitution = diagonal + (left[leftIndex - 1] === right[rightIndex - 1] ? 0 : 1);
+      previousRow[rightIndex] = Math.min(insertion, deletion, substitution);
+      diagonal = cached;
+    }
+  }
+
+  return previousRow[right.length] ?? Number.POSITIVE_INFINITY;
+}
+
+function getOptionSuggestion(option: string, knownOptions: readonly string[]): string | null {
+  let bestMatch: string | null = null;
+  let smallestDistance = Number.POSITIVE_INFINITY;
+
+  for (const knownOption of knownOptions) {
+    const distance = levenshteinDistance(option, knownOption);
+    if (distance < smallestDistance) {
+      smallestDistance = distance;
+      bestMatch = knownOption;
+    }
+  }
+
+  return smallestDistance <= 3 ? bestMatch : null;
+}
+
+export function assertKnownCommandOptions(
+  commandName: string,
+  args: string[],
+  knownOptions: readonly string[],
+): void {
+  const knownOptionSet = new Set(knownOptions);
+
+  for (let index = 0; index < args.length; index += 1) {
+    const token = args[index];
+    if (!token?.startsWith('-')) {
+      continue;
+    }
+
+    if (knownOptionSet.has(token)) {
+      if (index < args.length - 1) {
+        index += 1;
+      }
+      continue;
+    }
+
+    const suggestion = getOptionSuggestion(token, knownOptions);
+    const suggestionText = suggestion ? ` Did you mean "${suggestion}"?` : '';
+    throw new CliError(
+      'InvalidInput',
+      `Unknown option "${token}" for ${commandName} command.${suggestionText}`,
+    );
+  }
+}
+
+function formatFilesystemError(error: unknown): string {
+  if (error instanceof Error) {
+    const errorCode = Reflect.get(error, 'code');
+    if (typeof errorCode === 'string' && errorCode.length > 0) {
+      return `${errorCode}: ${error.message}`;
+    }
+    return error.message;
+  }
+
+  return 'Unknown filesystem error';
+}
+
+function createFilesystemCliError(
+  operation: 'read' | 'write',
+  filePath: string,
+  error: unknown,
+): CliError {
+  return new CliError(
+    'InvalidOperation',
+    `${operation} failed for "${filePath}": ${formatFilesystemError(error)}`,
+  );
+}
+
+function readFileBuffer(filePath: string): Buffer {
+  try {
+    return fs.readFileSync(filePath);
+  } catch (error) {
+    throw createFilesystemCliError('read', filePath, error);
+  }
+}
+
+function readStdinBuffer(): Buffer {
+  try {
+    return fs.readFileSync(0);
+  } catch (error) {
+    throw createFilesystemCliError('read', 'stdin', error);
+  }
+}
+
+function sha256Hex(buffer: Buffer): string {
+  return crypto
+    .createHash('sha256')
+    .update(buffer)
+    .digest('hex');
+}
+
+export function printHelp(): void {
+  const helpText = `
+WasmBoy-Voxel CLI
+
+Usage:
+  wasmboy-voxel run <rom|->
+  wasmboy-voxel snapshot <rom|-> [--out <jsonPath> | -o <jsonPath>]
+  wasmboy-voxel compare <baselineSummary> [--current <summaryPath> | -c <summaryPath>]
+  wasmboy-voxel contract-check --contract <name> --file <jsonPath>
+
+Examples:
+  wasmboy-voxel run test/performance/testroms/tobutobugirl/tobutobugirl.gb
+  cat ./roms/tobutobugirl.gb | wasmboy-voxel run -
+  wasmboy-voxel snapshot test/performance/testroms/back-to-color/back-to-color.gbc --out ./snapshot.json
+  cat ./roms/back-to-color.gbc | wasmboy-voxel snapshot - --out ./snapshot.json
+  wasmboy-voxel compare test/baseline/snapshots/summary.json
+  wasmboy-voxel contract-check --contract ppuSnapshot --file ./snapshot.json
+`;
+  process.stdout.write(helpText);
+}
+
+function readRomInput(romPath: string): { source: string; buffer: Buffer } {
+  if (romPath === '-') {
+    const stdinBuffer = readStdinBuffer();
+    if (stdinBuffer.length === 0) {
+      throw new CliError('InvalidInput', 'stdin ROM input is empty');
+    }
+    return {
+      source: 'stdin',
+      buffer: stdinBuffer,
+    };
+  }
+
+  const resolvedRom = assertRomPath(romPath);
+  const romBuffer = readFileBuffer(resolvedRom);
+  return {
+    source: resolvedRom,
+    buffer: romBuffer,
+  };
+}
+
+export function runCommand(romPath: string): void {
+  const romInput = readRomInput(romPath);
+  log({
+    level: 'info',
+    message: 'run command completed',
+    context: {
+      romPath: romInput.source,
+      sizeBytes: romInput.buffer.length,
+      sha256: sha256Hex(romInput.buffer),
+    },
+  });
+}
+
+export function snapshotCommand(romPath: string, outputPath?: string): void {
+  const romInput = readRomInput(romPath);
+
+  const payload = {
+    romPath: romInput.source,
+    capturedAtUtc: new Date().toISOString(),
+    sizeBytes: romInput.buffer.length,
+    sha256: sha256Hex(romInput.buffer),
+  };
+
+  const serialized = JSON.stringify(payload, null, 2);
+  if (outputPath) {
+    const resolvedOut = resolveInputPath(outputPath);
+    try {
+      fs.writeFileSync(resolvedOut, serialized);
+    } catch (error) {
+      throw createFilesystemCliError('write', resolvedOut, error);
+    }
+    log({
+      level: 'info',
+      message: 'snapshot command wrote output',
+      context: {
+        outputPath: resolvedOut,
+      },
+    });
+    return;
+  }
+
+  process.stdout.write(`${serialized}\n`);
+}
+
+interface SummaryFile {
+  roms: Array<{ rom: string; tileDataSha256?: string; oamDataSha256?: string }>;
+}
+
+function readSummary(pathToSummary: string): SummaryFile {
+  const raw = readFileBuffer(assertFilePath(pathToSummary)).toString('utf8');
+  return JSON.parse(raw) as SummaryFile;
+}
+
+export function compareCommand(baselinePath: string, currentPath?: string): void {
+  const baseline = readSummary(baselinePath);
+  const current = readSummary(currentPath ?? baselinePath);
+
+  const baselineMap = new Map<string, { tileDataSha256?: string; oamDataSha256?: string }>();
+  baseline.roms.forEach(entry => baselineMap.set(entry.rom, entry));
+
+  const differences = current.roms
+    .map(entry => {
+      const base = baselineMap.get(entry.rom);
+      if (!base) return { rom: entry.rom, kind: 'missing-in-baseline' };
+      if (
+        base.tileDataSha256 !== entry.tileDataSha256 ||
+        base.oamDataSha256 !== entry.oamDataSha256
+      ) {
+        return { rom: entry.rom, kind: 'checksum-diff' };
+      }
+      return null;
+    })
+    .filter((entry): entry is { rom: string; kind: string } => entry !== null);
+
+  log({
+    level: differences.length > 0 ? 'warn' : 'info',
+    message:
+      differences.length > 0
+        ? 'compare command detected differences'
+        : 'compare command found no differences',
+    context: {
+      baselinePath: resolveInputPath(baselinePath),
+      currentPath: resolveInputPath(currentPath ?? baselinePath),
+      differences,
+    },
+  });
+}
+
+function parseFlagValue(args: string[], flag: string): string | null {
+  const index = args.indexOf(flag);
+  if (index < 0 || index >= args.length - 1) return null;
+  return args[index + 1] ?? null;
+}
+
+export function contractCheckCommand(args: string[]): void {
+  assertKnownCommandOptions('contract-check', args, ['--contract', '--file']);
+
+  const contractName = parseFlagValue(args, '--contract');
+  const filePath = parseFlagValue(args, '--file');
+
+  if (!contractName || !filePath) {
+    throw new CliError('InvalidInput', 'contract-check requires --contract and --file');
+  }
+
+  const schema = ContractRegistry[CONTRACT_VERSION_V1][contractName];
+  if (!schema) {
+    throw new CliError(
+      'InvalidInput',
+      `Unknown contract name "${contractName}" for version ${CONTRACT_VERSION_V1}`,
+    );
+  }
+
+  const payload = JSON.parse(readFileBuffer(assertFilePath(filePath)).toString('utf8'));
+  const result = validateRegistryPayload(CONTRACT_VERSION_V1, contractName, payload);
+  if (!result.success) {
+    throw new CliError(
+      'OutOfBounds',
+      `contract-check failed: ${result.errorMessage ?? 'unknown error'}`,
+    );
+  }
+
+  log({
+    level: 'info',
+    message: 'contract-check passed',
+    context: {
+      contractName,
+      filePath: resolveInputPath(filePath),
+    },
+  });
+}

@@ -19,7 +19,7 @@ const assert = require('assert');
 const WASMBOY_INITIALIZE_OPTIONS = {
   headless: true,
   gameboySpeed: 100.0,
-  isGbcEnabled: true
+  isGbcEnabled: true,
 };
 
 // Path to roms we want to test
@@ -36,7 +36,7 @@ const WasmBoyJoypadState = {
   A: false,
   B: false,
   SELECT: false,
-  START: false
+  START: false,
 };
 
 const wait = time => {
@@ -60,7 +60,7 @@ describe('WasmBoy Headless Simple', () => {
 
     // Set our neatural joypad state
     WasmBoy.setJoypadState({
-      ...WasmBoyJoypadState
+      ...WasmBoyJoypadState,
     });
 
     // Run the WasmBoy for 60 frames, 30 times (30 seconds)
@@ -70,12 +70,12 @@ describe('WasmBoy Headless Simple', () => {
 
     // This should be the tobutobu start menu
     const startMenuImageDataArray = await commonTest.getImageDataFromFrame();
-    await commonTest.createImageFromFrame(startMenuImageDataArray, `./test/integration/headless-simple.start-menu.png`);
+    await commonTest.createImageFromFrame(startMenuImageDataArray, `./test/integration/headless-simple.start-menu.output.png`);
 
     // Make sure the start menu can be pressed
     WasmBoy.setJoypadState({
       ...WasmBoyJoypadState,
-      START: true
+      START: true,
     });
 
     // Should run us into the level select
@@ -83,7 +83,7 @@ describe('WasmBoy Headless Simple', () => {
 
     // Reset the input
     WasmBoy.setJoypadState({
-      ...WasmBoyJoypadState
+      ...WasmBoyJoypadState,
     });
 
     // Render a few more frames of the level select
@@ -91,12 +91,12 @@ describe('WasmBoy Headless Simple', () => {
 
     //  Screenshot the level select
     const levelSelectImageDataArray = await commonTest.getImageDataFromFrame();
-    await commonTest.createImageFromFrame(levelSelectImageDataArray, `./test/integration/headless-simple.level-select.png`);
+    await commonTest.createImageFromFrame(levelSelectImageDataArray, `./test/integration/headless-simple.level-select.output.png`);
 
     // Select the Stage
     WasmBoy.setJoypadState({
       ...WasmBoyJoypadState,
-      A: true
+      A: true,
     });
 
     // Should run us into the level select
@@ -104,7 +104,7 @@ describe('WasmBoy Headless Simple', () => {
 
     // Reset the input
     WasmBoy.setJoypadState({
-      ...WasmBoyJoypadState
+      ...WasmBoyJoypadState,
     });
 
     // Render a few more frames of the main game
@@ -112,13 +112,13 @@ describe('WasmBoy Headless Simple', () => {
       await WasmBoy._runWasmExport('executeMultipleFrames', [60]);
     }
 
-    const goldenImageFile = `./test/integration/headless-simple.golden.png`;
+    const outputImageFile = `./test/integration/headless-simple.golden.output.png`;
     const goldenJSONFile = `./test/integration/headless-simple.golden.json`;
 
     const imageDataArray = await commonTest.getImageDataFromFrame();
 
-    await commonTest.createImageFromFrame(imageDataArray, goldenImageFile);
-    console.log(`Screenshot created at: ${goldenImageFile}`);
+    await commonTest.createImageFromFrame(imageDataArray, outputImageFile);
+    console.log(`Screenshot created at: ${outputImageFile}`);
 
     // Do the golden comparison
     goldenFileCompareOrCreate(goldenJSONFile, imageDataArray);

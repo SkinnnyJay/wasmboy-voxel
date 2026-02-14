@@ -13,7 +13,9 @@ export type {
   VramBankState,
 } from "./fork-api-spec";
 export {
+  WasmBoyCompat,
   WasmBoy,
+  type WasmBoyCompatApi,
   type WasmBoyApi,
   type WasmBoyConfig,
   type GetPpuSnapshotLayersOptions,

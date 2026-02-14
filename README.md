@@ -33,6 +33,7 @@ This fork (WasmBoy-Voxel) adds a PPU snapshot layer used by voxel renderers and 
 - [Usage](#usage)
   - [Supported Platforms](#supported-platforms)
   - [Voxel Snapshot API](#voxel-snapshot-api)
+  - [Migration Stack (Workspace Packages/Apps)](#migration-stack-workspace-packagesapps)
 - [In-Game Screenshots](#in-game-screenshots)
   - [Gameboy Support](#gameboy-support)
   - [Gameboy Color Support](#gameboy-color-support)
@@ -84,6 +85,40 @@ Try to test and aim for support on all major browsers (Chrome, Firefox, and Safa
 ### Voxel Snapshot API
 
 This fork exposes `WasmBoyVoxelApi` via `voxel-wrapper.ts`, which adds PPU snapshot helpers on top of the base WasmBoy API. Use `supportsPpuSnapshot()` before calling `getPpuSnapshot()`, and handle `null` when the worker is not ready. Snapshot data includes tile data, BG/window tilemaps, OAM, and key PPU registers for voxel renderers.
+
+### Typed Contract Package (Migration)
+
+The migration introduces a typed contract package at `packages/api` with Zod
+schemas for versioned payloads (starting with `contracts/v1`):
+
+- `PpuSnapshotSchema`
+- `RegistersSchema`
+- `MemorySectionSchema`
+- `DebugFrameSchema`
+
+Use these contracts to validate payloads at API boundaries and preserve
+compatibility during refactors.
+
+### Migration Stack (Workspace Packages/Apps)
+
+New migration components are now available in-repo:
+
+- `packages/api` — versioned Zod contracts + runtime validators
+- `packages/cli` — headless tooling (`run`, `snapshot`, `compare`, `contract-check`)
+- `apps/debugger` — Next.js debugger shell with typed contract client + state/event tooling
+
+Guides:
+
+- API usage: `docs/migration/packages-api-usage-guide.md`
+- Debugger usage: `docs/migration/debugger-usage-guide.md`
+- CLI usage: `docs/migration/cli-usage-guide.md`
+- Troubleshooting FAQ: `docs/migration/troubleshooting-faq.md`
+- Repository architecture map: `docs/migration/repository-architecture-map-2026-02-14.md`
+- Performance budgets: `docs/migration/performance-budgets-2026-02-14.md`
+- Weekly regression checklist: `docs/migration/weekly-regression-checklist-2026-02-14.md`
+- Core save-state volatile field classification: `docs/migration/core-save-state-volatile-field-classification-2026-02-14.md`
+- Iterative backlog process: `docs/migration/iterative-backlog-process-2026-02-14.md`
+- Generated artifact commit policy: `docs/migration/generated-artifact-commit-policy-2026-02-14.md`
 
 # In-Game Screenshots
 
@@ -172,7 +207,14 @@ An Iframe embeddable version of WasmBoy. Simply provide information through [URL
 Add an iframe to your website like the following:
 
 ```html
-<iframe title="WasmBoy Iframe Embed" width="160" height="144" allowfullscreen="true" src="https://wasmboy.app/iframe/?[QUERY_PARAMS_GO_HERE]"> </iframe>
+<iframe
+  title="WasmBoy Iframe Embed"
+  width="160"
+  height="144"
+  allowfullscreen="true"
+  src="https://wasmboy.app/iframe/?[QUERY_PARAMS_GO_HERE]"
+>
+</iframe>
 ```
 
 The iframe is configured by adding [URL Query Params](https://en.wikipedia.org/wiki/Query_string). The configuration params are:
@@ -280,6 +322,37 @@ npm run watch
 # Build everything to be ready to be pushed to npm or released
 npm run build
 
+# Build only workspace packages (`packages/*`) and skip app builds
+npm run stack:build:packages
+
+# Run package-only CI checks (build + typecheck + tests)
+npm run ci:packages
+
+# Build release artifacts (root emulator/lib + workspace packages)
+npm run release:build
+
+# Run release verification gate (quality suite + changeset status)
+npm run release:verify
+
+# Run focused contract-check workflow gate locally (includes automation tests)
+npm run contract:ci
+
+# Run full contract gate variant (full ci gate + contract checks)
+npm run contract:ci:full
+
+# Run strict full contract gate variant (no-retry ci gate + contract checks)
+npm run contract:ci:full:strict
+
+# CI-friendly changeset status (suppresses known file-dependency noise)
+npm run changeset:status:ci
+# Show helper usage/flags for the changeset wrapper
+node scripts/changeset-status-ci.mjs --help
+# Optional: override changeset wrapper timeout per invocation
+node scripts/changeset-status-ci.mjs --timeout-ms 180000
+# Optional: override changeset wrapper timeout in milliseconds
+CHANGESET_STATUS_CI_TIMEOUT_MS=180000 node scripts/changeset-status-ci.mjs
+# Timeout env values must be positive integers <= 2147483647
+
 # Linting commands used during precommit an tests
 npm run prettier:*
 
@@ -295,6 +368,93 @@ npm run test
 # Run tests in `test/performance/test.js`
 npm run test:performance
 
+# Run migration-era full quality gate (lint/typecheck/tests/integration/core/perf/audit)
+npm run test:all:nobuild
+
+# Install all workspace dependencies used by CI/release workflows
+npm run install:stack
+
+# Install dependencies required for package/contract CI workflows
+npm run install:packages:ci
+
+# Deterministic lockfile install used by CI/release workflows (no install-time audit/fund noise)
+npm run install:stack:ci
+
+# Shortcut for running the same gate used in CI
+npm run ci:local
+
+# Run a strict no-retry variant of the full quality gate
+npm run ci:local:strict
+
+# Run release verification with strict no-retry full gate + changeset check
+npm run release:verify:strict
+
+# Dependency audit check used by CI
+npm run audit:check
+
+# Workspace lockfile/transitive security scan report
+npm run security:scan:workspaces
+
+# Fail on any workspace vulnerability findings
+npm run security:scan:workspaces:strict
+
+# Workspace dependency freshness report (root + packages/apps)
+npm run dependency:freshness:audit
+
+# Fail when any workspace has outdated dependencies
+npm run dependency:freshness:audit:strict
+
+# Generate the next 100-item backlog draft from open debt items
+npm run backlog:generate:next100
+
+# Check GitHub workflow formatting locally
+npm run workflow:lint
+
+# Run all automation formatting checks (workflow + scripts)
+npm run workflow:check
+
+# Auto-format GitHub workflow files
+npm run workflow:format
+
+# Check automation helper script formatting
+npm run scripts:lint
+
+# Auto-format automation helper scripts
+npm run scripts:format
+
+# Run automation helper unit tests
+npm run automation:test
+
+# Check core invalid-offset mapping contract via wasm export
+npm run core:memory-offset:check
+
+# Run automation formatting + helper unit tests together
+npm run automation:check
+
+# Preview generated artifact cleanup targets without deleting files
+npm run clean:artifacts:precommit:dry-run
+
+# Print machine-readable cleanup summary JSON
+node scripts/clean-accidental-build-artifacts.mjs --dry-run --json
+# Equivalent npm shortcut
+npm run clean:artifacts:precommit:json
+
+# Show generated artifact guard usage/help
+node scripts/guard-generated-artifacts-precommit.mjs --help
+
+# Print machine-readable generated-artifact guard summary JSON
+node scripts/guard-generated-artifacts-precommit.mjs --json
+# Equivalent npm shortcut
+npm run guard:generated-artifacts:precommit:json
+
+# Show helper usage/flags for diagnostics archive bundling
+node scripts/bundle-diagnostics.mjs --help
+# Optional: override tar timeout per invocation
+node scripts/bundle-diagnostics.mjs --output artifacts/ci-diagnostics.tar.gz --pattern 'ci-quality.log' --tar-timeout-ms 180000
+# Optional: override tar timeout in milliseconds for diagnostics bundling
+BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS=180000 node scripts/bundle-diagnostics.mjs --output artifacts/ci-diagnostics.tar.gz --pattern 'ci-quality.log'
+# Timeout env values must be positive integers <= 2147483647
+
 # All commands for testing, and are test related
 npm run test:*
 
@@ -306,6 +466,32 @@ npm run benchmark:*
 
 # Commands for building / serving all available apps in wasmboy
 npm run demo:*
+```
+
+### CI Workflows
+
+The repository uses four GitHub Actions workflows:
+
+- `ci.yml`: push/PR quality gate (`npm run test:all:nobuild`)
+- `contract-checks.yml`: contract-focused gate + explicit sample contract validation
+- `nightly-regression.yml`: scheduled daily drift detection (same no-build gate)
+- `release.yml`: changesets-driven release PR/publish automation
+
+Workflow notes:
+
+- CI/contract/release pipelines use path filters and manual dispatch triggers for better signal-to-noise.
+- Quality-gate workflows upload diagnostic artifacts on failure (logs and key generated screenshots).
+- CI and nightly manual dispatch support a `strict` boolean input to run `ci:local:strict` (no retry wrappers).
+- Release manual dispatch supports:
+  - `strict=true` to run `release:verify:strict`
+  - `dry_run=true` (default) to run verification-only release flows without publish/create-PR
+  - `dry_run=false` + `approve_publish=true` to pass the manual publish approval gate and run changesets publish/create-PR
+- Contract manual dispatch supports `full_gate=true`, with optional `strict=true` to run `contract:ci:full:strict`.
+
+For local parity with CI, run:
+
+```bash
+npm run ci:local
 ```
 
 Using the [gh-pages](https://www.npmjs.com/package/gh-pages) for debugger/demo deployment onto gh-pages.

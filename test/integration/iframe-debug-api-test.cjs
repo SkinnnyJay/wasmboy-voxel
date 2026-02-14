@@ -4,7 +4,7 @@
  * getTileDataImage, getOamSpritesImage.
  * Requires built lib and a ROM (same as breakpoint-test).
  */
-const WasmBoy = require('../../dist/wasmboy.wasm.cjs.cjs').WasmBoy;
+const WasmBoy = require('../load-wasmboy-runtime.cjs');
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');

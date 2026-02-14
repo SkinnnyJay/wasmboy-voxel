@@ -5,7 +5,11 @@ import { concatenateBytes } from '../helpers/index';
 import { Breakpoints } from '../debug/breakpoints';
 
 export function eightBitLoadFromGBMemory(gameboyOffset: i32): i32 {
-  return <i32>load<u8>(getWasmBoyOffsetFromGameBoyOffset(gameboyOffset));
+  const wasmBoyOffset = getWasmBoyOffsetFromGameBoyOffset(gameboyOffset);
+  if (wasmBoyOffset < 0) {
+    return 0xff;
+  }
+  return <i32>load<u8>(wasmBoyOffset);
 }
 
 export function eightBitLoadFromGBMemoryWithTraps(offset: i32): i32 {

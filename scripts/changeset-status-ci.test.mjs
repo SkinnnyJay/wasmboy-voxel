@@ -1,0 +1,882 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import test from 'node:test';
+import { fileURLToPath } from 'node:url';
+import { writeFakeExecutable } from './test-fixtures.mjs';
+
+const currentFilePath = fileURLToPath(import.meta.url);
+const currentDirectory = path.dirname(currentFilePath);
+const statusScriptPath = path.join(currentDirectory, 'changeset-status-ci.mjs');
+
+function runStatusScript(customPath, extraEnv = {}) {
+  return spawnSync('node', [statusScriptPath], {
+    encoding: 'utf8',
+    env: {
+      ...process.env,
+      PATH: customPath,
+      ...extraEnv,
+    },
+  });
+}
+
+function runStatusScriptWithArgs(customPath, args, extraEnv = {}) {
+  return spawnSync('node', [statusScriptPath, ...args], {
+    encoding: 'utf8',
+    env: {
+      ...process.env,
+      PATH: customPath,
+      ...extraEnv,
+    },
+  });
+}
+
+function createNodeOnlyPath() {
+  return path.dirname(process.execPath);
+}
+
+function writeFakeChangeset(tempDirectory, body) {
+  return writeFakeExecutable(tempDirectory, 'changeset', body);
+}
+
+function writeNoBumpChangeset(tempDirectory) {
+  return writeFakeChangeset(
+    tempDirectory,
+    `#!/usr/bin/env bash
+echo '🦋  info NO packages to be bumped at patch'
+exit 0
+`,
+  );
+}
+
+function writeDelayedChangeset(tempDirectory, delaySeconds = '0.1') {
+  return writeFakeChangeset(
+    tempDirectory,
+    `#!/usr/bin/env bash
+sleep ${delaySeconds}
+echo '🦋  info delayed status'
+exit 0
+`,
+  );
+}
+
+const HELP_DUPLICATE_ARG_FIXTURES = {
+  longThenShort: ['--help', '-h'],
+  shortThenLong: ['-h', '--help'],
+  longThenLong: ['--help', '--help'],
+  shortThenShort: ['-h', '-h'],
+};
+
+const TIMEOUT_DUPLICATE_ARG_FIXTURES = {
+  splitThenInline: ['--timeout-ms', '100', '--timeout-ms=200'],
+  inlineThenSplit: ['--timeout-ms=200', '--timeout-ms', '100'],
+  splitThenSplit: ['--timeout-ms', '200', '--timeout-ms', '100'],
+  inlineThenInline: ['--timeout-ms=200', '--timeout-ms=100'],
+  validThenMalformedInline: ['--timeout-ms=200', '--timeout-ms==100'],
+  malformedThenValidInline: ['--timeout-ms==200', '--timeout-ms=100'],
+};
+
+test('changeset-status-ci forwards filtered output and exit status', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-pass-'));
+  const fakeBinDirectory = writeFakeChangeset(
+    tempDirectory,
+    `#!/usr/bin/env bash
+echo 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "1.2.3" vs "file:../api"'
+echo '🦋  info NO packages to be bumped at patch'
+exit 0
+`,
+  );
+
+  const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`);
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Suppressed 1 expected workspace file-dependency notices/u);
+  assert.match(result.stdout, /🦋  info NO packages to be bumped at patch/u);
+});
+
+test('changeset-status-ci sorts suppressed warnings and preserves non-workspace warnings', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-sort-'));
+  const cliWarning = 'Package "@wasmboy/cli" must depend on the current version of "@wasmboy/api": "1.2.3" vs "file:../api"';
+  const debuggerWarning =
+    'Package "@wasmboy/debugger-app" must depend on the current version of "@wasmboy/api": "1.2.3" vs "file:../../packages/api"';
+  const nonWorkspaceWarning = 'Package "@external/consumer" must depend on the current version of "@wasmboy/api": "1.2.3" vs "file:../api"';
+  const fakeBinDirectory = writeFakeChangeset(
+    tempDirectory,
+    `#!/usr/bin/env bash
+echo '${cliWarning}'
+echo '${nonWorkspaceWarning}'
+echo '${debuggerWarning}'
+exit 0
+`,
+  );
+
+  const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`);
+  const cliWarningIndex = result.stdout.indexOf(`- ${cliWarning}`);
+  const debuggerWarningIndex = result.stdout.indexOf(`- ${debuggerWarning}`);
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Suppressed 2 expected workspace file-dependency notices/u);
+  assert.ok(cliWarningIndex >= 0 && debuggerWarningIndex >= 0, 'suppressed warning lines should be printed');
+  assert.ok(cliWarningIndex < debuggerWarningIndex, 'suppressed warning lines should be printed in lexicographic order');
+  assert.match(result.stdout, new RegExp(nonWorkspaceWarning.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&'), 'u'));
+});
+
+test('changeset-status-ci preserves non-zero changeset exit code', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-fail-'));
+  const fakeBinDirectory = writeFakeChangeset(
+    tempDirectory,
+    `#!/usr/bin/env bash
+echo '🦋  error status failure'
+exit 3
+`,
+  );
+
+  const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`);
+
+  assert.equal(result.status, 3);
+  assert.match(result.stdout, /🦋  error status failure/u);
+});
+
+test('changeset-status-ci reports missing changeset command clearly', () => {
+  const result = runStatusScript(createNodeOnlyPath());
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /changeset command was not found in PATH/u);
+});
+
+test('changeset-status-ci reports generic execution failures for non-ENOENT spawn errors', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-spawn-error-'));
+  const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
+  const nonExecutableChangesetPath = path.join(fakeBinDirectory, 'changeset');
+  fs.mkdirSync(fakeBinDirectory, { recursive: true });
+  fs.writeFileSync(nonExecutableChangesetPath, '#!/usr/bin/env bash\necho should-not-run\n', 'utf8');
+  fs.chmodSync(nonExecutableChangesetPath, 0o644);
+
+  const result = runStatusScript(`${fakeBinDirectory}:${createNodeOnlyPath()}`);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Failed to execute changeset status/u);
+  assert.doesNotMatch(result.stderr, /changeset command was not found in PATH/u);
+});
+
+test('changeset-status-ci prints usage with --help', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--help']);
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Usage:/u);
+  assert.match(result.stdout, /changeset status/u);
+  assert.match(result.stdout, /--timeout-ms/u);
+  assert.match(result.stdout, /CHANGESET_STATUS_CI_TIMEOUT_MS/u);
+});
+
+test('changeset-status-ci prints usage with -h alias', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['-h']);
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Options:/u);
+  assert.match(result.stdout, /-h, --help/u);
+});
+
+test('changeset-status-ci rejects duplicate help flags', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), HELP_DUPLICATE_ARG_FIXTURES.longThenShort);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[changeset:status:ci\]/u);
+  assert.match(result.stderr, /Duplicate help flag provided/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects duplicate help flags in short-first order', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), HELP_DUPLICATE_ARG_FIXTURES.shortThenLong);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[changeset:status:ci\]/u);
+  assert.match(result.stderr, /Duplicate help flag provided/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects duplicate long help flags', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), HELP_DUPLICATE_ARG_FIXTURES.longThenLong);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[changeset:status:ci\]/u);
+  assert.match(result.stderr, /Duplicate help flag provided/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects duplicate short help flags', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), HELP_DUPLICATE_ARG_FIXTURES.shortThenShort);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[changeset:status:ci\]/u);
+  assert.match(result.stderr, /Duplicate help flag provided/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects duplicate timeout flags', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), TIMEOUT_DUPLICATE_ARG_FIXTURES.splitThenInline);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Duplicate --timeout-ms argument provided/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects duplicate timeout flags in inline-first order', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), TIMEOUT_DUPLICATE_ARG_FIXTURES.inlineThenSplit);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Duplicate --timeout-ms argument provided/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects duplicate timeout flags in split-only order', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), TIMEOUT_DUPLICATE_ARG_FIXTURES.splitThenSplit);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Duplicate --timeout-ms argument provided/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects duplicate timeout flags in inline-only order', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), TIMEOUT_DUPLICATE_ARG_FIXTURES.inlineThenInline);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Duplicate --timeout-ms argument provided/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci prioritizes duplicate timeout errors over malformed second inline timeout tokens', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), TIMEOUT_DUPLICATE_ARG_FIXTURES.validThenMalformedInline);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Duplicate --timeout-ms argument provided/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci reports malformed first inline timeout tokens before duplicate checks', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), TIMEOUT_DUPLICATE_ARG_FIXTURES.malformedThenValidInline);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Malformed inline value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects missing timeout values', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects empty inline timeout values', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects malformed inline timeout values with double equals', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms==50']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Malformed inline value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects help long-flag token as inline timeout value', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=--help']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects help short-flag token as inline timeout value', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=-h']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects self timeout-flag token as inline timeout value', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=--timeout-ms']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects unknown long-flag token as inline timeout value', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=--unexpected']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects short-flag token as inline timeout value', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=-x']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects unknown long-flag token as timeout value', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '--unexpected']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects short-flag token as timeout value', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '-x']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects help long-flag token as timeout value', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '--help']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects help short-flag token as timeout value', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '-h']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects self timeout-flag token as timeout value', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '--timeout-ms']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects mixed help and timeout arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--help', '--timeout-ms', '100']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Help flag cannot be combined with timeout override arguments/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects mixed help and inline timeout arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--help', '--timeout-ms=100']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Help flag cannot be combined with timeout override arguments/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects mixed short-help and timeout arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['-h', '--timeout-ms', '100']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Help flag cannot be combined with timeout override arguments/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects mixed short-help and inline timeout arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['-h', '--timeout-ms=100']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Help flag cannot be combined with timeout override arguments/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects mixed timeout and trailing help arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '100', '--help']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Help flag cannot be combined with timeout override arguments/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects mixed inline timeout and trailing help arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=100', '--help']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Help flag cannot be combined with timeout override arguments/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects mixed timeout and trailing short-help arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '100', '-h']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Help flag cannot be combined with timeout override arguments/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects mixed inline timeout and trailing short-help arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=100', '-h']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Help flag cannot be combined with timeout override arguments/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects unknown arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--unknown']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[changeset:status:ci\]/u);
+  assert.match(result.stderr, /Unknown argument: --unknown/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects unknown short arguments', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['-x']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[changeset:status:ci\]/u);
+  assert.match(result.stderr, /Unknown argument: -x/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects unknown args even when help is present', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--help', '--unknown']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[changeset:status:ci\]/u);
+  assert.match(result.stderr, /Unknown argument: --unknown/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects unknown short args even when help is present', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--help', '-x']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[changeset:status:ci\]/u);
+  assert.match(result.stderr, /Unknown argument: -x/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects unknown args even when short-help is present', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['-h', '--unknown']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[changeset:status:ci\]/u);
+  assert.match(result.stderr, /Unknown argument: --unknown/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects unknown short args even when short-help is present', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['-h', '-x']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[changeset:status:ci\]/u);
+  assert.match(result.stderr, /Unknown argument: -x/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci fails fast for invalid timeout configuration', () => {
+  const result = runStatusScript(createNodeOnlyPath(), {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: 'invalid-timeout',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid CHANGESET_STATUS_CI_TIMEOUT_MS value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects zero timeout environment values', () => {
+  const result = runStatusScript(createNodeOnlyPath(), {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '0',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid CHANGESET_STATUS_CI_TIMEOUT_MS value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects plus-prefixed timeout environment values', () => {
+  const result = runStatusScript(createNodeOnlyPath(), {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '+5000',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid CHANGESET_STATUS_CI_TIMEOUT_MS value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects negative timeout environment values', () => {
+  const result = runStatusScript(createNodeOnlyPath(), {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '-5',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid CHANGESET_STATUS_CI_TIMEOUT_MS value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects whitespace-only CLI timeout override', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '   ']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects whitespace-only inline CLI timeout override', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=   ']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects plus-prefixed CLI timeout override', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '+5000']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects plus-prefixed inline CLI timeout override', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=+5000']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects negative CLI timeout override', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '-5']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects negative inline CLI timeout override', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=-5']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects zero CLI timeout override', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '0']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects zero inline CLI timeout override', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=0']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects CLI timeout overrides with non-numeric suffixes', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '50ms']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects inline CLI timeout overrides with non-numeric suffixes', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=50ms']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects CLI timeout overrides above supported ceiling', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '2147483648']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects inline CLI timeout overrides above supported ceiling', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=2147483648']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects invalid split CLI timeout override even with valid env timeout', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '0'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects invalid inline CLI timeout override even with valid env timeout', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=50ms'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid --timeout-ms value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects invalid timeout environment values even with valid split CLI override', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms', '50'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: 'invalid-timeout',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid CHANGESET_STATUS_CI_TIMEOUT_MS value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects invalid timeout environment values even with valid inline CLI override', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=50'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: 'invalid-timeout',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid CHANGESET_STATUS_CI_TIMEOUT_MS value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects timeout values with non-numeric suffixes', () => {
+  const result = runStatusScript(createNodeOnlyPath(), {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '50ms',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid CHANGESET_STATUS_CI_TIMEOUT_MS value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci rejects timeout values above supported ceiling', () => {
+  const result = runStatusScript(createNodeOnlyPath(), {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '2147483648',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Invalid CHANGESET_STATUS_CI_TIMEOUT_MS value/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci accepts max timeout environment value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-max-timeout-env-'));
+  const fakeBinDirectory = writeNoBumpChangeset(tempDirectory);
+
+  const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '2147483647',
+  });
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /🦋  info NO packages to be bumped at patch/u);
+});
+
+test('changeset-status-ci accepts whitespace-padded max timeout environment value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-max-timeout-env-whitespace-'));
+  const fakeBinDirectory = writeNoBumpChangeset(tempDirectory);
+  const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: ' 2147483647 ',
+  });
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /🦋  info NO packages to be bumped at patch/u);
+});
+
+test('changeset-status-ci accepts leading-zero timeout environment values', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-env-leading-zero-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '00050',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
+test('changeset-status-ci treats empty timeout env value as default', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-empty-timeout-env-'));
+  const fakeBinDirectory = writeNoBumpChangeset(tempDirectory);
+
+  const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '',
+  });
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /🦋  info NO packages to be bumped at patch/u);
+});
+
+test('changeset-status-ci reports timeout errors with configured value', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '50',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
+test('changeset-status-ci accepts whitespace-padded timeout environment values', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-env-whitespace-padded-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScript(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: ' 50 ',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
+test('changeset-status-ci timeout CLI override takes precedence over environment', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-override-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms', '50'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
+test('changeset-status-ci accepts whitespace-padded split CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-split-whitespace-padded-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms', ' 50 '], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
+test('changeset-status-ci inline timeout CLI override takes precedence over environment', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-inline-override-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms=50'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
+test('changeset-status-ci accepts whitespace-padded inline CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-inline-whitespace-padded-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms= 50 '], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
+test('changeset-status-ci accepts leading-zero split CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-leading-zero-split-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms', '00050'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
+test('changeset-status-ci accepts leading-zero inline CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-leading-zero-inline-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms=00050'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '5000',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
+test('changeset-status-ci timeout CLI override still applies when timeout env is empty', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-override-empty-env-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms', '50'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
+test('changeset-status-ci inline timeout CLI override still applies when timeout env is empty', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-inline-override-empty-env-'));
+  const fakeBinDirectory = writeDelayedChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms=50'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /timed out after 50ms/u);
+});
+
+test('changeset-status-ci accepts max split CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-max-split-'));
+  const fakeBinDirectory = writeNoBumpChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms', '2147483647'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '50',
+  });
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /🦋  info NO packages to be bumped at patch/u);
+});
+
+test('changeset-status-ci accepts max inline CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-max-inline-'));
+  const fakeBinDirectory = writeNoBumpChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms=2147483647'], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '50',
+  });
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /🦋  info NO packages to be bumped at patch/u);
+});
+
+test('changeset-status-ci accepts whitespace-padded max split CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-max-split-whitespace-padded-'));
+  const fakeBinDirectory = writeNoBumpChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms', ' 2147483647 '], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '50',
+  });
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /🦋  info NO packages to be bumped at patch/u);
+});
+
+test('changeset-status-ci accepts whitespace-padded max inline CLI timeout override', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-timeout-max-inline-whitespace-padded-'));
+  const fakeBinDirectory = writeNoBumpChangeset(tempDirectory);
+  const result = runStatusScriptWithArgs(`${fakeBinDirectory}:${process.env.PATH ?? ''}`, ['--timeout-ms= 2147483647 '], {
+    CHANGESET_STATUS_CI_TIMEOUT_MS: '50',
+  });
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /🦋  info NO packages to be bumped at patch/u);
+});

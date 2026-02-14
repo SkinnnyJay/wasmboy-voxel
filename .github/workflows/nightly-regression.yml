@@ -1,0 +1,81 @@
+name: nightly-regression
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+    inputs:
+      strict:
+        description: 'Run strict no-retry quality gate variant'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  full-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            packages/api/package-lock.json
+            packages/cli/package-lock.json
+            apps/debugger/package-lock.json
+
+      - name: Cache Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            apps/debugger/.next/cache
+          key: ${{ runner.os }}-next-nightly-cache-${{ hashFiles('apps/debugger/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-next-nightly-cache-
+
+      - name: Install workspace dependencies
+        run: npm run install:stack:ci
+
+      - name: Run full no-build quality suite
+        run: |
+          set -o pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.strict }}" == "true" ]]; then
+            npm run ci:local:strict 2>&1 | tee nightly-quality.log
+          else
+            npm run ci:local 2>&1 | tee nightly-quality.log
+          fi
+
+      - name: Compress diagnostics payload
+        if: ${{ failure() || cancelled() }}
+        run: >
+          node scripts/bundle-diagnostics.mjs
+          --output artifacts/nightly-diagnostics.tar.gz
+          --pattern 'nightly-quality.log'
+          --pattern 'test/core/save-state/*.png'
+          --pattern 'test/integration/headless-simple*.png'
+
+      - name: Upload failure diagnostics
+        if: ${{ failure() || cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-failure-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 14
+          if-no-files-found: ignore
+          path: |
+            artifacts/nightly-diagnostics.tar.gz

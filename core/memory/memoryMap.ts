@@ -6,7 +6,7 @@ import {
   OTHER_GAMEBOY_INTERNAL_MEMORY_LOCATION,
   CARTRIDGE_RAM_LOCATION,
   BOOT_ROM_LOCATION,
-  CARTRIDGE_ROM_LOCATION
+  CARTRIDGE_ROM_LOCATION,
 } from '../constants';
 import { Memory } from './memory';
 import { eightBitLoadFromGBMemory } from './load';
@@ -19,6 +19,10 @@ import { Cpu } from '../cpu/index';
 // And https://github.com/Dooskington/GameLad/wiki/Part-11---Memory-Bank-Controllers
 // Performance help from @dcodeIO, and awesome-gbdev
 export function getWasmBoyOffsetFromGameBoyOffset(gameboyOffset: i32): i32 {
+  if (<u32>gameboyOffset > 0xffff) {
+    return -1;
+  }
+
   // Get the top byte and switch
   let gameboyOffsetHighByte = gameboyOffset >> 12;
   switch (gameboyOffsetHighByte) {

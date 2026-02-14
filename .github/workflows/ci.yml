@@ -1,0 +1,224 @@
+name: ci
+
+on:
+  workflow_dispatch:
+    inputs:
+      strict:
+        description: 'Run strict no-retry quality gate variant'
+        required: false
+        type: boolean
+        default: false
+  push:
+    branches: ['master', 'cursor/**']
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'core/**'
+      - 'lib/**'
+      - 'packages/**'
+      - 'apps/**'
+      - 'contracts/**'
+      - 'test/**'
+      - 'scripts/**'
+      - 'index.ts'
+      - 'voxel-wrapper.ts'
+      - 'fork-api-spec.ts'
+      - '.changeset/**'
+      - '.github/workflows/*.yml'
+  pull_request:
+    branches: ['master']
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'core/**'
+      - 'lib/**'
+      - 'packages/**'
+      - 'apps/**'
+      - 'contracts/**'
+      - 'test/**'
+      - 'scripts/**'
+      - 'index.ts'
+      - 'voxel-wrapper.ts'
+      - 'fork-api-spec.ts'
+      - '.changeset/**'
+      - '.github/workflows/*.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  automation-test-matrix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['20', '22']
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Guard against tracked debugger build artifacts
+        run: |
+          tracked_next_files="$(git ls-files -- 'apps/debugger/.next/**')"
+          if [[ -n "${tracked_next_files}" ]]; then
+            echo "Tracked build artifacts under apps/debugger/.next are not allowed."
+            echo "${tracked_next_files}"
+            exit 1
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            packages/api/package-lock.json
+            packages/cli/package-lock.json
+            apps/debugger/package-lock.json
+
+      - name: Install workspace dependencies
+        run: npm run install:stack:ci
+
+      - name: Verify lockfile drift
+        run: |
+          set -o pipefail
+          git diff --exit-code -- \
+            package-lock.json \
+            packages/api/package-lock.json \
+            packages/cli/package-lock.json \
+            apps/debugger/package-lock.json
+
+      - name: Run automation script tests
+        run: |
+          set -o pipefail
+          first_attempt_log="automation-test-node-${{ matrix.node-version }}-attempt1.log"
+          second_attempt_log="automation-test-node-${{ matrix.node-version }}-attempt2.log"
+          flake_marker_log="automation-test-node-${{ matrix.node-version }}-flake-marker.log"
+
+          if npm run automation:test 2>&1 | tee "${first_attempt_log}"; then
+            exit 0
+          fi
+
+          echo "automation:test failed on first attempt for Node ${{ matrix.node-version }}. Retrying once to detect flake..."
+
+          if npm run automation:test 2>&1 | tee "${second_attempt_log}"; then
+            {
+              echo "flaky-test-detected=true"
+              echo "job=automation-test-matrix"
+              echo "node-version=${{ matrix.node-version }}"
+              echo "strategy=single-rerun"
+              echo "outcome=passed-on-retry"
+            } > "${flake_marker_log}"
+            echo "::warning::automation:test passed on retry for Node ${{ matrix.node-version }} (flaky detected)."
+            exit 0
+          fi
+
+          echo "automation:test failed on both attempts for Node ${{ matrix.node-version }}."
+          exit 1
+
+      - name: Compress automation diagnostics payload
+        if: ${{ failure() || cancelled() }}
+        run: >
+          node scripts/bundle-diagnostics.mjs
+          --output artifacts/automation-matrix-node-${{ matrix.node-version }}-diagnostics.tar.gz
+          --pattern 'automation-test-node-${{ matrix.node-version }}-attempt1.log'
+          --pattern 'automation-test-node-${{ matrix.node-version }}-attempt2.log'
+          --pattern 'automation-test-node-${{ matrix.node-version }}-flake-marker.log'
+
+      - name: Upload automation failure diagnostics
+        if: ${{ failure() || cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: automation-matrix-failure-diagnostics-node-${{ matrix.node-version }}-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 14
+          if-no-files-found: ignore
+          path: |
+            artifacts/automation-matrix-node-${{ matrix.node-version }}-diagnostics.tar.gz
+
+  lint-typecheck-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Guard against tracked debugger build artifacts
+        run: |
+          tracked_next_files="$(git ls-files -- 'apps/debugger/.next/**')"
+          if [[ -n "${tracked_next_files}" ]]; then
+            echo "Tracked build artifacts under apps/debugger/.next are not allowed."
+            echo "${tracked_next_files}"
+            exit 1
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            packages/api/package-lock.json
+            packages/cli/package-lock.json
+            apps/debugger/package-lock.json
+
+      - name: Cache Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            apps/debugger/.next/cache
+          key: ${{ runner.os }}-next-cache-${{ hashFiles('apps/debugger/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-next-cache-
+
+      - name: Install workspace dependencies
+        run: npm run install:stack:ci
+
+      - name: Verify lockfile drift
+        run: |
+          set -o pipefail
+          git diff --exit-code -- \
+            package-lock.json \
+            packages/api/package-lock.json \
+            packages/cli/package-lock.json \
+            apps/debugger/package-lock.json
+
+      - name: Run full no-build quality suite
+        run: |
+          set -o pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.strict }}" == "true" ]]; then
+            npm run ci:local:strict 2>&1 | tee ci-quality.log
+          else
+            npm run ci:local 2>&1 | tee ci-quality.log
+          fi
+
+      - name: Compress diagnostics payload
+        if: ${{ failure() || cancelled() }}
+        run: >
+          node scripts/bundle-diagnostics.mjs
+          --output artifacts/ci-diagnostics.tar.gz
+          --pattern 'ci-quality.log'
+          --pattern 'test/core/save-state/*.png'
+          --pattern 'test/integration/headless-simple*.png'
+
+      - name: Upload failure diagnostics
+        if: ${{ failure() || cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-failure-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 14
+          if-no-files-found: ignore
+          path: |
+            artifacts/ci-diagnostics.tar.gz

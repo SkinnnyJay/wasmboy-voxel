@@ -1,0 +1,556 @@
+# Migration Completion Summary (2026-02-13)
+
+## Outcome
+
+The migration plan phases were executed end-to-end, including:
+
+- typed contracts package (`@wasmboy/api`)
+- wrapper contract gates and compatibility export
+- debugger app scaffold + state/events + read-only debug API
+- CLI tooling package (`@wasmboy/cli`)
+- regression safety suite expansion
+- CI/release workflow automation
+- dependency hardening and audit cleanup
+
+## Normalized migration sections
+
+Repeated execution-log entries were consolidated into subsystem-oriented
+sections in:
+
+- `docs/migration/migration-docs-normalized-sections-2026-02-14.md`
+
+## Validation snapshot
+
+Primary command used for final continuous validation:
+
+```bash
+npm run test:all:nobuild
+```
+
+This executes:
+
+- workspace lint/typecheck/tests
+- integration regressions
+- core regressions
+- headless throughput baseline
+- dependency audit check
+
+Stability hardening:
+
+- headless integration command now includes a single Mocha retry (`--retries 1`) to reduce intermittent golden-frame CI flakes while preserving strict golden comparison semantics.
+- core save-state command now includes a single Mocha retry (`--retries 1`) to reduce intermittent screenshot-timing flakes while preserving golden-state assertions.
+- retries are scoped to CI-specific commands (`test:integration:headless:ci`, `test:core:savestate:ci`), while default local commands remain strict single-run checks.
+- `ci:local:strict` is available to run the full no-build gate using strict single-run integration/core commands.
+
+CI automation now runs the same gate in:
+
+- `ci.yml` (push/PR)
+- `contract-checks.yml` (contract-focused gate + explicit contract payload validation)
+- `nightly-regression.yml` (daily scheduled drift detection)
+- `release.yml` (pre-publish release guard before changesets action)
+- CI and nightly workflows invoke `npm run ci:local` directly to keep local/remote quality-gate parity exact
+
+CI and contract workflows now include:
+
+- `workflow_dispatch` manual trigger support
+- push/PR path filters so full CI runs only for relevant runtime/package/test/workflow changes
+- trigger path lists aligned to existing repo files (removed stale `pnpm-workspace.yaml` references)
+- CI workflow path filters include `.github/workflows/*.yml` so workflow-only changes still get full quality-gate validation
+- workflow trigger paths include `scripts/**` where scripts are used by CI/contract/release gates (e.g. `changeset:status:ci`)
+- CI and nightly manual dispatch include `strict` input support to run no-retry full-gate verification on demand
+- release manual dispatch supports `strict=true` for no-retry release verification
+- contract manual dispatch supports `full_gate=true` with optional `strict=true` for strict full-gate contract verification
+
+Release pipeline build uses:
+
+- `npm run release:build` (root emulator/lib build + workspace package builds)
+- `npm run release:verify` (full no-build quality gate + changeset status)
+- push trigger path filters so release automation runs only when releasable/runtime/package metadata changes
+- `release:verify` now composes `ci:local + changeset:status:ci` for direct local/CI gate parity
+- `release:verify:strict` is available for strict no-retry release verification and is selectable in manual release workflow runs
+
+Contract workflow uses:
+
+- `npm run ci:packages` (package build + package typecheck/tests)
+- `npm run contract:ci` (workflow checks + automation tests + package CI checks + changeset status + sample contract validation)
+- `npm run contract:ci:full` (full `ci:local` gate + changeset status + sample contract validation)
+- `npm run contract:ci:full:strict` (full `ci:local:strict` gate + changeset status + sample contract validation)
+- `npm run changeset:status:ci` (deduplicated/suppressed expected local file-dependency notices in CI output)
+- path filters so the workflow runs only when contract/package/release-metadata files change (including debugger package metadata used by changeset checks)
+- contract workflow path filters include `contracts/**` so contract-schema/documentation edits still exercise contract CI gates
+- contract workflow manual dispatch supports `full_gate=true`, with optional `strict=true` to run `contract:ci:full:strict`
+- contract workflow validates dispatch input combinations (`strict=true` without `full_gate=true` fails fast)
+
+Workflow hardening applied:
+
+- explicit workflow permissions (least privilege defaults)
+- concurrency groups with `cancel-in-progress` to avoid duplicate CI spend
+- shared install command (`npm run install:stack`) to keep CI/release dependency setup consistent across workflows
+- deterministic lockfile install command (`npm run install:stack:ci`) now used across all workflows
+- CI install command uses `--ignore-scripts` to avoid redundant prepare builds during dependency bootstrap
+- CI install command disables install-time audit/fund output (`--no-audit --fund=false`) since audit is enforced in the dedicated quality gate
+- package-focused deterministic install command (`npm run install:packages:ci`) used by contract workflow to avoid unnecessary app dependency bootstrap
+- stack-level deterministic install now composes package-level install (`install:stack:ci` -> `install:packages:ci` + debugger install) to reduce duplication
+- setup-node cache dependency paths include all workspace lockfiles for stable multi-package npm cache keys
+- contract workflow cache keys now omit debugger lockfile to better match package-only install inputs
+- release workflow now also caches Next.js build artifacts for debugger app builds
+- workflow formatting checks are enforced via `workflow:lint` and included in the unified quality gate
+- workflow formatting can be auto-remediated locally via `workflow:format`
+- automation helper scripts are linted via `scripts:lint` and included in the unified quality gate
+- automation helper scripts can be auto-formatted via `scripts:format`
+- `workflow:check` consolidates workflow + automation script format checks for reuse in CI scripts
+- automation helper scripts are covered by `automation:test` (Node test runner), and this test step is included in the unified quality gate
+- `automation:check` composes `workflow:check` + `automation:test` so quality-gate scripts can reuse one consolidated automation preflight command
+- automation coverage includes diagnostics bundle behavior checks (matched files, empty-placeholder fallback, duplicate-pattern deduplication)
+- automation coverage verifies directory matches are excluded so bundle inputs remain file-only
+- automation coverage includes custom placeholder message behavior for empty diagnostics archives
+- diagnostics archive file collection now sorts matches lexicographically for deterministic artifact structure across runs
+- diagnostics placeholder files are now cleaned up after archive creation to avoid leaving temporary files in workflow workspaces
+- diagnostics file deduplication now uses canonical resolved paths so mixed relative/absolute pattern inputs cannot archive the same file twice
+- diagnostics archive command now inserts `--` before file entries so dash-prefixed filenames are handled safely
+- diagnostics bundling now excludes the output archive path from matched inputs to avoid accidental self-inclusion when broad patterns are used
+- diagnostics bundling now normalizes absolute file matches to relative archive paths (when under repo cwd) to keep artifact contents stable and portable
+- diagnostics bundling now enforces a configurable tar timeout (`BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS`, default 120000ms) with explicit invalid-config and timeout failure handling
+- diagnostics bundler now supports per-invocation tar timeout overrides (`--tar-timeout-ms`, `--tar-timeout-ms=<ms>`) with strict duplicate/missing/help-mixed argument guards
+- diagnostics timeout token guards now include malformed split/inline flag-token value coverage (`--tar-timeout-ms --unexpected`, `--tar-timeout-ms=-x`), ensuring missing-value semantics stay stable
+- helper timeout-override regression coverage now also includes whitespace-only CLI values for both wrappers (`--timeout-ms ' '`, `--tar-timeout-ms ' '`), locking invalid-value behavior at CLI entrypoints
+- helper timeout-override regression coverage now includes plus-prefixed and negative CLI timeout overrides for both wrappers (`+5000`, `-5`) to keep strict numeric-input semantics consistent at wrapper boundaries
+- helper timeout-override regression coverage now includes split/inline parity assertions for whitespace/plus/negative timeout overrides in both wrappers, ensuring both argument styles enforce identical strict validation behavior
+- help/timeout exclusivity coverage now includes inline-timeout variants in both wrappers (`--help --timeout-ms=...`, `--help --tar-timeout-ms=...`) to preserve strict non-mixed help invocation semantics across argument styles
+- help-mode strictness coverage now includes unknown short-flag combinations (`--help -x`) for both wrappers, ensuring unknown-short argument rejection remains enforced even in help-mixed invocations
+- timeout-value token-guard coverage now includes help-alias tokens in split/inline timeout value positions for both wrappers (`--flag --help`, `--flag -h`, `--flag=--help`, `--flag=-h`), preserving missing-value semantics for option-token misuse
+- duplicate-timeout regression coverage now includes inline-first ordering (`--flag=...` then `--flag ...`) in both wrappers, ensuring duplicate-detection behavior remains ordering-agnostic across split/inline forms
+- help-timeout exclusivity regression coverage now includes short-help variants (`-h --flag ...`, `-h --flag=...`) in both wrappers, preserving help-flag exclusivity semantics across both help aliases and timeout argument styles
+- help-mode strictness coverage now includes short-help + unknown-arg combinations (`-h --unknown`, `-h -x`) for both wrappers, preserving unknown-argument rejection semantics even when help alias mode is active
+- diagnostics parser now treats whitespace-only `--output` / `--pattern` values (split and equals forms) as missing values, preventing accidental blank path-like argument acceptance
+- duplicate-help regression coverage now includes short-first order (`-h --help`) in both wrappers, ensuring duplicate-help detection remains ordering-agnostic across help aliases
+- duplicate-timeout regression coverage now includes split-only and inline-only duplicate forms in both wrappers (in addition to mixed split/inline orderings), ensuring duplicate-timeout detection remains syntax-order agnostic
+- timeout-override precedence coverage now includes inline CLI override variants for both wrappers, ensuring `--flag=<ms>` overrides timeout env defaults just like split-form overrides
+- diagnostics placeholder-message coverage now includes whitespace-only custom message values (split and equals forms), preserving intentional whitespace payload behavior for operator-supplied placeholder text
+- diagnostics message parsing now explicitly allows help-token literals (`--help`, `-h`) for `--message` values (split and equals forms), with regression coverage to keep those literals available as intentional placeholder text
+- diagnostics help-token message coverage now includes full split/equals parity for both literals (`--message --help`, `--message -h`, `--message=--help`, `--message=-h`) to lock intentional-literal behavior across argument styles
+- timeout-value token-guard coverage now also includes self-flag misuse tokens (`--timeout-ms --timeout-ms`, `--timeout-ms=--timeout-ms`, and diagnostics equivalents), preserving missing-value semantics when a timeout flag token is repeated in value position
+- diagnostics duplicate-flag regression coverage now includes equals-only duplicate paths for `--output` and `--message`, preserving duplicate-detection semantics across split-only, equals-only, and mixed argument forms
+- diagnostics path-value token-guard coverage now includes help-token variants for `--output` / `--pattern` (split and equals forms), preserving missing-value semantics for help-token misuse in path-value positions
+- help-timeout exclusivity regression coverage now includes trailing-help permutations (timeout args before help in both split/inline forms and both help aliases) for `changeset-status-ci` and `bundle-diagnostics`
+- `changeset-status-ci` argument parsing now uses a shared `validateValue` helper (known-token + prefix guards), aligning timeout value-token validation structure with diagnostics helper parsing semantics while preserving existing error contracts
+- diagnostics path-value token-guard coverage now includes timeout-flag token misuse variants for `--output` / `--pattern` (split and equals forms), preserving missing-value semantics for known flag tokens in path-value slots
+- diagnostics message-value token-guard coverage now includes timeout-flag token misuse variants (`--message --tar-timeout-ms`, `--message=--tar-timeout-ms`), preserving current known-token missing-value semantics for non-whitelisted message tokens
+- diagnostics message-value token-guard coverage now also includes operational known-flag misuse variants (`--message --output`, `--message --pattern`, plus equals forms), preserving known-token missing-value semantics for non-whitelisted message tokens while keeping explicit help-token literal allowances
+- `bundle-diagnostics` parser internals now use shared flag constants (`--output`, `--pattern`, `--message`) across known-token sets, split/equals parsing, and duplicate-error paths to reduce literal drift risk while preserving CLI behavior and error text
+- diagnostics timeout-value token-guard coverage now includes known operational-flag misuse variants (`--tar-timeout-ms --output`, `--tar-timeout-ms --pattern`, `--tar-timeout-ms --message`, plus inline forms), preserving missing-value semantics for known-flag tokens in timeout-value positions
+- diagnostics help-literal message regression coverage now includes explicit-help follow-up permutations (`--message --help --help`, `--message -h -h`, plus equals-form variants), preserving help-flag exclusivity when help-token literals are used intentionally as message payloads
+- diagnostics help-literal message coverage now includes timeout coexistence permutations (`--message --help --tar-timeout-ms ...` and equals-form `--message=-h` with inline timeout), preserving intentional help-literal payload semantics alongside timeout override arguments
+- duplicate-help regression coverage now includes same-alias duplicates (`--help --help` and `-h -h`) for both helper wrappers, preserving duplicate-help failure semantics independent of alias mixing order
+- `changeset-status-ci` parser now uses a shared `readRequiredValue` helper for split-form timeout parsing, aligning parser structure with diagnostics helper internals while preserving existing CLI behavior and timeout validation semantics
+- wrapper-level CLI timeout boundary coverage now explicitly includes zero, non-numeric suffix (`50ms`), and above-ceiling (`2147483648`) overrides in split and inline forms for both `changeset-status-ci` and `bundle-diagnostics`
+- wrapper-level timeout-environment boundary coverage now explicitly includes zero-value env rejection for both helpers (`CHANGESET_STATUS_CI_TIMEOUT_MS=0`, `BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS=0`), preserving strict positive-timeout semantics at wrapper entry points
+- wrapper-level timeout-environment boundary coverage now also includes plus-prefixed and negative env rejection for both helpers, preserving strict positive integer semantics for env-driven timeout parsing in wrapper entry points
+- wrapper-level CLI timeout boundary coverage now also includes acceptance tests at the maximum supported timeout (`2147483647`) in split and inline forms for both wrappers, preserving inclusive upper-bound semantics
+- wrapper-level timeout-environment boundary coverage now includes acceptance tests at the maximum supported timeout (`2147483647`) for both wrappers, preserving inclusive upper-bound semantics for env-driven timeout resolution
+- timeout-override precedence coverage now also includes failure-path assertions where invalid CLI timeout overrides still fail even when environment timeout values are valid, preserving strict CLI validation semantics under precedence rules
+- diagnostics timeout regression fixtures now use a shared delayed-fake-tar helper in automation tests, reducing fixture duplication while preserving timeout-path behavior and assertions
+- changeset timeout regression fixtures now use shared helper builders for delayed/no-bump fake changeset commands, reducing fixture duplication while preserving timeout and success-path behavior
+- timeout-override precedence coverage now includes empty-env fallback permutations where CLI timeout overrides still enforce configured timeout behavior (`... --timeout-ms 50` with empty timeout env) for both wrappers
+- timeout-override coverage now includes leading-zero CLI timeout permutations (`00050`) in split and inline forms for both wrappers, preserving numeric parsing semantics while enforcing configured timeout behavior
+- timeout-override coverage now includes whitespace-padded timeout values (`' 50 '`) across environment and CLI override paths (split and inline) for both wrappers, preserving trimmed numeric parsing semantics while enforcing configured timeout behavior
+- timeout-override precedence coverage now includes invalid-env/valid-CLI failure-path assertions (split and inline forms) for both wrappers, preserving current env-first timeout resolution semantics
+- timeout-environment coverage now includes leading-zero acceptance (`00050`) for both wrappers, preserving trimmed numeric parsing semantics and timeout behavior for canonicalizable integer env inputs
+- timeout-environment boundary coverage now includes whitespace-padded max-int acceptance (`' 2147483647 '`) for both wrappers, preserving trim semantics at the upper supported timeout boundary
+- timeout CLI boundary coverage now includes whitespace-padded max-int override acceptance (`' 2147483647 '`) in split and inline forms for both wrappers, preserving trim semantics at the upper supported timeout boundary for CLI overrides
+- timeout fixture defaults in automation tests now use shorter delayed-command sleeps (`0.1s`), reducing automation runtime while preserving timeout-path behavior and assertions
+- timeout regression fixtures now use shorter synthetic delays, reducing automation-test runtime while preserving timeout-path coverage
+- automation timeout-wrapper tests now share a reusable fake-executable fixture helper (`test-fixtures`), reducing duplicated executable setup logic across changeset and diagnostics harnesses
+- shared fake-executable fixture helper now has focused unit coverage validating runnable command creation in fake-bin paths
+- shared fake-executable fixture helper now rejects empty/path-segment executable names, hardening fixture path safety and preventing fake-bin escape via invalid command identifiers
+- shared fake-executable fixture helper now also rejects backslash-separated names, enforcing cross-platform separator safety for fixture command identifiers
+- shared fake-executable fixture helper now also rejects dot-segment names (`.` / `..`), preventing invalid directory-like executable identifiers in fake-bin setup
+- shared fake-executable fixture helper now rejects whitespace-containing executable names, hardening fixture command identifier safety against ambiguous shell-token names
+- shared fake-executable fixture helper now validates executable-name/body input types (including non-string name rejection and empty-body rejection), tightening fixture helper input contracts
+- shared fake-executable fixture helper now rejects whitespace-only executable bodies in addition to empty bodies, tightening fixture-helper script-body input contracts
+- shared fake-executable fixture helper now validates temp-directory inputs (non-string and empty-string rejection), tightening fixture-helper path contract safety before filesystem operations
+- shared fake-executable fixture helper coverage now includes non-string executable-body rejection, tightening helper body-type input contract validation semantics
+- shared fake-executable fixture helper now rejects null-byte path tokens in temp-directory and executable-name inputs, preventing invalid filesystem path propagation during fixture setup
+- shared fake-executable fixture helper coverage now includes null-byte temp-directory/executable-name rejection, locking fixture path-token sanitization semantics
+- shared fake-executable fixture helper now also rejects null-byte executable-body inputs, preventing malformed script payload propagation into generated fixture binaries
+- shared fake-executable fixture helper coverage now includes null-byte executable-body rejection, locking fixture script-payload sanitization semantics
+- shared fake-executable fixture helper now normalizes error-value rendering with safe string conversion, preventing Symbol/non-string invalid fixture inputs from triggering formatting TypeErrors in validation paths
+- shared fake-executable fixture helper coverage now includes Symbol temp-directory/name/body rejection paths, locking robust error-reporting behavior for non-string invalid fixture inputs
+- shared fake-executable fixture helper coverage now includes unprintable-value fallback assertions (`toString`-throwing temp-directory/name/body inputs), locking `[unprintable]` fallback error-format semantics under hostile invalid-input shapes
+- shared fake-executable fixture helper coverage now includes explicit `null` invalid-input rejection paths (`tempDirectory`, executable name, executable body), locking null-value contract semantics across fixture helper input contracts
+- `changeset-status-ci` output-filter helper coverage now includes whitespace-padded warning suppression and passthrough internal-blank-line preservation, locking output-formatting behavior under mixed warning/info streams
+- `changeset-status-ci` output-filter helper coverage now also includes whitespace-variant warning deduplication and empty-output handling, locking normalization behavior for sparse and duplicate-heavy output streams
+- `changeset-status-ci` output-filter helper coverage now includes an only-warnings stream case (empty passthrough output assertion), locking filtered-output behavior when no informational lines remain
+- `changeset-status-ci` output-filter helper now validates input type and rejects non-string output payloads with explicit errors, preventing implicit `.split` type failures from malformed helper invocations
+- `changeset-status-ci` output-filter helper coverage now includes non-string/symbol/unprintable output rejection paths, locking robust error-reporting semantics for invalid filter inputs
+- `changeset-status-ci` output-filter helper coverage now includes explicit `null` output rejection, locking null-input contract semantics for filter entrypoints
+- timeout argument-value validation now uses a shared helper module (`cli-arg-values`) across both wrappers, reducing parser duplication while preserving split/equals token-guard semantics
+- shared argument-value helper now has focused unit coverage for missing/known-token/whitespace/flag-like value validation and required-following-token reads
+- shared argument-value helper coverage now includes unknown long-flag token rejection under double-dash-disallowed settings, explicit whitespace-only acceptance when enabled, and allowed-known-token read behavior (`--message --help`)
+- shared argument-value helper internals now centralize missing-value error creation, reducing repeated error-construction logic while preserving existing error text contracts
+- shared argument-value helper now validates helper-option contracts (flag-name/known-args/boolean toggles/allowed-known-values set), preventing ambiguous helper misuse from silently altering parser semantics
+- shared argument-value helper coverage now includes invalid-option contract rejection cases, locking helper input-contract semantics alongside value-token validation behavior
+- shared argument-value helper now validates `readRequiredArgumentValue` call-site contracts (`argv` array + non-negative integer index), preventing ambiguous token reads from invalid parser cursor inputs
+- shared argument-value helper coverage now includes invalid `argv`/index rejection paths for required-following-token reads, locking parser-cursor input contract semantics
+- shared argument-value helper now validates presence/object shape of required options before field-level validation, preventing opaque property-access failures from malformed helper invocations
+- shared argument-value helper coverage now includes missing/non-object options rejection in both direct validation and read-path entrypoints, locking top-level helper-option contract semantics
+- shared argument-value helper now also rejects array-shaped options containers, tightening helper options-shape validation against ambiguous non-record input types
+- shared argument-value helper coverage now includes array-options rejection across direct/read-path entrypoints, locking strict options-shape contract semantics
+- shared argument-value helper now validates that configured known-token sets contain only string entries, preventing malformed set entries from silently bypassing parser token checks
+- shared argument-value helper coverage now includes non-string set-entry rejection for `knownArgs` and `allowedKnownValues`, locking helper token-set input contract semantics
+- shared argument-value helper now rejects empty/whitespace token-set entries in `knownArgs` and `allowedKnownValues`, preventing ambiguous blank token matches in parser configuration
+- shared argument-value helper coverage now includes empty/whitespace token-set entry rejection paths, locking non-blank token-contract semantics for configured parser token sets
+- shared argument-value helper now rejects non-string value tokens before string operations (`trim`/`startsWith`), preventing helper misuse from triggering opaque type errors during required-value validation
+- shared argument-value helper coverage now includes non-string value-token rejection in both direct and read-path entrypoints, locking value-type contract semantics alongside token-shape validation
+- shared argument-value helper now normalizes error-value rendering with safe string conversion, preventing Symbol/non-string invalid inputs from triggering unexpected formatting TypeErrors in validation paths
+- shared argument-value helper coverage now includes Symbol invalid value/flag-name/index rejection paths, locking robust error-reporting behavior for non-string invalid helper inputs
+- shared argument-value helper coverage now includes unprintable-value fallback assertions (`toString`-throwing value/flag-name/index inputs), locking `[unprintable]` fallback error-format semantics under hostile invalid-input shapes
+- shared argument-value helper coverage now includes explicit `null` invalid-input rejection paths (value token, `flagName`, options object, argument index), locking null-value contract semantics across direct/read-path helper entrypoints
+- shared argument-value helper now rejects out-of-range parser cursor indexes (`index >= argv.length`) before reading following tokens, preventing ambiguous missing-value errors from invalid parser-cursor positions
+- shared argument-value helper coverage now includes out-of-range index rejection, locking parser-cursor bounds semantics for required-following-token reads
+- timeout env/CLI precedence resolution now uses a shared helper (`resolveTimeoutFromCliAndEnv`) across both wrappers, reducing duplicated timeout-resolution scaffolding while preserving current env-first validation + CLI-override semantics
+- shared timeout-precedence helper now has focused unit coverage for default/env/CLI precedence plus invalid-env and invalid-CLI failure paths
+- shared timeout-precedence helper coverage now also includes empty-env + CLI-override resolution, whitespace-padded max-int CLI override acceptance, and whitespace-only CLI rejection with valid env fallback
+- timeout env parsing is now strict numeric-only (e.g. rejects suffix values like `50ms`) for both diagnostics and changeset wrappers
+- shared timeout parser now rejects values above the supported process timeout ceiling (`2147483647ms`) to avoid runtime overflow ambiguity
+- shared timeout parser helper coverage now explicitly includes max-boundary acceptance (`2147483647`) and leading-zero acceptance (`00050`) to lock canonicalizable upper-bound input semantics
+- shared timeout parser now validates default timeout inputs (`defaultValue`) as strict positive safe integers within the supported ceiling, preventing invalid internal fallback configuration from being silently accepted
+- shared timeout parser helper coverage now includes invalid-default rejection paths (zero, non-integer, above-ceiling) to lock default-fallback contract semantics
+- shared timeout parser helper coverage now includes non-finite default rejection (`NaN`), locking finite-number default constraints in fallback validation semantics
+- shared timeout parser helper coverage now includes explicit infinite-default rejection (`Infinity`) in both direct and composed timeout resolution tests, locking finite default fallback constraints across helper entrypoints
+- shared timeout parser helper coverage now includes non-numeric default-type rejection (string values) in both direct and composed timeout resolution tests, locking strict numeric default contract semantics
+- shared timeout parser now validates option-name inputs and rejects empty/non-string names, preventing ambiguous helper error labels for misconfigured timeout option metadata
+- shared timeout parser helper coverage now includes invalid option-name rejection (empty/non-string names and invalid composed env-name metadata) to lock timeout option-label input contract semantics
+- shared timeout parser now validates top-level env-resolution helper options object shape before destructuring, preventing opaque destructuring failures from malformed helper invocations
+- shared timeout parser helper coverage now includes missing/array env-resolution options rejection, locking top-level helper input contract semantics
+- shared timeout parser now rejects non-string raw timeout values before string normalization, preventing helper misuse from causing implicit type coercion or property-access failures
+- shared timeout parser helper coverage now includes non-string raw timeout rejection in direct and composed resolution paths, locking timeout raw-value input contract semantics
+- shared timeout parser now normalizes error-value rendering with safe string conversion, preventing Symbol/raw non-string helper inputs from throwing unexpected formatting TypeErrors during validation error construction
+- shared timeout parser helper coverage now includes Symbol-based invalid option-name/default/raw-value rejection paths, locking robust error-reporting behavior for non-string invalid inputs
+- shared timeout parser helper coverage now includes unprintable-value fallback assertions (`toString`-throwing option-name/default/raw-value inputs), locking `[unprintable]` fallback error-format semantics under hostile invalid-input shapes
+- shared timeout parser helper coverage now includes explicit `null` invalid-input rejection paths for raw timeout values and composed environment option names, locking null-value contract semantics in direct/composed timeout resolution
+- shared timeout precedence helper coverage now includes composed Symbol option-name rejection (`env.name` and `cli.name`), locking Symbol-safe error-reporting semantics across composed env/CLI timeout resolution entrypoints
+- shared timeout precedence helper coverage now includes unprintable-value fallback assertions (`toString`-throwing `env.name` / `cli.name`), locking `[unprintable]` fallback error-format semantics across composed env/CLI timeout resolution paths
+- shared timeout precedence helper now validates composed options shape (`env`/`cli` objects) and emits explicit contract errors for missing option objects, preventing opaque property-access failures when wrappers misconfigure helper inputs
+- shared timeout precedence helper coverage now includes missing `env`/`cli` option-object rejection, locking composed timeout-resolution input contract semantics
+- shared timeout precedence helper coverage now also includes missing top-level options and non-object `env`/`cli` option rejection, locking full options-shape contract semantics at helper entrypoint boundaries
+- shared timeout precedence helper now rejects array-shaped options objects (`options`, `env`, `cli`) in addition to missing/non-object values, tightening helper options-shape contracts against ambiguous container types
+- shared timeout precedence helper coverage now includes array-shaped `options`/`env`/`cli` rejection paths, locking strict object-shape semantics for composed timeout resolution inputs
+- shared timeout parser tests now cover whitespace-only env values as invalid, preventing accidental silent coercion in CI configuration
+- shared timeout parser tests now cover empty-string env values as default-fallback behavior, preserving predictable unset-env semantics
+- shared timeout parser tests now cover plus-prefixed and negative numeric inputs as invalid, tightening timeout-config input contract clarity
+- wrapper-level timeout regression coverage now includes above-ceiling env values for both helpers, ensuring shared timeout bounds enforcement is surfaced at CLI entrypoints
+- README helper command examples now explicitly call out timeout env bounds (`1..2147483647`) for operator clarity
+- diagnostics bundler help handling now remains strict about unknown flags (`--help --unknown` fails), matching stricter wrapper argument-guard behavior
+- diagnostics bundler now emits consistent `[bundle-diagnostics] ...` prefixed CLI errors (with usage output on parse errors), improving CI log readability
+- diagnostics/changeset wrappers now include usage text for invalid timeout configuration failures, improving remediation context in CI logs
+- automation tests now explicitly assert helper-specific error prefixes (`[bundle-diagnostics]`, `[changeset:status:ci]`) for stable troubleshooting output contracts
+- automation tests now also assert usage-text presence for key bundle argument/config failures, protecting CLI guidance output in error paths
+- diagnostics helper now rejects mixed help + operational arguments to keep CLI intent explicit and avoid ambiguous invocation behavior
+- changeset helper now also has regression coverage for `--help` mixed with unknown arguments, preserving strict invocation semantics across both wrappers
+- changeset timeout-suffix failure tests now assert usage-text output, locking guidance quality for timeout-config error paths
+- both helpers now reject duplicate help-flag combinations (e.g. `--help -h`) with explicit parse errors to keep invocation semantics strict
+- both helpers now have explicit regression coverage for unknown short-flag arguments (e.g. `-x`) to protect strict argument-surface behavior
+- diagnostics helper argument parsing now allows dash-prefixed message values (e.g. `--message "--custom note"`) while still treating known flags as missing-value sentinels
+- diagnostics helper now treats unknown long-flag tokens as missing-value errors for `--output` / `--pattern`, preventing accidental flag-token capture as path values
+- bundle argument parsing now tests both accepted dash-prefixed message payloads and rejected long-flag token capture for path-oriented args, documenting the intended parsing boundary
+- bundle token-capture regression assertions now require usage-text output on those failures, preserving CLI guidance when path args are malformed
+- bundle parser now rejects short-flag-like tokens (e.g. `-x`) in `--output` / `--pattern` value positions to reduce accidental option-token capture
+- wrapper-level timeout coverage now includes empty-string env behavior for both helpers, confirming default-timeout fallback semantics remain stable at CLI entrypoints
+- bundle helper now supports equals-form long options (`--output=...`, `--pattern=...`, `--message=...`) with dedicated empty-value validation coverage
+- diagnostics helper regression coverage now includes mixed split/equals duplicate detection for `--output` and `--message` to keep duplicate-flag semantics stable across syntax styles
+- automation coverage includes `changeset:status:ci` filtering behavior checks (expected warning suppression and deduplication)
+- changeset status warning filter now tolerates version bumps by suppressing only `file:` workspace warnings from `@wasmboy/*` packages against `@wasmboy/api`
+- suppressed changeset workspace warnings are now lexicographically sorted before reporting for deterministic CI log output
+- automation coverage now includes `changeset-status-ci.mjs` wrapper behavior (filtered output passthrough, exit-code passthrough, and missing-command failure handling)
+- changeset filter/wrapper tests now assert non-`@wasmboy/*` `file:` warnings remain visible and that suppressed warning logs are emitted in deterministic order
+- changeset status wrapper now supports `--help` and `-h` usage output, with automation coverage for both help paths
+- changeset filter tests now cover CRLF output handling to ensure cross-platform warning parsing stability
+- changeset status wrapper now rejects unknown CLI arguments with usage guidance to keep automation invocation strict and predictable
+- changeset status wrapper now enforces a configurable execution timeout (`CHANGESET_STATUS_CI_TIMEOUT_MS`, default 120000ms) with explicit timeout/invalid-config failures
+- changeset status wrapper now supports per-invocation timeout overrides (`--timeout-ms`, `--timeout-ms=<ms>`) with strict duplicate/missing-value guards and precedence over env defaults
+- changeset timeout split-arg parsing now treats unknown/short flag tokens as missing timeout values, avoiding accidental flag-token capture in timeout value positions
+- changeset timeout inline-equals parsing now also treats unknown/short flag tokens as missing timeout values, aligning malformed-value handling with split-arg parsing
+- helper command docs now include timeout override examples for both automation wrappers (`CHANGESET_STATUS_CI_TIMEOUT_MS`, `BUNDLE_DIAGNOSTICS_TAR_TIMEOUT_MS`)
+- timeout parsing logic is now centralized in a shared automation helper (`scripts/cli-timeout.mjs`) with dedicated unit coverage, reducing duplication between wrappers
+- automation coverage also validates diagnostics bundle CLI argument guards (missing `--output` and missing `--pattern`)
+- automation coverage also validates diagnostics bundle argument parsing errors (unknown flags and missing flag values)
+- diagnostics bundle tests now cover missing values for `--output` and `--message` flags to enforce strict CLI parsing behavior
+- diagnostics bundle parser now rejects duplicate `--output` / `--message` flags, with automation coverage for both error paths
+- diagnostics bundler now supports `--help` usage output (covered by automation tests) for easier local debugging/tooling introspection
+- diagnostics bundler also supports `-h` short-help alias for standard CLI ergonomics
+- README command reference now includes direct helper usage examples for both automation scripts (`changeset-status-ci` and `bundle-diagnostics`)
+- CI and nightly workflows now capture full quality-gate logs and relevant screenshot outputs as artifacts on failure for faster triage
+- contract and release workflows now capture gate logs as failure artifacts to support post-failure debugging without reruns
+- release workflow failure artifacts now also include core/headless generated screenshots from release verification test failures
+- failure diagnostics artifacts use a 14-day retention window to balance triage utility with storage footprint
+- log-capturing workflow steps explicitly use `shell: bash` to guarantee `set -o pipefail` behavior
+- failure artifact names include run id/attempt for clearer traceability in repeated or retried runs
+- diagnostics upload steps now run on both failure and cancellation, preserving partial logs from interrupted pipelines
+- workflows now set job-level `defaults.run.shell: bash` so bash semantics are consistently applied across all run steps
+- diagnostics are archived into per-workflow tarballs before upload to keep artifacts compact and grouped for easier download/inspection
+- diagnostics bundling now collects only existing files (with placeholder manifests when empty), avoiding noisy tar missing-file warnings on early-fail/early-cancel paths
+- diagnostics bundling is centralized via `scripts/bundle-diagnostics.mjs`, reducing duplicated workflow shell logic across CI/contract/nightly/release pipelines
+- shared CLI argument-value parsing now enforces that `allowedKnownValues` is a subset of `knownArgs`, preventing misconfigured token whitelists in helper callers
+- shared timeout resolution coverage now explicitly asserts `null` environment raw-timeout rejection in composed env/CLI precedence helper paths
+- shared timeout helper coverage now explicitly asserts `null` default-timeout rejection and `null` composed CLI option-name rejection paths
+- shared CLI argument-value helper coverage now explicitly asserts `null` token rejection for both `knownArgs` and `allowedKnownValues` set entries
+- changeset status output-filter coverage now explicitly asserts `undefined` output rejection in addition to existing non-string/null/symbol/unprintable invalid-input checks
+- shared timeout precedence-helper coverage now explicitly asserts Symbol raw-timeout rejection for both composed env and CLI raw timeout inputs
+- shared timeout precedence-helper coverage now explicitly asserts unprintable raw-timeout rejection for both composed env and CLI raw timeout inputs, preserving `[unprintable]` error formatting semantics
+- shared test-fixture helper coverage now explicitly asserts `undefined` rejection for temp-directory, executable-name, and executable-body inputs
+- shared CLI argument-value helper coverage now explicitly asserts undefined flag-name rejection and missing `allowDoubleDashValue` option rejection
+- shared timeout helper coverage now explicitly asserts undefined default-timeout rejection for both direct env parsing and composed env/CLI timeout resolution helpers
+- shared CLI argument-value helper coverage now explicitly asserts missing/null `knownArgs` set rejection in required-argument option validation
+- parser-helper set-option coverage now explicitly asserts `Symbol`/`bigint` non-Set rejection for `knownArgs` and `allowedKnownValues` in direct/read validation helpers
+- shared timeout precedence-helper coverage now explicitly asserts undefined option-name rejection for both composed env and CLI option metadata
+- read-path CLI argument parsing coverage now explicitly asserts missing `knownArgs` and missing `allowDoubleDashValue` option rejection in `readRequiredArgumentValue` validation paths
+- read-path CLI argument parsing coverage now explicitly asserts null `knownArgs` and null `allowDoubleDashValue` option rejection in `readRequiredArgumentValue` validation paths
+- read-path CLI argument parsing coverage now explicitly asserts invalid `allowedKnownValues` set-shape rejection and read-path subset-enforcement rejection in `readRequiredArgumentValue` validation paths
+- read-path CLI argument parsing coverage now explicitly asserts null and whitespace-only `allowedKnownValues` entry rejection in `readRequiredArgumentValue` validation paths
+- read-path parser-helper tests now include explicit implemented assertions for null/whitespace `allowedKnownValues` entries in `readRequiredArgumentValue` to match documented token-entry guardrails
+- read-path parser-helper coverage now explicitly asserts non-string (`number`) `allowedKnownValues` entry rejection in `readRequiredArgumentValue` validation paths
+- read-path parser-helper coverage now explicitly asserts non-string and whitespace-only `knownArgs` entry rejection in `readRequiredArgumentValue` validation paths
+- parser-helper coverage now explicitly asserts non-boolean `allowWhitespaceOnly` rejection for direct/read validation entrypoints and null/undefined `argv` rejection in read-path parsing
+- read-path parser-helper argv-shape coverage now explicitly asserts `bigint` argv rejection in `readRequiredArgumentValue`
+- read-path parser-helper argv-shape coverage now explicitly asserts `Symbol` and unprintable argv rejection in `readRequiredArgumentValue`
+- timeout-helper options-shape coverage now explicitly asserts null container rejection for direct/composed entrypoints (`options`, composed `env`, composed `cli`)
+- timeout-helper options-shape coverage now explicitly asserts primitive non-object (`number`) top-level options-object rejection for direct/composed timeout helper entrypoints
+- timeout-helper default-value coverage now explicitly asserts `-Infinity` default-timeout rejection for both direct env and composed env/CLI timeout resolution helpers
+- read-path parser-helper options-shape coverage now explicitly asserts primitive non-object (`number`) options rejection in `readRequiredArgumentValue` validation paths
+- parser-helper options-shape coverage now explicitly asserts `Symbol` options rejection across direct/read required-argument validation entrypoints
+- parser-helper options-shape coverage now explicitly asserts `bigint` options rejection across direct/read required-argument validation entrypoints
+- parser-helper options-contract coverage now explicitly asserts `null` `allowDoubleDashValue` rejection in `validateRequiredArgumentValue` validation paths
+- parser-helper options-contract coverage now explicitly asserts `null` `allowWhitespaceOnly` rejection in both direct and read-path argument validation helpers
+- read-path parser-helper value-type coverage now explicitly asserts `null`, `Symbol`, and unprintable following-token rejection with stable formatted error output
+- composed timeout-resolution coverage now explicitly asserts `null`, `Symbol`, and unprintable default-timeout rejection with stable formatted error output
+- parser-helper boolean-option coverage now explicitly asserts `Symbol` rejection for `allowDoubleDashValue` and `allowWhitespaceOnly` in direct/read validation helpers
+- parser-helper boolean-option coverage now explicitly asserts `bigint` rejection for `allowDoubleDashValue` and `allowWhitespaceOnly` in direct/read validation helpers
+- parser-helper boolean-option coverage now explicitly asserts unprintable-object rejection for `allowDoubleDashValue` and `allowWhitespaceOnly` in direct/read validation helpers
+- changeset-status output filtering coverage now explicitly asserts `bigint` output rejection in `filterChangesetStatusOutput`
+- timeout helper coverage now explicitly asserts `bigint` rejection for direct/composed default values and env/CLI raw timeout inputs
+- timeout helper coverage now explicitly asserts `bigint` option-name rejection for direct/composed timeout option metadata (`name`, `env.name`, `cli.name`)
+- timeout helper options-shape coverage now explicitly asserts `Symbol` container rejection for direct/composed entrypoints (`options`, composed `env`, composed `cli`)
+- timeout helper options-shape coverage now explicitly asserts `bigint` container rejection for direct/composed entrypoints (`options`, composed `env`, composed `cli`)
+- parser-helper argument-value coverage now explicitly asserts `bigint` rejection in direct and read-path value validation helpers
+- test-fixture helper coverage now explicitly asserts `bigint` rejection for temp-directory, executable-name, and executable-body inputs
+- parser-helper set-entry coverage now explicitly asserts `bigint` entry rejection for `knownArgs` and `allowedKnownValues` in direct/read validation helpers
+- parser-helper set-entry coverage now explicitly asserts `Symbol` entry rejection for `knownArgs` and `allowedKnownValues` in direct/read validation helpers
+- parser-helper set-entry coverage now explicitly asserts unprintable-entry rejection for `knownArgs` and `allowedKnownValues` in direct/read validation helpers
+- timeout-helper coverage now explicitly asserts null/undefined direct option-name rejection for `resolveStrictPositiveIntegerEnv`
+- read-path parser-helper coverage now explicitly asserts undefined argument-index rejection in `readRequiredArgumentValue` validation paths
+- read-path parser-helper coverage now explicitly asserts `bigint` argument-index rejection in `readRequiredArgumentValue` validation paths
+- read-path parser-helper coverage now explicitly asserts `NaN` argument-index rejection in `readRequiredArgumentValue` validation paths
+- read-path parser-helper coverage now explicitly asserts `Infinity` argument-index rejection in `readRequiredArgumentValue` validation paths
+- read-path parser-helper coverage now explicitly asserts `-Infinity` argument-index rejection in `readRequiredArgumentValue` validation paths
+- parser-helper option-name coverage now explicitly asserts `bigint` `flagName` rejection in `validateRequiredArgumentValue`, locking non-string primitive flag-name contract semantics
+- parser-helper option-name coverage now explicitly asserts `bigint` `flagName` rejection in `readRequiredArgumentValue`, locking non-string primitive flag-name contract semantics in read-path parser validation
+- parser-helper option-name coverage now explicitly asserts `number` `flagName` rejection in `validateRequiredArgumentValue`, locking numeric primitive flag-name contract semantics in direct parser validation
+- parser-helper option-name coverage now explicitly asserts `number` `flagName` rejection in `readRequiredArgumentValue`, locking numeric primitive flag-name contract semantics in read-path parser validation
+- parser-helper option-name coverage now explicitly asserts unprintable `flagName` rejection in `readRequiredArgumentValue`, locking `[unprintable]` error-format contract semantics in read-path parser validation
+- read-path index-contract coverage now explicitly asserts symbol index rejection in upper-bound cursor scenarios, locking invalid-index-type precedence before missing-value boundary handling
+- read-path value-token coverage now explicitly asserts empty-string following-token rejection for required flags, locking missing-value semantics for explicit empty argv payloads
+- read-path inline-equals parity coverage now asserts extracted `--flag=value` payload validation parity with split-form `readRequiredArgumentValue` reads, locking parser-helper consistency across inline/split argument styles
+- timeout option-name validation now rejects whitespace-padded names (`name !== name.trim()`), with direct/composed env+cli helper coverage locking disallowed padded-label semantics
+- timeout options-container validation now enforces plain-object inputs, with Date/Map/Set rejection coverage across direct helper options and composed top-level/env/cli timeout option containers
+- timeout default-value boundary coverage now explicitly asserts `-0` rejection in direct and composed timeout helpers, locking negative-zero default semantics alongside existing non-positive default guards
+- timeout raw-value overflow coverage now explicitly asserts max-safe-integer overflow string rejection (`9007199254740992`) across direct env parsing and composed env/cli precedence paths
+- composed timeout precedence coverage now explicitly asserts plus-prefixed raw-timeout rejection (`+5000`, `+50`) across env and CLI override paths, locking strict digit-only override semantics
+- timeout Unicode-whitespace coverage now explicitly asserts trim acceptance for Unicode-padded numeric values and rejection for Unicode-whitespace-only values across direct and composed env/cli timeout paths
+- bundle-diagnostics parser now rejects malformed double-equals inline forms for `--output`, `--pattern`, and `--tar-timeout-ms`, with regression tests verifying explicit parse failures and usage guidance output
+- bundle-diagnostics file dedupe now canonicalizes matches using real paths, preventing duplicate archive entries when the same file is matched via symlink and non-symlink paths (covered by symlink dedupe regression tests)
+- bundle-diagnostics dedupe coverage now explicitly asserts case-variant filename preservation (`Case.log` and `case.log`) on case-sensitive filesystems
+- bundle-diagnostics archive-failure handling now sets `process.exitCode` (instead of immediate `process.exit`) so `finally` cleanup removes placeholder files, with regression coverage for non-zero tar exit cleanup paths
+- changeset-status filter coverage now explicitly asserts mixed line-ending handling (CRLF + LF in the same output payload), locking cross-platform normalization semantics
+- bundle-diagnostics tar spawn failures now classify missing-command (`ENOENT`) cases into a deterministic “tar command was not found in PATH” error, with regression coverage and placeholder cleanup assertions
+- changeset-status suppressed-warning sorting now uses deterministic code-point ordering (instead of locale-sensitive comparison), with regression coverage using locale-sensitive fixture names (`z-module` vs `ä-module`)
+- changeset-status parser now rejects malformed inline timeout forms with double equals (`--timeout-ms==...`) at parse time, with explicit usage-guidance regression coverage
+- timeout options-container validation coverage now includes unprintable non-plain object fixtures (Date instances with throwing `toString`) across direct and composed top-level/env/cli container guards
+- changeset-status spawn failures now classify missing-command (`ENOENT`) cases into deterministic “changeset command was not found in PATH” diagnostics, replacing generic execution-failure output for missing-binary scenarios
+- shared required-argument option validation now rejects whitespace-padded `flagName` values, with validate/read helper regression coverage to lock canonical flag-label semantics
+- required-argument set-entry validation now rejects whitespace-padded `knownArgs` and `allowedKnownValues` entries, with validate/read helper regression coverage for canonical token-set semantics
+- required-argument options-container validation now enforces plain-object inputs, with Date/Map/Set options-object rejection coverage across validate/read helper entrypoints
+- bundle-diagnostics equals-form parsing now rejects malformed message double-equals forms (`--message==...`), aligning malformed-inline semantics across all equals-form flags
+- changeset-status duplicate-timeout matrix now explicitly covers duplicate-vs-malformed inline collision precedence, locking deterministic duplicate-first behavior when the first timeout token is valid
+- bundle-diagnostics duplicate-flag matrix now explicitly covers duplicate-vs-malformed inline collision precedence for timeout/output/message flags, locking deterministic duplicate-first behavior when the first inline token is valid
+- changeset-status command-spawn diagnostics now include regression coverage for non-ENOENT execution failures (present but non-executable `changeset` binary), preserving generic execution-failure messaging distinct from missing-command classification
+- cli-timeout coverage now includes omitted `defaultValue` semantics, asserting missing defaults fail fast with explicit invalid-default diagnostics
+- bundle-diagnostics help-literal handling now includes long/short alias-collision regressions for trailing help flags after message literals in both split and equals forms (`--help` value followed by `-h`, and `-h` value followed by `--help`)
+- cli-timeout parsing now includes null-byte timeout regression coverage for both direct env parsing and env+cli precedence paths, ensuring embedded null bytes are rejected deterministically
+- bundle-diagnostics dedupe coverage now includes case-variant alias collisions (`logs/` and `LOGS/` symlink aliases) to ensure same-file aliases collapse into a single archive entry
+- bundle-diagnostics placeholder cleanup handling now includes failure-mode coverage for tar-side placeholder removal and cleanup unlink errors, with explicit cleanup diagnostics that do not mask primary archive failures
+- bundle-diagnostics timeout precedence coverage now explicitly includes empty-env + invalid-CLI overrides and whitespace-only env timeout rejection even when split/inline CLI overrides are otherwise valid
+- bundle-diagnostics runtime error-message contract now includes unexpected filesystem setup failures (e.g. mkdir against file paths), ensuring diagnostics remain prefixed and avoid argument-usage output
+- changeset-status filter coverage now includes large mixed-output payload handling, asserting passthrough line integrity is preserved while workspace warnings remain deduplicated and deterministically sorted
+- changeset-status warning suppression now requires fully formed workspace file-warning lines; malformed variants (missing terminating quotes or trailing tokens) are preserved in passthrough output
+- test-fixtures executable-name validation now includes explicit byte-length caps, with regression coverage for overlength names to avoid filesystem-dependent ENAMETOOLONG behavior
+- test-fixtures executable-body validation now includes explicit newline-only body regressions (`\\n\\n` and `\\r\\n\\r\\n`) to lock rejection of structurally empty shell scripts
+- test-fixtures executable-name validation now rejects Windows reserved device names (`CON`, `PRN`, etc.), ensuring fake executable generation behaves consistently across platforms
+- test-fixtures coverage now includes fake-bin idempotency semantics, verifying repeated fixture writes reuse the same fake-bin path and keep all generated commands runnable
+- scripts test suites now share a centralized `UNPRINTABLE_VALUE` fixture helper, eliminating duplicated unprintable-value fixture declarations across script utility test files
+- changeset-status duplicate-argument parser tests now use reusable fixture constants for help/timeout duplicate matrices, reducing repeated literal arrays while retaining full precedence coverage
+- script-level contract coverage now includes an explicit cross-helper `formatErrorValue` regression suite, ensuring unprintable inputs are surfaced as `[unprintable]` consistently across parser/timeout/filter/fixture utilities
+- scripts synchronous I/O hotspots were audited and documented; current sync filesystem/subprocess usage remains intentional and acceptable for short-lived CI/batch script flows, with future async migration notes captured in audit docs
+- scripts automation now includes parser-latency smoke tests with bounded runtime budgets for `cli-arg-values` and `cli-timeout`, providing early warning for argument-parsing performance regressions
+- CI now runs `automation:test` in a Node LTS matrix (20 and 22) through a dedicated workflow job, improving cross-version confidence for script automation behavior
+- CI now enforces a tracked-artifact guard for `apps/debugger/.next/**`, failing fast when generated Next.js output is accidentally committed
+- CI now enforces post-install lockfile drift checks across root/api/cli/debugger lockfiles, preventing hidden dependency graph mutations from passing automation jobs
+- packages/api public exports were audited and documented with backward-compatibility guarantees/risks (entrypoint symbols, registry keys, export-map scope), establishing a baseline for future API stability checks
+- packages/api contract tests now include full-register-field bounds and coercion rejection coverage, verifying all register keys reject out-of-range and string/boolean payloads without coercion
+- packages/api snapshot schema tests now enforce required-field stability by asserting all snapshot keys remain non-optional and any omitted field fails validation
+- packages/api validation coverage now includes non-object payload rejection across all v1 contract entrypoints, for both `validateRegistryPayload` and `validateContractPayload` paths
+- packages/api numeric validation coverage now includes non-finite value rejection (`NaN`, `Infinity`, `-Infinity`) across register bytes, snapshot byte arrays, memory-section numeric fields, and debug-frame numeric fields; debug-frame `timestampMs` and `fps` are now explicitly constrained to finite numbers
+- packages/api debugger-frame coverage now includes JSON serialization roundtrip regressions, ensuring serialized+parsed frames remain valid and structurally equivalent through both direct schema validation and registry-based validation paths
+- packages/api now includes validate-throughput smoke benchmarks for batched direct-schema and registry validation paths, with explicit runtime budgets to detect major validation performance regressions
+- packages/api README now includes invalid-payload error-handling examples for both direct schema validation and registry validation paths, including practical `errorMessage` handling patterns
+- changelog now includes an explicit `@wasmboy/api` semver policy mapping section that classifies contract-surface changes into patch/minor/major buckets (schemas, registry keys, validation helpers, and payload shape compatibility)
+- packages/cli parser/path error messaging was audited and documented with a full current-message inventory, inconsistency findings, and normalization recommendations (`docs/migration/packages-cli-error-phrasing-audit-2026-02-13.md`)
+- packages/cli command parsing now rejects unknown options with nearest-flag suggestions for `snapshot`, `compare`, and `contract-check`, with regression coverage for typo hints (`--ot`, `--currnt`, `--contrct`)
+- packages/cli now enforces mutually exclusive alias pairs for output/current options (`--out` vs `-o`, `--current` vs `-c`) and includes regression tests for conflict diagnostics
+- packages/cli filesystem read/write failures are now surfaced through normalized `CliError` InvalidOperation messages (including errno + operation + path), with permission-denied formatting regressions for `run` and `snapshot`
+- packages/cli path resolution now handles Windows-style backslashes and wrapping quotes consistently; regression tests cover quoted/backslash ROM inputs and quoted/backslash snapshot output paths
+- packages/cli now supports stdin piping for ROM-bearing commands (`run` and `snapshot`) using `-` as the ROM path sentinel, with integration-style tests validating stdin reads and snapshot metadata outputs
+- packages/cli test coverage now includes a startup-latency smoke benchmark for help-path dispatch, with explicit runtime budgets to flag major CLI cold-path performance regressions
+- packages/cli logger hot path was refactored to reduce redundant allocations (no object spread/newline template allocation on each log), with new logger tests locking stdout/stderr JSONL output contracts
+- packages/cli README now documents non-zero exit behavior and troubleshooting patterns, including structured stderr failure envelope examples and interpretation of `InvalidInput` / `InvalidOperation` / `OutOfBounds`
+- release workflow now includes automated npm publish dry-run checklist execution (`release:checklist:npm-dry-run`), backed by a dedicated script and automation tests validating both success and failure/reporting paths
+- debugger worker boot/lifecycle paths were audited for WASM-load race conditions; findings and mitigation sequence (handshake readiness barrier, error-channel wiring, attempt IDs, abortable fetch) are documented in `docs/migration/debugger-worker-boot-race-audit-2026-02-14.md`
+- debugger test coverage now includes repeated worker init/dispose lifecycle regression checks, asserting no active worker accumulation and stable `createDebuggerWorker` constructor options through high-cycle churn
+- debugger panel rendering coverage now includes high-volume event-log scenarios, asserting `EventLogPanel` renders large mocked event streams and does not regress to empty-state fallback output
+- debugger AI debug route now sanitizes malformed frame/event/snapshot/checksum payload segments before responding, with regression tests proving normalized output when store state contains invalid contract-frame data
+- debugger now emits frame-render performance marks/measures (capture→render latency) with utility-level regression tests covering both successful measurements and graceful failure behavior when marks are unavailable
+- debugger timeline safety now includes bounded snapshot selector/panel rendering windows and explicit truncation messaging, with regression tests confirming oversized snapshot arrays cannot trigger runaway timeline rendering growth
+- ROM loader behavior now includes recovery-oriented validation for unsupported/empty selections, with tests confirming error messaging and successful valid-selection recovery paths that re-enable load event payloads
+- debugger worker lifecycle now includes crash auto-restart handling (bounded restart budget + listener rebind), with regression tests covering `error`/`messageerror` restart triggers and dispose-time restart suppression
+- debugger selector consumption now uses scalar frame selectors to reduce unnecessary rerender pressure from object-selector allocations, with regression tests validating frame-selector stability across non-frame state updates
+- debugger usage documentation now explicitly captures memory panel constraints for large dumps, including bounded-render behavior and recommended export/pagination workflows for heavy memory inspection
+- voxel-wrapper snapshot-read paths were audited for repeated per-frame allocations, documenting fallback-path hotspots (single-byte register section reads, full-snapshot layer overread, memory-read `Array.from` copies) and a prioritized mitigation sequence in `docs/migration/voxel-wrapper-snapshot-allocation-audit-2026-02-14.md`
+- voxel-wrapper integration coverage now includes worker-readiness retry/null semantics through a dedicated Node test (`test/integration/voxel-wrapper-readiness-test.mjs`), and the suite is wired into all integration script variants via `test:integration:voxel:wrapper`
+- voxel-wrapper fallback tests now cover `_getWasmConstant` failure semantics, including cached-base snapshot success when later constant lookups fail and explicit null fallback after cache clear forces retry exhaustion
+- voxel-wrapper regression coverage now includes unsupported-core detection paths, verifying snapshot capability checks return safe false/null results when required internal hooks are missing
+- voxel-wrapper snapshot fallback logic now tolerates partial memory-section read failures by converting thrown section-read errors into `null` snapshot responses (with error emission), with dedicated regression tests proving non-throwing failure behavior
+- core graphics hot-path branch churn was profiled and documented (`docs/migration/core-graphics-branch-churn-profile-2026-02-14.md`), including throughput baseline evidence plus branch-density/hot-loop findings and prioritized low-risk reduction candidates
+- core sound channel update paths were audited for duplicated state writes (`docs/migration/core-sound-duplicate-state-write-audit-2026-02-14.md`), documenting repeat frequency-field sync writes, NR52 reset fan-out behavior, and low-risk dedupe candidates for mixer-state flags
+- core suite now includes an execute-loop microbenchmark regression guard (`test/core/execute-loop-microbench.cjs` + baseline fixture), and all core test script variants run it by default to catch execution-loop slowdowns
+- core suite now includes divider-overflow boundary coverage for timers (`test/core/timer-overflow-boundary-test.cjs`), validating 16-bit DIV wrap behavior remains bounded and stable near overflow edges
+- core suite now includes interrupt-priority ordering regressions (`test/core/interrupt-priority-ordering-test.cjs`) that assert simultaneous pending flags are serviced in hardware-priority order (VBlank → LCD → Timer → Serial → Joypad)
+- core suite now includes serialization determinism coverage (`test/core/serialization-determinism-test.cjs`) asserting cartridge/gameboy/palette memory snapshots remain byte-stable across repeated save/load cycles
+- memory banking/write-trap control flow was audited for branch-heavy repeated checks (`docs/migration/core-memory-banking-branch-audit-2026-02-14.md`), including branch-density hotspots and low-risk refactor candidates for MBC flag caching and trap-path decomposition
+- core memory mapping now rejects invalid Game Boy offsets via explicit sentinel handling (`-1`) in `getWasmBoyOffsetFromGameBoyOffset`, and load/store helpers now guard against negative wasm offsets (`0xff` read fallback, ignored invalid writes); coverage is enforced by `test/core/invalid-memory-trap-address-test.cjs` in all core suite script variants
+- core/wrapper memory-layout coupling is now explicitly documented in `docs/migration/core-wrapper-offset-dependency-map-2026-02-14.md`, including a constant-level map (`DEBUG_GAMEBOY_MEMORY_LOCATION`, `GBC_PALETTE_LOCATION`, `GBC_PALETTE_SIZE`), derived wrapper offset formulas, and a compatibility update checklist
+- automated memory-layout compatibility enforcement now validates core/wrapper coupling in CI (`scripts/core-wrapper-memory-layout-check*.mjs` + `memory:layout:check`), asserting required core constant exports, wrapper offset literals, `_getWasmConstant` lookups, and base-offset section-read formulas; this check is now part of `automation:check`
+- a repo-level pre-commit cleanup guard now removes accidental build artifacts before formatting (`scripts/clean-accidental-build-artifacts.mjs` via `clean:artifacts:precommit`), including transient `build/`, `apps/debugger/.next`, and non-golden generated test outputs/images, with regression coverage for safe keep/delete boundaries
+- pre-commit now also enforces a generated-artifact staging guard (`scripts/guard-generated-artifacts-precommit.mjs`), blocking staged `dist/**` and `build/**` edits unless explicitly overridden (`WASMBOY_ALLOW_GENERATED_EDITS=1`), with regression coverage for normalization and allow/deny semantics
+- automation now enforces accidental library `console.*` usage checks (`scripts/check-library-console-usage.mjs` + `lint:library:console`), with an explicit allowlist for intentional legacy logging paths and regression coverage for unexpected-console detection behavior
+- stack quality gates now include selective scope test smoke commands (`stack:test:smoke:scope:api|cli|debugger` via `stack:test:smoke:scopes`) to continuously verify scoped package/app test command wiring before full-stack test phases
+- migration follow-up ownership is now tracked in a dedicated technical debt register (`docs/migration/technical-debt-register-2026-02-14.md`) with severity tiers (S1-S4), subsystem owner tags, open/closed partitions, and triage cadence guidance
+- CI automation matrix jobs now bundle and upload node-version-specific `automation:test` logs on failure/cancellation, improving artifact-level triage for automation helper regressions in `automation-test-matrix`
+- CI automation matrix now includes one-step flaky rerun detection for `automation:test` (retry once after first failure), emits warning annotations for pass-on-retry outcomes, and records attempt/flake-marker logs for diagnostics bundles
+- release workflow now supports explicit dry-run/publish modes with manual approval gating (`dry_run` + `approve_publish` workflow-dispatch inputs): push-triggered releases run verification-only dry-runs, and changesets publish/create-PR is limited to approved manual publish runs
+- dependency freshness auditing is now available by workspace (`dependency:freshness:audit`, `dependency:freshness:audit:strict`), providing root/api/cli/debugger `npm outdated` visibility with structured report output and strict-fail capability for enforcement scenarios
+- security advisory scanning is now automated per workspace lockfile (`security:scan:workspaces`, strict via `security:scan:workspaces:strict`), and `audit:check` now enforces the strict multi-workspace scan so transitive/root-package advisories across root/api/cli/debugger are CI-gated
+- onboarding documentation now includes a repository architecture diagram (`docs/migration/repository-architecture-map-2026-02-14.md`) mapping core/runtime/workspace/quality layers and contributor entry points
+- cross-subsystem performance budgets are now documented (`docs/migration/performance-budgets-2026-02-14.md`) for scripts/CLI/debugger/core paths, and debugger instrumentation now has an explicit smoke budget regression (`apps/debugger/test/performance-budget.test.ts`)
+- a weekly regression checklist now links CI status, local gates, focused safety checks, performance budgets, and docs/debt synchronization (`docs/migration/weekly-regression-checklist-2026-02-14.md`)
+- a formal iterative backlog process now defines how to generate and execute each new 100-item hardening cycle (`docs/migration/iterative-backlog-process-2026-02-14.md`), including scoring, source signals, execution protocol, and a reusable next-100 template
+- husky pre-commit configuration now uses explicit `husky.hooks.pre-commit` wiring (`precommit:hook`) instead of deprecated `scripts.precommit` discovery, preserving staged cleanup/guard/format behavior while removing deprecation warning noise
+- generated-artifact guard ergonomics now include explicit contributor guidance (`docs/migration/generated-artifact-commit-policy-2026-02-14.md`) for intentional `dist/build` commits, including per-command override usage and safety requirements
+- next-cycle backlog generation is now scriptable (`backlog:generate:next100` via `scripts/next-backlog-generator.mjs`) with test coverage and a generated dated draft backlog seeded from open debt items (`docs/migration/next-100-backlog-draft-2026-02-14.md`)
+- next-cycle `task101` is now completed via automated core memory-offset contract enforcement (`core:memory-offset:check` + `scripts/core-memory-offset-contract-check*.mjs`), integrated into `automation:check` with script-level regression coverage and debt-register closure for TD-001
+- next-cycle `task102` is now completed by classifying volatile `WASMBOY_STATE` save/load bytes and enforcing non-volatile determinism in core serialization regression coverage (`test/core/serialization-determinism-test.cjs` + `docs/migration/core-save-state-volatile-field-classification-2026-02-14.md`), with debt-register closure for TD-002
+- next-cycle `task110` is now completed by introducing shared schema-driven throw-case test registration (`scripts/test-schema-helpers.mjs`) and migrating dense parser validation suites (`cli-arg-values`, `cli-timeout`) to the shared fixture pattern, with debt-register closure for TD-010
+- next-cycle `task106` is now completed by refactoring voxel snapshot fallback reads to batch register-block access and perform selective layer retrieval in `getPpuSnapshotLayers` (avoiding forced full-layer reads for partial requests), validated by expanded wrapper readiness integration tests and debt-register closure for TD-006
+- next-cycle `task107` is now completed by implementing capability-based direct memory access in the voxel wrapper (`getDirectMemoryAccess`) using optional sync hooks (`_getWasmMemoryView` / `_getWasmMemoryBuffer`) with bounds validation, validated via expanded wrapper readiness integration tests, and recorded as debt-register closure for TD-007
+- next-cycle `task108` is now completed by adding debugger worker restart telemetry plus capped exponential backoff tuning in `createAutoRestartingDebuggerWorker`, then surfacing worker lifecycle diagnostics in the debugger app shell; validated with the debugger Vitest suite and recorded as debt-register closure for TD-008
+- next-cycle `task109` is now completed by adding paginated snapshot timeline deep-inspection controls for large datasets (oldest/older/newer/newest navigation) backed by deterministic page-window helper tests in the debugger suite, recorded as debt-register closure for TD-009
+- next-cycle `task105` is now completed by splitting core memory-banking branch fan-out in `handleBanking` into focused helper paths while preserving behavior, validated through rebuilt core bundles and targeted core/integration regression runs, and recorded as debt-register closure for TD-005
+- next-cycle `task104` is now completed by deduplicating sound channel frequency synchronization paths through shared `syncFrequencyFromRegisters()` helpers in channels 1–3, validated with rebuilt core bundles plus serialization/headless regressions, and recorded as debt-register closure for TD-004
+- next-cycle `task103` is now completed by hoisting graphics hot-loop config/mode branches out of per-pixel background rendering and caching per-iteration scanline cycle budgets, validated with throughput + headless integration regressions, and recorded as debt-register closure for TD-003
+- next-cycle `task111` is now completed by switching headless integration screenshot outputs to `.output` files and extending accidental-artifact cleanup coverage to `test/integration/**`, with script regression coverage plus integration validation to keep tracked baselines clean during local test runs
+- next-cycle `task112` is now completed by adding cleanup-wrapped headless integration commands and routing aggregate integration scripts through them, so local/CI integration runs automatically clear generated `.output` artifacts after headless snapshot checks
+- next-cycle `task113` is now completed by adding package-script contract tests that lock in cleanup-wrapped headless integration script wiring, preventing accidental regressions in aggregate integration command chains
+- next-cycle `task114` is now completed by extending pre-commit generated-artifact blocking to integration `.output` artifacts and updating guard/policy documentation with regression coverage, preventing accidental staging of transient headless integration outputs
+- next-cycle `task115` is now completed by expanding pre-commit generated-artifact blocking to non-golden accuracy outputs and non-baseline performance PNG outputs, with regression tests ensuring intentional golden/baseline artifacts remain allowed
+- next-cycle `task116` is now completed by adding cleanup-vs-guard parity regression tests that ensure generated test outputs are consistently blocked/cleaned while golden and baseline reference artifacts remain allowed
+- next-cycle `task117` is now completed by extracting shared artifact policy helpers used by both cleanup and pre-commit guard scripts, reducing policy duplication and preserving normalized cross-platform path handling with full automation regression validation
+- next-cycle `task118` is now completed by adding focused unit tests for artifact policy helpers, locking normalization and block/cleanup classification behavior at the source module boundary
+- next-cycle `task119` is now completed by adding dry-run/help CLI support for accidental artifact cleanup, including parser validation and non-destructive candidate reporting coverage to improve local review workflows
+- next-cycle `task120` is now completed by adding a first-class npm dry-run command for artifact cleanup and enforcing/documenting that script contract so engineers can inspect generated artifact candidates without mutating workspace state
+- next-cycle `task121` is now completed by adding argument parser/help support to the generated-artifact guard script with regression coverage, making manual guard invocation behavior explicit and contract-tested
+- next-cycle `task122` is now completed by adding subprocess-level CLI contract tests for cleanup/guard scripts so usage and unknown-flag error behaviors are validated end-to-end at the executable boundary
+- next-cycle `task123` is now completed by removing duplicate error-prefix noise from cleanup/guard parser failures and updating executable contract tests to lock clean, single-prefix CLI diagnostics
+- next-cycle `task124` is now completed by de-duplicating normalized blocked-path results in the generated-artifact guard, ensuring concise deterministic pre-commit diagnostics even when duplicate path aliases are staged
+- next-cycle `task125` is now completed by consolidating generated-artifact policy evaluation internals to avoid duplicate normalization while adding explicit windows-path blocking coverage for generated integration outputs
+- next-cycle `task126` is now completed by adding subprocess dry-run/cleanup behavior tests for the cleanup CLI, proving candidate reporting and real deletion semantics in isolated temp-workspace executions
+- next-cycle `task127` is now completed by adding explicit type guards to shared artifact-policy path helpers with regression tests for non-string inputs, improving failure clarity and input-contract robustness
+- next-cycle `task128` is now completed by adding strict input contract validation to guard blocked-path collection (array + string entries) with regression tests to fail fast on malformed consumer inputs
+- next-cycle `task129` is now completed by adding machine-readable `--json` output mode for the cleanup CLI with parser and subprocess contract coverage, enabling deterministic automation integration without log scraping
+- next-cycle `task130` is now completed by adding machine-readable `--json` output support for the generated-artifact guard CLI with parser + subprocess contract coverage, enabling deterministic staged-artifact validation integrations
+- next-cycle `task131` is now completed by adding npm shortcut scripts and contract checks for cleanup/guard JSON summaries, improving discoverability and consistency of machine-readable artifact-policy diagnostics
+- next-cycle `task132` is now completed by validating guard `--json` failure-mode payload and exit-code behavior with staged generated artifacts in isolated git repos, strengthening executable contract confidence for CI consumers
+- next-cycle `task133` is now completed by validating guard `--json` override-mode payload behavior (`WASMBOY_ALLOW_GENERATED_EDITS=1`) with staged generated artifacts, ensuring machine-readable diagnostics align with intentional override semantics
+- next-cycle `task134` is now completed by introducing reusable temporary-git-repo setup helpers in CLI contract tests, reducing duplicated fixture logic while preserving explicit generated-artifact failure/override scenario coverage
+- next-cycle `task135` is now completed by enforcing duplicate-flag rejection across cleanup/guard CLI parsers and extending executable contracts to lock deterministic duplicate-flag diagnostics for artifact-policy tooling
+- next-cycle `task136` is now completed by enriching cleanup/guard JSON summaries with `timestampMs` metadata and validating the new field in executable contracts/documentation for traceable machine-readable diagnostics
+- next-cycle `task137` is now completed by adding strict argv-shape/token-type validation to cleanup/guard parser helpers with regression coverage, improving fail-fast diagnostics for malformed internal invocations
+- next-cycle `task138` is now completed by introducing `schemaVersion` metadata in cleanup/guard JSON outputs with executable contract and policy-doc updates, providing explicit versioning for future machine-readable payload evolution
+- next-cycle `task139` is now completed by adding subprocess regression coverage for cleanup `--json` apply-mode behavior, proving machine-readable payload correctness alongside actual artifact removal semantics
+- next-cycle `task140` is now completed by adding subprocess regression coverage for cleanup `--json` zero-removal scenarios, locking deterministic no-op payload semantics for machine-readable automation consumers
+- next-cycle `task141` is now completed by adding subprocess regression coverage for guard `--json` no-op override scenarios, ensuring override metadata and success semantics remain explicit in machine-readable payloads
+- next-cycle `task142` is now completed by adding subprocess regression coverage for deterministic blocked-path ordering in guard `--json` payloads, improving stability for downstream machine-readable automation consumers
+- next-cycle `task143` is now completed by centralizing executable-contract metadata assertions for artifact JSON summaries, improving strictness and maintainability of schema/timestamp validation across scenarios
+- next-cycle `task144` is now completed by adding explicit `tool` identifiers to cleanup/guard JSON summaries and locking the new metadata in executable contracts/documentation for deterministic payload attribution
+- next-cycle `task145` is now completed by enforcing options-shape/type validation in `cleanAccidentalBuildArtifacts`, with regression coverage that hardens helper behavior against malformed automation caller payloads
+- next-cycle `task146` is now completed by enforcing options-shape/type validation in `validateGeneratedArtifactStaging`, hardening guard helper behavior and diagnostics for malformed automation caller payloads
+- next-cycle `task147` is now completed by implementing help-first argument semantics in cleanup/guard CLIs (`--help/-h` always prints usage), with parser and subprocess contract coverage for deterministic operator behavior
+- next-cycle `task148` is now completed by adding explicit machine-readable summary count fields (`deletedDirectoryCount`, `deletedFileCount`, `blockedPathCount`) and locking their contracts/documentation for downstream automation consumers
+- next-cycle `task149` is now completed by centralizing executable-contract count-consistency assertions so JSON count fields must match their corresponding list lengths across cleanup/guard scenarios
+- next-cycle `task150` is now completed by introducing a shared artifact-summary contract module used by cleanup/guard JSON emitters, reducing schema/tool/timestamp drift risk and adding direct helper contract coverage
+- next-cycle `task151` is now completed by adding deterministic timestamp override support (`WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS`) through shared summary helpers, with executable contracts verifying override behavior in cleanup/guard JSON payloads
+- next-cycle `task152` is now completed by adding subprocess failure-mode contracts for malformed summary timestamp overrides, ensuring cleanup/guard CLIs fail deterministically with actionable diagnostics
+- next-cycle `task153` is now completed by adding whitespace-tolerant parsing for summary timestamp overrides with helper/executable regression coverage, improving operator ergonomics while preserving strict positive-integer validation
+- next-cycle `task154` is now completed by adding explicit `timestampSource` metadata in artifact JSON summaries, enabling downstream automation to distinguish system-clock timestamps from env-overridden timestamps deterministically
+- next-cycle `task155` is now completed by centralizing cleanup/guard summary payload construction in shared helper builders with strict input-contract coverage, reducing duplicate JSON assembly logic and contract drift risk
+- next-cycle `task156` is now completed by adding boolean outcome flags (`hasRemovals`, `hasBlockedPaths`) to artifact JSON summaries with helper/executable contract coverage for simpler downstream automation branching
+- next-cycle `task157` is now completed by enforcing guard summary invariants (`stagedPathCount >= blockedPathCount`) in shared builders with regression coverage, preventing impossible machine-readable payload combinations
+- next-cycle `task158` is now completed by enforcing guard validity invariants (`isValid` requires zero blocked paths) in shared builders with regression coverage, preventing contradictory machine-readable payload states
+
+## Security posture at completion
+
+```bash
+npm audit --omit=optional
+```
+
+Result at completion: **0 vulnerabilities**.
+
+## Release markers
+
+- annotated tag: `v0.8.0-migration-preview.1`
+- release changeset added for:
+  - `@wasmboy/api` (minor)
+  - `@wasmboy/cli` (minor)
+
+## Post-completion incremental hardening
+
+- Added deterministic list ordering in shared artifact summary payload builders (`deletedDirectories`, `deletedFiles`, `blockedPaths`) and validated through summary helper and executable CLI contract tests, reducing cross-run ordering drift in machine-readable automation outputs.
+- Replaced locale-sensitive artifact summary path sorting with ordinal comparison and added mixed-case ordering regression coverage, ensuring deterministic machine-readable summary ordering across OS locale differences.
+- Added duplicate-path canonicalization in shared artifact summary builders so repeated input paths collapse to unique sorted outputs before count derivation, preventing inflated machine-readable totals from duplicate path inputs.
+- Added windows-separator path canonicalization in shared artifact summary builders so mixed `\` and `/` inputs normalize to one machine-readable path format prior to sort/de-dup/count derivation.
+- Added a full-repository audit deliverable (`docs/migration/repository-audit-backlog-2026-02-14.md`) with a risk summary, 100 concrete prioritized tasks, and a recommended first-10 execution sequence to drive the next hardening cycle.
+- Standardized generated-artifact guard blocked-path sorting to locale-independent ordinal ordering and added mixed-case contract coverage to keep machine-readable guard output deterministic across host locales.
+- Standardized dependency-freshness report package-row ordering to deterministic ordinal sorting and added regression coverage for formatted output ordering stability.
+- Added dependency-freshness subprocess timeout controls (`DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS`) with timeout-specific failure diagnostics and regression coverage to prevent indefinite npm outdated hangs.
+- Added workspace-security-scan subprocess timeout controls (`SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS`) with timeout-specific diagnostics and regression coverage to prevent indefinite npm audit hangs across workspaces.
+- Added release-checklist subprocess timeout controls (`RELEASE_CHECKLIST_NPM_TIMEOUT_MS`) with package-context timeout diagnostics and regression coverage to prevent indefinite npm publish dry-run hangs.
+- Added generated-artifact guard staged-git timeout controls (`GUARD_GENERATED_ARTIFACTS_GIT_TIMEOUT_MS`) with timeout diagnostics and regression coverage to prevent indefinite precommit guard hangs.
+- Replaced locale-sensitive ordering in library console-usage violation sorting with ordinal comparators and added mixed-case path ordering regression coverage to keep lint output deterministic across locales.
+- Replaced locale-sensitive diagnostics-bundling path ordering tie-breaks with ordinal comparators and added mixed-case argument-order regression coverage to keep archive input ordering deterministic across locales.
+- Hardened dependency-freshness CLI parsing with strict unknown/duplicate argument rejection, help usage output, and timeout CLI override wiring through shared timeout resolution.
+- Hardened workspace security-scan CLI parsing with strict unknown/duplicate argument rejection, help usage output, and timeout CLI override wiring through shared timeout resolution.
+- Hardened release checklist dry-run CLI parsing with strict unknown/duplicate argument rejection, help usage output, and timeout CLI override wiring through shared timeout resolution.
+- Hardened next-backlog generator option contracts by validating options object shape plus positive-integer backlog size/start-task parameters before row generation, with regression coverage for invalid numeric inputs.
+- Hardened next-backlog generator CLI parsing with strict duplicate/unknown argument rejection, help output, and numeric `--backlog-size`/`--start-task-number` overrides wired into file generation.
+- Hardened library console-usage lint CLI parsing with strict duplicate/unknown argument rejection, `--repo-root` override support, and script-level help usage coverage.
+- Hardened core memory-offset contract-check CLI parsing with strict duplicate/unknown argument rejection, `--repo-root` override support, and script direct-invocation guards for import-safe parser testing.
+- Hardened core-wrapper memory-layout check CLI parsing with strict duplicate/unknown argument rejection, custom path override support, and script direct-invocation guards for import-safe parser testing.
+- Eliminated temporary directory leakage in core-memory-offset dist loader by guaranteeing cleanup in a `finally` block and added regression coverage proving no residual contract temp directories remain after load.
