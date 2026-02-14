@@ -508,3 +508,4 @@
 - 2026-02-13: Added stdin piping integration support/tests for CLI ROM commands (`run`/`snapshot`) via `<rom> = "-"`, including help-text examples and regression assertions for stdin-sourced snapshot payload metadata.
 - 2026-02-13: Added CLI startup-dispatch smoke benchmark coverage (`executeCli --help` loop with stdout mocking) and explicit latency budget assertions to catch major cold-path regressions.
 - 2026-02-13: Refactored CLI logger hot path to avoid spread/newline concatenation allocations (explicit record serialization + direct stream writes) and added dedicated logger output contract tests for stdout/stderr JSONL behavior.
+- 2026-02-13: Expanded CLI package documentation with non-zero exit code semantics and troubleshooting guidance, including failure JSON envelope examples and `InvalidInput`/`InvalidOperation`/`OutOfBounds` code interpretation.

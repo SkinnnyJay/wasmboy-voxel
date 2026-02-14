@@ -405,6 +405,7 @@ Workflow hardening applied:
 - packages/cli now supports stdin piping for ROM-bearing commands (`run` and `snapshot`) using `-` as the ROM path sentinel, with integration-style tests validating stdin reads and snapshot metadata outputs
 - packages/cli test coverage now includes a startup-latency smoke benchmark for help-path dispatch, with explicit runtime budgets to flag major CLI cold-path performance regressions
 - packages/cli logger hot path was refactored to reduce redundant allocations (no object spread/newline template allocation on each log), with new logger tests locking stdout/stderr JSONL output contracts
+- packages/cli README now documents non-zero exit behavior and troubleshooting patterns, including structured stderr failure envelope examples and interpretation of `InvalidInput` / `InvalidOperation` / `OutOfBounds`
 
 ## Security posture at completion
 
