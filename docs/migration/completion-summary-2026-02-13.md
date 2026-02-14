@@ -435,6 +435,7 @@ Workflow hardening applied:
 - a repo-level pre-commit cleanup guard now removes accidental build artifacts before formatting (`scripts/clean-accidental-build-artifacts.mjs` via `clean:artifacts:precommit`), including transient `build/`, `apps/debugger/.next`, and non-golden generated test outputs/images, with regression coverage for safe keep/delete boundaries
 - pre-commit now also enforces a generated-artifact staging guard (`scripts/guard-generated-artifacts-precommit.mjs`), blocking staged `dist/**` and `build/**` edits unless explicitly overridden (`WASMBOY_ALLOW_GENERATED_EDITS=1`), with regression coverage for normalization and allow/deny semantics
 - automation now enforces accidental library `console.*` usage checks (`scripts/check-library-console-usage.mjs` + `lint:library:console`), with an explicit allowlist for intentional legacy logging paths and regression coverage for unexpected-console detection behavior
+- stack quality gates now include selective scope test smoke commands (`stack:test:smoke:scope:api|cli|debugger` via `stack:test:smoke:scopes`) to continuously verify scoped package/app test command wiring before full-stack test phases
 
 ## Security posture at completion
 
