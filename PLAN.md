@@ -820,3 +820,4 @@
 - 2026-02-14: Re-ran dual-build integration verification pipeline (`npm run test:integration:dual-build:verify`) to reconfirm sequential WASM build + headless main-thread integration smoke + TS build + TS runtime smoke remain green end-to-end with a clean working tree.
 - 2026-02-14: Re-ran scoped workspace smoke gate (`npm run stack:test:smoke:scopes`) to reconfirm package/app scoped test entrypoint wiring remains green across API/CLI/debugger workspaces with a clean working tree.
 - 2026-02-14: Re-ran no-build Playwright smoke gate (`npm run test:e2e:playwright:headless:nobuild`) to reconfirm headless browser runtime verification remains green without rebuild coupling and with a clean working tree.
+- 2026-02-14: Re-ran root aggregate typecheck gate (`npm run typecheck`) to reconfirm strict lib typecheck plus workspace package/app TypeScript checks remain green end-to-end with a clean working tree.
