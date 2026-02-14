@@ -27,7 +27,7 @@ function createMockStoreState(
 ) {
   return {
     frameId: events.length,
-    timestampMs: events.length > 0 ? (events[events.length - 1]?.timestampMs ?? 0) : 0,
+    timestampMs: events.length > 0 ? events[events.length - 1]?.timestampMs ?? 0 : 0,
     rateLimitMs: 16,
     lastCaptureAtMs: 0,
     sandboxMode: false,
@@ -45,13 +45,13 @@ function createMockStoreState(
 }
 
 describe('EventLogPanel', () => {
-  it('renders large event logs without falling back to empty state', () => {
+  it('renders a bounded window for oversized event logs', () => {
     const largeEventLog = Array.from({ length: LARGE_EVENT_LOG_COUNT }, (_, index) =>
       createEventLogEntry(index),
     );
     const useDebuggerStoreSpy = vi
       .spyOn(debuggerStoreModule, 'useDebuggerStore')
-      .mockImplementation((selector) => selector(createMockStoreState(largeEventLog)));
+      .mockImplementation(selector => selector(createMockStoreState(largeEventLog)));
 
     let html = '';
     try {
@@ -60,8 +60,10 @@ describe('EventLogPanel', () => {
       useDebuggerStoreSpy.mockRestore();
     }
 
-    expect(html).toContain('[snapshot] frame 1 @ 1000ms');
+    expect(html).toContain('1000 older events hidden to keep log rendering bounded.');
+    expect(html).toContain('[snapshot] frame 1001 @ 2000ms');
     expect(html).toContain(`[snapshot] frame ${LARGE_EVENT_LOG_COUNT} @ ${2199}ms`);
+    expect(html).not.toContain('[snapshot] frame 1 @ 1000ms');
     expect(html).not.toContain('No events yet.');
   });
 });
