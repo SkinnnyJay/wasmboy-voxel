@@ -166,11 +166,11 @@ _Source: MIGRATE_TO_TYPESCRIPT.md “Optional Future Enhancements”._
 
 _Ensure we have confidence in headless, mainThread, WasmBoyHeadless, and voxel snapshot paths. Use ROMs, Playwright MCP, Chrome DevTools MCP, and existing test scripts._
 
-- [ ] - **Test-audit:** Document current coverage: which tests run for (1) headless Worker path, (2) headless mainThread path, (3) WasmBoyHeadless class, (4) voxel snapshot APIs. See §5.1 and `test/integration/*headless*`, `test/performance/headless-throughput.cjs`.
+- [x] - **Test-audit:** Document current coverage: which tests run for (1) headless Worker path, (2) headless mainThread path, (3) WasmBoyHeadless class, (4) voxel snapshot APIs. See §5.1 and `test/integration/*headless*`, `test/performance/headless-throughput.cjs`. _(Added `docs/migration/headless-voxel-test-coverage-audit-2026-02-14.md` with command-to-path coverage matrix and latest execution evidence.)_
 - [x] - **Integration:** Add `test:integration:headless:mainthread` to the default `test:integration` and `test:integration:nobuild` (and CI) so all three headless paths are run every time. _(Done: scripts already include it.)_
-- [ ] - **voxel-wrapper test:** Fix or document `test:integration:voxel:wrapper` (voxel-wrapper-readiness-test.mjs). It fails with "Unknown file extension .ts" when Node loads `voxel-wrapper.ts`; either run against built JS output or use ts-node/tsx and add to docs.
+- [x] - **voxel-wrapper test:** Fix or document `test:integration:voxel:wrapper` (voxel-wrapper-readiness-test.mjs). It fails with "Unknown file extension .ts" when Node loads `voxel-wrapper.ts`; either run against built JS output or use ts-node/tsx and add to docs. _(Documented current Node 22 behavior + guidance in `docs/migration/headless-voxel-test-coverage-audit-2026-02-14.md`; readiness suite now runs green via default script.)_
 - [ ] - **E2E headless (Playwright):** Add at least one Playwright (or Chrome DevTools MCP) E2E that loads the debugger or a minimal page, loads a ROM with `headless: true` (and optionally `mainThread: true`), runs frames, and asserts snapshot/frame data or no console errors. Artifacts under `./temp/playwright/`; see §8.3.
-- [ ] - **ROM coverage:** Confirm test ROMs (e.g. `test/performance/testroms/tobutobugirl`, `test/accuracy/testroms/mooneye/*`) are used in headless and baseline tests; document in PLAN44 or test README.
+- [x] - **ROM coverage:** Confirm test ROMs (e.g. `test/performance/testroms/tobutobugirl`, `test/accuracy/testroms/mooneye/*`) are used in headless and baseline tests; document in PLAN44 or test README. _(Documented ROM usage mapping for headless/integration/baseline/accuracy suites in `docs/migration/headless-voxel-test-coverage-audit-2026-02-14.md`.)_
 
 ### 4.7 JS vs TypeScript build verification
 
