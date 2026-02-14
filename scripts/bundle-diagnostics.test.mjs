@@ -485,6 +485,33 @@ test('bundle-diagnostics keeps distinct case-variant filenames when deduplicatin
   );
 });
 
+test('bundle-diagnostics de-duplicates case-variant alias paths resolving to same file', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-case-alias-dedupe-'));
+  const logsDirectory = path.join(tempDirectory, 'logs');
+  const upperCaseAliasDirectory = path.join(tempDirectory, 'LOGS');
+  fs.mkdirSync(logsDirectory, { recursive: true });
+  fs.writeFileSync(path.join(logsDirectory, 'same.log'), 'same file via case-variant alias\n', 'utf8');
+  fs.symlinkSync(logsDirectory, upperCaseAliasDirectory, 'dir');
+
+  runBundlerCommand(tempDirectory, [
+    '--output',
+    'artifacts/case-alias-dedupe.tar.gz',
+    '--pattern',
+    'logs/same.log',
+    '--pattern',
+    'LOGS/same.log',
+  ]);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/case-alias-dedupe.tar.gz');
+  const matchingEntries = archiveContents.filter(entry => entry.endsWith('/same.log') || entry.endsWith('same.log'));
+  assert.equal(matchingEntries.length, 1, 'archive should include one canonical entry for case-variant alias paths');
+  assert.equal(
+    matchingEntries.some(entry => entry.endsWith('logs/same.log') || entry.endsWith('LOGS/same.log')),
+    true,
+    'canonical case-variant entry should remain present in archive output',
+  );
+});
+
 test('bundle-diagnostics archives files whose names start with a dash', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-dash-file-'));
   const dashFilePath = path.join(tempDirectory, '-special.log');
