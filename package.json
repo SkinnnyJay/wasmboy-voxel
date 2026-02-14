@@ -90,7 +90,7 @@
     "prettier:lint:list": "prettier --config .prettierrc --list-different rollup.*.js preact.config.js demo/**/*.js demo/**/*.css lib/**/*.js core/**/*.ts",
     "prettier:lint:fix": "prettier --config .prettierrc --write rollup.*.js preact.config.js demo/**/*.js demo/**/*.css lib/**/*.js core/**/*.ts",
     "precommit:format": "pretty-quick --staged",
-    "precommit": "run-s clean:artifacts:precommit guard:generated-artifacts:precommit precommit:format",
+    "precommit:hook": "run-s clean:artifacts:precommit guard:generated-artifacts:precommit precommit:format",
     "core:watch": "watch \"npm run core:build\" core",
     "core:build": "run-s core:build:asc core:build:dist core:build:done",
     "core:build:asc": "asc core/index.ts -b dist/core/core.untouched.wasm -t dist/core/core.untouched.wat -O3 --converge --sourceMap core/dist/core.untouched.wasm.map --memoryBase 0",
@@ -190,6 +190,11 @@
     "idb": "^2.1.3",
     "raf": "^3.4.0",
     "responsive-gamepad": "1.1.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run precommit:hook"
+    }
   },
   "devDependencies": {
     "@ampproject/rollup-plugin-closure-compiler": "^0.26.0",
