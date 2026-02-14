@@ -105,6 +105,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C082 | Console usage lint CLI argument contract hardening       | Added strict library console-usage CLI argument parsing (`--repo-root` and help semantics) with duplicate/unknown rejection and regression coverage for script-level usage handling.                                                         | S4                | `@automation-tooling` |
 | TD-C083 | Core memory-offset check CLI argument contract hardening | Added strict core memory-offset contract-check CLI argument parsing (`--repo-root` and help semantics) with duplicate/unknown rejection, usage handling, and import-safe script invocation guarding.                                         | S4                | `@automation-tooling` |
 | TD-C084 | Core-wrapper memory-layout check CLI contract hardening  | Added strict core-wrapper memory-layout check CLI argument parsing (duplicate/unknown rejection, help semantics, and custom source-path overrides) with regression coverage and import-safe script invocation guarding.                      | S4                | `@automation-tooling` |
+| TD-C085 | Core memory-offset loader temp cleanup hardening         | Eliminated temp-directory leakage in core-memory-offset dist loading by guaranteeing cleanup in a `finally` block and added regression coverage proving no residual contract temp directories remain after load.                             | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

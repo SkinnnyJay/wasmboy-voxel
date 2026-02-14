@@ -157,7 +157,7 @@
 [x] - task178 (S2 reliability): Backlog discovery candidate #78 — define validation command at implementation time.
 [x] - task179 (S2 reliability): Backlog discovery candidate #79 — define validation command at implementation time.
 [x] - task180 (S2 reliability): Backlog discovery candidate #80 — define validation command at implementation time.
-[ ] - task181 (S2 reliability): Backlog discovery candidate #81 — define validation command at implementation time.
+[x] - task181 (S2 reliability): Backlog discovery candidate #81 — define validation command at implementation time.
 [ ] - task182 (S2 reliability): Backlog discovery candidate #82 — define validation command at implementation time.
 [ ] - task183 (S2 reliability): Backlog discovery candidate #83 — define validation command at implementation time.
 [ ] - task184 (S2 reliability): Backlog discovery candidate #84 — define validation command at implementation time.
@@ -736,3 +736,4 @@
 - 2026-02-14: Addressed next-cycle `task178` by hardening library console-usage lint CLI argument parsing (`--repo-root` / `--help`) with strict duplicate/unknown rejection and script-level usage handling coverage; validated via `node --test "scripts/check-library-console-usage.test.mjs"`; marked `task178` completed.
 - 2026-02-14: Addressed next-cycle `task179` by hardening core memory-offset contract-check CLI argument parsing (`--repo-root` / `--help`) with strict duplicate/unknown rejection and direct-invocation guarding for import-safe helper testing; validated via `node --test "scripts/core-memory-offset-contract-check.test.mjs"`; marked `task179` completed.
 - 2026-02-14: Addressed next-cycle `task180` by hardening core-wrapper memory-layout check CLI argument parsing (`--core-constants-path` / `--wrapper-path` / `--help`) with strict duplicate/unknown rejection, custom path override support, and import-safe direct-invocation guarding; validated via `node --test "scripts/core-wrapper-memory-layout-check.test.mjs"`; marked `task180` completed.
+- 2026-02-14: Addressed next-cycle `task181` by eliminating temp-directory leakage in core-memory-offset dist loading via guaranteed cleanup (`rm` in `finally`) and adding regression coverage that asserts no residual `core-memory-offset-contract-*` temp directories remain after load; validated via `node --test "scripts/core-memory-offset-contract-check.test.mjs"`; marked `task181` completed.

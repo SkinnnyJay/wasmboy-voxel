@@ -1,8 +1,14 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
-import { runCoreMemoryOffsetContractCheck, validateGameBoyOffsetResolver } from './core-memory-offset-contract-check-lib.mjs';
+import {
+  loadCoreFromDist,
+  runCoreMemoryOffsetContractCheck,
+  validateGameBoyOffsetResolver,
+} from './core-memory-offset-contract-check-lib.mjs';
 import { parseCoreMemoryOffsetCheckArgs } from './core-memory-offset-contract-check.mjs';
 
 const coreMemoryOffsetCheckScriptPath = path.resolve('scripts/core-memory-offset-contract-check.mjs');
@@ -108,4 +114,44 @@ test('runCoreMemoryOffsetContractCheck rejects invalid loader responses', async 
     () => runCoreMemoryOffsetContractCheck({ loadCore: async () => ({ instance: {} }) }),
     /Core wasm instance exports are unavailable/u,
   );
+});
+
+test('loadCoreFromDist removes temporary copied dist directory after loading', async () => {
+  const fixtureDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'core-memory-offset-dist-fixture-'));
+  const fixtureDistPath = path.join(fixtureDirectory, 'getWasmBoyWasmCore.cjs.js');
+  fs.writeFileSync(
+    fixtureDistPath,
+    `module.exports = function getWasmBoyWasmCore() {
+  return {
+    instance: {
+      exports: {
+        getWasmBoyOffsetFromGameBoyOffset(offset) {
+          if (offset < 0 || offset > 0xffff) {
+            return -1;
+          }
+          return offset;
+        },
+      },
+    },
+  };
+};
+`,
+    'utf8',
+  );
+
+  const tempPrefix = 'core-memory-offset-contract-';
+  const listContractTempDirectories = () =>
+    fs
+      .readdirSync(os.tmpdir(), { withFileTypes: true })
+      .filter(entry => entry.isDirectory() && entry.name.startsWith(tempPrefix))
+      .map(entry => entry.name)
+      .sort();
+
+  const beforeDirectories = listContractTempDirectories();
+  const loadedCore = await loadCoreFromDist(fixtureDistPath);
+  const afterDirectories = listContractTempDirectories();
+
+  assert.equal(typeof loadedCore, 'object');
+  assert.equal(typeof loadedCore.instance.exports.getWasmBoyOffsetFromGameBoyOffset, 'function');
+  assert.deepEqual(afterDirectories, beforeDirectories);
 });

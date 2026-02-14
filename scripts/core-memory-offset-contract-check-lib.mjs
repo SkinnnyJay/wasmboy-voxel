@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import os from 'node:os';
-import { copyFile, mkdtemp } from 'node:fs/promises';
+import { copyFile, mkdtemp, rm } from 'node:fs/promises';
 
 const INVALID_OFFSETS = [-1, 0x10000, 0x200000];
 const VALID_BOUNDARY_OFFSETS = [0x0000, 0xffff];
@@ -36,19 +36,23 @@ export function validateGameBoyOffsetResolver(resolver) {
 /**
  * @param {string} distCoreEntryPath
  */
-async function loadCoreFromDist(distCoreEntryPath) {
+export async function loadCoreFromDist(distCoreEntryPath) {
   const tempDirectory = await mkdtemp(path.join(os.tmpdir(), 'core-memory-offset-contract-'));
   const temporaryCjsEntryPath = path.join(tempDirectory, 'getWasmBoyWasmCore.contract.cjs');
-  await copyFile(distCoreEntryPath, temporaryCjsEntryPath);
+  try {
+    await copyFile(distCoreEntryPath, temporaryCjsEntryPath);
 
-  const require = createRequire(import.meta.url);
-  const getWasmBoyWasmCore = require(temporaryCjsEntryPath);
+    const require = createRequire(import.meta.url);
+    const getWasmBoyWasmCore = require(temporaryCjsEntryPath);
 
-  if (typeof getWasmBoyWasmCore !== 'function') {
-    throw new Error(`Expected dist core entry to export a function at ${distCoreEntryPath}.`);
+    if (typeof getWasmBoyWasmCore !== 'function') {
+      throw new Error(`Expected dist core entry to export a function at ${distCoreEntryPath}.`);
+    }
+
+    return getWasmBoyWasmCore();
+  } finally {
+    await rm(tempDirectory, { recursive: true, force: true });
   }
-
-  return getWasmBoyWasmCore();
 }
 
 /**
