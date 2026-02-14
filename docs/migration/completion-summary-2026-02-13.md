@@ -367,6 +367,7 @@ Workflow hardening applied:
 - changeset-status duplicate-timeout matrix now explicitly covers duplicate-vs-malformed inline collision precedence, locking deterministic duplicate-first behavior when the first timeout token is valid
 - bundle-diagnostics duplicate-flag matrix now explicitly covers duplicate-vs-malformed inline collision precedence for timeout/output/message flags, locking deterministic duplicate-first behavior when the first inline token is valid
 - changeset-status command-spawn diagnostics now include regression coverage for non-ENOENT execution failures (present but non-executable `changeset` binary), preserving generic execution-failure messaging distinct from missing-command classification
+- cli-timeout coverage now includes omitted `defaultValue` semantics, asserting missing defaults fail fast with explicit invalid-default diagnostics
 
 ## Security posture at completion
 

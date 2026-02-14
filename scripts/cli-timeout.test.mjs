@@ -1056,6 +1056,17 @@ test('resolveTimeoutFromCliAndEnv rejects undefined default timeout value types'
   );
 });
 
+test('resolveTimeoutFromCliAndEnv rejects missing default timeout values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid default value for TEST_TIMEOUT_ENV: undefined/u,
+  );
+});
+
 test('resolveTimeoutFromCliAndEnv rejects non-finite default timeout values', () => {
   assert.throws(
     () =>
