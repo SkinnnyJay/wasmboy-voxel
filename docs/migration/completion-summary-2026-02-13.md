@@ -383,6 +383,7 @@ Workflow hardening applied:
 - scripts test suites now share a centralized `UNPRINTABLE_VALUE` fixture helper, eliminating duplicated unprintable-value fixture declarations across script utility test files
 - changeset-status duplicate-argument parser tests now use reusable fixture constants for help/timeout duplicate matrices, reducing repeated literal arrays while retaining full precedence coverage
 - script-level contract coverage now includes an explicit cross-helper `formatErrorValue` regression suite, ensuring unprintable inputs are surfaced as `[unprintable]` consistently across parser/timeout/filter/fixture utilities
+- scripts synchronous I/O hotspots were audited and documented; current sync filesystem/subprocess usage remains intentional and acceptable for short-lived CI/batch script flows, with future async migration notes captured in audit docs
 
 ## Security posture at completion
 
