@@ -3,6 +3,22 @@ import test, { afterEach } from 'node:test';
 
 const SUPPORT_CHECK_MAX_RETRIES = 5;
 const GAME_MEMORY_BASE_CONSTANT = 'DEBUG_GAMEBOY_MEMORY_LOCATION';
+const GAME_MEMORY_BASE = 0x1000;
+const TILE_DATA_START = 0x8000;
+const TILE_DATA_END_EXCLUSIVE = 0x9800;
+const BG_TILEMAP_0_START = 0x9800;
+const BG_TILEMAP_1_START = 0x9c00;
+const TILEMAP_SIZE = 0x400;
+const REG_LCDC = 0xff40;
+const REG_SCY = 0xff42;
+const REG_SCX = 0xff43;
+const REG_BGP = 0xff47;
+const REG_OBP0 = 0xff48;
+const REG_OBP1 = 0xff49;
+const REG_WY = 0xff4a;
+const REG_WX = 0xff4b;
+const REGISTER_BLOCK_END_EXCLUSIVE = REG_WX + 1;
+const LCDC_BG_TILEMAP_SELECT_BIT = 0x08;
 
 const IDB_GLOBAL_NAMES = [
   'IDBIndex',
@@ -59,7 +75,7 @@ test('supportsPpuSnapshot retries until _getWasmConstant becomes available', asy
     if (calls < 3) {
       throw new Error('worker-not-ready');
     }
-    return 0x1000;
+    return GAME_MEMORY_BASE;
   };
 
   const supported = await WasmBoy.supportsPpuSnapshot();
@@ -169,6 +185,94 @@ test('getPpuSnapshot returns null when core lacks memory-section internals', asy
 
   const snapshot = await WasmBoy.getPpuSnapshot();
   assert.equal(snapshot, null);
+});
+
+test('getPpuSnapshotLayers reads only tile data when only tileData layer is requested', async () => {
+  const memoryReads = [];
+  WasmBoy.clearPpuSnapshotCache();
+  WasmBoy._getWasmConstant = async () => GAME_MEMORY_BASE;
+  WasmBoy._getPpuSnapshotBuffer = undefined;
+  WasmBoy._parsePpuSnapshotBuffer = undefined;
+  WasmBoy._getWasmMemorySection = async (start, endExclusive) => {
+    memoryReads.push([start, endExclusive]);
+    return new Uint8Array(endExclusive - start).fill(3);
+  };
+
+  const snapshot = await WasmBoy.getPpuSnapshotLayers({ layers: ['tileData'] });
+  assert.notEqual(snapshot, null);
+  assert.equal(snapshot.tileData?.length, TILE_DATA_END_EXCLUSIVE - TILE_DATA_START);
+  assert.equal(snapshot.bgTileMap, undefined);
+  assert.equal(snapshot.windowTileMap, undefined);
+  assert.equal(snapshot.oamData, undefined);
+  assert.equal(snapshot.registers, undefined);
+  assert.deepEqual(memoryReads, [[GAME_MEMORY_BASE + TILE_DATA_START, GAME_MEMORY_BASE + TILE_DATA_END_EXCLUSIVE]]);
+});
+
+test('getPpuSnapshotLayers reads register block and selected tilemap for bgTileMap requests', async () => {
+  const memoryReads = [];
+  WasmBoy.clearPpuSnapshotCache();
+  WasmBoy._getWasmConstant = async () => GAME_MEMORY_BASE;
+  WasmBoy._getPpuSnapshotBuffer = undefined;
+  WasmBoy._parsePpuSnapshotBuffer = undefined;
+  WasmBoy._getWasmMemorySection = async (start, endExclusive) => {
+    memoryReads.push([start, endExclusive]);
+    if (start === GAME_MEMORY_BASE + REG_LCDC && endExclusive === GAME_MEMORY_BASE + REGISTER_BLOCK_END_EXCLUSIVE) {
+      const registerBlock = new Uint8Array(REGISTER_BLOCK_END_EXCLUSIVE - REG_LCDC);
+      registerBlock[0] = LCDC_BG_TILEMAP_SELECT_BIT;
+      return registerBlock;
+    }
+    if (start === GAME_MEMORY_BASE + BG_TILEMAP_1_START && endExclusive === GAME_MEMORY_BASE + BG_TILEMAP_1_START + TILEMAP_SIZE) {
+      return new Uint8Array(TILEMAP_SIZE).fill(9);
+    }
+    throw new Error(`unexpected read: ${String(start)}-${String(endExclusive)}`);
+  };
+
+  const snapshot = await WasmBoy.getPpuSnapshotLayers({ layers: ['bgTileMap'] });
+  assert.notEqual(snapshot, null);
+  assert.equal(snapshot.bgTileMap?.length, TILEMAP_SIZE);
+  assert.equal(snapshot.registers, undefined);
+  assert.deepEqual(memoryReads, [
+    [GAME_MEMORY_BASE + REG_LCDC, GAME_MEMORY_BASE + REGISTER_BLOCK_END_EXCLUSIVE],
+    [GAME_MEMORY_BASE + BG_TILEMAP_1_START, GAME_MEMORY_BASE + BG_TILEMAP_1_START + TILEMAP_SIZE],
+  ]);
+});
+
+test('getPpuSnapshotLayers reads one register block for registers-only requests', async () => {
+  const memoryReads = [];
+  WasmBoy.clearPpuSnapshotCache();
+  WasmBoy._getWasmConstant = async () => GAME_MEMORY_BASE;
+  WasmBoy._getPpuSnapshotBuffer = undefined;
+  WasmBoy._parsePpuSnapshotBuffer = undefined;
+  WasmBoy._getWasmMemorySection = async (start, endExclusive) => {
+    memoryReads.push([start, endExclusive]);
+    if (start === GAME_MEMORY_BASE + REG_LCDC && endExclusive === GAME_MEMORY_BASE + REGISTER_BLOCK_END_EXCLUSIVE) {
+      const registerBlock = new Uint8Array(REGISTER_BLOCK_END_EXCLUSIVE - REG_LCDC);
+      registerBlock[REG_SCX - REG_LCDC] = 11;
+      registerBlock[REG_SCY - REG_LCDC] = 22;
+      registerBlock[REG_WX - REG_LCDC] = 33;
+      registerBlock[REG_WY - REG_LCDC] = 44;
+      registerBlock[REG_LCDC - REG_LCDC] = 55;
+      registerBlock[REG_BGP - REG_LCDC] = 66;
+      registerBlock[REG_OBP0 - REG_LCDC] = 77;
+      registerBlock[REG_OBP1 - REG_LCDC] = 88;
+      return registerBlock;
+    }
+    throw new Error(`unexpected read: ${String(start)}-${String(endExclusive)}`);
+  };
+
+  const snapshot = await WasmBoy.getPpuSnapshotLayers({ layers: ['registers'] });
+  assert.notEqual(snapshot, null);
+  assert.deepEqual(snapshot.registers, {
+    scx: 11,
+    scy: 22,
+    wx: 33,
+    wy: 44,
+    lcdc: 55,
+    bgp: 66,
+    obp0: 77,
+    obp1: 88,
+  });
+  assert.deepEqual(memoryReads, [[GAME_MEMORY_BASE + REG_LCDC, GAME_MEMORY_BASE + REGISTER_BLOCK_END_EXCLUSIVE]]);
 });
 
 test('getPpuSnapshot returns null when a partial section read fails', async () => {

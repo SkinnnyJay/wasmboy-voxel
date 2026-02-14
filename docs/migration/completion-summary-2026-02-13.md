@@ -459,6 +459,7 @@ Workflow hardening applied:
 - next-cycle `task101` is now completed via automated core memory-offset contract enforcement (`core:memory-offset:check` + `scripts/core-memory-offset-contract-check*.mjs`), integrated into `automation:check` with script-level regression coverage and debt-register closure for TD-001
 - next-cycle `task102` is now completed by classifying volatile `WASMBOY_STATE` save/load bytes and enforcing non-volatile determinism in core serialization regression coverage (`test/core/serialization-determinism-test.cjs` + `docs/migration/core-save-state-volatile-field-classification-2026-02-14.md`), with debt-register closure for TD-002
 - next-cycle `task110` is now completed by introducing shared schema-driven throw-case test registration (`scripts/test-schema-helpers.mjs`) and migrating dense parser validation suites (`cli-arg-values`, `cli-timeout`) to the shared fixture pattern, with debt-register closure for TD-010
+- next-cycle `task106` is now completed by refactoring voxel snapshot fallback reads to batch register-block access and perform selective layer retrieval in `getPpuSnapshotLayers` (avoiding forced full-layer reads for partial requests), validated by expanded wrapper readiness integration tests and debt-register closure for TD-006
 
 ## Security posture at completion
 

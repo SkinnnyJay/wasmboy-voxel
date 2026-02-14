@@ -95,6 +95,8 @@ const REG_WX = 0xff4b;
 const REG_BGP = 0xff47;
 const REG_OBP0 = 0xff48;
 const REG_OBP1 = 0xff49;
+const REGISTER_BLOCK_START = REG_LCDC;
+const REGISTER_BLOCK_END_EXCLUSIVE = REG_WX + 1;
 const LCDC_BG_TILEMAP_SELECT_BIT = 0x08;
 const LCDC_WINDOW_TILEMAP_SELECT_BIT = 0x40;
 
@@ -198,6 +200,7 @@ const GBC_PALETTE_BYTES = 64;
 const GBC_COLORS_PER_PALETTE = 4;
 const GBC_PALETTES = 8;
 const BYTES_PER_GBC_COLOR = 2;
+const ALL_PPU_SNAPSHOT_LAYERS: PpuSnapshotLayer[] = ['tileData', 'bgTileMap', 'windowTileMap', 'oamData', 'registers'];
 
 export interface WasmBoyVoxelApi extends WasmBoyApi {
   supportsPpuSnapshot(): Promise<boolean>;
@@ -228,6 +231,8 @@ const hasSnapshotInternals = (api: WasmBoyApi): api is WasmBoyInternalSnapshotAp
 const isByte = (value: number): boolean => Number.isInteger(value) && value >= BYTE_MIN && value <= BYTE_MAX;
 
 const hasExpectedLength = (value: Uint8Array, expected: number): boolean => value.length === expected;
+const hasExpectedByteArrayLength = (value: Uint8Array | undefined, expected: number): boolean =>
+  value instanceof Uint8Array && hasExpectedLength(value, expected);
 
 const isValidRegistersContract = (registers: WasmBoyPpuSnapshot['registers']): boolean =>
   isByte(registers.scx) &&
@@ -263,6 +268,17 @@ const readGameMemorySection = async (
   start: number,
   endExclusive: number,
 ): Promise<Uint8Array> => api._getWasmMemorySection(gameMemoryBase + start, gameMemoryBase + endExclusive);
+
+const readRegisterBlock = async (api: WasmBoyInternalSnapshotApi, gameMemoryBase: number): Promise<Uint8Array> =>
+  readGameMemorySection(api, gameMemoryBase, REGISTER_BLOCK_START, REGISTER_BLOCK_END_EXCLUSIVE);
+
+const readRegisterFromBlock = (registerBlock: Uint8Array, address: number): number => {
+  const index = address - REGISTER_BLOCK_START;
+  if (index < 0 || index >= registerBlock.length) {
+    return 0;
+  }
+  return registerBlock[index] ?? 0;
+};
 
 const readGameMemoryByte = async (api: WasmBoyInternalSnapshotApi, gameMemoryBase: number, address: number): Promise<number> => {
   const data = await readGameMemorySection(api, gameMemoryBase, address, address + 1);
@@ -390,13 +406,14 @@ const getPpuSnapshot = async (api: WasmBoyApi): Promise<WasmBoyPpuSnapshot | nul
     return null;
   }
 
-  let lcdc: number;
+  let registerBlock: Uint8Array;
   try {
-    lcdc = await readGameMemoryByte(internal, gameMemoryBase, REG_LCDC);
+    registerBlock = await readRegisterBlock(internal, gameMemoryBase);
   } catch (error) {
     emitSnapshotError(error);
     return null;
   }
+  const lcdc = readRegisterFromBlock(registerBlock, REG_LCDC);
   const bgMapStart = (lcdc & LCDC_BG_TILEMAP_SELECT_BIT) !== 0 ? BG_TILEMAP_1_START : BG_TILEMAP_0_START;
   const windowMapStart = (lcdc & LCDC_WINDOW_TILEMAP_SELECT_BIT) !== 0 ? BG_TILEMAP_1_START : BG_TILEMAP_0_START;
 
@@ -404,32 +421,26 @@ const getPpuSnapshot = async (api: WasmBoyApi): Promise<WasmBoyPpuSnapshot | nul
   let bgTileMap: Uint8Array;
   let windowTileMap: Uint8Array;
   let oamData: Uint8Array;
-  let scx: number;
-  let scy: number;
-  let wx: number;
-  let wy: number;
-  let bgp: number;
-  let obp0: number;
-  let obp1: number;
 
   try {
-    [tileData, bgTileMap, windowTileMap, oamData, scx, scy, wx, wy, bgp, obp0, obp1] = await Promise.all([
+    [tileData, bgTileMap, windowTileMap, oamData] = await Promise.all([
       readGameMemorySection(internal, gameMemoryBase, TILE_DATA_START, TILE_DATA_END_EXCLUSIVE),
       readGameMemorySection(internal, gameMemoryBase, bgMapStart, bgMapStart + TILEMAP_SIZE),
       readGameMemorySection(internal, gameMemoryBase, windowMapStart, windowMapStart + TILEMAP_SIZE),
       readGameMemorySection(internal, gameMemoryBase, OAM_START, OAM_END_EXCLUSIVE),
-      readGameMemoryByte(internal, gameMemoryBase, REG_SCX),
-      readGameMemoryByte(internal, gameMemoryBase, REG_SCY),
-      readGameMemoryByte(internal, gameMemoryBase, REG_WX),
-      readGameMemoryByte(internal, gameMemoryBase, REG_WY),
-      readGameMemoryByte(internal, gameMemoryBase, REG_BGP),
-      readGameMemoryByte(internal, gameMemoryBase, REG_OBP0),
-      readGameMemoryByte(internal, gameMemoryBase, REG_OBP1),
     ]);
   } catch (error) {
     emitSnapshotError(error);
     return null;
   }
+
+  const scx = readRegisterFromBlock(registerBlock, REG_SCX);
+  const scy = readRegisterFromBlock(registerBlock, REG_SCY);
+  const wx = readRegisterFromBlock(registerBlock, REG_WX);
+  const wy = readRegisterFromBlock(registerBlock, REG_WY);
+  const bgp = readRegisterFromBlock(registerBlock, REG_BGP);
+  const obp0 = readRegisterFromBlock(registerBlock, REG_OBP0);
+  const obp1 = readRegisterFromBlock(registerBlock, REG_OBP1);
 
   lastSnapshotDurationMs = (typeof performance !== 'undefined' ? performance.now() : Date.now()) - snapshotStart;
 
@@ -459,15 +470,135 @@ async function getRegisters(api: WasmBoyApi): Promise<WasmBoyPpuSnapshot['regist
 }
 
 async function getPpuSnapshotLayers(api: WasmBoyApi, options?: GetPpuSnapshotLayersOptions): Promise<Partial<WasmBoyPpuSnapshot> | null> {
-  const full = await getPpuSnapshot(api);
-  if (!full) return null;
   const layers = options?.layers;
-  if (!layers || layers.length === 0) return full;
-  const result: Partial<WasmBoyPpuSnapshot> = {};
-  for (const layer of layers) {
-    if (layer === 'registers') result.registers = full.registers;
-    else if (layer in full) (result as WasmBoyPpuSnapshot)[layer] = full[layer];
+  if (!layers || layers.length === 0) return getPpuSnapshot(api);
+
+  const selectedLayers = layers.filter((layer): layer is PpuSnapshotLayer => ALL_PPU_SNAPSHOT_LAYERS.includes(layer));
+  if (selectedLayers.length === 0) return {};
+  if (ALL_PPU_SNAPSHOT_LAYERS.every(layer => selectedLayers.includes(layer))) {
+    return getPpuSnapshot(api);
   }
+
+  if (!hasSnapshotInternals(api)) return null;
+  const internal = api as WasmBoyInternalSnapshotApi;
+  if (cachedGameMemoryBase === null) {
+    const supported = await supportsPpuSnapshot(api);
+    if (!supported) return null;
+  }
+
+  const snapshotStart = typeof performance !== 'undefined' ? performance.now() : Date.now();
+  const gameMemoryBase = await resolveGameMemoryBase(internal);
+  if (gameMemoryBase === null) {
+    emitSnapshotError(new Error('resolveGameMemoryBase failed'));
+    return null;
+  }
+
+  const needsRegisterBlock =
+    selectedLayers.includes('registers') || selectedLayers.includes('bgTileMap') || selectedLayers.includes('windowTileMap');
+  let registerBlock: Uint8Array | null = null;
+  if (needsRegisterBlock) {
+    try {
+      registerBlock = await readRegisterBlock(internal, gameMemoryBase);
+    } catch (error) {
+      emitSnapshotError(error);
+      return null;
+    }
+  }
+
+  const result: Partial<WasmBoyPpuSnapshot> = {};
+  const memoryLayerReads: Promise<void>[] = [];
+  const lcdc = registerBlock ? readRegisterFromBlock(registerBlock, REG_LCDC) : 0;
+
+  if (selectedLayers.includes('tileData')) {
+    memoryLayerReads.push(
+      readGameMemorySection(internal, gameMemoryBase, TILE_DATA_START, TILE_DATA_END_EXCLUSIVE).then(section => {
+        result.tileData = section;
+      }),
+    );
+  }
+
+  if (selectedLayers.includes('bgTileMap')) {
+    const bgMapStart = (lcdc & LCDC_BG_TILEMAP_SELECT_BIT) !== 0 ? BG_TILEMAP_1_START : BG_TILEMAP_0_START;
+    memoryLayerReads.push(
+      readGameMemorySection(internal, gameMemoryBase, bgMapStart, bgMapStart + TILEMAP_SIZE).then(section => {
+        result.bgTileMap = section;
+      }),
+    );
+  }
+
+  if (selectedLayers.includes('windowTileMap')) {
+    const windowMapStart = (lcdc & LCDC_WINDOW_TILEMAP_SELECT_BIT) !== 0 ? BG_TILEMAP_1_START : BG_TILEMAP_0_START;
+    memoryLayerReads.push(
+      readGameMemorySection(internal, gameMemoryBase, windowMapStart, windowMapStart + TILEMAP_SIZE).then(section => {
+        result.windowTileMap = section;
+      }),
+    );
+  }
+
+  if (selectedLayers.includes('oamData')) {
+    memoryLayerReads.push(
+      readGameMemorySection(internal, gameMemoryBase, OAM_START, OAM_END_EXCLUSIVE).then(section => {
+        result.oamData = section;
+      }),
+    );
+  }
+
+  try {
+    await Promise.all(memoryLayerReads);
+  } catch (error) {
+    emitSnapshotError(error);
+    return null;
+  }
+
+  if (selectedLayers.includes('registers') && registerBlock) {
+    const registers = {
+      scx: readRegisterFromBlock(registerBlock, REG_SCX),
+      scy: readRegisterFromBlock(registerBlock, REG_SCY),
+      wx: readRegisterFromBlock(registerBlock, REG_WX),
+      wy: readRegisterFromBlock(registerBlock, REG_WY),
+      lcdc: readRegisterFromBlock(registerBlock, REG_LCDC),
+      bgp: readRegisterFromBlock(registerBlock, REG_BGP),
+      obp0: readRegisterFromBlock(registerBlock, REG_OBP0),
+      obp1: readRegisterFromBlock(registerBlock, REG_OBP1),
+    };
+    if (contractValidationEnabled && !isValidRegistersContract(registers)) {
+      emitSnapshotError(new Error('Registers contract validation failed.'));
+      return null;
+    }
+    result.registers = registers;
+  }
+
+  lastSnapshotDurationMs = (typeof performance !== 'undefined' ? performance.now() : Date.now()) - snapshotStart;
+
+  if (
+    contractValidationEnabled &&
+    selectedLayers.includes('tileData') &&
+    !hasExpectedByteArrayLength(result.tileData, TILE_DATA_END_EXCLUSIVE - TILE_DATA_START)
+  ) {
+    emitSnapshotError(new Error('tileData contract validation failed.'));
+    return null;
+  }
+  if (contractValidationEnabled && selectedLayers.includes('bgTileMap') && !hasExpectedByteArrayLength(result.bgTileMap, TILEMAP_SIZE)) {
+    emitSnapshotError(new Error('bgTileMap contract validation failed.'));
+    return null;
+  }
+  if (
+    contractValidationEnabled &&
+    selectedLayers.includes('windowTileMap') &&
+    !hasExpectedByteArrayLength(result.windowTileMap, TILEMAP_SIZE)
+  ) {
+    emitSnapshotError(new Error('windowTileMap contract validation failed.'));
+    return null;
+  }
+  if (
+    contractValidationEnabled &&
+    selectedLayers.includes('oamData') &&
+    !hasExpectedByteArrayLength(result.oamData, OAM_END_EXCLUSIVE - OAM_START)
+  ) {
+    emitSnapshotError(new Error('oamData contract validation failed.'));
+    return null;
+  }
+
   return result;
 }
 
