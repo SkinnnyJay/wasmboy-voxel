@@ -147,3 +147,26 @@ test('generated artifact guard JSON output reports blocked staged artifacts', ()
     stagedPathCount: 1,
   });
 });
+
+test('generated artifact guard JSON output honors generated-edit override', () => {
+  const tempRepoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'artifact-guard-json-override-'));
+  runGit(['init', '--quiet'], tempRepoRoot);
+  const stagedGeneratedPath = path.join(tempRepoRoot, 'dist', 'generated.js');
+  writeFileEnsuringParent(stagedGeneratedPath, 'console.log("generated");');
+  runGit(['add', 'dist/generated.js'], tempRepoRoot);
+
+  const result = runScript(guardArtifactsScriptPath, ['--json'], {
+    cwd: tempRepoRoot,
+    env: { WASMBOY_ALLOW_GENERATED_EDITS: '1' },
+  });
+
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, '');
+  const parsedOutput = JSON.parse(result.stdout.trim());
+  assert.deepEqual(parsedOutput, {
+    allowGeneratedEdits: true,
+    isValid: true,
+    blockedPaths: [],
+    stagedPathCount: 1,
+  });
+});

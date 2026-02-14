@@ -488,6 +488,7 @@ Workflow hardening applied:
 - next-cycle `task130` is now completed by adding machine-readable `--json` output support for the generated-artifact guard CLI with parser + subprocess contract coverage, enabling deterministic staged-artifact validation integrations
 - next-cycle `task131` is now completed by adding npm shortcut scripts and contract checks for cleanup/guard JSON summaries, improving discoverability and consistency of machine-readable artifact-policy diagnostics
 - next-cycle `task132` is now completed by validating guard `--json` failure-mode payload and exit-code behavior with staged generated artifacts in isolated git repos, strengthening executable contract confidence for CI consumers
+- next-cycle `task133` is now completed by validating guard `--json` override-mode payload behavior (`WASMBOY_ALLOW_GENERATED_EDITS=1`) with staged generated artifacts, ensuring machine-readable diagnostics align with intentional override semantics
 
 ## Security posture at completion
 
