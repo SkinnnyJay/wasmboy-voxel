@@ -140,7 +140,7 @@ _Source: PLAN.md. Sound bounds, wrapper memory, debugger soak/large-data, automa
 
 _Source: PLAN3.md, MIGRATE_TO_TYPESCRIPT.md. MIGRATE Phase 1 narrative mentions “Convert lib/ and voxel-wrapper.ts to strict TypeScript” but the checklist there covers only packages/api; full lib/ conversion is Phase 11 in PLAN3, not started. Do after S1/S2 critical items are under control. **Include headless:** `lib/headless/` (WasmBoyHeadless, mainThreadCore._), headless module types in `wasm-fork.d.ts`, and `voxel-wrapper.ts` `WasmBoyConfig.mainThread`.\*
 
-- [ ] - Phase 11: Create `lib/` TypeScript config (strict; no `any`; project references if needed).
+- [x] - Phase 11: Create `lib/` TypeScript config (strict; no `any`; project references if needed). _(Added `lib/tsconfig.json` as a strict composite TypeScript project scaffold for lib migration, wired to shared strict base options and ready for incremental `.ts` conversion.)_
 - [ ] - Phase 11: Convert lib entry points to `.ts` with explicit types.
 - [ ] - Phase 11: Convert worker entry points to `.ts`; type message schemas (align with Phase 0 docs).
 - [ ] - Phase 11: Type all snapshot and memory paths used by voxel-wrapper (use contracts from packages/api where applicable).
@@ -148,7 +148,7 @@ _Source: PLAN3.md, MIGRATE_TO_TYPESCRIPT.md. MIGRATE Phase 1 narrative mentions 
 - [ ] - Phase 11: Remove all `any` and unsafe type assertions in `lib/`.
 - [ ] - Phase 11: Add shared types/constants in `lib/` or from `packages/shared` (no magic numbers for non-hardware).
 - [ ] - Phase 11: Ensure `voxel-wrapper.ts` and `index.ts` consume typed lib; no new `any`.
-- [ ] - Phase 11: Add `npm run typecheck` (or equivalent) for repo root that includes lib.
+- [x] - Phase 11: Add `npm run typecheck` (or equivalent) for repo root that includes lib. _(Added root `typecheck` script chaining new `lib:typecheck` with existing workspace typechecks so root type verification now includes lib migration surfaces.)_
 - [ ] - Phase 11: Update Prettier/ESLint (or Biome) to include `lib/**/*.ts` if not already.
 - [ ] - Phase 11: Document any remaining intentional `unknown` or narrowings.
 
