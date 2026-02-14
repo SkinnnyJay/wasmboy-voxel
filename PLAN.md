@@ -832,3 +832,4 @@
 - 2026-02-14: Re-ran aggregate check entrypoint (`npm run check`) to reconfirm repository-level formatting lint plus full automation contract/test stack remain green end-to-end (792 pass, 1 expected platform skip) with a clean working tree.
 - 2026-02-14: Re-ran release checklist publishability gate (`npm run release:checklist:npm-dry-run`) to reconfirm npm publish dry-run checks for `@wasmboy/api` and `@wasmboy/cli` remain green with a clean working tree.
 - 2026-02-14: Re-ran throughput performance guard (`npm run test:performance:throughput`) to reconfirm headless FPS baseline remains above floor (799.75 FPS in current run; 1200 frames in 1500.48ms) with a clean working tree.
+- 2026-02-14: Re-ran strict local CI alias (`npm run ci:local:strict`) to reconfirm strict no-build CI-parity sequencing remains green end-to-end after latest verification loop, including throughput baseline above floor (742.59 FPS in current run), with a clean working tree.
