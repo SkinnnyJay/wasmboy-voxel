@@ -466,3 +466,4 @@
 - 2026-02-13: Hardened required-argument set-entry validation by rejecting whitespace-padded `knownArgs` and `allowedKnownValues` entries, adding validate/read regression coverage for canonical token-set semantics.
 - 2026-02-13: Hardened required-argument options-container validation with plain-object guards (`Object`/`null` prototype only), adding Date/Map/Set options-object rejection coverage for both validate/read helper entrypoints.
 - 2026-02-13: Hardened `bundle-diagnostics` message parser parity by rejecting malformed inline double-equals message tokens (`--message==...`), aligning malformed-inline semantics across output/pattern/message/timeout equals-form flags.
+- 2026-02-13: Expanded `changeset-status-ci` duplicate-flag matrix with precedence regression coverage for duplicate-vs-malformed inline timeout collisions, locking deterministic duplicate-first behavior when first timeout token is valid and malformed-first behavior otherwise.

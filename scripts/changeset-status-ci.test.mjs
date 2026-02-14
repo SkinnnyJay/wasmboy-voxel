@@ -216,6 +216,22 @@ test('changeset-status-ci rejects duplicate timeout flags in inline-only order',
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci prioritizes duplicate timeout errors over malformed second inline timeout tokens', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=200', '--timeout-ms==100']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Duplicate --timeout-ms argument provided/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
+test('changeset-status-ci reports malformed first inline timeout tokens before duplicate checks', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms==200', '--timeout-ms=100']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Malformed inline value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci rejects missing timeout values', () => {
   const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms']);
 
