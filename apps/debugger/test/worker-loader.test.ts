@@ -33,6 +33,8 @@ class RestartableMockWorker {
 
   static optionsHistory: WorkerOptions[] = [];
 
+  public terminated = false;
+
   private readonly listeners = {
     error: new Set<(event: Event) => void>(),
     messageerror: new Set<(event: Event) => void>(),
@@ -67,6 +69,11 @@ class RestartableMockWorker {
 
   terminate(): void {
     RestartableMockWorker.terminateCount += 1;
+    this.terminated = true;
+  }
+
+  getListenerCount(): number {
+    return this.listeners.error.size + this.listeners.messageerror.size;
   }
 
   trigger(type: 'error' | 'messageerror'): void {
@@ -248,6 +255,81 @@ describe('worker loader', () => {
 
       workerHandle.dispose();
       expect(telemetryEvents.at(-1)?.eventType).toBe('disposed');
+    } finally {
+      if (originalWorker) {
+        Object.defineProperty(globalThis, 'Worker', {
+          configurable: true,
+          writable: true,
+          value: originalWorker,
+        });
+      } else {
+        Object.defineProperty(globalThis, 'Worker', {
+          configurable: true,
+          writable: true,
+          value: undefined,
+        });
+      }
+    }
+  });
+
+  it('soak tests restart lifecycle without accumulating worker listeners', () => {
+    const originalWorker = globalThis.Worker;
+    RestartableMockWorker.instances = [];
+    RestartableMockWorker.optionsHistory = [];
+    RestartableMockWorker.terminateCount = 0;
+    const restartCounts: number[] = [];
+    const maxRestarts = 200;
+
+    Object.defineProperty(globalThis, 'Worker', {
+      configurable: true,
+      writable: true,
+      value: RestartableMockWorker,
+    });
+
+    try {
+      const workerHandle = createAutoRestartingDebuggerWorker(
+        new URL('file:///debugger.worker.js'),
+        {
+          maxRestarts,
+          scheduleRestart(_delayMs, callback) {
+            callback();
+            return () => {};
+          },
+          onRestart(restartCount) {
+            restartCounts.push(restartCount);
+          },
+        },
+      );
+
+      for (let restartIndex = 0; restartIndex < maxRestarts; restartIndex += 1) {
+        const activeWorker = RestartableMockWorker.instances.at(-1);
+        expect(activeWorker).toBeDefined();
+        const crashReason = restartIndex % 2 === 0 ? 'error' : 'messageerror';
+        activeWorker?.trigger(crashReason);
+      }
+
+      expect(restartCounts.length).toBe(maxRestarts);
+      expect(restartCounts.at(-1)).toBe(maxRestarts);
+      expect(RestartableMockWorker.instances.length).toBe(maxRestarts + 1);
+
+      const activeWorker = RestartableMockWorker.instances.at(-1);
+      expect(activeWorker).toBeDefined();
+      RestartableMockWorker.instances.forEach(workerInstance => {
+        if (workerInstance === activeWorker) {
+          expect(workerInstance.getListenerCount()).toBe(2);
+          expect(workerInstance.terminated).toBe(false);
+          return;
+        }
+
+        expect(workerInstance.terminated).toBe(true);
+        expect(workerInstance.getListenerCount()).toBe(0);
+      });
+
+      const terminateCountBeforeDispose = RestartableMockWorker.terminateCount;
+      workerHandle.dispose();
+      expect(RestartableMockWorker.terminateCount).toBe(terminateCountBeforeDispose + 1);
+      expect(activeWorker?.terminated).toBe(true);
+      expect(activeWorker?.getListenerCount()).toBe(0);
     } finally {
       if (originalWorker) {
         Object.defineProperty(globalThis, 'Worker', {
