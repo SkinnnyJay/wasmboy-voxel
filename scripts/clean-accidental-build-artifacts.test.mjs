@@ -123,6 +123,12 @@ test('parseCleanArtifactsArgs supports dry-run and usage flags', () => {
   });
   assert.deepEqual(parseCleanArtifactsArgs(['--help']), { dryRun: false, jsonOutput: false, shouldPrintUsage: true });
   assert.deepEqual(parseCleanArtifactsArgs(['-h']), { dryRun: false, jsonOutput: false, shouldPrintUsage: true });
+  assert.deepEqual(parseCleanArtifactsArgs(['--help', '-h']), { dryRun: false, jsonOutput: false, shouldPrintUsage: true });
+  assert.deepEqual(parseCleanArtifactsArgs(['--json', '--help', '--unknown']), {
+    dryRun: false,
+    jsonOutput: false,
+    shouldPrintUsage: true,
+  });
 });
 
 test('parseCleanArtifactsArgs rejects unknown flags', () => {
@@ -135,7 +141,6 @@ test('parseCleanArtifactsArgs rejects unknown flags', () => {
 test('parseCleanArtifactsArgs rejects duplicate flags', () => {
   assert.throws(() => parseCleanArtifactsArgs(['--dry-run', '--dry-run']), /Duplicate --dry-run flag received\./u);
   assert.throws(() => parseCleanArtifactsArgs(['--json', '--json']), /Duplicate --json flag received\./u);
-  assert.throws(() => parseCleanArtifactsArgs(['--help', '-h']), /Duplicate help flag received\./u);
 });
 
 test('parseCleanArtifactsArgs validates argv shape and token types', () => {

@@ -122,6 +122,8 @@ test('parseGeneratedArtifactGuardArgs supports help flags', () => {
   assert.deepEqual(parseGeneratedArtifactGuardArgs(['--json']), { jsonOutput: true, shouldPrintUsage: false });
   assert.deepEqual(parseGeneratedArtifactGuardArgs(['--help']), { jsonOutput: false, shouldPrintUsage: true });
   assert.deepEqual(parseGeneratedArtifactGuardArgs(['-h']), { jsonOutput: false, shouldPrintUsage: true });
+  assert.deepEqual(parseGeneratedArtifactGuardArgs(['--help', '-h']), { jsonOutput: false, shouldPrintUsage: true });
+  assert.deepEqual(parseGeneratedArtifactGuardArgs(['--json', '--help', '--dry-run']), { jsonOutput: false, shouldPrintUsage: true });
 });
 
 test('parseGeneratedArtifactGuardArgs rejects unknown flags', () => {
@@ -130,7 +132,6 @@ test('parseGeneratedArtifactGuardArgs rejects unknown flags', () => {
 
 test('parseGeneratedArtifactGuardArgs rejects duplicate flags', () => {
   assert.throws(() => parseGeneratedArtifactGuardArgs(['--json', '--json']), /Duplicate --json flag received\./u);
-  assert.throws(() => parseGeneratedArtifactGuardArgs(['--help', '-h']), /Duplicate help flag received\./u);
 });
 
 test('parseGeneratedArtifactGuardArgs validates argv shape and token types', () => {

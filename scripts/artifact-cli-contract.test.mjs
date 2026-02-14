@@ -68,6 +68,14 @@ test('clean artifact script prints usage for --help', () => {
   assert.match(result.stdout, /Usage: node scripts\/clean-accidental-build-artifacts\.mjs \[--dry-run\] \[--json\]/u);
 });
 
+test('clean artifact script prioritizes help over other flags', () => {
+  const result = runScript(cleanArtifactsScriptPath, ['--help', '--unknown', '--json']);
+
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, '');
+  assert.match(result.stdout, /Usage: node scripts\/clean-accidental-build-artifacts\.mjs \[--dry-run\] \[--json\]/u);
+});
+
 test('clean artifact script rejects unknown flags', () => {
   const result = runScript(cleanArtifactsScriptPath, ['--unknown']);
 
@@ -86,6 +94,14 @@ test('generated artifact guard script prints usage for --help', () => {
   const result = runScript(guardArtifactsScriptPath, ['--help']);
 
   assert.equal(result.status, 0);
+  assert.match(result.stdout, /Usage: node scripts\/guard-generated-artifacts-precommit\.mjs \[--json\] \[--help\]/u);
+});
+
+test('generated artifact guard script prioritizes help over other flags', () => {
+  const result = runScript(guardArtifactsScriptPath, ['-h', '--dry-run', '--json']);
+
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, '');
   assert.match(result.stdout, /Usage: node scripts\/guard-generated-artifacts-precommit\.mjs \[--json\] \[--help\]/u);
 });
 

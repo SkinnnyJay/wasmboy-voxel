@@ -127,15 +127,26 @@ export function parseCleanArtifactsArgs(argv) {
     throw new TypeError('Expected argv to be an array.');
   }
 
-  let dryRun = false;
-  let jsonOutput = false;
   let helpRequested = false;
-
   for (let index = 0; index < argv.length; index += 1) {
     const token = argv[index];
     if (typeof token !== 'string') {
       throw new TypeError(`Expected argv[${String(index)}] to be a string.`);
     }
+    if (token === '--help' || token === '-h') {
+      helpRequested = true;
+    }
+  }
+
+  if (helpRequested) {
+    return { dryRun: false, jsonOutput: false, shouldPrintUsage: true };
+  }
+
+  let dryRun = false;
+  let jsonOutput = false;
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const token = argv[index];
 
     if (token === '--dry-run') {
       if (dryRun) {
@@ -153,19 +164,7 @@ export function parseCleanArtifactsArgs(argv) {
       continue;
     }
 
-    if (token === '--help' || token === '-h') {
-      if (helpRequested) {
-        throw new Error('Duplicate help flag received.');
-      }
-      helpRequested = true;
-      continue;
-    }
-
     throw new Error(`Unknown argument "${token}". Supported flags: --dry-run, --json, --help.`);
-  }
-
-  if (helpRequested) {
-    return { dryRun: false, jsonOutput: false, shouldPrintUsage: true };
   }
 
   return { dryRun, jsonOutput, shouldPrintUsage: false };
