@@ -150,7 +150,7 @@ _Source: PLAN3.md, MIGRATE_TO_TYPESCRIPT.md. MIGRATE Phase 1 narrative mentions 
 - [ ] - Phase 11: Ensure `voxel-wrapper.ts` and `index.ts` consume typed lib; no new `any`.
 - [x] - Phase 11: Add `npm run typecheck` (or equivalent) for repo root that includes lib. _(Added root `typecheck` script chaining new `lib:typecheck` with existing workspace typechecks so root type verification now includes lib migration surfaces.)_
 - [x] - Phase 11: Update Prettier/ESLint (or Biome) to include `lib/**/*.ts` if not already. _(Extended root Prettier lint/fix globs to include `lib/**/*.ts`, ensuring new TypeScript files in lib migration scope are checked/formatted by default tooling gates.)_
-- [ ] - Phase 11: Document any remaining intentional `unknown` or narrowings.
+- [x] - Phase 11: Document any remaining intentional `unknown` or narrowings. _(Added `docs/migration/lib-ts-intentional-unknowns-2026-02-14.md` to track current intentional `unknown` usage buckets in migrated lib declarations and the planned narrowing strategy.)_
 
 **Completion criteria (Phase 11):** `lib/` and `voxel-wrapper.ts` are strict TypeScript; no `any` in public API; types aligned with `packages/api` contracts; root `npm run typecheck` includes lib and passes; consumer (e.g. gameboy-remix) can rely on typed exports. Headless bundle and types remain valid.
 
