@@ -144,6 +144,25 @@ test('clean artifact script emits JSON summary when --json is set', () => {
   assert.equal(fs.existsSync(generatedOutputPath), true);
 });
 
+test('clean artifact script emits apply-mode JSON summary and removes files', () => {
+  const tempRepoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'artifact-cli-json-apply-'));
+  const generatedOutputPath = path.join(tempRepoRoot, 'test', 'integration', 'headless.output');
+  writeFileEnsuringParent(generatedOutputPath);
+
+  const result = runScript(cleanArtifactsScriptPath, ['--json'], { cwd: tempRepoRoot });
+
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, '');
+  const parsedOutput = JSON.parse(result.stdout.trim());
+  assert.equal(parsedOutput.schemaVersion, 1);
+  assert.equal(parsedOutput.mode, 'apply');
+  assert.equal(typeof parsedOutput.timestampMs, 'number');
+  assert.equal(parsedOutput.removedCount, 1);
+  assert.deepEqual(parsedOutput.deletedDirectories, []);
+  assert.deepEqual(parsedOutput.deletedFiles, ['test/integration/headless.output']);
+  assert.equal(fs.existsSync(generatedOutputPath), false);
+});
+
 test('generated artifact guard script emits JSON summary when --json is set', () => {
   const result = runScript(guardArtifactsScriptPath, ['--json']);
 
