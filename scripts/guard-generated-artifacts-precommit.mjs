@@ -126,6 +126,7 @@ function runPrecommitGuard(options = {}) {
   const stagedPaths = readStagedPathsFromGit();
   const validationResult = validateGeneratedArtifactStaging(stagedPaths, { allowGeneratedEdits });
   const summary = {
+    tool: 'guard:generated-artifacts',
     schemaVersion: 1,
     allowGeneratedEdits,
     isValid: validationResult.isValid,

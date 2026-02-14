@@ -166,6 +166,7 @@ if (shouldRunAsScript) {
       const removedCount = result.deletedDirectories.length + result.deletedFiles.length;
       const summaryVerb = args.dryRun ? 'would remove' : 'removed';
       const summary = {
+        tool: 'clean:artifacts',
         schemaVersion: 1,
         mode: args.dryRun ? 'dry-run' : 'apply',
         timestampMs: Date.now(),

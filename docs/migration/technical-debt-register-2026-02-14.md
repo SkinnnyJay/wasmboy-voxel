@@ -69,6 +69,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C046 | Guard JSON no-op override contract     | Added subprocess coverage for guard `--json` no-op runs with `WASMBOY_ALLOW_GENERATED_EDITS=1`, ensuring override metadata and success semantics remain explicit for machine-readable automation consumers.              | S4                | `@automation-tooling` |
 | TD-C047 | Guard blocked-path ordering contract   | Added subprocess coverage for guard `--json` multi-path staged artifact scenarios to lock deterministic sorted `blockedPaths` ordering in machine-readable payloads consumed by automation tooling.                      | S4                | `@automation-tooling` |
 | TD-C048 | Artifact JSON metadata assertion reuse | Refactored artifact CLI executable contracts to centralize strict metadata assertions (`schemaVersion`, positive integer `timestampMs`), reducing duplicate test logic while hardening machine-readable payload checks.  | S4                | `@automation-tooling` |
+| TD-C049 | Artifact JSON tool attribution         | Added explicit `tool` identifiers to cleanup/guard JSON summaries with executable contract and policy-doc updates so machine-readable consumers can deterministically attribute payload sources.                         | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

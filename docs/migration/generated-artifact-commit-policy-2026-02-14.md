@@ -17,14 +17,14 @@ This protects the repo from accidental generated-output drift.
 - `scripts/clean-accidental-build-artifacts.mjs` removes transient generated files
   (use `node scripts/clean-accidental-build-artifacts.mjs --dry-run` to inspect
   candidates without deleting, or `--dry-run --json` for machine-readable
-  summaries; JSON payloads include `schemaVersion` and `timestampMs` metadata
-  for traceability;
+  summaries; JSON payloads include `tool`, `schemaVersion`, and `timestampMs`
+  metadata for traceability;
   npm shortcuts: `clean:artifacts:precommit:dry-run` and
   `clean:artifacts:precommit:json`).
 - `scripts/guard-generated-artifacts-precommit.mjs` blocks staged generated paths
   and integration output artifacts (use `--help` for invocation/usage details,
   or `--json` for machine-readable validation summaries; JSON payloads include
-  `schemaVersion` and `timestampMs` metadata; npm shortcut:
+  `tool`, `schemaVersion`, and `timestampMs` metadata; npm shortcut:
   `guard:generated-artifacts:precommit:json`).
 
 ## Intentional exception path
