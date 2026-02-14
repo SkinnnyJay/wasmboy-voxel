@@ -82,6 +82,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C059 | Artifact timestamp source metadata        | Added explicit `timestampSource` metadata (`system-clock` / `env-override`) in artifact JSON summaries with helper and executable contracts so downstream consumers can reason about timestamp provenance deterministically. | S4                | `@automation-tooling` |
 | TD-C060 | Artifact summary payload builder reuse    | Centralized cleanup/guard JSON payload construction in shared helper builders with strict input-contract tests, reducing duplicate summary assembly logic and machine-readable contract drift risk.                          | S4                | `@automation-tooling` |
 | TD-C061 | Artifact JSON outcome convenience flags   | Added boolean outcome flags (`hasRemovals`, `hasBlockedPaths`) to cleanup/guard JSON summaries with helper and executable contract coverage, simplifying downstream automation branching logic.                              | S4                | `@automation-tooling` |
+| TD-C062 | Guard summary count invariant             | Enforced shared guard-summary invariant (`stagedPathCount >= blockedPathCount`) with regression coverage, preventing impossible machine-readable payload combinations from propagating to automation consumers.              | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

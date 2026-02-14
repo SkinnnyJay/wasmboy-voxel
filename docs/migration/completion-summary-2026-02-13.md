@@ -512,6 +512,7 @@ Workflow hardening applied:
 - next-cycle `task154` is now completed by adding explicit `timestampSource` metadata in artifact JSON summaries, enabling downstream automation to distinguish system-clock timestamps from env-overridden timestamps deterministically
 - next-cycle `task155` is now completed by centralizing cleanup/guard summary payload construction in shared helper builders with strict input-contract coverage, reducing duplicate JSON assembly logic and contract drift risk
 - next-cycle `task156` is now completed by adding boolean outcome flags (`hasRemovals`, `hasBlockedPaths`) to artifact JSON summaries with helper/executable contract coverage for simpler downstream automation branching
+- next-cycle `task157` is now completed by enforcing guard summary invariants (`stagedPathCount >= blockedPathCount`) in shared builders with regression coverage, preventing impossible machine-readable payload combinations
 
 ## Security posture at completion
 

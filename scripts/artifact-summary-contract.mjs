@@ -126,6 +126,10 @@ export function buildGuardArtifactSummary(options) {
     throw new TypeError('Expected options.stagedPathCount to be a non-negative integer.');
   }
 
+  if (options.blockedPaths.length > options.stagedPathCount) {
+    throw new RangeError('Expected options.stagedPathCount to be >= blocked path count.');
+  }
+
   return {
     ...buildArtifactSummaryMetadata(GUARD_ARTIFACT_SUMMARY_TOOL, { timestampMs: options.timestampMs }),
     allowGeneratedEdits: options.allowGeneratedEdits,
