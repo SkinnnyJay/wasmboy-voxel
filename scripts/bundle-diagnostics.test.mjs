@@ -358,6 +358,31 @@ test('bundle-diagnostics de-duplicates equivalent relative and absolute matches'
   );
 });
 
+test('bundle-diagnostics de-duplicates equivalent symlinked path matches', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-symlink-dedupe-'));
+  const logsDirectory = path.join(tempDirectory, 'logs');
+  const symlinkDirectory = path.join(tempDirectory, 'linked-logs');
+  const duplicatePath = path.join(logsDirectory, 'duplicate.log');
+  fs.mkdirSync(logsDirectory, { recursive: true });
+  fs.writeFileSync(duplicatePath, 'duplicate entry\n', 'utf8');
+  fs.symlinkSync(logsDirectory, symlinkDirectory, 'dir');
+
+  runBundlerCommand(tempDirectory, [
+    '--output',
+    'artifacts/symlink-dedupe.tar.gz',
+    '--pattern',
+    'logs/*.log',
+    '--pattern',
+    'linked-logs/*.log',
+  ]);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/symlink-dedupe.tar.gz');
+  const canonicalEntries = archiveContents.filter(entry => /(?:^|\/)logs\/duplicate\.log$/u.test(entry));
+  const symlinkEntries = archiveContents.filter(entry => /(?:^|\/)linked-logs\/duplicate\.log$/u.test(entry));
+  assert.equal(canonicalEntries.length, 1, 'archive should include one canonical duplicate entry for symlinked matches');
+  assert.equal(symlinkEntries.length, 0, 'archive should not include duplicate symlink-path entries');
+});
+
 test('bundle-diagnostics ignores directories matched by patterns', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-dir-match-'));
   const logsDirectory = path.join(tempDirectory, 'logs');

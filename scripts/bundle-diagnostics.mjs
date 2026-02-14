@@ -214,6 +214,17 @@ function collectFiles(patterns, outputPath) {
   const filesByResolvedPath = new Map();
   const resolvedOutputPath = path.resolve(outputPath);
 
+  /**
+   * @param {string} filePath
+   */
+  function toCanonicalResolvedPath(filePath) {
+    try {
+      return fs.realpathSync(filePath);
+    } catch {
+      return filePath;
+    }
+  }
+
   function toArchivePath(filePath, resolvedFilePath) {
     const normalizedInputPath = path.normalize(filePath);
 
@@ -255,9 +266,10 @@ function collectFiles(patterns, outputPath) {
       }
 
       if (fs.existsSync(resolvedFilePath) && fs.statSync(resolvedFilePath).isFile()) {
+        const canonicalResolvedFilePath = toCanonicalResolvedPath(resolvedFilePath);
         const candidateArchivePath = toArchivePath(file, resolvedFilePath);
-        const existingArchivePath = filesByResolvedPath.get(resolvedFilePath);
-        filesByResolvedPath.set(resolvedFilePath, pickPreferredArchivePath(existingArchivePath, candidateArchivePath));
+        const existingArchivePath = filesByResolvedPath.get(canonicalResolvedFilePath);
+        filesByResolvedPath.set(canonicalResolvedFilePath, pickPreferredArchivePath(existingArchivePath, candidateArchivePath));
       }
     }
   }

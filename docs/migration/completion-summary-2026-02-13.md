@@ -351,6 +351,7 @@ Workflow hardening applied:
 - composed timeout precedence coverage now explicitly asserts plus-prefixed raw-timeout rejection (`+5000`, `+50`) across env and CLI override paths, locking strict digit-only override semantics
 - timeout Unicode-whitespace coverage now explicitly asserts trim acceptance for Unicode-padded numeric values and rejection for Unicode-whitespace-only values across direct and composed env/cli timeout paths
 - bundle-diagnostics parser now rejects malformed double-equals inline forms for `--output`, `--pattern`, and `--tar-timeout-ms`, with regression tests verifying explicit parse failures and usage guidance output
+- bundle-diagnostics file dedupe now canonicalizes matches using real paths, preventing duplicate archive entries when the same file is matched via symlink and non-symlink paths (covered by symlink dedupe regression tests)
 
 ## Security posture at completion
 
