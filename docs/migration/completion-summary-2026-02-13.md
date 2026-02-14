@@ -536,3 +536,4 @@ Result at completion: **0 vulnerabilities**.
 - Replaced locale-sensitive artifact summary path sorting with ordinal comparison and added mixed-case ordering regression coverage, ensuring deterministic machine-readable summary ordering across OS locale differences.
 - Added duplicate-path canonicalization in shared artifact summary builders so repeated input paths collapse to unique sorted outputs before count derivation, preventing inflated machine-readable totals from duplicate path inputs.
 - Added windows-separator path canonicalization in shared artifact summary builders so mixed `\` and `/` inputs normalize to one machine-readable path format prior to sort/de-dup/count derivation.
+- Added a full-repository audit deliverable (`docs/migration/repository-audit-backlog-2026-02-14.md`) with a risk summary, 100 concrete prioritized tasks, and a recommended first-10 execution sequence to drive the next hardening cycle.

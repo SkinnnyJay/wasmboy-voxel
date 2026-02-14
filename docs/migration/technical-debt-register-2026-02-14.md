@@ -88,6 +88,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C065 | Artifact summary locale-independent sort         | Replaced locale-sensitive path sorting with ordinal string comparison in artifact summary builders and added mixed-case regression coverage to lock cross-platform deterministic ordering in machine-readable payloads.         | S4                | `@automation-tooling` |
 | TD-C066 | Artifact summary duplicate-path canonicalization | De-duplicated repeated path entries in cleanup/guard summary builders before deriving totals, ensuring machine-readable path arrays and count fields remain canonical and consistent even under duplicate input paths.          | S4                | `@automation-tooling` |
 | TD-C067 | Artifact summary separator canonicalization      | Normalized windows-style separators to POSIX slash form before summary de-duplication/sorting so mixed slash/backslash inputs produce canonical machine-readable path lists and consistent counts across platforms.             | S4                | `@automation-tooling` |
+| TD-C068 | Post-migration audit backlog bootstrap           | Completed an end-to-end repository audit and published a prioritized 100-task implementation backlog with evidence/fix/acceptance/verification contracts in `docs/migration/repository-audit-backlog-2026-02-14.md`.            | S2                | `@triage`             |
 
 ## Triage cadence
 
