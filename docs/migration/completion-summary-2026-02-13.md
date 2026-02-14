@@ -451,6 +451,7 @@ Workflow hardening applied:
 - security advisory scanning is now automated per workspace lockfile (`security:scan:workspaces`, strict via `security:scan:workspaces:strict`), and `audit:check` now enforces the strict multi-workspace scan so transitive/root-package advisories across root/api/cli/debugger are CI-gated
 - onboarding documentation now includes a repository architecture diagram (`docs/migration/repository-architecture-map-2026-02-14.md`) mapping core/runtime/workspace/quality layers and contributor entry points
 - cross-subsystem performance budgets are now documented (`docs/migration/performance-budgets-2026-02-14.md`) for scripts/CLI/debugger/core paths, and debugger instrumentation now has an explicit smoke budget regression (`apps/debugger/test/performance-budget.test.ts`)
+- a weekly regression checklist now links CI status, local gates, focused safety checks, performance budgets, and docs/debt synchronization (`docs/migration/weekly-regression-checklist-2026-02-14.md`)
 
 ## Security posture at completion
 
