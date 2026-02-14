@@ -509,3 +509,4 @@
 - 2026-02-13: Added CLI startup-dispatch smoke benchmark coverage (`executeCli --help` loop with stdout mocking) and explicit latency budget assertions to catch major cold-path regressions.
 - 2026-02-13: Refactored CLI logger hot path to avoid spread/newline concatenation allocations (explicit record serialization + direct stream writes) and added dedicated logger output contract tests for stdout/stderr JSONL behavior.
 - 2026-02-13: Expanded CLI package documentation with non-zero exit code semantics and troubleshooting guidance, including failure JSON envelope examples and `InvalidInput`/`InvalidOperation`/`OutOfBounds` code interpretation.
+- 2026-02-13: Added release checklist automation for package publish dry-runs via `scripts/release-checklist-dry-run.mjs`, wired to `release:checklist:npm-dry-run` and the release workflow, with automation tests for success/failure command execution paths.

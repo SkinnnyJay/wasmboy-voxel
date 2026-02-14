@@ -80,6 +80,9 @@ jobs:
             npm run release:verify 2>&1 | tee release-verify.log
           fi
 
+      - name: Run npm publish dry-run checklist
+        run: npm run release:checklist:npm-dry-run
+
       - name: Compress diagnostics payload
         if: ${{ failure() || cancelled() }}
         run: >
