@@ -45,6 +45,18 @@ test('findBlockedArtifactPaths de-duplicates equivalent blocked paths', () => {
   assert.deepEqual(blockedPaths, ['dist/wasmboy.wasm.esm.js']);
 });
 
+test('findBlockedArtifactPaths de-duplicates case-variant blocked paths', () => {
+  const blockedPaths = findBlockedArtifactPaths([
+    'dist/wasmboy.wasm.esm.js',
+    'DIST/WASMBOY.WASM.ESM.JS',
+    'Dist\\WasmBoy.wasm.esm.js',
+    'TEST/INTEGRATION/HEADLESS.OUTPUT',
+    'test/integration/headless.output',
+  ]);
+
+  assert.deepEqual(blockedPaths, ['TEST/INTEGRATION/HEADLESS.OUTPUT', 'dist/wasmboy.wasm.esm.js']);
+});
+
 test('findBlockedArtifactPaths sorts blocked paths using ordinal ordering', () => {
   const blockedPaths = findBlockedArtifactPaths(['dist/a-generated.js', 'dist/B-generated.js']);
 

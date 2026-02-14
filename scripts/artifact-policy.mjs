@@ -64,26 +64,25 @@ function toPolicyRelativePath(normalizedPath) {
  * @param {string} candidatePath
  */
 function isIntegrationGeneratedOutput(candidatePath) {
-  return (
-    candidatePath.startsWith(BLOCKED_INTEGRATION_OUTPUT_PREFIX) &&
-    (candidatePath.endsWith('.output') || candidatePath.endsWith('.output.png'))
-  );
+  const lowerPath = candidatePath.toLowerCase();
+  return lowerPath.startsWith(BLOCKED_INTEGRATION_OUTPUT_PREFIX) && (lowerPath.endsWith('.output') || lowerPath.endsWith('.output.png'));
 }
 
 /**
  * @param {string} candidatePath
  */
 function isAccuracyGeneratedOutput(candidatePath) {
-  if (!candidatePath.startsWith(BLOCKED_ACCURACY_OUTPUT_PREFIX)) {
+  const lowerPath = candidatePath.toLowerCase();
+  if (!lowerPath.startsWith(BLOCKED_ACCURACY_OUTPUT_PREFIX)) {
     return false;
   }
 
-  if (candidatePath.endsWith('.output')) {
-    return !candidatePath.endsWith('.golden.output');
+  if (lowerPath.endsWith('.output')) {
+    return !lowerPath.endsWith('.golden.output');
   }
 
-  if (candidatePath.endsWith('.png')) {
-    return !candidatePath.endsWith('.golden.png');
+  if (lowerPath.endsWith('.png')) {
+    return !lowerPath.endsWith('.golden.png');
   }
 
   return false;
@@ -93,12 +92,13 @@ function isAccuracyGeneratedOutput(candidatePath) {
  * @param {string} candidatePath
  */
 function isPerformanceGeneratedOutput(candidatePath) {
-  if (!candidatePath.startsWith(BLOCKED_PERFORMANCE_OUTPUT_PREFIX)) {
+  const lowerPath = candidatePath.toLowerCase();
+  if (!lowerPath.startsWith(BLOCKED_PERFORMANCE_OUTPUT_PREFIX)) {
     return false;
   }
 
-  if (candidatePath.endsWith('.png')) {
-    return !candidatePath.endsWith('.noPerformanceOptions.png');
+  if (lowerPath.endsWith('.png')) {
+    return !lowerPath.endsWith('.noperformanceoptions.png');
   }
 
   return false;
@@ -130,5 +130,6 @@ export function shouldRemoveGeneratedFile(relativePath) {
 export function shouldBlockStagedArtifactPath(stagedPath) {
   assertPathString(stagedPath, 'stagedPath');
   const normalizedPath = toPolicyRelativePath(normalizeArtifactPath(stagedPath));
-  return BLOCKED_ARTIFACT_PREFIXES.some(prefix => normalizedPath.startsWith(prefix)) || matchesGeneratedArtifactPolicy(normalizedPath);
+  const normalizedLowerPath = normalizedPath.toLowerCase();
+  return BLOCKED_ARTIFACT_PREFIXES.some(prefix => normalizedLowerPath.startsWith(prefix)) || matchesGeneratedArtifactPolicy(normalizedPath);
 }

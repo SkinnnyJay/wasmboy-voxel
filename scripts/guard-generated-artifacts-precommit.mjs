@@ -18,7 +18,7 @@ export function findBlockedArtifactPaths(stagedPaths) {
     throw new TypeError('[guard:generated-artifacts] Expected stagedPaths to be an array.');
   }
 
-  const blockedPathSet = new Set();
+  const blockedPathByCaseInsensitiveKey = new Map();
 
   for (let index = 0; index < stagedPaths.length; index += 1) {
     const stagedPath = stagedPaths[index];
@@ -27,11 +27,14 @@ export function findBlockedArtifactPaths(stagedPaths) {
     }
     const normalizedPath = normalizeArtifactPath(stagedPath);
     if (shouldBlockStagedArtifactPath(normalizedPath)) {
-      blockedPathSet.add(normalizedPath);
+      const caseInsensitivePathKey = normalizedPath.toLowerCase();
+      if (!blockedPathByCaseInsensitiveKey.has(caseInsensitivePathKey)) {
+        blockedPathByCaseInsensitiveKey.set(caseInsensitivePathKey, normalizedPath);
+      }
     }
   }
 
-  return [...blockedPathSet].sort((left, right) => (left === right ? 0 : left < right ? -1 : 1));
+  return [...blockedPathByCaseInsensitiveKey.values()].sort((left, right) => (left === right ? 0 : left < right ? -1 : 1));
 }
 
 /**
