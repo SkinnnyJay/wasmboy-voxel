@@ -1,4 +1,5 @@
 import { spawnSync } from 'node:child_process';
+import { attemptWindowsTimeoutTerminationFallback, resolveTimeoutKillSignal } from './subprocess-timeout-signals.mjs';
 
 export const DEFAULT_SUBPROCESS_TIMEOUT_MS = 30000;
 
@@ -38,11 +39,12 @@ export function runSubprocess(command, args, options = {}) {
       ...(options.env ?? {}),
     },
     timeout: timeoutMs,
-    killSignal: 'SIGTERM',
+    killSignal: resolveTimeoutKillSignal(),
   });
 
   if (result.error) {
     if (result.error.code === 'ETIMEDOUT') {
+      attemptWindowsTimeoutTerminationFallback(result.pid);
       throw new Error(`[subprocess:test-harness] ${description} timed out after ${String(timeoutMs)}ms.`);
     }
 

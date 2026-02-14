@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { buildGuardArtifactSummary, resolveArtifactSummaryTimestampOverride } from './artifact-summary-contract.mjs';
 import { normalizeArtifactPath, shouldBlockStagedArtifactPath } from './artifact-policy.mjs';
 import { resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
+import { attemptWindowsTimeoutTerminationFallback, resolveTimeoutKillSignal } from './subprocess-timeout-signals.mjs';
 const ALLOW_OVERRIDE_ENV_NAME = 'WASMBOY_ALLOW_GENERATED_EDITS';
 const GUARD_GIT_TIMEOUT_ENV_VARIABLE = 'GUARD_GENERATED_ARTIFACTS_GIT_TIMEOUT_MS';
 const DEFAULT_GUARD_GIT_TIMEOUT_MS = 120000;
@@ -84,11 +85,12 @@ function readStagedPathsFromGit() {
     encoding: 'utf8',
     env: process.env,
     timeout: timeoutMs,
-    killSignal: 'SIGTERM',
+    killSignal: resolveTimeoutKillSignal(),
   });
 
   if (result.error) {
     if (result.error.code === 'ETIMEDOUT') {
+      attemptWindowsTimeoutTerminationFallback(result.pid);
       throw new Error(`git diff --cached timed out after ${String(timeoutMs)}ms.`);
     }
     throw new Error(`Failed to inspect staged files: ${result.error.message}`);

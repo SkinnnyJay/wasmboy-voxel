@@ -5,6 +5,7 @@ import { spawnSync } from 'node:child_process';
 import { create as createTarArchive } from 'tar';
 import { resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
 import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
+import { attemptWindowsTimeoutTerminationFallback, resolveTimeoutKillSignal } from './subprocess-timeout-signals.mjs';
 
 /**
  * Usage:
@@ -305,11 +306,12 @@ function createArchiveWithTarCommand(outputPath, files, timeoutMs) {
   const archiveResult = spawnSync('tar', ['-czf', outputPath, '--', ...files], {
     stdio: 'inherit',
     timeout: timeoutMs,
-    killSignal: 'SIGTERM',
+    killSignal: resolveTimeoutKillSignal(),
   });
 
   if (archiveResult.error) {
     if (archiveResult.error.code === 'ETIMEDOUT') {
+      attemptWindowsTimeoutTerminationFallback(archiveResult.pid);
       throw new Error(`tar timed out after ${timeoutMs}ms`);
     }
 
