@@ -430,6 +430,7 @@ Workflow hardening applied:
 - core suite now includes serialization determinism coverage (`test/core/serialization-determinism-test.cjs`) asserting cartridge/gameboy/palette memory snapshots remain byte-stable across repeated save/load cycles
 - memory banking/write-trap control flow was audited for branch-heavy repeated checks (`docs/migration/core-memory-banking-branch-audit-2026-02-14.md`), including branch-density hotspots and low-risk refactor candidates for MBC flag caching and trap-path decomposition
 - core memory mapping now rejects invalid Game Boy offsets via explicit sentinel handling (`-1`) in `getWasmBoyOffsetFromGameBoyOffset`, and load/store helpers now guard against negative wasm offsets (`0xff` read fallback, ignored invalid writes); coverage is enforced by `test/core/invalid-memory-trap-address-test.cjs` in all core suite script variants
+- core/wrapper memory-layout coupling is now explicitly documented in `docs/migration/core-wrapper-offset-dependency-map-2026-02-14.md`, including a constant-level map (`DEBUG_GAMEBOY_MEMORY_LOCATION`, `GBC_PALETTE_LOCATION`, `GBC_PALETTE_SIZE`), derived wrapper offset formulas, and a compatibility update checklist
 
 ## Security posture at completion
 
