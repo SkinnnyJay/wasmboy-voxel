@@ -87,6 +87,31 @@ exit 1
   );
 }
 
+function writeDeletingFailingFakeTar(tempDirectory) {
+  return writeFakeExecutable(
+    tempDirectory,
+    'tar',
+    `#!/usr/bin/env bash
+placeholder_path="\${@: -1}"
+rm -f "$placeholder_path"
+exit 1
+`,
+  );
+}
+
+function writePlaceholderReplacingFailingFakeTar(tempDirectory) {
+  return writeFakeExecutable(
+    tempDirectory,
+    'tar',
+    `#!/usr/bin/env bash
+placeholder_path="\${@: -1}"
+rm -f "$placeholder_path"
+mkdir -p "$placeholder_path"
+exit 1
+`,
+  );
+}
+
 test('bundle-diagnostics archives matched files', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-match-'));
   const logsDirectory = path.join(tempDirectory, 'logs');
@@ -135,6 +160,46 @@ test('bundle-diagnostics cleans placeholder files when archive creation fails', 
     fs.existsSync(path.join(tempDirectory, 'artifacts/empty-failing.txt')),
     false,
     'placeholder file should be removed when archive creation fails',
+  );
+});
+
+test('bundle-diagnostics tolerates placeholder files removed by failing tar commands', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-empty-failing-tar-removes-placeholder-'));
+  const fakeBinDirectory = writeDeletingFailingFakeTar(tempDirectory);
+  const output = runBundlerCommandExpectFailure(
+    tempDirectory,
+    ['--output', 'artifacts/empty-failing-removed.tar.gz', '--pattern', 'missing/*.log'],
+    {
+      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+    },
+  );
+
+  assert.match(output, /tar exited with status 1/u);
+  assert.doesNotMatch(output, /Failed to remove temporary placeholder file/u);
+  assert.equal(
+    fs.existsSync(path.join(tempDirectory, 'artifacts/empty-failing-removed.txt')),
+    false,
+    'placeholder file should remain absent when tar removed it before cleanup',
+  );
+});
+
+test('bundle-diagnostics reports placeholder cleanup failures without masking archive errors', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-empty-failing-tar-placeholder-dir-'));
+  const fakeBinDirectory = writePlaceholderReplacingFailingFakeTar(tempDirectory);
+  const output = runBundlerCommandExpectFailure(
+    tempDirectory,
+    ['--output', 'artifacts/empty-failing-cleanup.tar.gz', '--pattern', 'missing/*.log'],
+    {
+      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+    },
+  );
+
+  assert.match(output, /tar exited with status 1/u);
+  assert.match(output, /Failed to remove temporary placeholder file/u);
+  assert.equal(
+    fs.existsSync(path.join(tempDirectory, 'artifacts/empty-failing-cleanup.txt')),
+    true,
+    'placeholder cleanup failures should leave the placeholder path for diagnosis',
   );
 });
 

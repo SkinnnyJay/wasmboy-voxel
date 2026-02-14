@@ -368,7 +368,12 @@ function main() {
     process.exitCode = 1;
   } finally {
     if (placeholderFile && fs.existsSync(placeholderFile)) {
-      fs.unlinkSync(placeholderFile);
+      try {
+        fs.unlinkSync(placeholderFile);
+      } catch (error) {
+        console.error(`[bundle-diagnostics] Failed to remove temporary placeholder file: ${toErrorMessage(error)}`);
+        process.exitCode = 1;
+      }
     }
   }
 }

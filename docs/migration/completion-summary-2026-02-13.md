@@ -371,6 +371,7 @@ Workflow hardening applied:
 - bundle-diagnostics help-literal handling now includes long/short alias-collision regressions for trailing help flags after message literals in both split and equals forms (`--help` value followed by `-h`, and `-h` value followed by `--help`)
 - cli-timeout parsing now includes null-byte timeout regression coverage for both direct env parsing and env+cli precedence paths, ensuring embedded null bytes are rejected deterministically
 - bundle-diagnostics dedupe coverage now includes case-variant alias collisions (`logs/` and `LOGS/` symlink aliases) to ensure same-file aliases collapse into a single archive entry
+- bundle-diagnostics placeholder cleanup handling now includes failure-mode coverage for tar-side placeholder removal and cleanup unlink errors, with explicit cleanup diagnostics that do not mask primary archive failures
 
 ## Security posture at completion
 
