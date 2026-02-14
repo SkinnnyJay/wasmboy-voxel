@@ -778,3 +778,4 @@
 - 2026-02-14: Re-ran audit umbrella gate (`npm run audit:check`) to reconfirm strict workspace security scanning remains green with zero vulnerabilities across root/API/CLI/debugger workspaces and a clean working tree.
 - 2026-02-14: Re-ran strict CI alias command (`npm run ci:local:strict`) to reconfirm the full no-build strict quality chain (automation, stack smoke/lint/typecheck/test, integration/core/performance/security) remains green with a clean working tree.
 - 2026-02-14: Re-ran integration no-build CI aggregate (`npm run test:integration:nobuild:ci`) to reconfirm lib/voxel/headless/compat/memory/tick/baseline integration suites plus cleanup-wrapped headless artifact hygiene remain green with a clean working tree.
+- 2026-02-14: Re-ran core no-build CI aggregate (`npm run test:core:nobuild:ci`) to reconfirm save-state/isolation/timer/interrupt/audio/memory/graphics regression suites remain green with a clean working tree.
