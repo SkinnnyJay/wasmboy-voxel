@@ -504,6 +504,7 @@ Workflow hardening applied:
 - next-cycle `task146` is now completed by enforcing options-shape/type validation in `validateGeneratedArtifactStaging`, hardening guard helper behavior and diagnostics for malformed automation caller payloads
 - next-cycle `task147` is now completed by implementing help-first argument semantics in cleanup/guard CLIs (`--help/-h` always prints usage), with parser and subprocess contract coverage for deterministic operator behavior
 - next-cycle `task148` is now completed by adding explicit machine-readable summary count fields (`deletedDirectoryCount`, `deletedFileCount`, `blockedPathCount`) and locking their contracts/documentation for downstream automation consumers
+- next-cycle `task149` is now completed by centralizing executable-contract count-consistency assertions so JSON count fields must match their corresponding list lengths across cleanup/guard scenarios
 
 ## Security posture at completion
 
