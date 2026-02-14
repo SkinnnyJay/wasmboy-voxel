@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   findBlockedArtifactPaths,
   parseGeneratedArtifactGuardArgs,
+  resolveGuardGitTimeoutFromEnv,
   validateGeneratedArtifactStaging,
 } from './guard-generated-artifacts-precommit.mjs';
 
@@ -143,4 +144,17 @@ test('parseGeneratedArtifactGuardArgs rejects duplicate flags', () => {
 test('parseGeneratedArtifactGuardArgs validates argv shape and token types', () => {
   assert.throws(() => parseGeneratedArtifactGuardArgs('--json'), /Expected argv to be an array\./u);
   assert.throws(() => parseGeneratedArtifactGuardArgs(['--json', 3]), /Expected argv\[1\] to be a string\./u);
+});
+
+test('resolveGuardGitTimeoutFromEnv parses and validates environment overrides', () => {
+  assert.equal(resolveGuardGitTimeoutFromEnv({}), 120000);
+  assert.equal(resolveGuardGitTimeoutFromEnv({ GUARD_GENERATED_ARTIFACTS_GIT_TIMEOUT_MS: ' 7000 ' }), 7000);
+  assert.throws(
+    () => resolveGuardGitTimeoutFromEnv({ GUARD_GENERATED_ARTIFACTS_GIT_TIMEOUT_MS: '0' }),
+    /Invalid GUARD_GENERATED_ARTIFACTS_GIT_TIMEOUT_MS value: 0/u,
+  );
+  assert.throws(
+    () => resolveGuardGitTimeoutFromEnv({ GUARD_GENERATED_ARTIFACTS_GIT_TIMEOUT_MS: 'NaN' }),
+    /Invalid GUARD_GENERATED_ARTIFACTS_GIT_TIMEOUT_MS value: NaN/u,
+  );
 });

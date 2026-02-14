@@ -542,3 +542,4 @@ Result at completion: **0 vulnerabilities**.
 - Added dependency-freshness subprocess timeout controls (`DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS`) with timeout-specific failure diagnostics and regression coverage to prevent indefinite npm outdated hangs.
 - Added workspace-security-scan subprocess timeout controls (`SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS`) with timeout-specific diagnostics and regression coverage to prevent indefinite npm audit hangs across workspaces.
 - Added release-checklist subprocess timeout controls (`RELEASE_CHECKLIST_NPM_TIMEOUT_MS`) with package-context timeout diagnostics and regression coverage to prevent indefinite npm publish dry-run hangs.
+- Added generated-artifact guard staged-git timeout controls (`GUARD_GENERATED_ARTIFACTS_GIT_TIMEOUT_MS`) with timeout diagnostics and regression coverage to prevent indefinite precommit guard hangs.

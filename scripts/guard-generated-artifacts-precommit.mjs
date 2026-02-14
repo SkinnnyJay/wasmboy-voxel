@@ -3,7 +3,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildGuardArtifactSummary, resolveArtifactSummaryTimestampOverride } from './artifact-summary-contract.mjs';
 import { normalizeArtifactPath, shouldBlockStagedArtifactPath } from './artifact-policy.mjs';
+import { resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
 const ALLOW_OVERRIDE_ENV_NAME = 'WASMBOY_ALLOW_GENERATED_EDITS';
+const GUARD_GIT_TIMEOUT_ENV_VARIABLE = 'GUARD_GENERATED_ARTIFACTS_GIT_TIMEOUT_MS';
+const DEFAULT_GUARD_GIT_TIMEOUT_MS = 120000;
 const SCRIPT_USAGE = `Usage: node scripts/guard-generated-artifacts-precommit.mjs [--json] [--help]\n\nOptions:\n  --json      Emit machine-readable JSON summary.\n  --help, -h  Show this usage message.\n`;
 
 /**
@@ -58,13 +61,36 @@ export function validateGeneratedArtifactStaging(stagedPaths, options = {}) {
   };
 }
 
+/**
+ * @param {Record<string, unknown>} environment
+ */
+export function resolveGuardGitTimeoutFromEnv(environment) {
+  return resolveTimeoutFromCliAndEnv({
+    defaultValue: DEFAULT_GUARD_GIT_TIMEOUT_MS,
+    env: {
+      name: GUARD_GIT_TIMEOUT_ENV_VARIABLE,
+      rawValue: environment[GUARD_GIT_TIMEOUT_ENV_VARIABLE],
+    },
+    cli: {
+      name: '--guard-git-timeout-ms',
+      rawValue: '',
+    },
+  });
+}
+
 function readStagedPathsFromGit() {
+  const timeoutMs = resolveGuardGitTimeoutFromEnv(process.env);
   const result = spawnSync('git', ['diff', '--cached', '--name-only', '--diff-filter=ACMR'], {
     encoding: 'utf8',
     env: process.env,
+    timeout: timeoutMs,
+    killSignal: 'SIGTERM',
   });
 
   if (result.error) {
+    if (result.error.code === 'ETIMEDOUT') {
+      throw new Error(`git diff --cached timed out after ${String(timeoutMs)}ms.`);
+    }
     throw new Error(`Failed to inspect staged files: ${result.error.message}`);
   }
 
