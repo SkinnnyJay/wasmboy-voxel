@@ -786,3 +786,4 @@
 - 2026-02-14: Re-ran strict release wrapper (`npm run release:verify:strict`) to reconfirm strict CI-parity chain plus changeset status remain green end-to-end with a clean working tree.
 - 2026-02-14: Re-ran automation contract/tooling gate (`npm run automation:check`) to reconfirm workflow formatting, memory-layout/core-offset contracts, library console-lint guard, and script test harness coverage remain green with a clean working tree.
 - 2026-02-14: Re-ran scoped workspace smoke gate (`npm run stack:test:smoke:scopes`) to reconfirm package/app test entrypoint wiring across API/CLI/debugger workspaces remains green with a clean working tree.
+- 2026-02-14: Re-ran workspace aggregate typecheck gate (`npm run stack:typecheck`) to reconfirm package/app TypeScript project checks remain green with a clean working tree.
