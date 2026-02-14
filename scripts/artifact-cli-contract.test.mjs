@@ -360,3 +360,21 @@ test('generated artifact guard JSON output sorts blocked paths deterministically
   assertSummaryCountConsistency(parsedOutput, 'blockedPathCount', 'blockedPaths');
   assert.equal(parsedOutput.stagedPathCount, 2);
 });
+
+test('generated artifact guard JSON output uses ordinal blocked path ordering', () => {
+  const tempRepo = createTempGitRepoWithStagedPaths('artifact-guard-json-ordinal-', ['dist/a-generated.js', 'dist/B-generated.js']);
+
+  const result = runScript(guardArtifactsScriptPath, ['--json'], { cwd: tempRepo.tempRepoRoot });
+
+  assert.equal(result.status, 1);
+  assert.equal(result.stderr, '');
+  const parsedOutput = JSON.parse(result.stdout.trim());
+  assertSummaryMetadata(parsedOutput, 'guard:generated-artifacts');
+  assert.equal(parsedOutput.allowGeneratedEdits, false);
+  assert.equal(parsedOutput.isValid, false);
+  assert.deepEqual(parsedOutput.blockedPaths, ['dist/B-generated.js', 'dist/a-generated.js']);
+  assert.equal(parsedOutput.blockedPathCount, 2);
+  assert.equal(parsedOutput.hasBlockedPaths, true);
+  assertSummaryCountConsistency(parsedOutput, 'blockedPathCount', 'blockedPaths');
+  assert.equal(parsedOutput.stagedPathCount, 2);
+});

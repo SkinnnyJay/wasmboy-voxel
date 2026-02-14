@@ -27,7 +27,7 @@ export function findBlockedArtifactPaths(stagedPaths) {
     }
   }
 
-  return [...blockedPathSet].sort((left, right) => left.localeCompare(right));
+  return [...blockedPathSet].sort((left, right) => (left === right ? 0 : left < right ? -1 : 1));
 }
 
 /**
