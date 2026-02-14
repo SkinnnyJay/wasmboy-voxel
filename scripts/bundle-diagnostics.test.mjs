@@ -77,6 +77,17 @@ exit 0
   );
 }
 
+function writeArgumentLoggingFakeTar(tempDirectory) {
+  return writeFakeExecutable(
+    tempDirectory,
+    'tar',
+    `#!/usr/bin/env bash
+echo "$*" >> "$BUNDLE_DIAGNOSTICS_TAR_ARGS_LOG"
+exit 0
+`,
+  );
+}
+
 function writeFailingFakeTar(tempDirectory) {
   return writeFakeExecutable(
     tempDirectory,
@@ -283,6 +294,30 @@ test('bundle-diagnostics accepts custom messages that begin with double dashes',
 
   const placeholderText = readArchiveEntry(tempDirectory, 'artifacts/custom-dash-empty.tar.gz', placeholderEntry).trim();
   assert.equal(placeholderText, customMessage, 'placeholder file should preserve dash-prefixed message text');
+});
+
+test('bundle-diagnostics sorts matched file arguments with ordinal ordering', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-ordinal-order-'));
+  const logsDirectory = path.join(tempDirectory, 'logs');
+  fs.mkdirSync(logsDirectory, { recursive: true });
+  fs.writeFileSync(path.join(logsDirectory, 'a.log'), 'lower\n', 'utf8');
+  fs.writeFileSync(path.join(logsDirectory, 'B.log'), 'upper\n', 'utf8');
+
+  const tarArgsLogPath = path.join(tempDirectory, 'tar-args.log');
+  const fakeBinDirectory = writeArgumentLoggingFakeTar(tempDirectory);
+
+  runBundlerCommand(tempDirectory, ['--output', 'artifacts/ordered.tar.gz', '--pattern', 'logs/*.log'], {
+    PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+    BUNDLE_DIAGNOSTICS_TAR_ARGS_LOG: tarArgsLogPath,
+  });
+
+  const loggedArguments = fs
+    .readFileSync(tarArgsLogPath, 'utf8')
+    .trim()
+    .split('\n')
+    .filter(line => line.length > 0);
+  assert.equal(loggedArguments.length, 1);
+  assert.match(loggedArguments[0], /-- logs\/B\.log logs\/a\.log$/u);
 });
 
 test('bundle-diagnostics accepts custom messages equal to --help', () => {

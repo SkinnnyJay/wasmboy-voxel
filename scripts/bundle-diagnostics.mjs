@@ -39,6 +39,17 @@ Options:
 Environment:
   ${TAR_TIMEOUT_ENV_VARIABLE}=<ms>  tar timeout in milliseconds (default: ${DEFAULT_TAR_TIMEOUT_MS})`;
 
+/**
+ * @param {string} left
+ * @param {string} right
+ */
+function compareOrdinalStrings(left, right) {
+  if (left === right) {
+    return 0;
+  }
+  return left < right ? -1 : 1;
+}
+
 function parseArgs(argv) {
   /** @type {{output: string; patterns: string[]; message: string; showHelp: boolean; tarTimeoutMsOverride: string}} */
   const parsed = {
@@ -257,7 +268,7 @@ function collectFiles(patterns, outputPath) {
       return candidatePath.length < existingPath.length ? candidatePath : existingPath;
     }
 
-    return candidatePath.localeCompare(existingPath) < 0 ? candidatePath : existingPath;
+    return compareOrdinalStrings(candidatePath, existingPath) < 0 ? candidatePath : existingPath;
   }
 
   for (const pattern of patterns) {
@@ -277,7 +288,7 @@ function collectFiles(patterns, outputPath) {
     }
   }
 
-  return [...filesByResolvedPath.values()].sort((left, right) => left.localeCompare(right));
+  return [...filesByResolvedPath.values()].sort(compareOrdinalStrings);
 }
 
 function createPlaceholderFile(outputPath, message) {

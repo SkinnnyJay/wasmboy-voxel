@@ -96,6 +96,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C073 | Release checklist subprocess timeout guard         | Added configurable npm publish dry-run timeout handling (`RELEASE_CHECKLIST_NPM_TIMEOUT_MS`) with package-context timeout diagnostics and regression coverage to prevent indefinite release checklist hangs.                       | S4                | `@automation-tooling` |
 | TD-C074 | Generated artifact guard git timeout guard         | Added configurable staged-git inspection timeout handling (`GUARD_GENERATED_ARTIFACTS_GIT_TIMEOUT_MS`) with timeout diagnostics and regression coverage, preventing indefinite precommit guard hangs.                              | S4                | `@automation-tooling` |
 | TD-C075 | Console usage lint deterministic ordering          | Replaced locale-sensitive library console-usage violation sorting with ordinal comparators and added mixed-case path ordering regression coverage to keep lint output deterministic across locales.                                | S4                | `@automation-tooling` |
+| TD-C076 | Diagnostics bundle deterministic path ordering     | Replaced locale-sensitive diagnostics bundle path ordering tie-breakers with ordinal comparators and added mixed-case subprocess argument-order regression coverage for deterministic archive input ordering across locales.       | S4                | `@automation-tooling` |
 
 ## Triage cadence
 
