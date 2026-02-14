@@ -24,6 +24,22 @@ function assertTimestampMs(timestampMs) {
 }
 
 /**
+ * @param {unknown} candidateArray
+ * @param {string} parameterName
+ */
+function assertStringArray(candidateArray, parameterName) {
+  if (!Array.isArray(candidateArray)) {
+    throw new TypeError(`Expected ${parameterName} to be an array.`);
+  }
+
+  for (let index = 0; index < candidateArray.length; index += 1) {
+    if (typeof candidateArray[index] !== 'string') {
+      throw new TypeError(`Expected ${parameterName}[${String(index)}] to be a string.`);
+    }
+  }
+}
+
+/**
  * @param {string} tool
  * @param {{
  *   timestampMs?: number;
@@ -45,6 +61,77 @@ export function buildArtifactSummaryMetadata(tool, options = {}) {
     schemaVersion: ARTIFACT_SUMMARY_SCHEMA_VERSION,
     timestampSource,
     timestampMs,
+  };
+}
+
+/**
+ * @param {{
+ *   dryRun: boolean;
+ *   deletedDirectories: string[];
+ *   deletedFiles: string[];
+ *   timestampMs?: number;
+ * }} options
+ */
+export function buildCleanupArtifactSummary(options) {
+  if (options === null || typeof options !== 'object') {
+    throw new TypeError('Expected options to be an object.');
+  }
+
+  if (typeof options.dryRun !== 'boolean') {
+    throw new TypeError('Expected options.dryRun to be a boolean.');
+  }
+
+  assertStringArray(options.deletedDirectories, 'options.deletedDirectories');
+  assertStringArray(options.deletedFiles, 'options.deletedFiles');
+
+  const removedCount = options.deletedDirectories.length + options.deletedFiles.length;
+
+  return {
+    ...buildArtifactSummaryMetadata(CLEAN_ARTIFACT_SUMMARY_TOOL, { timestampMs: options.timestampMs }),
+    mode: options.dryRun ? 'dry-run' : 'apply',
+    removedCount,
+    deletedDirectoryCount: options.deletedDirectories.length,
+    deletedFileCount: options.deletedFiles.length,
+    deletedDirectories: options.deletedDirectories,
+    deletedFiles: options.deletedFiles,
+  };
+}
+
+/**
+ * @param {{
+ *   allowGeneratedEdits: boolean;
+ *   isValid: boolean;
+ *   blockedPaths: string[];
+ *   stagedPathCount: number;
+ *   timestampMs?: number;
+ * }} options
+ */
+export function buildGuardArtifactSummary(options) {
+  if (options === null || typeof options !== 'object') {
+    throw new TypeError('Expected options to be an object.');
+  }
+
+  if (typeof options.allowGeneratedEdits !== 'boolean') {
+    throw new TypeError('Expected options.allowGeneratedEdits to be a boolean.');
+  }
+
+  if (typeof options.isValid !== 'boolean') {
+    throw new TypeError('Expected options.isValid to be a boolean.');
+  }
+
+  assertStringArray(options.blockedPaths, 'options.blockedPaths');
+
+  if (!Number.isInteger(options.stagedPathCount) || options.stagedPathCount < 0) {
+    throw new TypeError('Expected options.stagedPathCount to be a non-negative integer.');
+  }
+
+  return {
+    ...buildArtifactSummaryMetadata(GUARD_ARTIFACT_SUMMARY_TOOL, { timestampMs: options.timestampMs }),
+    allowGeneratedEdits: options.allowGeneratedEdits,
+    isValid: options.isValid,
+    blockedPaths: options.blockedPaths,
+    blockedPathCount: options.blockedPaths.length,
+    stagedPathCount: options.stagedPathCount,
   };
 }
 

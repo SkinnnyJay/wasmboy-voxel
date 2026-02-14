@@ -4,6 +4,8 @@ import {
   ARTIFACT_SUMMARY_TIMESTAMP_ENV_NAME,
   ARTIFACT_SUMMARY_SCHEMA_VERSION,
   buildArtifactSummaryMetadata,
+  buildCleanupArtifactSummary,
+  buildGuardArtifactSummary,
   CLEAN_ARTIFACT_SUMMARY_TOOL,
   GUARD_ARTIFACT_SUMMARY_TOOL,
   resolveArtifactSummaryTimestampOverride,
@@ -83,5 +85,85 @@ test('resolveArtifactSummaryTimestampOverride validates environment and timestam
   assert.throws(
     () => resolveArtifactSummaryTimestampOverride({ [ARTIFACT_SUMMARY_TIMESTAMP_ENV_NAME]: '0' }),
     /WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS must be a positive integer when provided\./u,
+  );
+});
+
+test('buildCleanupArtifactSummary emits derived count fields and mode', () => {
+  const summary = buildCleanupArtifactSummary({
+    dryRun: true,
+    deletedDirectories: ['build'],
+    deletedFiles: ['test/integration/headless.output'],
+    timestampMs: 789,
+  });
+
+  assert.deepEqual(summary, {
+    tool: CLEAN_ARTIFACT_SUMMARY_TOOL,
+    schemaVersion: ARTIFACT_SUMMARY_SCHEMA_VERSION,
+    timestampSource: SUMMARY_TIMESTAMP_SOURCE_ENV_OVERRIDE,
+    timestampMs: 789,
+    mode: 'dry-run',
+    removedCount: 2,
+    deletedDirectoryCount: 1,
+    deletedFileCount: 1,
+    deletedDirectories: ['build'],
+    deletedFiles: ['test/integration/headless.output'],
+  });
+});
+
+test('buildCleanupArtifactSummary validates options contracts', () => {
+  assert.throws(() => buildCleanupArtifactSummary(null), /Expected options to be an object\./u);
+  assert.throws(
+    () => buildCleanupArtifactSummary({ dryRun: 'yes', deletedDirectories: [], deletedFiles: [] }),
+    /Expected options\.dryRun to be a boolean\./u,
+  );
+  assert.throws(
+    () => buildCleanupArtifactSummary({ dryRun: false, deletedDirectories: [7], deletedFiles: [] }),
+    /Expected options\.deletedDirectories\[0\] to be a string\./u,
+  );
+  assert.throws(
+    () => buildCleanupArtifactSummary({ dryRun: false, deletedDirectories: [], deletedFiles: [7] }),
+    /Expected options\.deletedFiles\[0\] to be a string\./u,
+  );
+});
+
+test('buildGuardArtifactSummary emits derived blocked count fields', () => {
+  const summary = buildGuardArtifactSummary({
+    allowGeneratedEdits: false,
+    isValid: false,
+    blockedPaths: ['build/a-generated.js'],
+    stagedPathCount: 2,
+    timestampMs: 789,
+  });
+
+  assert.deepEqual(summary, {
+    tool: GUARD_ARTIFACT_SUMMARY_TOOL,
+    schemaVersion: ARTIFACT_SUMMARY_SCHEMA_VERSION,
+    timestampSource: SUMMARY_TIMESTAMP_SOURCE_ENV_OVERRIDE,
+    timestampMs: 789,
+    allowGeneratedEdits: false,
+    isValid: false,
+    blockedPaths: ['build/a-generated.js'],
+    blockedPathCount: 1,
+    stagedPathCount: 2,
+  });
+});
+
+test('buildGuardArtifactSummary validates options contracts', () => {
+  assert.throws(() => buildGuardArtifactSummary(null), /Expected options to be an object\./u);
+  assert.throws(
+    () => buildGuardArtifactSummary({ allowGeneratedEdits: 'yes', isValid: true, blockedPaths: [], stagedPathCount: 0 }),
+    /Expected options\.allowGeneratedEdits to be a boolean\./u,
+  );
+  assert.throws(
+    () => buildGuardArtifactSummary({ allowGeneratedEdits: true, isValid: 'yes', blockedPaths: [], stagedPathCount: 0 }),
+    /Expected options\.isValid to be a boolean\./u,
+  );
+  assert.throws(
+    () => buildGuardArtifactSummary({ allowGeneratedEdits: true, isValid: true, blockedPaths: [3], stagedPathCount: 0 }),
+    /Expected options\.blockedPaths\[0\] to be a string\./u,
+  );
+  assert.throws(
+    () => buildGuardArtifactSummary({ allowGeneratedEdits: true, isValid: true, blockedPaths: [], stagedPathCount: -1 }),
+    /Expected options\.stagedPathCount to be a non-negative integer\./u,
   );
 });

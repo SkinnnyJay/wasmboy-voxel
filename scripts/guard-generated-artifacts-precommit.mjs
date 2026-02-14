@@ -1,11 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import {
-  buildArtifactSummaryMetadata,
-  GUARD_ARTIFACT_SUMMARY_TOOL,
-  resolveArtifactSummaryTimestampOverride,
-} from './artifact-summary-contract.mjs';
+import { buildGuardArtifactSummary, resolveArtifactSummaryTimestampOverride } from './artifact-summary-contract.mjs';
 import { normalizeArtifactPath, shouldBlockStagedArtifactPath } from './artifact-policy.mjs';
 const ALLOW_OVERRIDE_ENV_NAME = 'WASMBOY_ALLOW_GENERATED_EDITS';
 const SCRIPT_USAGE = `Usage: node scripts/guard-generated-artifacts-precommit.mjs [--json] [--help]\n\nOptions:\n  --json      Emit machine-readable JSON summary.\n  --help, -h  Show this usage message.\n`;
@@ -138,14 +134,13 @@ function runPrecommitGuard(options = {}) {
   const stagedPaths = readStagedPathsFromGit();
   const validationResult = validateGeneratedArtifactStaging(stagedPaths, { allowGeneratedEdits });
   const timestampOverride = resolveArtifactSummaryTimestampOverride(process.env);
-  const summary = {
-    ...buildArtifactSummaryMetadata(GUARD_ARTIFACT_SUMMARY_TOOL, { timestampMs: timestampOverride }),
+  const summary = buildGuardArtifactSummary({
     allowGeneratedEdits,
     isValid: validationResult.isValid,
     blockedPaths: validationResult.blockedPaths,
-    blockedPathCount: validationResult.blockedPaths.length,
     stagedPathCount: stagedPaths.length,
-  };
+    timestampMs: timestampOverride,
+  });
 
   if (jsonOutput) {
     process.stdout.write(`${JSON.stringify(summary)}\n`);
