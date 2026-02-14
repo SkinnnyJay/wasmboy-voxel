@@ -1,5 +1,9 @@
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+
 // Common test functions
-const commonTest = require('../common-test');
+const commonTest = require('../common-test.cjs');
 
 // Wasm Boy library
 const WasmBoy = require('../../dist/wasmboy.wasm.cjs.cjs').WasmBoy;
@@ -32,7 +36,7 @@ const PERFORMANCE_OPTION_ITERATIONS = 2;
 const WASMBOY_INITIALIZE_OPTIONS = {
   headless: true,
   gameboySpeed: 100.0,
-  isGbcEnabled: true
+  isGbcEnabled: true,
 };
 
 // Doing an initialize intialization here, that way we can load roms
@@ -50,7 +54,7 @@ const WASMBOY_PERFORMANCE_TESTS = [
   ['audioBatchProcessing', 'audioAccumulateSamples'],
   ['timersBatchProcessing'],
   ['graphicsBatchProcessing'],
-  ['graphicsDisableScanlineRendering']
+  ['graphicsDisableScanlineRendering'],
 ];
 
 const PERFORMANCE_TABLE_HEADER = `
@@ -174,7 +178,7 @@ directories.forEach((directory, directoryIndex) => {
                 // Some Spacing
                 console.log(' ');
                 console.log(
-                  `WasmBoy with the option(s): ${performanceOptionKeys.join(', ')} enabled, ` + `took ${timeElapsed} milliseconds to run`
+                  `WasmBoy with the option(s): ${performanceOptionKeys.join(', ')} enabled, ` + `took ${timeElapsed} milliseconds to run`,
                 );
                 console.log(' ');
 

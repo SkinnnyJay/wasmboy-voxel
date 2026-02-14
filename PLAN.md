@@ -794,3 +794,4 @@
 - 2026-02-14: Re-ran workflow/scripts formatting contract gate (`npm run workflow:check`) to reconfirm workflow YAML and repository script formatting invariants remain green with a clean working tree.
 - 2026-02-14: Re-ran library console-usage lint contract gate (`npm run lint:library:console`) to reconfirm library code remains free of unexpected console statements with a clean working tree.
 - 2026-02-14: Re-ran aggregate check entrypoint (`npm run check`) to reconfirm formatting lint plus full automation contract/test stack remains green end-to-end with a clean working tree.
+- 2026-02-14: Fixed ESM runtime compatibility for the legacy performance regression suite by routing `test/performance/performance-test.js` through `createRequire(import.meta.url)` and requiring the CJS helper (`../common-test.cjs`), then re-ran `npm run test:performance:nobuild` to confirm all 20 performance regression cases pass.
