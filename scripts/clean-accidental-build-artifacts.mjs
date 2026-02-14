@@ -102,11 +102,20 @@ export async function cleanAccidentalBuildArtifacts(options = {}) {
  * @param {string[]} argv
  */
 export function parseCleanArtifactsArgs(argv) {
+  if (!Array.isArray(argv)) {
+    throw new TypeError('Expected argv to be an array.');
+  }
+
   let dryRun = false;
   let jsonOutput = false;
   let helpRequested = false;
 
-  for (const token of argv) {
+  for (let index = 0; index < argv.length; index += 1) {
+    const token = argv[index];
+    if (typeof token !== 'string') {
+      throw new TypeError(`Expected argv[${String(index)}] to be a string.`);
+    }
+
     if (token === '--dry-run') {
       if (dryRun) {
         throw new Error('Duplicate --dry-run flag received.');

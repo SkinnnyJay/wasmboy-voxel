@@ -492,6 +492,7 @@ Workflow hardening applied:
 - next-cycle `task134` is now completed by introducing reusable temporary-git-repo setup helpers in CLI contract tests, reducing duplicated fixture logic while preserving explicit generated-artifact failure/override scenario coverage
 - next-cycle `task135` is now completed by enforcing duplicate-flag rejection across cleanup/guard CLI parsers and extending executable contracts to lock deterministic duplicate-flag diagnostics for artifact-policy tooling
 - next-cycle `task136` is now completed by enriching cleanup/guard JSON summaries with `timestampMs` metadata and validating the new field in executable contracts/documentation for traceable machine-readable diagnostics
+- next-cycle `task137` is now completed by adding strict argv-shape/token-type validation to cleanup/guard parser helpers with regression coverage, improving fail-fast diagnostics for malformed internal invocations
 
 ## Security posture at completion
 

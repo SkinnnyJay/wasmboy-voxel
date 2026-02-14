@@ -131,3 +131,8 @@ test('parseCleanArtifactsArgs rejects duplicate flags', () => {
   assert.throws(() => parseCleanArtifactsArgs(['--json', '--json']), /Duplicate --json flag received\./u);
   assert.throws(() => parseCleanArtifactsArgs(['--help', '-h']), /Duplicate help flag received\./u);
 });
+
+test('parseCleanArtifactsArgs validates argv shape and token types', () => {
+  assert.throws(() => parseCleanArtifactsArgs('--dry-run'), /Expected argv to be an array\./u);
+  assert.throws(() => parseCleanArtifactsArgs(['--dry-run', 3]), /Expected argv\[1\] to be a string\./u);
+});

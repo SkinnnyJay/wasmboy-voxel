@@ -62,6 +62,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C039 | CLI fixture deduplication             | Refactored artifact CLI contract tests to use shared temporary git-repo setup helpers for staged generated-artifact scenarios, reducing duplicated setup code and improving maintainability of executable tests.         | S4                | `@automation-tooling` |
 | TD-C040 | Artifact CLI duplicate-flag contracts | Enforced duplicate-flag rejection for cleanup/guard CLI parsers (`--dry-run`, `--json`, help aliases) with unit and executable regression coverage to keep argument handling deterministic and user-facing errors clear. | S4                | `@automation-tooling` |
 | TD-C041 | Artifact JSON timestamp metadata      | Added `timestampMs` fields to cleanup/guard JSON summaries with executable contract and policy-doc updates so machine-readable artifact diagnostics carry traceable emission timing metadata.                            | S4                | `@automation-tooling` |
+| TD-C042 | Artifact parser argv contracts        | Added strict argv array/token type validation in cleanup/guard parser helpers with regression coverage, preventing malformed internal consumer payloads from triggering opaque runtime parser failures.                  | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

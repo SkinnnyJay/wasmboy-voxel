@@ -76,10 +76,19 @@ function readStagedPathsFromGit() {
  * @param {string[]} argv
  */
 export function parseGeneratedArtifactGuardArgs(argv) {
+  if (!Array.isArray(argv)) {
+    throw new TypeError('Expected argv to be an array.');
+  }
+
   let jsonOutput = false;
   let helpRequested = false;
 
-  for (const token of argv) {
+  for (let index = 0; index < argv.length; index += 1) {
+    const token = argv[index];
+    if (typeof token !== 'string') {
+      throw new TypeError(`Expected argv[${String(index)}] to be a string.`);
+    }
+
     if (token === '--json') {
       if (jsonOutput) {
         throw new Error('Duplicate --json flag received.');

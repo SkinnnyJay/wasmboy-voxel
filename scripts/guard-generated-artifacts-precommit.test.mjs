@@ -121,3 +121,8 @@ test('parseGeneratedArtifactGuardArgs rejects duplicate flags', () => {
   assert.throws(() => parseGeneratedArtifactGuardArgs(['--json', '--json']), /Duplicate --json flag received\./u);
   assert.throws(() => parseGeneratedArtifactGuardArgs(['--help', '-h']), /Duplicate help flag received\./u);
 });
+
+test('parseGeneratedArtifactGuardArgs validates argv shape and token types', () => {
+  assert.throws(() => parseGeneratedArtifactGuardArgs('--json'), /Expected argv to be an array\./u);
+  assert.throws(() => parseGeneratedArtifactGuardArgs(['--json', 3]), /Expected argv\[1\] to be a string\./u);
+});
