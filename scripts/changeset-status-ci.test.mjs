@@ -130,6 +130,21 @@ test('changeset-status-ci reports missing changeset command clearly', () => {
   assert.match(result.stderr, /changeset command was not found in PATH/u);
 });
 
+test('changeset-status-ci reports generic execution failures for non-ENOENT spawn errors', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'changeset-status-ci-spawn-error-'));
+  const fakeBinDirectory = path.join(tempDirectory, 'fake-bin');
+  const nonExecutableChangesetPath = path.join(fakeBinDirectory, 'changeset');
+  fs.mkdirSync(fakeBinDirectory, { recursive: true });
+  fs.writeFileSync(nonExecutableChangesetPath, '#!/usr/bin/env bash\necho should-not-run\n', 'utf8');
+  fs.chmodSync(nonExecutableChangesetPath, 0o644);
+
+  const result = runStatusScript(`${fakeBinDirectory}:${createNodeOnlyPath()}`);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Failed to execute changeset status/u);
+  assert.doesNotMatch(result.stderr, /changeset command was not found in PATH/u);
+});
+
 test('changeset-status-ci prints usage with --help', () => {
   const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--help']);
 
