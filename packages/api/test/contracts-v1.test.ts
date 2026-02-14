@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   CONTRACT_VERSION_V1,
   ContractRegistry,
+  Registers,
   V1Schemas,
   validateContractPayload,
   validateRegistryPayload,
@@ -20,6 +21,17 @@ const makeValidRegisters = () => ({
 
 const makeFilledBytes = (length: number, value: number): number[] =>
   Array.from({ length }, () => value);
+
+const REGISTER_KEYS: (keyof Registers)[] = [
+  'scx',
+  'scy',
+  'wx',
+  'wy',
+  'lcdc',
+  'bgp',
+  'obp0',
+  'obp1',
+];
 
 describe('contracts v1', () => {
   it('accepts valid PPU snapshot payload', () => {
@@ -76,6 +88,26 @@ describe('contracts v1', () => {
     const failure = validateContractPayload(V1Schemas.RegistersSchema, { scx: -1 });
     expect(failure.success).toBe(false);
     expect(typeof failure.errorMessage).toBe('string');
+  });
+
+  it('enforces register u8 bounds for all register fields', () => {
+    for (const registerKey of REGISTER_KEYS) {
+      const belowRangePayload = { ...makeValidRegisters(), [registerKey]: -1 };
+      const aboveRangePayload = { ...makeValidRegisters(), [registerKey]: 0x100 };
+
+      expect(V1Schemas.RegistersSchema.safeParse(belowRangePayload).success).toBe(false);
+      expect(V1Schemas.RegistersSchema.safeParse(aboveRangePayload).success).toBe(false);
+    }
+  });
+
+  it('rejects coercible register field payloads (string/boolean) instead of coercing', () => {
+    for (const registerKey of REGISTER_KEYS) {
+      const stringPayload = { ...makeValidRegisters(), [registerKey]: '12' };
+      const booleanPayload = { ...makeValidRegisters(), [registerKey]: true };
+
+      expect(V1Schemas.RegistersSchema.safeParse(stringPayload).success).toBe(false);
+      expect(V1Schemas.RegistersSchema.safeParse(booleanPayload).success).toBe(false);
+    }
   });
 
   it('validates known registry schemas and reports unknown keys', () => {

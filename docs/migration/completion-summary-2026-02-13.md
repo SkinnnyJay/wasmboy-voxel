@@ -389,6 +389,7 @@ Workflow hardening applied:
 - CI now enforces a tracked-artifact guard for `apps/debugger/.next/**`, failing fast when generated Next.js output is accidentally committed
 - CI now enforces post-install lockfile drift checks across root/api/cli/debugger lockfiles, preventing hidden dependency graph mutations from passing automation jobs
 - packages/api public exports were audited and documented with backward-compatibility guarantees/risks (entrypoint symbols, registry keys, export-map scope), establishing a baseline for future API stability checks
+- packages/api contract tests now include full-register-field bounds and coercion rejection coverage, verifying all register keys reject out-of-range and string/boolean payloads without coercion
 
 ## Security posture at completion
 
