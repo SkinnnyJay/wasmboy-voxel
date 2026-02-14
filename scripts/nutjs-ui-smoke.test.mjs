@@ -90,3 +90,16 @@ test('runNutjsUiSmoke executes smoke action with loaded NutJS module', async () 
   assert.deepEqual(summary.reasons, []);
   assert.deepEqual(summary.smokeMetadata, { validated: true });
 });
+
+test('runNutjsUiSmoke default smoke action reports platform shortcut mapping metadata', async () => {
+  const summary = await runNutjsUiSmoke({
+    platform: 'darwin',
+    env: {},
+    loader: async () => ({ keyboard: {}, mouse: {} }),
+  });
+
+  assert.equal(summary.status, 'passed');
+  assert.deepEqual(summary.smokeMetadata.defaultShortcutAction, 'open-devtools');
+  assert.deepEqual(summary.smokeMetadata.defaultShortcutScanCodes, ['MetaLeft', 'AltLeft', 'KeyI']);
+  assert.deepEqual(summary.smokeMetadata.defaultShortcutKeyNames, ['LeftSuper', 'LeftAlt', 'I']);
+});
