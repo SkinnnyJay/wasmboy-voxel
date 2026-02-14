@@ -385,6 +385,7 @@ Workflow hardening applied:
 - script-level contract coverage now includes an explicit cross-helper `formatErrorValue` regression suite, ensuring unprintable inputs are surfaced as `[unprintable]` consistently across parser/timeout/filter/fixture utilities
 - scripts synchronous I/O hotspots were audited and documented; current sync filesystem/subprocess usage remains intentional and acceptable for short-lived CI/batch script flows, with future async migration notes captured in audit docs
 - scripts automation now includes parser-latency smoke tests with bounded runtime budgets for `cli-arg-values` and `cli-timeout`, providing early warning for argument-parsing performance regressions
+- CI now runs `automation:test` in a Node LTS matrix (20 and 22) through a dedicated workflow job, improving cross-version confidence for script automation behavior
 
 ## Security posture at completion
 

@@ -487,3 +487,4 @@
 - 2026-02-13: Added `format-error-value-contract.test.mjs` to enforce cross-script diagnostics consistency, asserting helper modules render unprintable inputs as `[unprintable]` via `formatErrorValue`-backed error messages.
 - 2026-02-13: Completed synchronous I/O hotspot audit for script utilities and documented tradeoffs in `docs/migration/scripts-sync-io-audit-2026-02-13.md`, concluding current sync usage is acceptable for short-lived CI/test workflows.
 - 2026-02-13: Added parser-latency smoke benchmarks (`parser-latency-smoke.test.mjs`) covering `cli-arg-values` and `cli-timeout` hot loops with explicit runtime budgets to catch major performance regressions.
+- 2026-02-13: Added CI Node LTS matrix coverage for `automation:test` via a dedicated `automation-test-matrix` GitHub Actions job (Node 20 + 22), with shared workspace install/caching semantics.
