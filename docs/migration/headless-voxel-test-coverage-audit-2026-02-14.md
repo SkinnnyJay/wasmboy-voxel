@@ -13,6 +13,7 @@ runtime note that was previously tracked as a `.ts` extension loader risk.
 | `WasmBoyHeadless` class API                                       | `npm run test:integration:headless:class`      | `test/integration/headless-class-test.cjs`          | ✅ passing                                  |
 | Voxel snapshot API surface                                        | `npm run test:integration:voxel`               | `test/integration/voxel-snapshot-test.cjs`          | ✅ passing                                  |
 | Voxel wrapper readiness + contract behavior                       | `npm run test:integration:voxel:wrapper`       | `test/integration/voxel-wrapper-readiness-test.mjs` | ✅ passing                                  |
+| Browser E2E headless smoke with artifacts                         | `npm run test:e2e:playwright:headless`         | `test/e2e/playwright-headless-smoke.mjs`            | ✅ passing (artifacts in `temp/playwright`) |
 | Headless deterministic throughput budget                          | `npm run test:performance:throughput`          | `test/performance/headless-throughput.cjs`          | ✅ passing (780.33 FPS in latest local run) |
 
 ## voxel-wrapper `.ts` loading note
@@ -35,6 +36,7 @@ currently green under the repository Node runtime (`node --test` on Node 22).
 - `test/integration/headless-mainthread-test.cjs` → `test/performance/testroms/tobutobugirl/tobutobugirl.gb`
 - `test/integration/headless-class-test.cjs` → `test/performance/testroms/tobutobugirl/tobutobugirl.gb`
 - `test/performance/headless-throughput.cjs` → `test/performance/testroms/back-to-color/back-to-color.gbc`
+- `test/e2e/playwright-headless-smoke.mjs` → `test/performance/testroms/back-to-color/back-to-color.gbc`
 
 ### Baseline/snapshot suites
 
@@ -59,4 +61,5 @@ currently green under the repository Node runtime (`node --test` on Node 22).
 - `npm run test:integration:headless:class`
 - `npm run test:integration:voxel`
 - `npm run test:integration:voxel:wrapper`
+- `npm run test:e2e:playwright:headless`
 - `npm run test:performance:throughput`

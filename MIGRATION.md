@@ -10,13 +10,14 @@ This guide covers how to migrate between different versions and entry points of 
 - **V1** — Current “classic” layout: JS lib (`lib/`), AssemblyScript core → WASM (`core/`), `dist/wasmboy.wasm.*` and `dist/wasmboy.headless.*`, Preact demos (`demo/`). Built with `npm run build` (WASM).
 - **V2** — New layout: migration stack (`packages/api`, `packages/cli`, `apps/debugger`), TypeScript lib when Phase 11 is done, voxel-wrapper TS, and consolidated build/test via Makefile.
 
-When the V1/V2 layout is in place, the root **Makefile** will provide targets such as `make v1-build`, `make v1-test`, `make v2-build`, `make v2-test`, and `make test-all`.
+The root **Makefile** provides targets such as `make v1-build`,
+`make v1-test`, `make v2-build`, `make v2-test`, and `make test-all`.
 
 ---
 
 ## Migrating from Old to V1
 
-*Use this path if you are on upstream WasmBoy or an older fork and want the current JS/WASM build and headless support.*
+_Use this path if you are on upstream WasmBoy or an older fork and want the current JS/WASM build and headless support._
 
 ### Entry points
 
@@ -39,7 +40,8 @@ When the V1/V2 layout is in place, the root **Makefile** will provide targets su
 
 ## Migrating from Old to V2
 
-*Use this path when V2 is available and you want the TypeScript lib, migration stack (packages/api, packages/cli, apps/debugger), and unified tooling.*
+_Use this path when you want the TypeScript lib, migration stack (packages/api,
+packages/cli, apps/debugger), and unified tooling._
 
 ### Entry points (when V2 is in place)
 
@@ -53,7 +55,7 @@ When the V1/V2 layout is in place, the root **Makefile** will provide targets su
 
 ### Steps
 
-1. Follow PLAN44 §4.8 for V2 layout and Makefile.
+1. Review `V2/README.md` and Makefile targets for the current V2 layout.
 2. Use `make v2-build` (or equivalent) to build the TS lib and migration stack.
 3. Consume packages from the workspace or built artifacts; see `docs/migration/packages-api-usage-guide.md` and related migration docs.
 4. For headless, use the same headless/mainThread APIs as V1; entry paths may differ (see V1→V2 below).
@@ -62,7 +64,7 @@ When the V1/V2 layout is in place, the root **Makefile** will provide targets su
 
 ## Migrating from V1 to V2
 
-*Use this path when you are already on V1 (current JS/WASM + headless) and want to move to the V2 layout and TypeScript lib.*
+_Use this path when you are already on V1 (current JS/WASM + headless) and want to move to the V2 layout and TypeScript lib._
 
 ### What stays the same
 
@@ -78,7 +80,7 @@ When the V1/V2 layout is in place, the root **Makefile** will provide targets su
 ### Steps
 
 1. Ensure V1 tests pass (`make v1-test` or `npm run test:integration` including headless).
-2. Switch to V2 build and entry points per PLAN44 §4.8 and MIGRATION.md “Old to V2”.
+2. Switch to V2 build and entry points per this guide’s “Old to V2” section.
 3. Run `make v2-test` (or equivalent); fix any import or type breaks.
 4. Update consumer (e.g. gameboy-remix) to use V2 entry points and typed APIs; see `docs/migration/troubleshooting-faq.md` for common issues.
 
@@ -86,10 +88,10 @@ When the V1/V2 layout is in place, the root **Makefile** will provide targets su
 
 ## Quick reference
 
-| From → To | Doc section        | Key actions                                      |
-|-----------|--------------------|--------------------------------------------------|
-| Old → V1  | Old to V1          | Use `dist/wasmboy.wasm.*` and `dist/wasmboy.headless.*`; see HEADLESS_MODE.md |
-| Old → V2  | Old to V2          | Use V2 layout and Makefile when available        |
-| V1 → V2   | V1 to V2           | Switch entry points and build; keep headless API |
+| From → To | Doc section | Key actions                                                                   |
+| --------- | ----------- | ----------------------------------------------------------------------------- |
+| Old → V1  | Old to V1   | Use `dist/wasmboy.wasm.*` and `dist/wasmboy.headless.*`; see HEADLESS_MODE.md |
+| Old → V2  | Old to V2   | Use V2 layout and Makefile when available                                     |
+| V1 → V2   | V1 to V2    | Switch entry points and build; keep headless API                              |
 
 For repository architecture and backlog, see **PLAN44.md** and **docs/migration/repository-architecture-map-2026-02-14.md**.
