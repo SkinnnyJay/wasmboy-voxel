@@ -443,6 +443,7 @@ Workflow hardening applied:
 - pre-commit now also enforces a generated-artifact staging guard (`scripts/guard-generated-artifacts-precommit.mjs`), blocking staged `dist/**` and `build/**` edits unless explicitly overridden (`WASMBOY_ALLOW_GENERATED_EDITS=1`), with regression coverage for normalization and allow/deny semantics
 - automation now enforces accidental library `console.*` usage checks (`scripts/check-library-console-usage.mjs` + `lint:library:console`), with an explicit allowlist for intentional legacy logging paths and regression coverage for unexpected-console detection behavior
 - stack quality gates now include selective scope test smoke commands (`stack:test:smoke:scope:api|cli|debugger` via `stack:test:smoke:scopes`) to continuously verify scoped package/app test command wiring before full-stack test phases
+- migration follow-up ownership is now tracked in a dedicated technical debt register (`docs/migration/technical-debt-register-2026-02-14.md`) with severity tiers (S1-S4), subsystem owner tags, open/closed partitions, and triage cadence guidance
 
 ## Security posture at completion
 
