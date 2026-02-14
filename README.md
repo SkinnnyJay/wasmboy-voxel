@@ -440,6 +440,9 @@ node scripts/clean-accidental-build-artifacts.mjs --dry-run --json
 # Show generated artifact guard usage/help
 node scripts/guard-generated-artifacts-precommit.mjs --help
 
+# Print machine-readable generated-artifact guard summary JSON
+node scripts/guard-generated-artifacts-precommit.mjs --json
+
 # Show helper usage/flags for diagnostics archive bundling
 node scripts/bundle-diagnostics.mjs --help
 # Optional: override tar timeout per invocation

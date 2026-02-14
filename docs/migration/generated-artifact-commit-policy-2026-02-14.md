@@ -19,7 +19,8 @@ This protects the repo from accidental generated-output drift.
   candidates without deleting, or `--dry-run --json` for machine-readable
   summaries).
 - `scripts/guard-generated-artifacts-precommit.mjs` blocks staged generated paths
-  and integration output artifacts (use `--help` for invocation/usage details).
+  and integration output artifacts (use `--help` for invocation/usage details,
+  or `--json` for machine-readable validation summaries).
 
 ## Intentional exception path
 

@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { normalizeArtifactPath, shouldBlockStagedArtifactPath } from './artifact-policy.mjs';
 const ALLOW_OVERRIDE_ENV_NAME = 'WASMBOY_ALLOW_GENERATED_EDITS';
-const SCRIPT_USAGE = `Usage: node scripts/guard-generated-artifacts-precommit.mjs [--help]\n\nOptions:\n  --help, -h  Show this usage message.\n`;
+const SCRIPT_USAGE = `Usage: node scripts/guard-generated-artifacts-precommit.mjs [--json] [--help]\n\nOptions:\n  --json      Emit machine-readable JSON summary.\n  --help, -h  Show this usage message.\n`;
 
 /**
  * @param {string[]} stagedPaths
@@ -76,21 +76,48 @@ function readStagedPathsFromGit() {
  * @param {string[]} argv
  */
 export function parseGeneratedArtifactGuardArgs(argv) {
+  let jsonOutput = false;
+
   for (const token of argv) {
-    if (token === '--help' || token === '-h') {
-      return { shouldPrintUsage: true };
+    if (token === '--json') {
+      jsonOutput = true;
+      continue;
     }
 
-    throw new Error(`Unknown argument "${token}". Supported flags: --help.`);
+    if (token === '--help' || token === '-h') {
+      return { jsonOutput: false, shouldPrintUsage: true };
+    }
+
+    throw new Error(`Unknown argument "${token}". Supported flags: --json, --help.`);
   }
 
-  return { shouldPrintUsage: false };
+  return { jsonOutput, shouldPrintUsage: false };
 }
 
-function runPrecommitGuard() {
+/**
+ * @param {{
+ *   jsonOutput?: boolean;
+ * }} [options]
+ */
+function runPrecommitGuard(options = {}) {
+  const jsonOutput = options.jsonOutput ?? false;
   const allowGeneratedEdits = process.env[ALLOW_OVERRIDE_ENV_NAME] === '1';
   const stagedPaths = readStagedPathsFromGit();
   const validationResult = validateGeneratedArtifactStaging(stagedPaths, { allowGeneratedEdits });
+  const summary = {
+    allowGeneratedEdits,
+    isValid: validationResult.isValid,
+    blockedPaths: validationResult.blockedPaths,
+    stagedPathCount: stagedPaths.length,
+  };
+
+  if (jsonOutput) {
+    process.stdout.write(`${JSON.stringify(summary)}\n`);
+    if (!validationResult.isValid) {
+      process.exitCode = 1;
+    }
+    return;
+  }
 
   if (validationResult.isValid) {
     if (allowGeneratedEdits) {
@@ -120,7 +147,7 @@ if (shouldRunAsScript) {
       process.stdout.write(SCRIPT_USAGE);
       process.exitCode = 0;
     } else {
-      runPrecommitGuard();
+      runPrecommitGuard({ jsonOutput: args.jsonOutput });
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown generated-artifact guard error';

@@ -55,6 +55,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C032 | Artifact policy input guards        | Added explicit string-parameter validation in shared artifact-policy helpers plus non-string regression tests, making consumer contract violations fail fast with actionable diagnostics.                    | S4                | `@automation-tooling` |
 | TD-C033 | Guard input contract checks         | Added strict staged-path input validation (array + string entries) in `findBlockedArtifactPaths` with regression coverage to prevent opaque failures from malformed guard helper consumers.                  | S4                | `@automation-tooling` |
 | TD-C034 | Cleanup JSON output contract        | Added `clean-accidental-build-artifacts --json` support with parser + subprocess regression coverage, providing deterministic machine-readable cleanup summaries for automation and tooling integrations.    | S4                | `@automation-tooling` |
+| TD-C035 | Guard JSON output contract          | Added `guard-generated-artifacts-precommit --json` support with parser/help and subprocess regression coverage to expose deterministic machine-readable staged-artifact validation summaries.                | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

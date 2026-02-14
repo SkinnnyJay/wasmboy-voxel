@@ -107,11 +107,12 @@ test('validateGeneratedArtifactStaging supports explicit override for intentiona
 });
 
 test('parseGeneratedArtifactGuardArgs supports help flags', () => {
-  assert.deepEqual(parseGeneratedArtifactGuardArgs([]), { shouldPrintUsage: false });
-  assert.deepEqual(parseGeneratedArtifactGuardArgs(['--help']), { shouldPrintUsage: true });
-  assert.deepEqual(parseGeneratedArtifactGuardArgs(['-h']), { shouldPrintUsage: true });
+  assert.deepEqual(parseGeneratedArtifactGuardArgs([]), { jsonOutput: false, shouldPrintUsage: false });
+  assert.deepEqual(parseGeneratedArtifactGuardArgs(['--json']), { jsonOutput: true, shouldPrintUsage: false });
+  assert.deepEqual(parseGeneratedArtifactGuardArgs(['--help']), { jsonOutput: false, shouldPrintUsage: true });
+  assert.deepEqual(parseGeneratedArtifactGuardArgs(['-h']), { jsonOutput: false, shouldPrintUsage: true });
 });
 
 test('parseGeneratedArtifactGuardArgs rejects unknown flags', () => {
-  assert.throws(() => parseGeneratedArtifactGuardArgs(['--dry-run']), /Unknown argument "--dry-run"\. Supported flags: --help\./u);
+  assert.throws(() => parseGeneratedArtifactGuardArgs(['--dry-run']), /Unknown argument "--dry-run"\. Supported flags: --json, --help\./u);
 });

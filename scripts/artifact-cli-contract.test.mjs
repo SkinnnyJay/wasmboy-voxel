@@ -41,14 +41,14 @@ test('generated artifact guard script prints usage for --help', () => {
   const result = runScript(guardArtifactsScriptPath, ['--help']);
 
   assert.equal(result.status, 0);
-  assert.match(result.stdout, /Usage: node scripts\/guard-generated-artifacts-precommit\.mjs \[--help\]/u);
+  assert.match(result.stdout, /Usage: node scripts\/guard-generated-artifacts-precommit\.mjs \[--json\] \[--help\]/u);
 });
 
 test('generated artifact guard script rejects unknown flags', () => {
   const result = runScript(guardArtifactsScriptPath, ['--dry-run']);
 
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /\[guard:generated-artifacts\] Unknown argument "--dry-run"\. Supported flags: --help\./u);
+  assert.match(result.stderr, /\[guard:generated-artifacts\] Unknown argument "--dry-run"\. Supported flags: --json, --help\./u);
 });
 
 test('clean artifact script dry-run reports candidates without deleting files', () => {
@@ -98,4 +98,16 @@ test('clean artifact script emits JSON summary when --json is set', () => {
     deletedFiles: ['test/integration/headless.output'],
   });
   assert.equal(fs.existsSync(generatedOutputPath), true);
+});
+
+test('generated artifact guard script emits JSON summary when --json is set', () => {
+  const result = runScript(guardArtifactsScriptPath, ['--json']);
+
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, '');
+  const parsedOutput = JSON.parse(result.stdout.trim());
+  assert.equal(typeof parsedOutput.allowGeneratedEdits, 'boolean');
+  assert.equal(parsedOutput.isValid, true);
+  assert.equal(parsedOutput.stagedPathCount, 0);
+  assert.deepEqual(parsedOutput.blockedPaths, []);
 });
