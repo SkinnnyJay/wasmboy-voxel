@@ -516,3 +516,4 @@
 - 2026-02-14: Added malformed-frame resilience coverage for debugger AI route payloads, including sanitization of invalid frame metadata/checksum/event/snapshot entries and regression tests verifying `GET /api/ai/debug` returns safe normalized envelopes.
 - 2026-02-14: Added debugger frame-render performance instrumentation via capture/render marks + latency measures, wired into snapshot capture/UI frame effects, with dedicated utility tests for mark/measure behavior and failure fallback paths.
 - 2026-02-14: Added runaway timeline safeguards by clamping snapshot selector output and panel render windows, plus regression tests proving oversized snapshot arrays render only the latest bounded timeline segment with truncation notice messaging.
+- 2026-02-14: Added ROM loader recovery UX coverage by validating unsupported/empty file selection errors and ensuring valid follow-up selections clear error state and resume load-event payload emission.

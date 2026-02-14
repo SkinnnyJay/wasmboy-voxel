@@ -413,6 +413,7 @@ Workflow hardening applied:
 - debugger AI debug route now sanitizes malformed frame/event/snapshot/checksum payload segments before responding, with regression tests proving normalized output when store state contains invalid contract-frame data
 - debugger now emits frame-render performance marks/measures (capture→render latency) with utility-level regression tests covering both successful measurements and graceful failure behavior when marks are unavailable
 - debugger timeline safety now includes bounded snapshot selector/panel rendering windows and explicit truncation messaging, with regression tests confirming oversized snapshot arrays cannot trigger runaway timeline rendering growth
+- ROM loader behavior now includes recovery-oriented validation for unsupported/empty selections, with tests confirming error messaging and successful valid-selection recovery paths that re-enable load event payloads
 
 ## Security posture at completion
 
