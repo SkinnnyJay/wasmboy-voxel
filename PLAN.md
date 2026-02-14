@@ -899,3 +899,4 @@
 - 2026-02-14: Re-ran aggregate repository check entrypoint (`npm run check`) to reconfirm repository-level formatting lint plus full automation contract/test stack remain green end-to-end (793 tests: 792 pass, 1 expected platform skip) with a clean working tree.
 - 2026-02-14: Re-ran standalone changeset status CI gate (`npm run changeset:status:ci`) to reconfirm expected workspace dependency notice suppression and stable minor-bump classification output remain green with a clean working tree.
 - 2026-02-14: Re-ran release checklist publishability gate (`npm run release:checklist:npm-dry-run`) to reconfirm npm publish dry-run checks for `@wasmboy/api` and `@wasmboy/cli` remain green with a clean working tree.
+- 2026-02-14: Re-ran throughput performance guard (`npm run test:performance:throughput`) to reconfirm headless FPS baseline remains above floor (767.54 FPS in current run; 1200 frames in 1563.43ms) with a clean working tree.
