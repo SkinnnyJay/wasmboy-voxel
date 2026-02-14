@@ -468,6 +468,7 @@ Workflow hardening applied:
 - next-cycle `task103` is now completed by hoisting graphics hot-loop config/mode branches out of per-pixel background rendering and caching per-iteration scanline cycle budgets, validated with throughput + headless integration regressions, and recorded as debt-register closure for TD-003
 - next-cycle `task111` is now completed by switching headless integration screenshot outputs to `.output` files and extending accidental-artifact cleanup coverage to `test/integration/**`, with script regression coverage plus integration validation to keep tracked baselines clean during local test runs
 - next-cycle `task112` is now completed by adding cleanup-wrapped headless integration commands and routing aggregate integration scripts through them, so local/CI integration runs automatically clear generated `.output` artifacts after headless snapshot checks
+- next-cycle `task113` is now completed by adding package-script contract tests that lock in cleanup-wrapped headless integration script wiring, preventing accidental regressions in aggregate integration command chains
 
 ## Security posture at completion
 
