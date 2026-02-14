@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const BLOCKED_ARTIFACT_PREFIXES = ['dist/', 'build/'];
+const BLOCKED_INTEGRATION_OUTPUT_PREFIX = 'test/integration/';
 const ALLOW_OVERRIDE_ENV_NAME = 'WASMBOY_ALLOW_GENERATED_EDITS';
 
 /**
@@ -18,7 +19,12 @@ function normalizeStagedPath(stagedPath) {
 export function findBlockedArtifactPaths(stagedPaths) {
   return stagedPaths
     .map(normalizeStagedPath)
-    .filter(stagedPath => BLOCKED_ARTIFACT_PREFIXES.some(prefix => stagedPath.startsWith(prefix)))
+    .filter(
+      stagedPath =>
+        BLOCKED_ARTIFACT_PREFIXES.some(prefix => stagedPath.startsWith(prefix)) ||
+        (stagedPath.startsWith(BLOCKED_INTEGRATION_OUTPUT_PREFIX) &&
+          (stagedPath.endsWith('.output') || stagedPath.endsWith('.output.png'))),
+    )
     .sort((left, right) => left.localeCompare(right));
 }
 
@@ -82,7 +88,7 @@ function runPrecommitGuard() {
     process.stderr.write(`[guard:generated-artifacts] - ${blockedPath}\n`);
   }
   process.stderr.write(
-    `[guard:generated-artifacts] Remove staged dist/build edits or set ${ALLOW_OVERRIDE_ENV_NAME}=1 for intentional generated-artifact commits.\n`,
+    `[guard:generated-artifacts] Remove staged dist/build or test/integration .output artifacts, or set ${ALLOW_OVERRIDE_ENV_NAME}=1 for intentional generated-artifact commits.\n`,
   );
   process.exitCode = 1;
 }

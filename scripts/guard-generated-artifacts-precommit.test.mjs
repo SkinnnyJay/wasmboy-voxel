@@ -14,6 +14,16 @@ test('findBlockedArtifactPaths normalizes leading dot segments and windows path 
   assert.deepEqual(blockedPaths, ['build/iframe/index.html', 'dist/worker/audio.worker.js']);
 });
 
+test('findBlockedArtifactPaths flags staged integration output artifacts', () => {
+  const blockedPaths = findBlockedArtifactPaths([
+    'test/integration/headless-simple.golden.output.png',
+    'test/integration/headless-simple.output',
+    'test/integration/headless-simple.golden.png',
+  ]);
+
+  assert.deepEqual(blockedPaths, ['test/integration/headless-simple.golden.output.png', 'test/integration/headless-simple.output']);
+});
+
 test('validateGeneratedArtifactStaging passes when no generated artifact paths are staged', () => {
   const result = validateGeneratedArtifactStaging(['core/constants.ts', 'voxel-wrapper.ts']);
 
@@ -22,10 +32,19 @@ test('validateGeneratedArtifactStaging passes when no generated artifact paths a
 });
 
 test('validateGeneratedArtifactStaging fails when generated artifact paths are staged', () => {
-  const result = validateGeneratedArtifactStaging(['dist/wasmboy.wasm.esm.js', 'build/debugger/index.html', 'README.md']);
+  const result = validateGeneratedArtifactStaging([
+    'dist/wasmboy.wasm.esm.js',
+    'build/debugger/index.html',
+    'test/integration/headless-simple.output',
+    'README.md',
+  ]);
 
   assert.equal(result.isValid, false);
-  assert.deepEqual(result.blockedPaths, ['build/debugger/index.html', 'dist/wasmboy.wasm.esm.js']);
+  assert.deepEqual(result.blockedPaths, [
+    'build/debugger/index.html',
+    'dist/wasmboy.wasm.esm.js',
+    'test/integration/headless-simple.output',
+  ]);
 });
 
 test('validateGeneratedArtifactStaging supports explicit override for intentional generated edits', () => {

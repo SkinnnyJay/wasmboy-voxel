@@ -1,13 +1,19 @@
 # Generated Artifact Commit Policy (2026-02-14)
 
-By default, pre-commit blocks staged `dist/**` and `build/**` edits.
+By default, pre-commit blocks staged:
+
+- `dist/**`
+- `build/**`
+- `test/integration/**/*.output`
+- `test/integration/**/*.output.png`
 
 This protects the repo from accidental generated-output drift.
 
 ## Default behavior
 
 - `scripts/clean-accidental-build-artifacts.mjs` removes transient generated files.
-- `scripts/guard-generated-artifacts-precommit.mjs` blocks staged generated paths.
+- `scripts/guard-generated-artifacts-precommit.mjs` blocks staged generated paths
+  and integration output artifacts.
 
 ## Intentional exception path
 
@@ -38,4 +44,5 @@ WASMBOY_ALLOW_GENERATED_EDITS=1 git commit -m "intentional generated artifact up
 
 - Local experiment artifacts.
 - Partial build output from interrupted test runs.
+- Headless integration `.output` screenshot/log artifacts.
 - Any generated file added without corresponding source changes.
