@@ -787,3 +787,4 @@
 - 2026-02-14: Re-ran automation contract/tooling gate (`npm run automation:check`) to reconfirm workflow formatting, memory-layout/core-offset contracts, library console-lint guard, and script test harness coverage remain green with a clean working tree.
 - 2026-02-14: Re-ran scoped workspace smoke gate (`npm run stack:test:smoke:scopes`) to reconfirm package/app test entrypoint wiring across API/CLI/debugger workspaces remains green with a clean working tree.
 - 2026-02-14: Re-ran workspace aggregate typecheck gate (`npm run stack:typecheck`) to reconfirm package/app TypeScript project checks remain green with a clean working tree.
+- 2026-02-14: Re-ran workspace aggregate lint gate (`npm run stack:lint`) to reconfirm package/app typecheck + Prettier format invariants remain green across API/CLI/debugger workspaces with a clean working tree.
