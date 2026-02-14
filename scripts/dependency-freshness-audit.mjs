@@ -100,14 +100,17 @@ export function collectDependencyFreshness(options = {}) {
 /**
  * @param {ReturnType<typeof collectDependencyFreshness>} report
  */
-function formatFreshnessReport(report) {
+export function formatFreshnessReport(report) {
   const lines = [];
   lines.push(`[dependency:freshness] generatedAt=${report.generatedAtIso}`);
   lines.push(`[dependency:freshness] totalOutdated=${String(report.totalOutdatedCount)}`);
 
   for (const workspace of report.workspaces) {
     lines.push(`[dependency:freshness] workspace=${workspace.workspacePath} outdated=${String(workspace.outdatedCount)}`);
-    for (const [packageName, metadata] of Object.entries(workspace.outdatedPackages)) {
+    const sortedPackageEntries = Object.entries(workspace.outdatedPackages).sort(([leftName], [rightName]) =>
+      leftName === rightName ? 0 : leftName < rightName ? -1 : 1,
+    );
+    for (const [packageName, metadata] of sortedPackageEntries) {
       if (metadata && typeof metadata === 'object') {
         const wanted = typeof metadata.wanted === 'string' ? metadata.wanted : 'unknown';
         const latest = typeof metadata.latest === 'string' ? metadata.latest : 'unknown';

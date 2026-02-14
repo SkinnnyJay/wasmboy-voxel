@@ -142,7 +142,7 @@
 [x] - task163 (S2 reliability): Backlog discovery candidate #63 — define validation command at implementation time.
 [x] - task164 (S2 reliability): Backlog discovery candidate #64 — define validation command at implementation time.
 [x] - task165 (S2 reliability): Backlog discovery candidate #65 — define validation command at implementation time.
-[ ] - task166 (S2 reliability): Backlog discovery candidate #66 — define validation command at implementation time.
+[x] - task166 (S2 reliability): Backlog discovery candidate #66 — define validation command at implementation time.
 [ ] - task167 (S2 reliability): Backlog discovery candidate #67 — define validation command at implementation time.
 [ ] - task168 (S2 reliability): Backlog discovery candidate #68 — define validation command at implementation time.
 [ ] - task169 (S2 reliability): Backlog discovery candidate #69 — define validation command at implementation time.
@@ -721,3 +721,4 @@
 - 2026-02-14: Addressed next-cycle `task163` by normalizing dot-path segments (`./`, `../` simplification) before summary list de-dup/sort processing so machine-readable artifact payloads remain canonical across equivalent relative path forms; validated via `node --test "scripts/artifact-summary-contract.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs"`; marked `task163` completed.
 - 2026-02-14: Addressed next-cycle `task164` by executing an end-to-end repository audit and publishing a prioritized 100-task backlog with per-task evidence/fix/acceptance/verification fields in `docs/migration/repository-audit-backlog-2026-02-14.md`; validated via `npx prettier --check "docs/migration/repository-audit-backlog-2026-02-14.md" && rg "## 2\\) Prioritized backlog \\(100 tasks\\)" docs/migration/repository-audit-backlog-2026-02-14.md`; marked `task164` completed.
 - 2026-02-14: Addressed next-cycle `task165` by switching generated-artifact guard blocked-path sorting to locale-independent ordinal ordering and extending unit + executable contracts for mixed-case deterministic ordering semantics; validated via `node --test "scripts/guard-generated-artifacts-precommit.test.mjs" && node --test "scripts/artifact-cli-contract.test.mjs"`; marked `task165` completed.
+- 2026-02-14: Addressed next-cycle `task166` by sorting dependency-freshness package report rows deterministically in ordinal order and adding direct report-format coverage to lock stable output ordering across runtime environments; validated via `node --test "scripts/dependency-freshness-audit.test.mjs"`; marked `task166` completed.

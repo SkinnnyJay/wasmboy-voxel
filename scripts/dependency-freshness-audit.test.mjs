@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { collectDependencyFreshness, parseOutdatedJson } from './dependency-freshness-audit.mjs';
+import { collectDependencyFreshness, formatFreshnessReport, parseOutdatedJson } from './dependency-freshness-audit.mjs';
 import { UNPRINTABLE_VALUE } from './test-helpers.mjs';
 
 test('parseOutdatedJson returns empty map for empty npm outdated output', () => {
@@ -65,4 +65,26 @@ test('collectDependencyFreshness aggregates outdated counts by workspace using r
   assert.equal(report.workspaces[1]?.outdatedCount, 1);
   assert.equal(report.workspaces[2]?.workspacePath, 'packages/cli');
   assert.equal(report.workspaces[2]?.outdatedCount, 2);
+});
+
+test('formatFreshnessReport sorts package entries deterministically', () => {
+  const formatted = formatFreshnessReport({
+    generatedAtIso: '2026-02-14T00:00:00.000Z',
+    totalOutdatedCount: 2,
+    workspaces: [
+      {
+        workspacePath: 'packages/cli',
+        outdatedCount: 2,
+        outdatedPackages: {
+          zod: { wanted: '4.1.0', latest: '4.1.11', location: '/workspace/packages/cli' },
+          '@types/node': { wanted: '22.0.0', latest: '25.0.0', location: '/workspace/packages/cli' },
+        },
+      },
+    ],
+  });
+
+  assert.match(
+    formatted,
+    /\[dependency:freshness\]\s+- @types\/node wanted=22\.0\.0 latest=25\.0\.0 location=\/workspace\/packages\/cli\n\[dependency:freshness\]\s+- zod wanted=4\.1\.0 latest=4\.1\.11 location=\/workspace\/packages\/cli/u,
+  );
 });
