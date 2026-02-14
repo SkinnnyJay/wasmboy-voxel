@@ -12,6 +12,18 @@ function formatErrorValue(value) {
 }
 
 /**
+ * @param {unknown} value
+ */
+function isPlainObject(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return false;
+  }
+
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+}
+
+/**
  * @param {unknown} flagName
  */
 function createMissingValueError(flagName) {
@@ -22,7 +34,7 @@ function createMissingValueError(flagName) {
  * @param {RequiredArgumentValueOptions} options
  */
 function assertValidRequiredArgumentValueOptions(options) {
-  if (!options || typeof options !== 'object' || Array.isArray(options)) {
+  if (!isPlainObject(options)) {
     throw new Error('Invalid required argument options.');
   }
 

@@ -464,3 +464,4 @@
 - 2026-02-13: Hardened `changeset-status-ci` spawn error classification by mapping `ENOENT` failures to deterministic “changeset command was not found in PATH” diagnostics, replacing generic execution-failure messaging for missing-binary scenarios.
 - 2026-02-13: Hardened shared required-argument option validation by rejecting whitespace-padded `flagName` values (`flagName !== flagName.trim()`), adding regression coverage for both validate/read helper entrypoints.
 - 2026-02-13: Hardened required-argument set-entry validation by rejecting whitespace-padded `knownArgs` and `allowedKnownValues` entries, adding validate/read regression coverage for canonical token-set semantics.
+- 2026-02-13: Hardened required-argument options-container validation with plain-object guards (`Object`/`null` prototype only), adding Date/Map/Set options-object rejection coverage for both validate/read helper entrypoints.

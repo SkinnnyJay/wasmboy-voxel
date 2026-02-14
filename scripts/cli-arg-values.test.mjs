@@ -113,6 +113,18 @@ test('validateRequiredArgumentValue rejects bigint options', () => {
   assert.throws(() => validateRequiredArgumentValue('value', 42n), /Invalid required argument options\./u);
 });
 
+test('validateRequiredArgumentValue rejects Date options objects', () => {
+  assert.throws(() => validateRequiredArgumentValue('value', new Date()), /Invalid required argument options\./u);
+});
+
+test('validateRequiredArgumentValue rejects Map options objects', () => {
+  assert.throws(() => validateRequiredArgumentValue('value', new Map()), /Invalid required argument options\./u);
+});
+
+test('validateRequiredArgumentValue rejects Set options objects', () => {
+  assert.throws(() => validateRequiredArgumentValue('value', new Set()), /Invalid required argument options\./u);
+});
+
 test('validateRequiredArgumentValue rejects symbol flag names', () => {
   assert.throws(
     () =>
@@ -919,6 +931,18 @@ test('readRequiredArgumentValue rejects symbol options', () => {
 
 test('readRequiredArgumentValue rejects bigint options', () => {
   assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, 42n), /Invalid required argument options\./u);
+});
+
+test('readRequiredArgumentValue rejects Date options objects', () => {
+  assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, new Date()), /Invalid required argument options\./u);
+});
+
+test('readRequiredArgumentValue rejects Map options objects', () => {
+  assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, new Map()), /Invalid required argument options\./u);
+});
+
+test('readRequiredArgumentValue rejects Set options objects', () => {
+  assert.throws(() => readRequiredArgumentValue(['--timeout-ms', '50'], 0, new Set()), /Invalid required argument options\./u);
 });
 
 test('readRequiredArgumentValue rejects non-object options', () => {
