@@ -806,3 +806,4 @@
 - 2026-02-14: Re-ran release checklist publishability gate (`npm run release:checklist:npm-dry-run`) to reconfirm npm publish dry-run checks for `@wasmboy/api` and `@wasmboy/cli` remain green with a clean working tree.
 - 2026-02-14: Re-ran Makefile aggregate wrapper (`make test-all`) to reconfirm dual-build verification (`test:integration:dual-build:verify`) plus top-level no-build umbrella (`test:all:nobuild`) remain green end-to-end, including throughput baseline above floor (783.42 FPS in current run), with a clean working tree.
 - 2026-02-14: Re-ran Makefile V2 build wrapper (`make v2-build`) to reconfirm workspace package/app build outputs and TS migration build path (`lib:build:ts`) remain green end-to-end with a clean working tree.
+- 2026-02-14: Re-ran Makefile V1 build wrapper (`make v1-build`) to reconfirm classic build orchestration (`core:build` + `lib:build:wasm`) remains green end-to-end with a clean working tree.
