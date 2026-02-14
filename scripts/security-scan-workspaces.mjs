@@ -1,9 +1,12 @@
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
 
 const WORKSPACE_PATHS = ['.', 'packages/api', 'packages/cli', 'apps/debugger'];
 const FAIL_ON_VULNERABILITIES_FLAG = '--fail-on-vulnerabilities';
+const SECURITY_SCAN_TIMEOUT_ENV_VARIABLE = 'SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS';
+const DEFAULT_AUDIT_TIMEOUT_MS = 120000;
 
 /**
  * @param {unknown} value
@@ -72,16 +75,22 @@ function extractVulnerabilitySummary(auditReport) {
 /**
  * @param {string} repoRoot
  * @param {string} workspacePath
+ * @param {number} timeoutMs
  */
-function runAuditForWorkspace(repoRoot, workspacePath) {
+function runAuditForWorkspace(repoRoot, workspacePath, timeoutMs) {
   const workspaceRoot = path.resolve(repoRoot, workspacePath);
   const result = spawnSync('npm', ['audit', '--omit=optional', '--json'], {
     cwd: workspaceRoot,
     encoding: 'utf8',
     env: process.env,
+    timeout: timeoutMs,
+    killSignal: 'SIGTERM',
   });
 
   if (result.error) {
+    if (result.error.code === 'ETIMEDOUT') {
+      throw new Error(`npm audit timed out in ${workspacePath} after ${String(timeoutMs)}ms.`);
+    }
     throw new Error(`Failed to run npm audit in ${workspacePath}: ${result.error.message}`);
   }
 
@@ -98,21 +107,40 @@ function runAuditForWorkspace(repoRoot, workspacePath) {
 }
 
 /**
+ * @param {Record<string, unknown>} environment
+ */
+export function resolveSecurityScanTimeoutFromEnv(environment) {
+  return resolveTimeoutFromCliAndEnv({
+    defaultValue: DEFAULT_AUDIT_TIMEOUT_MS,
+    env: {
+      name: SECURITY_SCAN_TIMEOUT_ENV_VARIABLE,
+      rawValue: environment[SECURITY_SCAN_TIMEOUT_ENV_VARIABLE],
+    },
+    cli: {
+      name: '--security-scan-timeout-ms',
+      rawValue: '',
+    },
+  });
+}
+
+/**
  * @param {{
  *   repoRoot?: string;
  *   workspacePaths?: string[];
- *   runAudit?: (repoRoot: string, workspacePath: string) => { stdout: string; status: number };
+ *   runAudit?: (repoRoot: string, workspacePath: string, timeoutMs: number) => { stdout: string; status: number };
+ *   auditTimeoutMs?: number;
  * }} [options]
  */
 export function collectWorkspaceSecurityScan(options = {}) {
   const repoRoot = options.repoRoot ?? process.cwd();
   const workspacePaths = options.workspacePaths ?? WORKSPACE_PATHS;
   const runAudit = options.runAudit ?? runAuditForWorkspace;
+  const auditTimeoutMs = options.auditTimeoutMs ?? resolveSecurityScanTimeoutFromEnv(process.env);
   const workspaces = [];
   let totalVulnerabilities = 0;
 
   for (const workspacePath of workspacePaths) {
-    const auditResult = runAudit(repoRoot, workspacePath);
+    const auditResult = runAudit(repoRoot, workspacePath, auditTimeoutMs);
     const parsedReport = parseAuditJson(auditResult.stdout);
     const vulnerabilitySummary = extractVulnerabilitySummary(parsedReport);
     totalVulnerabilities += vulnerabilitySummary.total;

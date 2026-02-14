@@ -540,3 +540,4 @@ Result at completion: **0 vulnerabilities**.
 - Standardized generated-artifact guard blocked-path sorting to locale-independent ordinal ordering and added mixed-case contract coverage to keep machine-readable guard output deterministic across host locales.
 - Standardized dependency-freshness report package-row ordering to deterministic ordinal sorting and added regression coverage for formatted output ordering stability.
 - Added dependency-freshness subprocess timeout controls (`DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS`) with timeout-specific failure diagnostics and regression coverage to prevent indefinite npm outdated hangs.
+- Added workspace-security-scan subprocess timeout controls (`SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS`) with timeout-specific diagnostics and regression coverage to prevent indefinite npm audit hangs across workspaces.

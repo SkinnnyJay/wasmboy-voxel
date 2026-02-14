@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { collectWorkspaceSecurityScan, parseAuditJson } from './security-scan-workspaces.mjs';
+import { collectWorkspaceSecurityScan, parseAuditJson, resolveSecurityScanTimeoutFromEnv } from './security-scan-workspaces.mjs';
 import { UNPRINTABLE_VALUE } from './test-helpers.mjs';
 
 test('parseAuditJson accepts empty output as empty object', () => {
@@ -35,7 +35,9 @@ test('parseAuditJson rejects invalid output values and malformed json', () => {
 });
 
 test('collectWorkspaceSecurityScan aggregates workspace vulnerability totals', () => {
+  const runAuditCalls = [];
   const runAudit = (_repoRoot, workspacePath) => {
+    runAuditCalls.push(workspacePath);
     if (workspacePath === '.') {
       return {
         status: 0,
@@ -80,6 +82,7 @@ test('collectWorkspaceSecurityScan aggregates workspace vulnerability totals', (
   assert.equal(report.workspaces[1]?.vulnerabilitySummary.total, 1);
   assert.equal(report.workspaces[2]?.workspacePath, 'packages/cli');
   assert.equal(report.workspaces[2]?.vulnerabilitySummary.high, 2);
+  assert.deepEqual(runAuditCalls, ['.', 'packages/api', 'packages/cli', 'apps/debugger']);
 });
 
 test('collectWorkspaceSecurityScan falls back to vulnerabilities object size when metadata is absent', () => {
@@ -102,4 +105,39 @@ test('collectWorkspaceSecurityScan falls back to vulnerabilities object size whe
   assert.equal(report.totalVulnerabilities, 2);
   assert.equal(report.workspaces[0]?.vulnerabilitySummary.total, 2);
   assert.equal(report.workspaces[0]?.vulnerabilitySummary.high, 0);
+});
+
+test('collectWorkspaceSecurityScan forwards configured timeout to workspace runner', () => {
+  const observedTimeoutValues = [];
+
+  const report = collectWorkspaceSecurityScan({
+    repoRoot: '/workspace',
+    workspacePaths: ['.', 'packages/api'],
+    auditTimeoutMs: 6789,
+    runAudit: (_repoRoot, _workspacePath, timeoutMs) => {
+      observedTimeoutValues.push(timeoutMs);
+      return {
+        status: 0,
+        stdout: JSON.stringify({
+          metadata: { vulnerabilities: { info: 0, low: 0, moderate: 0, high: 0, critical: 0, total: 0 } },
+        }),
+      };
+    },
+  });
+
+  assert.equal(report.totalVulnerabilities, 0);
+  assert.deepEqual(observedTimeoutValues, [6789, 6789]);
+});
+
+test('resolveSecurityScanTimeoutFromEnv parses and validates environment overrides', () => {
+  assert.equal(resolveSecurityScanTimeoutFromEnv({}), 120000);
+  assert.equal(resolveSecurityScanTimeoutFromEnv({ SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS: ' 8000 ' }), 8000);
+  assert.throws(
+    () => resolveSecurityScanTimeoutFromEnv({ SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS: '0' }),
+    /Invalid SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS value: 0/u,
+  );
+  assert.throws(
+    () => resolveSecurityScanTimeoutFromEnv({ SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS: 'NaN' }),
+    /Invalid SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS value: NaN/u,
+  );
 });
