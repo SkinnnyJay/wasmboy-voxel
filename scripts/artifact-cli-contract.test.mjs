@@ -14,13 +14,29 @@ function runScript(scriptPath, args, options = {}) {
   return spawnSync(process.execPath, [scriptPath, ...args], {
     cwd: options.cwd ?? process.cwd(),
     encoding: 'utf8',
-    env: process.env,
+    env: {
+      ...process.env,
+      ...options.env,
+    },
   });
 }
 
 function writeFileEnsuringParent(filePath, contents = 'fixture') {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, contents, 'utf8');
+}
+
+function runGit(args, cwd) {
+  const result = spawnSync('git', args, {
+    cwd,
+    encoding: 'utf8',
+    env: process.env,
+  });
+
+  if (result.status !== 0) {
+    const stderr = result.stderr?.trim() ?? '';
+    throw new Error(`git ${args.join(' ')} failed: ${stderr}`);
+  }
 }
 
 test('clean artifact script prints usage for --help', () => {
@@ -110,4 +126,24 @@ test('generated artifact guard script emits JSON summary when --json is set', ()
   assert.equal(parsedOutput.isValid, true);
   assert.equal(parsedOutput.stagedPathCount, 0);
   assert.deepEqual(parsedOutput.blockedPaths, []);
+});
+
+test('generated artifact guard JSON output reports blocked staged artifacts', () => {
+  const tempRepoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'artifact-guard-json-'));
+  runGit(['init', '--quiet'], tempRepoRoot);
+  const stagedGeneratedPath = path.join(tempRepoRoot, 'dist', 'generated.js');
+  writeFileEnsuringParent(stagedGeneratedPath, 'console.log("generated");');
+  runGit(['add', 'dist/generated.js'], tempRepoRoot);
+
+  const result = runScript(guardArtifactsScriptPath, ['--json'], { cwd: tempRepoRoot });
+
+  assert.equal(result.status, 1);
+  assert.equal(result.stderr, '');
+  const parsedOutput = JSON.parse(result.stdout.trim());
+  assert.deepEqual(parsedOutput, {
+    allowGeneratedEdits: false,
+    isValid: false,
+    blockedPaths: ['dist/generated.js'],
+    stagedPathCount: 1,
+  });
 });

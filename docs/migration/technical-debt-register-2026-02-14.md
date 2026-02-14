@@ -57,6 +57,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C034 | Cleanup JSON output contract         | Added `clean-accidental-build-artifacts --json` support with parser + subprocess regression coverage, providing deterministic machine-readable cleanup summaries for automation and tooling integrations.    | S4                | `@automation-tooling` |
 | TD-C035 | Guard JSON output contract           | Added `guard-generated-artifacts-precommit --json` support with parser/help and subprocess regression coverage to expose deterministic machine-readable staged-artifact validation summaries.                | S4                | `@automation-tooling` |
 | TD-C036 | Artifact JSON script discoverability | Added npm script shortcuts plus package-script contract checks for cleanup/guard JSON summary commands, improving contributor discoverability and preventing script drift in machine-readable workflows.     | S4                | `@automation-tooling` |
+| TD-C037 | Guard JSON failure-mode contract     | Added subprocess regression coverage for guard `--json` output under staged generated-artifact failures in isolated git repos, validating payload shape and non-zero exit behavior for CI consumers.         | S4                | `@automation-tooling` |
 
 ## Triage cadence
 
