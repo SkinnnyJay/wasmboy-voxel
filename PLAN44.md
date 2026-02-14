@@ -4,7 +4,7 @@ This document is the **single source** for incomplete work. It consolidates unfi
 
 **Source review date:** 2026-02-13.
 
-**Completed (not in backlog):** Headless mode and WasmBoyHeadless were implemented per feature request: Phase 1 (headless config + frame callback in Worker path), Phase 2 (main-thread runner in `lib/headless/`, `dist/wasmboy.headless.*`), Phase 3 (tests + docs). See `docs/HEADLESS_MODE.md`, `wasm-fork.d.ts` (headless module + `mainThread` on config), and integration tests `headless-callback-test.cjs`, `headless-class-test.cjs`. When doing Phase 11 or typecheck, include `lib/headless/` and headless types.
+**Completed (not in backlog):** Headless mode and WasmBoyHeadless were implemented per feature request: Phase 1 (headless config + frame callback in Worker path), Phase 2 (main-thread runner in `lib/headless/`, `dist/wasmboy.headless.*`), Phase 3 (tests + docs). See `docs/HEADLESS_MODE.md`, `wasm-fork.d.ts` (headless module + `mainThread` on config), and integration tests `headless-callback-test.cjs`, `headless-class-test.cjs`, `headless-mainthread-test.cjs`. When doing Phase 11 or typecheck, include `lib/headless/` and headless types.
 
 ---
 
@@ -162,6 +162,34 @@ This document is the **single source** for incomplete work. It consolidates unfi
 - [ ] - Optional: Streaming snapshot export for time-series analysis.
 - [ ] - Optional: Dedicated “AI debug console” in the Next.js app.
 
+### 4.6 Test confidence (unit, integration, e2e) for new features
+
+*Ensure we have confidence in headless, mainThread, WasmBoyHeadless, and voxel snapshot paths. Use ROMs, Playwright MCP, Chrome DevTools MCP, and existing test scripts.*
+
+- [ ] - **Test-audit:** Document current coverage: which tests run for (1) headless Worker path, (2) headless mainThread path, (3) WasmBoyHeadless class, (4) voxel snapshot APIs. See §5.1 and `test/integration/*headless*`, `test/performance/headless-throughput.cjs`.
+- [x] - **Integration:** Add `test:integration:headless:mainthread` to the default `test:integration` and `test:integration:nobuild` (and CI) so all three headless paths are run every time. *(Done: scripts already include it.)*
+- [ ] - **voxel-wrapper test:** Fix or document `test:integration:voxel:wrapper` (voxel-wrapper-readiness-test.mjs). It fails with "Unknown file extension .ts" when Node loads `voxel-wrapper.ts`; either run against built JS output or use ts-node/tsx and add to docs.
+- [ ] - **E2E headless (Playwright):** Add at least one Playwright (or Chrome DevTools MCP) E2E that loads the debugger or a minimal page, loads a ROM with `headless: true` (and optionally `mainThread: true`), runs frames, and asserts snapshot/frame data or no console errors. Artifacts under `./temp/playwright/`; see §8.3.
+- [ ] - **ROM coverage:** Confirm test ROMs (e.g. `test/performance/testroms/tobutobugirl`, `test/accuracy/testroms/mooneye/*`) are used in headless and baseline tests; document in PLAN44 or test README.
+
+### 4.7 JS vs TypeScript build verification
+
+*Confirm the current JS (WASM) build and the TypeScript (TS core) build both work and are tested.*
+
+- [ ] - **JS (WASM) path:** Document that `npm run build` (lib:build:wasm) produces `dist/wasmboy.wasm.*` and `dist/wasmboy.headless.*`; `test:integration:nobuild` uses CJS WASM runtime. Ensure all headless integration tests pass with WASM build.
+- [ ] - **TS path:** Run `npm run lib:build:ts` and confirm `dist/wasmboy.ts.*` (or equivalent) builds; add or run integration test that loads the TS-built lib (if entry differs) and runs a minimal headless or snapshot check. If TS lib is not consumed by current integration tests, add a smoke test or document in MIGRATION.md.
+- [ ] - **Dual-version sign-off:** If both builds must ship, add a CI job or Makefile target that builds and tests both WASM and TS versions and document in README/MIGRATION.
+
+### 4.8 Release layout: V1 / V2 isolation and Makefile
+
+*Final release step: two isolated versions in one package, single control surface, migration docs.*
+
+- [ ] - **V1 layout:** Create `V1/` at repo root. Move or symlink "old" artifacts into V1: e.g. current `lib/` (JS), `core/` (AS→WASM), `dist/` outputs for WASM lib, `demo/` (Preact debugger/benchmark/iframe), and npm scripts that build/run only V1. Document what "old" means (pre–migration stack, pre–TypeScript lib).
+- [ ] - **V2 layout:** Create `V2/` at repo root. Move or symlink "new" artifacts: migration stack (`packages/api`, `packages/cli`, `apps/debugger`), TypeScript lib (when Phase 11 done), voxel-wrapper TS, and any new build outputs. Document what "new" means.
+- [ ] - **Makefile:** Add root `Makefile` with targets to build, test, and run either V1 or V2 (e.g. `make v1-build`, `make v1-test`, `make v2-build`, `make v2-test`, `make test-all`). Keep targets simple and documented in README.
+- [x] - **MIGRATION.md:** Create `MIGRATION.md` with: (1) Migrating from old (upstream WasmBoy or pre-fork) to V1; (2) Migrating from old to V2; (3) Migrating from V1 to V2. Include breaking changes, entry points, and npm/import paths. Reference MIGRATION.md from root README. *(Done: MIGRATION.md created; README links to it in "Migration and versioning".)*
+- [ ] - **README:** When V1/V2 and Makefile exist, add or expand the "Migration and versioning" section to describe V1 vs V2 and how to use the Makefile.
+
 ---
 
 ## 5) Research findings — context for fixes
@@ -172,7 +200,7 @@ This document is the **single source** for incomplete work. It consolidates unfi
 
 - **core:memory-offset:check:** See §3; blocks `test:all:nobuild` and CI.
 - **Existing suites:** `test:accuracy`, `test:integration`, `test:core`, `test:performance:throughput`; ensure they pass after contract fix and S1/S2 work.
-- **Headless:** Integration includes `test:integration:headless:callback` (headless + updateGraphicsCallback) and `test:integration:headless:class` (WasmBoyHeadless). Keep these green when changing lib/headless or graphics/load path.
+- **Headless:** Integration includes `test:integration:headless:callback` (headless + updateGraphicsCallback), `test:integration:headless:class` (WasmBoyHeadless), and `test:integration:headless:mainthread` (headless + mainThread). Keep these green when changing lib/headless or graphics/load path. E2E with Playwright/Chrome DevTools MCP for headless in browser is not yet added (§4.6).
 - **Save-state slot tests:** Repository audit (T001–T006) calls out missing focused save/load slot-ID regression tests; save-state tests are currently long-loop/screenshot oriented.
 
 ### 5.2 Performance
@@ -228,6 +256,9 @@ This document is the **single source** for incomplete work. It consolidates unfi
 5. **Tests:** Full suite green after each change; add focused regressions for save-state slots and new behavior.
 6. **Performance/memory:** Re-verify performance budgets and voxel-wrapper allocation mitigations after core/wrapper changes.
 7. **Phase 11:** Start TypeScript migration of `lib/` only after S1/S2 and critical PLAN44 items are under control.
+8. **Test confidence (§4.6):** Run test-audit; add headless:mainthread to default integration run; fix or document voxel-wrapper test; add Playwright E2E for headless if required.
+9. **JS vs TS (§4.7):** Verify WASM and TS builds and document or add smoke tests.
+10. **Release layout (§4.8):** After core work is stable, add V1/V2 layout, Makefile, MIGRATION.md, and README link.
 
 ---
 
@@ -244,6 +275,7 @@ This document is the **single source** for incomplete work. It consolidates unfi
 - **docs/migration/voxel-wrapper-snapshot-allocation-audit-2026-02-14.md** — Snapshot allocation hotspots and hardening.
 - **docs/migration/debugger-worker-boot-race-audit-2026-02-14.md** — Worker readiness/handshake/lifecycle.
 - **docs/migration/core-wrapper-offset-dependency-map-2026-02-14.md** — Core constants vs wrapper offsets.
+- **MIGRATION.md** — Migrating old → V1, old → V2, V1 → V2; entry points and breaking changes (§4.8).
 
 ---
 
