@@ -512,3 +512,4 @@
 - 2026-02-13: Added release checklist automation for package publish dry-runs via `scripts/release-checklist-dry-run.mjs`, wired to `release:checklist:npm-dry-run` and the release workflow, with automation tests for success/failure command execution paths.
 - 2026-02-14: Completed debugger worker boot-path race-condition audit and documented readiness/handshake/lifecycle risks plus mitigation sequence in `docs/migration/debugger-worker-boot-race-audit-2026-02-14.md`.
 - 2026-02-14: Added debugger worker lifecycle stability regression coverage with repeated init/dispose cycle tests for `createDebuggerWorker`, asserting no active-worker accumulation and consistent worker-constructor options across cycles.
+- 2026-02-14: Added debugger panel rendering regression coverage for large event logs by mocking store payloads and asserting `EventLogPanel` renders high-volume event entries without falling back to empty-state messaging.

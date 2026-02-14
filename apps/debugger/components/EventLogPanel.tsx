@@ -1,3 +1,4 @@
+import React from 'react';
 import { useDebuggerStore } from '../store/debugger-store';
 
 export function EventLogPanel() {

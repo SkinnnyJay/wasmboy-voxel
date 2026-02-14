@@ -61,7 +61,7 @@ describe('worker loader', () => {
 
     expect(MockWorker.activeInstances.size).toBe(0);
     expect(MockWorker.optionsHistory.length).toBe(INIT_DISPOSE_CYCLES);
-    MockWorker.optionsHistory.forEach(workerOptions => {
+    MockWorker.optionsHistory.forEach((workerOptions) => {
       expect(workerOptions.type).toBe('module');
       expect(workerOptions.name).toBe('wasmboy-debugger-worker');
     });
