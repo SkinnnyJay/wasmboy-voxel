@@ -660,6 +660,34 @@ test('bundle-diagnostics rejects duplicate timeout flags in inline-only order', 
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics prioritizes duplicate timeout errors over malformed second inline timeout tokens', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-timeout-inline-malformed-second-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms=200',
+    '--tar-timeout-ms==100',
+  ]);
+  assert.match(output, /Duplicate --tar-timeout-ms argument provided/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics reports malformed first inline timeout tokens before duplicate checks', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-timeout-inline-malformed-first-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output',
+    'artifacts/out.tar.gz',
+    '--pattern',
+    'missing/*.log',
+    '--tar-timeout-ms==200',
+    '--tar-timeout-ms=100',
+  ]);
+  assert.match(output, /Malformed inline value for --tar-timeout-ms argument/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects missing timeout values', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-missing-timeout-value-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, [
@@ -1429,6 +1457,28 @@ test('bundle-diagnostics rejects duplicate output flags in equals-only order', (
   assert.match(output, /Usage:/u);
 });
 
+test('bundle-diagnostics prioritizes duplicate output errors over malformed second inline output tokens', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-output-inline-malformed-second-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output=artifacts/one.tar.gz',
+    '--output==artifacts/two.tar.gz',
+    '--pattern=missing/*.log',
+  ]);
+  assert.match(output, /Duplicate --output argument provided/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics reports malformed first inline output tokens before duplicate checks', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-output-inline-malformed-first-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output==artifacts/one.tar.gz',
+    '--output=artifacts/two.tar.gz',
+    '--pattern=missing/*.log',
+  ]);
+  assert.match(output, /Malformed inline value for --output argument/u);
+  assert.match(output, /Usage:/u);
+});
+
 test('bundle-diagnostics rejects duplicate message flags', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-message-'));
   const output = runBundlerCommandExpectFailure(tempDirectory, [
@@ -1467,6 +1517,30 @@ test('bundle-diagnostics rejects duplicate message flags in equals-only order', 
     '--message=second',
   ]);
   assert.match(output, /Duplicate --message argument provided/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics prioritizes duplicate message errors over malformed second inline message tokens', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-message-inline-malformed-second-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output=artifacts/out.tar.gz',
+    '--pattern=missing/*.log',
+    '--message=first',
+    '--message==second',
+  ]);
+  assert.match(output, /Duplicate --message argument provided/u);
+  assert.match(output, /Usage:/u);
+});
+
+test('bundle-diagnostics reports malformed first inline message tokens before duplicate checks', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-duplicate-message-inline-malformed-first-'));
+  const output = runBundlerCommandExpectFailure(tempDirectory, [
+    '--output=artifacts/out.tar.gz',
+    '--pattern=missing/*.log',
+    '--message==first',
+    '--message=second',
+  ]);
+  assert.match(output, /Malformed inline value for --message argument/u);
   assert.match(output, /Usage:/u);
 });
 

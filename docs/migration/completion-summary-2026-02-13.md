@@ -365,6 +365,7 @@ Workflow hardening applied:
 - required-argument options-container validation now enforces plain-object inputs, with Date/Map/Set options-object rejection coverage across validate/read helper entrypoints
 - bundle-diagnostics equals-form parsing now rejects malformed message double-equals forms (`--message==...`), aligning malformed-inline semantics across all equals-form flags
 - changeset-status duplicate-timeout matrix now explicitly covers duplicate-vs-malformed inline collision precedence, locking deterministic duplicate-first behavior when the first timeout token is valid
+- bundle-diagnostics duplicate-flag matrix now explicitly covers duplicate-vs-malformed inline collision precedence for timeout/output/message flags, locking deterministic duplicate-first behavior when the first inline token is valid
 
 ## Security posture at completion
 
