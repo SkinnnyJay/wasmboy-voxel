@@ -355,6 +355,7 @@ Workflow hardening applied:
 - bundle-diagnostics dedupe coverage now explicitly asserts case-variant filename preservation (`Case.log` and `case.log`) on case-sensitive filesystems
 - bundle-diagnostics archive-failure handling now sets `process.exitCode` (instead of immediate `process.exit`) so `finally` cleanup removes placeholder files, with regression coverage for non-zero tar exit cleanup paths
 - changeset-status filter coverage now explicitly asserts mixed line-ending handling (CRLF + LF in the same output payload), locking cross-platform normalization semantics
+- bundle-diagnostics tar spawn failures now classify missing-command (`ENOENT`) cases into a deterministic “tar command was not found in PATH” error, with regression coverage and placeholder cleanup assertions
 
 ## Security posture at completion
 

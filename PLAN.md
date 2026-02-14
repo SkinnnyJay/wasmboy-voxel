@@ -457,3 +457,4 @@
 - 2026-02-13: Expanded `bundle-diagnostics` dedupe/collision coverage with case-variant filename assertions (`Case.log` vs `case.log`) to lock distinct-entry behavior on case-sensitive filesystems.
 - 2026-02-13: Hardened `bundle-diagnostics` placeholder cleanup failure handling by replacing immediate `process.exit(1)` with `process.exitCode = 1` in archive-failure paths so `finally` cleanup executes, with regression coverage asserting placeholder removal when tar exits non-zero.
 - 2026-02-13: Expanded `changeset-status-ci` filter coverage with mixed newline payload assertions (CRLF + LF in one output stream), locking cross-platform line-ending normalization semantics.
+- 2026-02-13: Hardened `bundle-diagnostics` tar spawn error classification by mapping `ENOENT` failures to a deterministic “tar command was not found in PATH” error, with regression coverage and placeholder cleanup assertions for PATH-misconfiguration failures.

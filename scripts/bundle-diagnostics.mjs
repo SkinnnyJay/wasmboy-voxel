@@ -297,6 +297,10 @@ function createArchive(outputPath, files, timeoutMs) {
       throw new Error(`tar timed out after ${timeoutMs}ms`);
     }
 
+    if (archiveResult.error.code === 'ENOENT') {
+      throw new Error('tar command was not found in PATH');
+    }
+
     throw archiveResult.error;
   }
 

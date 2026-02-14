@@ -138,6 +138,21 @@ test('bundle-diagnostics cleans placeholder files when archive creation fails', 
   );
 });
 
+test('bundle-diagnostics reports a clear error when tar is missing from PATH', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-missing-tar-path-'));
+  const nodeBinDirectory = path.dirname(process.execPath);
+  const output = runBundlerCommandExpectFailure(tempDirectory, ['--output', 'artifacts/missing-tar.tar.gz', '--pattern', 'missing/*.log'], {
+    PATH: nodeBinDirectory,
+  });
+
+  assert.match(output, /tar command was not found in PATH/u);
+  assert.equal(
+    fs.existsSync(path.join(tempDirectory, 'artifacts/missing-tar.txt')),
+    false,
+    'placeholder file should still be removed when tar is missing from PATH',
+  );
+});
+
 test('bundle-diagnostics writes custom placeholder message when provided', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-empty-message-'));
   const customMessage = 'custom placeholder message';
