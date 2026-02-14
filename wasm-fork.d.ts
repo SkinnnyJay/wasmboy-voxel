@@ -4,6 +4,7 @@
 declare module "./dist/wasmboy.wasm.esm.js" {
   export interface WasmBoyConfig {
     headless?: boolean;
+    mainThread?: boolean;
     disablePauseOnHidden?: boolean;
     isAudioEnabled?: boolean;
     enableAudioDebugging?: boolean;
@@ -89,4 +90,57 @@ declare module "./dist/wasmboy.wasm.esm.js" {
   }
 
   export const WasmBoy: WasmBoyApi;
+}
+
+/**
+ * Headless runner (main-thread WASM, no Workers).
+ * Use for testing, CI, and deterministic frame stepping.
+ */
+declare module "./dist/wasmboy.headless.esm.js" {
+  export interface WasmBoyHeadlessPpuSnapshot {
+    registers: {
+      scx: number;
+      scy: number;
+      wx: number;
+      wy: number;
+      lcdc: number;
+      bgp: number;
+      obp0: number;
+      obp1: number;
+    };
+    tileData: Uint8Array;
+    bgTileMap: Uint8Array;
+    windowTileMap: Uint8Array;
+    oamData: Uint8Array;
+  }
+
+  export function loadMainThreadWasm(): Promise<{
+    instance: { exports: Record<string, unknown> };
+    byteMemory: Uint8Array;
+  }>;
+
+  export class WasmBoyHeadless {
+    loadROM(rom: Uint8Array, options?: { enableBootRom?: boolean; isGbcEnabled?: boolean }): Promise<void>;
+    stepFrame(): void;
+    stepFrames(count: number): void;
+    getFrameBuffer(): Uint8ClampedArray;
+    getPpuSnapshot(): WasmBoyHeadlessPpuSnapshot | null;
+    readMemory(address: number): number;
+    writeMemory(address: number, value: number): void;
+    setButton(button: string, pressed: boolean): void;
+    setJoypadState(state: {
+      UP?: boolean;
+      RIGHT?: boolean;
+      DOWN?: boolean;
+      LEFT?: boolean;
+      A?: boolean;
+      B?: boolean;
+      SELECT?: boolean;
+      START?: boolean;
+    }): void;
+    saveState(): unknown;
+    loadState(state: unknown): void;
+    reset(): void;
+    destroy(): void;
+  }
 }

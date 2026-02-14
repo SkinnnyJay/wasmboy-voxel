@@ -62,6 +62,7 @@ export interface WasmBoyApi {
 
 export interface WasmBoyConfig {
   headless?: boolean;
+  mainThread?: boolean;
   disablePauseOnHidden?: boolean;
   isAudioEnabled?: boolean;
   isGbcEnabled?: boolean;
