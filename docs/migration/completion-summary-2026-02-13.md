@@ -397,6 +397,7 @@ Workflow hardening applied:
 - packages/api now includes validate-throughput smoke benchmarks for batched direct-schema and registry validation paths, with explicit runtime budgets to detect major validation performance regressions
 - packages/api README now includes invalid-payload error-handling examples for both direct schema validation and registry validation paths, including practical `errorMessage` handling patterns
 - changelog now includes an explicit `@wasmboy/api` semver policy mapping section that classifies contract-surface changes into patch/minor/major buckets (schemas, registry keys, validation helpers, and payload shape compatibility)
+- packages/cli parser/path error messaging was audited and documented with a full current-message inventory, inconsistency findings, and normalization recommendations (`docs/migration/packages-cli-error-phrasing-audit-2026-02-13.md`)
 
 ## Security posture at completion
 
