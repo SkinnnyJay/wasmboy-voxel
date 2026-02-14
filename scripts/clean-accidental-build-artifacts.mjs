@@ -12,6 +12,26 @@ const GENERATED_FILE_SCAN_ROOTS = [
 const SCRIPT_USAGE = `Usage: node scripts/clean-accidental-build-artifacts.mjs [--dry-run] [--json]\n\nOptions:\n  --dry-run  Print cleanup candidates without deleting files.\n  --json     Emit machine-readable JSON summary.\n  --help     Show this usage message.\n`;
 
 /**
+ * @param {{
+ *   repoRoot?: string;
+ *   dryRun?: boolean;
+ * }} options
+ */
+function validateCleanArtifactsOptions(options) {
+  if (options === null || typeof options !== 'object') {
+    throw new TypeError('Expected options to be an object.');
+  }
+
+  if (options.repoRoot !== undefined && typeof options.repoRoot !== 'string') {
+    throw new TypeError('Expected options.repoRoot to be a string when provided.');
+  }
+
+  if (options.dryRun !== undefined && typeof options.dryRun !== 'boolean') {
+    throw new TypeError('Expected options.dryRun to be a boolean when provided.');
+  }
+}
+
+/**
  * @param {string} absolutePath
  */
 async function pathExists(absolutePath) {
@@ -58,6 +78,7 @@ async function listFilesRecursively(absoluteRoot) {
  * }} [options]
  */
 export async function cleanAccidentalBuildArtifacts(options = {}) {
+  validateCleanArtifactsOptions(options);
   const repoRoot = options.repoRoot ?? process.cwd();
   const dryRun = options.dryRun ?? false;
   const deletedDirectories = [];

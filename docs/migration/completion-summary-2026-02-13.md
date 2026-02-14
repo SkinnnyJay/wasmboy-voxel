@@ -500,6 +500,7 @@ Workflow hardening applied:
 - next-cycle `task142` is now completed by adding subprocess regression coverage for deterministic blocked-path ordering in guard `--json` payloads, improving stability for downstream machine-readable automation consumers
 - next-cycle `task143` is now completed by centralizing executable-contract metadata assertions for artifact JSON summaries, improving strictness and maintainability of schema/timestamp validation across scenarios
 - next-cycle `task144` is now completed by adding explicit `tool` identifiers to cleanup/guard JSON summaries and locking the new metadata in executable contracts/documentation for deterministic payload attribution
+- next-cycle `task145` is now completed by enforcing options-shape/type validation in `cleanAccidentalBuildArtifacts`, with regression coverage that hardens helper behavior against malformed automation caller payloads
 
 ## Security posture at completion
 

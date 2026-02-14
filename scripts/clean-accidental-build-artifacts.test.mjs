@@ -106,6 +106,12 @@ test('cleanAccidentalBuildArtifacts dry-run reports candidates without deleting 
   assert.deepEqual(result.deletedFiles, ['test/integration/headless-simple.output']);
 });
 
+test('cleanAccidentalBuildArtifacts validates options shape and types', async () => {
+  await assert.rejects(() => cleanAccidentalBuildArtifacts(null), /Expected options to be an object\./u);
+  await assert.rejects(() => cleanAccidentalBuildArtifacts({ repoRoot: 5 }), /Expected options\.repoRoot to be a string when provided\./u);
+  await assert.rejects(() => cleanAccidentalBuildArtifacts({ dryRun: 'yes' }), /Expected options\.dryRun to be a boolean when provided\./u);
+});
+
 test('parseCleanArtifactsArgs supports dry-run and usage flags', () => {
   assert.deepEqual(parseCleanArtifactsArgs([]), { dryRun: false, jsonOutput: false, shouldPrintUsage: false });
   assert.deepEqual(parseCleanArtifactsArgs(['--dry-run']), { dryRun: true, jsonOutput: false, shouldPrintUsage: false });
