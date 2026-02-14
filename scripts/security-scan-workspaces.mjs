@@ -2,11 +2,112 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
+import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
 
 const WORKSPACE_PATHS = ['.', 'packages/api', 'packages/cli', 'apps/debugger'];
 const FAIL_ON_VULNERABILITIES_FLAG = '--fail-on-vulnerabilities';
 const SECURITY_SCAN_TIMEOUT_ENV_VARIABLE = 'SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS';
 const DEFAULT_AUDIT_TIMEOUT_MS = 120000;
+const CLI_TIMEOUT_FLAG = '--timeout-ms';
+const HELP_SHORT_FLAG = '-h';
+const HELP_LONG_FLAG = '--help';
+const HELP_ARGS = new Set([HELP_LONG_FLAG, HELP_SHORT_FLAG]);
+const KNOWN_ARGS = new Set([FAIL_ON_VULNERABILITIES_FLAG, CLI_TIMEOUT_FLAG, HELP_LONG_FLAG, HELP_SHORT_FLAG]);
+const USAGE_TEXT = `Usage:
+node scripts/security-scan-workspaces.mjs [--fail-on-vulnerabilities] [--timeout-ms <ms>] [--help]
+
+Options:
+  --fail-on-vulnerabilities   Exit non-zero when workspace audits report vulnerabilities
+  --timeout-ms <ms>           Override npm audit timeout in milliseconds for this invocation
+  --timeout-ms=<ms>           Inline timeout override variant
+  -h, --help                  Show this help message
+
+Environment:
+  ${SECURITY_SCAN_TIMEOUT_ENV_VARIABLE}=<ms>  npm audit timeout in milliseconds (default: ${DEFAULT_AUDIT_TIMEOUT_MS})`;
+
+/**
+ * @param {string[]} argv
+ */
+export function parseSecurityScanArgs(argv) {
+  if (!Array.isArray(argv)) {
+    throw new Error('Expected argv to be an array.');
+  }
+
+  for (let index = 0; index < argv.length; index += 1) {
+    if (typeof argv[index] !== 'string') {
+      throw new Error(`Expected argv[${String(index)}] to be a string.`);
+    }
+  }
+
+  if (argv.some(token => HELP_ARGS.has(token))) {
+    return {
+      showHelp: true,
+      failOnVulnerabilities: false,
+      timeoutMsOverride: '',
+    };
+  }
+
+  /** @type {{showHelp: boolean; failOnVulnerabilities: boolean; timeoutMsOverride: string}} */
+  const parsed = {
+    showHelp: false,
+    failOnVulnerabilities: false,
+    timeoutMsOverride: '',
+  };
+  let failOnVulnerabilitiesConfigured = false;
+  let timeoutConfigured = false;
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const token = argv[index];
+
+    if (token === FAIL_ON_VULNERABILITIES_FLAG) {
+      if (failOnVulnerabilitiesConfigured) {
+        throw new Error(`Duplicate ${FAIL_ON_VULNERABILITIES_FLAG} flag received.`);
+      }
+      parsed.failOnVulnerabilities = true;
+      failOnVulnerabilitiesConfigured = true;
+      continue;
+    }
+
+    if (token === CLI_TIMEOUT_FLAG) {
+      if (timeoutConfigured) {
+        throw new Error(`Duplicate ${CLI_TIMEOUT_FLAG} flag received.`);
+      }
+      const timeoutValue = readRequiredArgumentValue(argv, index, {
+        flagName: CLI_TIMEOUT_FLAG,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      });
+      parsed.timeoutMsOverride = timeoutValue;
+      timeoutConfigured = true;
+      index += 1;
+      continue;
+    }
+
+    if (token.startsWith(`${CLI_TIMEOUT_FLAG}=`)) {
+      if (timeoutConfigured) {
+        throw new Error(`Duplicate ${CLI_TIMEOUT_FLAG} flag received.`);
+      }
+      const timeoutValue = token.slice(`${CLI_TIMEOUT_FLAG}=`.length);
+      if (timeoutValue.startsWith('=')) {
+        throw new Error(`Malformed inline value for ${CLI_TIMEOUT_FLAG} argument.`);
+      }
+      validateRequiredArgumentValue(timeoutValue, {
+        flagName: CLI_TIMEOUT_FLAG,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: true,
+      });
+      parsed.timeoutMsOverride = timeoutValue;
+      timeoutConfigured = true;
+      continue;
+    }
+
+    throw new Error(`Unknown argument: ${token}`);
+  }
+
+  return parsed;
+}
 
 /**
  * @param {unknown} value
@@ -108,8 +209,9 @@ function runAuditForWorkspace(repoRoot, workspacePath, timeoutMs) {
 
 /**
  * @param {Record<string, unknown>} environment
+ * @param {string} [cliTimeoutMsOverride]
  */
-export function resolveSecurityScanTimeoutFromEnv(environment) {
+export function resolveSecurityScanTimeoutFromEnv(environment, cliTimeoutMsOverride = '') {
   return resolveTimeoutFromCliAndEnv({
     defaultValue: DEFAULT_AUDIT_TIMEOUT_MS,
     env: {
@@ -117,8 +219,8 @@ export function resolveSecurityScanTimeoutFromEnv(environment) {
       rawValue: environment[SECURITY_SCAN_TIMEOUT_ENV_VARIABLE],
     },
     cli: {
-      name: '--security-scan-timeout-ms',
-      rawValue: '',
+      name: CLI_TIMEOUT_FLAG,
+      rawValue: cliTimeoutMsOverride,
     },
   });
 }
@@ -184,17 +286,24 @@ const shouldRunAsScript = invokedFilePath === currentFilePath;
 
 if (shouldRunAsScript) {
   try {
-    const failOnVulnerabilities = process.argv.slice(2).includes(FAIL_ON_VULNERABILITIES_FLAG);
-    const report = collectWorkspaceSecurityScan();
+    const parsedArgs = parseSecurityScanArgs(process.argv.slice(2));
+    if (parsedArgs.showHelp) {
+      process.stdout.write(`${USAGE_TEXT}\n`);
+      process.exit(0);
+    }
+
+    const report = collectWorkspaceSecurityScan({
+      auditTimeoutMs: resolveSecurityScanTimeoutFromEnv(process.env, parsedArgs.timeoutMsOverride),
+    });
     process.stdout.write(`${formatSecurityScanReport(report)}\n`);
 
-    if (failOnVulnerabilities && report.totalVulnerabilities > 0) {
+    if (parsedArgs.failOnVulnerabilities && report.totalVulnerabilities > 0) {
       process.stderr.write(`[security:scan] Found ${String(report.totalVulnerabilities)} vulnerabilities across workspace audits.\n`);
       process.exitCode = 1;
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown security scan error';
-    process.stderr.write(`[security:scan] ${message}\n`);
+    process.stderr.write(`[security:scan] ${message}\n${USAGE_TEXT}\n`);
     process.exitCode = 1;
   }
 }

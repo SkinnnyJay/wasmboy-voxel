@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { collectWorkspaceSecurityScan, parseAuditJson, resolveSecurityScanTimeoutFromEnv } from './security-scan-workspaces.mjs';
+import {
+  collectWorkspaceSecurityScan,
+  parseAuditJson,
+  parseSecurityScanArgs,
+  resolveSecurityScanTimeoutFromEnv,
+} from './security-scan-workspaces.mjs';
 import { UNPRINTABLE_VALUE } from './test-helpers.mjs';
 
 test('parseAuditJson accepts empty output as empty object', () => {
@@ -32,6 +37,53 @@ test('parseAuditJson rejects invalid output values and malformed json', () => {
   assert.throws(() => parseAuditJson(UNPRINTABLE_VALUE), /Invalid npm audit output: \[unprintable\]/u);
   assert.throws(() => parseAuditJson('[]'), /Invalid npm audit JSON structure/u);
   assert.throws(() => parseAuditJson('{bad-json'), /JSON|Unexpected|invalid/u);
+});
+
+test('parseSecurityScanArgs supports fail and timeout flags', () => {
+  assert.deepEqual(parseSecurityScanArgs([]), {
+    showHelp: false,
+    failOnVulnerabilities: false,
+    timeoutMsOverride: '',
+  });
+  assert.deepEqual(parseSecurityScanArgs(['--fail-on-vulnerabilities']), {
+    showHelp: false,
+    failOnVulnerabilities: true,
+    timeoutMsOverride: '',
+  });
+  assert.deepEqual(parseSecurityScanArgs(['--timeout-ms', '5000']), {
+    showHelp: false,
+    failOnVulnerabilities: false,
+    timeoutMsOverride: '5000',
+  });
+  assert.deepEqual(parseSecurityScanArgs(['--timeout-ms=7000']), {
+    showHelp: false,
+    failOnVulnerabilities: false,
+    timeoutMsOverride: '7000',
+  });
+  assert.deepEqual(parseSecurityScanArgs(['--help']), {
+    showHelp: true,
+    failOnVulnerabilities: false,
+    timeoutMsOverride: '',
+  });
+  assert.deepEqual(parseSecurityScanArgs(['--fail-on-vulnerabilities', '--help', '--timeout-ms', '4000']), {
+    showHelp: true,
+    failOnVulnerabilities: false,
+    timeoutMsOverride: '',
+  });
+});
+
+test('parseSecurityScanArgs rejects malformed and duplicate arguments', () => {
+  assert.throws(() => parseSecurityScanArgs('--help'), /Expected argv to be an array\./u);
+  assert.throws(() => parseSecurityScanArgs(['--help', 3]), /Expected argv\[1\] to be a string\./u);
+  assert.throws(() => parseSecurityScanArgs(['--unknown']), /Unknown argument: --unknown/u);
+  assert.throws(
+    () => parseSecurityScanArgs(['--fail-on-vulnerabilities', '--fail-on-vulnerabilities']),
+    /Duplicate --fail-on-vulnerabilities flag received\./u,
+  );
+  assert.throws(() => parseSecurityScanArgs(['--timeout-ms', '5000', '--timeout-ms=6000']), /Duplicate --timeout-ms flag received\./u);
+  assert.throws(() => parseSecurityScanArgs(['--timeout-ms']), /Missing value for --timeout-ms argument\./u);
+  assert.throws(() => parseSecurityScanArgs(['--timeout-ms=']), /Missing value for --timeout-ms argument\./u);
+  assert.throws(() => parseSecurityScanArgs(['--timeout-ms==5000']), /Malformed inline value for --timeout-ms argument\./u);
 });
 
 test('collectWorkspaceSecurityScan aggregates workspace vulnerability totals', () => {
@@ -132,10 +184,13 @@ test('collectWorkspaceSecurityScan forwards configured timeout to workspace runn
 test('resolveSecurityScanTimeoutFromEnv parses and validates environment overrides', () => {
   assert.equal(resolveSecurityScanTimeoutFromEnv({}), 120000);
   assert.equal(resolveSecurityScanTimeoutFromEnv({ SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS: ' 8000 ' }), 8000);
+  assert.equal(resolveSecurityScanTimeoutFromEnv({}, '7000'), 7000);
+  assert.equal(resolveSecurityScanTimeoutFromEnv({ SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS: '8000' }, '7000'), 7000);
   assert.throws(
     () => resolveSecurityScanTimeoutFromEnv({ SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS: '0' }),
     /Invalid SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS value: 0/u,
   );
+  assert.throws(() => resolveSecurityScanTimeoutFromEnv({}, '0'), /Invalid --timeout-ms value: 0/u);
   assert.throws(
     () => resolveSecurityScanTimeoutFromEnv({ SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS: 'NaN' }),
     /Invalid SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS value: NaN/u,
