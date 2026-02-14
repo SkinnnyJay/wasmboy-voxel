@@ -773,3 +773,4 @@
 - 2026-02-14: Re-ran Makefile aggregate verification (`make test-all`) to reconfirm wrapper orchestration across dual-build migration checks and the complete no-build quality gate remains green end-to-end with a clean working tree.
 - 2026-02-14: Re-ran strict release verification wrapper (`npm run release:verify:strict`) once more to reconfirm full strict CI parity chain (`test:all:nobuild:strict` + changeset status) remains green with a clean working tree.
 - 2026-02-14: Re-ran no-build Playwright smoke command (`npm run test:e2e:playwright:headless:nobuild`) to reconfirm headless browser verification remains green without rebuilding artifacts and leaves a clean working tree.
+- 2026-02-14: Re-ran release checklist package dry-run command (`npm run release:checklist:npm-dry-run`) to reconfirm publishability validation for `@wasmboy/api` and `@wasmboy/cli` remains green with a clean working tree.
