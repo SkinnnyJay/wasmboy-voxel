@@ -403,6 +403,9 @@ npm run dependency:freshness:audit
 # Fail when any workspace has outdated dependencies
 npm run dependency:freshness:audit:strict
 
+# Generate the next 100-item backlog draft from open debt items
+npm run backlog:generate:next100
+
 # Check GitHub workflow formatting locally
 npm run workflow:lint
 

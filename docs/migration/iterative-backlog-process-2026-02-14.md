@@ -91,3 +91,14 @@ At cycle close:
 3. Pull latest dependency freshness + security scan outputs.
 4. Produce a new backlog draft using the item schema above.
 5. Rank by priority score, then freeze initial ordering for execution.
+
+## Automation helper
+
+Backlog draft generation can be bootstrapped with:
+
+```bash
+npm run backlog:generate:next100
+```
+
+This reads the current technical debt register and writes a dated draft backlog
+under `docs/migration/`.
