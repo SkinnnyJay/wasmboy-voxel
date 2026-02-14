@@ -5,6 +5,11 @@ import { normalizeArtifactPath, shouldBlockStagedArtifactPath, shouldRemoveGener
 test('normalizeArtifactPath normalizes windows and relative path prefixes', () => {
   assert.equal(normalizeArtifactPath('./dist\\worker\\audio.worker.js'), 'dist/worker/audio.worker.js');
   assert.equal(normalizeArtifactPath('.\\test\\integration\\headless.output.png'), 'test/integration/headless.output.png');
+  assert.equal(normalizeArtifactPath('C:\\agent\\_work\\1\\s\\dist\\wasmboy.wasm.esm.js'), 'agent/_work/1/s/dist/wasmboy.wasm.esm.js');
+  assert.equal(
+    normalizeArtifactPath('D:/agent/_work/1/s/test/integration/headless.output'),
+    'agent/_work/1/s/test/integration/headless.output',
+  );
 });
 
 test('artifact policy path helpers reject non-string path inputs', () => {
@@ -32,5 +37,8 @@ test('shouldBlockStagedArtifactPath blocks dist/build plus generated outputs', (
   assert.equal(shouldBlockStagedArtifactPath('build/assets/core.untouched.wasm'), true);
   assert.equal(shouldBlockStagedArtifactPath('test/integration/headless.output'), true);
   assert.equal(shouldBlockStagedArtifactPath('.\\test\\integration\\headless.output.png'), true);
+  assert.equal(shouldBlockStagedArtifactPath('C:\\agent\\_work\\1\\s\\build\\assets\\core.untouched.wasm'), true);
+  assert.equal(shouldBlockStagedArtifactPath('D:/agent/_work/1/s/test/accuracy/testroms/suite/frame.output'), true);
+  assert.equal(shouldRemoveGeneratedFile('D:\\agent\\_work\\1\\s\\test\\performance\\testroms\\suite\\frame.png'), true);
   assert.equal(shouldBlockStagedArtifactPath('README.md'), false);
 });

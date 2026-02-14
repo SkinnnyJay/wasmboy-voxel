@@ -4,6 +4,12 @@ export const BLOCKED_ARTIFACT_PREFIXES = ['dist/', 'build/'];
 const BLOCKED_INTEGRATION_OUTPUT_PREFIX = 'test/integration/';
 const BLOCKED_ACCURACY_OUTPUT_PREFIX = 'test/accuracy/testroms/';
 const BLOCKED_PERFORMANCE_OUTPUT_PREFIX = 'test/performance/testroms/';
+const POLICY_PATH_ANCHORS = [
+  ...BLOCKED_ARTIFACT_PREFIXES,
+  BLOCKED_INTEGRATION_OUTPUT_PREFIX,
+  BLOCKED_ACCURACY_OUTPUT_PREFIX,
+  BLOCKED_PERFORMANCE_OUTPUT_PREFIX,
+];
 
 /**
  * @param {unknown} candidatePath
@@ -20,11 +26,38 @@ function assertPathString(candidatePath, parameterName) {
  */
 export function normalizeArtifactPath(candidatePath) {
   assertPathString(candidatePath, 'candidatePath');
-  return candidatePath
+  const normalizedPath = candidatePath
+    .trim()
+    .replace(/^\\\\\?\\?/u, '')
     .replaceAll('\\', '/')
+    .replace(/^[A-Za-z]:\//u, '/')
     .split(path.sep)
-    .join('/')
-    .replace(/^\.?\//u, '');
+    .join('/');
+  const normalizedPosixPath = path.posix.normalize(normalizedPath);
+  if (normalizedPosixPath === '.') {
+    return '';
+  }
+  return normalizedPosixPath.replace(/^\.?\//u, '').replace(/^\/+/u, '');
+}
+
+/**
+ * @param {string} normalizedPath
+ */
+function toPolicyRelativePath(normalizedPath) {
+  const lowerPath = normalizedPath.toLowerCase();
+
+  for (const anchor of POLICY_PATH_ANCHORS) {
+    const lowerAnchor = anchor.toLowerCase();
+    const anchorIndex = lowerPath.indexOf(lowerAnchor);
+    if (anchorIndex === 0) {
+      return normalizedPath;
+    }
+    if (anchorIndex > 0 && normalizedPath[anchorIndex - 1] === '/') {
+      return normalizedPath.slice(anchorIndex);
+    }
+  }
+
+  return normalizedPath;
 }
 
 /**
@@ -87,7 +120,7 @@ function matchesGeneratedArtifactPolicy(normalizedPath) {
  */
 export function shouldRemoveGeneratedFile(relativePath) {
   assertPathString(relativePath, 'relativePath');
-  const normalizedPath = normalizeArtifactPath(relativePath);
+  const normalizedPath = toPolicyRelativePath(normalizeArtifactPath(relativePath));
   return matchesGeneratedArtifactPolicy(normalizedPath);
 }
 
@@ -96,6 +129,6 @@ export function shouldRemoveGeneratedFile(relativePath) {
  */
 export function shouldBlockStagedArtifactPath(stagedPath) {
   assertPathString(stagedPath, 'stagedPath');
-  const normalizedPath = normalizeArtifactPath(stagedPath);
+  const normalizedPath = toPolicyRelativePath(normalizeArtifactPath(stagedPath));
   return BLOCKED_ARTIFACT_PREFIXES.some(prefix => normalizedPath.startsWith(prefix)) || matchesGeneratedArtifactPolicy(normalizedPath);
 }

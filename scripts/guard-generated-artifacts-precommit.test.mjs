@@ -19,6 +19,16 @@ test('findBlockedArtifactPaths normalizes leading dot segments and windows path 
   assert.deepEqual(blockedPaths, ['build/iframe/index.html', 'dist/worker/audio.worker.js']);
 });
 
+test('findBlockedArtifactPaths normalizes Windows drive-letter absolute paths', () => {
+  const blockedPaths = findBlockedArtifactPaths([
+    'C:\\agent\\_work\\1\\s\\dist\\worker\\audio.worker.js',
+    'D:/agent/_work/1/s/test/integration/headless.output',
+    'core/constants.ts',
+  ]);
+
+  assert.deepEqual(blockedPaths, ['agent/_work/1/s/dist/worker/audio.worker.js', 'agent/_work/1/s/test/integration/headless.output']);
+});
+
 test('findBlockedArtifactPaths flags staged integration output artifacts', () => {
   const blockedPaths = findBlockedArtifactPaths([
     'test/integration/headless-simple.golden.output.png',
