@@ -42,8 +42,8 @@ function assertStringArray(candidateArray, parameterName) {
 /**
  * @param {string[]} values
  */
-function sortedStringArray(values) {
-  return [...values].sort((left, right) => (left === right ? 0 : left < right ? -1 : 1));
+function sortedUniqueStringArray(values) {
+  return [...new Set(values)].sort((left, right) => (left === right ? 0 : left < right ? -1 : 1));
 }
 
 /**
@@ -91,8 +91,8 @@ export function buildCleanupArtifactSummary(options) {
   assertStringArray(options.deletedDirectories, 'options.deletedDirectories');
   assertStringArray(options.deletedFiles, 'options.deletedFiles');
 
-  const deletedDirectories = sortedStringArray(options.deletedDirectories);
-  const deletedFiles = sortedStringArray(options.deletedFiles);
+  const deletedDirectories = sortedUniqueStringArray(options.deletedDirectories);
+  const deletedFiles = sortedUniqueStringArray(options.deletedFiles);
   const removedCount = deletedDirectories.length + deletedFiles.length;
 
   return {
@@ -130,7 +130,7 @@ export function buildGuardArtifactSummary(options) {
   }
 
   assertStringArray(options.blockedPaths, 'options.blockedPaths');
-  const blockedPaths = sortedStringArray(options.blockedPaths);
+  const blockedPaths = sortedUniqueStringArray(options.blockedPaths);
 
   if (!Number.isInteger(options.stagedPathCount) || options.stagedPathCount < 0) {
     throw new TypeError('Expected options.stagedPathCount to be a non-negative integer.');

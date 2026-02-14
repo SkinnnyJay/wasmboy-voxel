@@ -212,3 +212,26 @@ test('summary builders use locale-independent ordinal sorting for path arrays', 
   assert.deepEqual(cleanupSummary.deletedFiles, ['test/integration/A.output', 'test/integration/z.output']);
   assert.deepEqual(guardSummary.blockedPaths, ['dist/generated-A.js', 'dist/generated-z.js']);
 });
+
+test('summary builders de-duplicate repeated path values before computing counts', () => {
+  const cleanupSummary = buildCleanupArtifactSummary({
+    dryRun: false,
+    deletedDirectories: ['build', 'build'],
+    deletedFiles: ['test/integration/headless.output', 'test/integration/headless.output'],
+  });
+  const guardSummary = buildGuardArtifactSummary({
+    allowGeneratedEdits: false,
+    isValid: false,
+    blockedPaths: ['dist/generated.js', 'dist/generated.js'],
+    stagedPathCount: 2,
+  });
+
+  assert.equal(cleanupSummary.removedCount, 2);
+  assert.equal(cleanupSummary.deletedDirectoryCount, 1);
+  assert.equal(cleanupSummary.deletedFileCount, 1);
+  assert.deepEqual(cleanupSummary.deletedDirectories, ['build']);
+  assert.deepEqual(cleanupSummary.deletedFiles, ['test/integration/headless.output']);
+
+  assert.equal(guardSummary.blockedPathCount, 1);
+  assert.deepEqual(guardSummary.blockedPaths, ['dist/generated.js']);
+});
