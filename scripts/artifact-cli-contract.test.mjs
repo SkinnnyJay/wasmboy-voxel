@@ -27,14 +27,14 @@ test('clean artifact script prints usage for --help', () => {
   const result = runScript(cleanArtifactsScriptPath, ['--help']);
 
   assert.equal(result.status, 0);
-  assert.match(result.stdout, /Usage: node scripts\/clean-accidental-build-artifacts\.mjs \[--dry-run\]/u);
+  assert.match(result.stdout, /Usage: node scripts\/clean-accidental-build-artifacts\.mjs \[--dry-run\] \[--json\]/u);
 });
 
 test('clean artifact script rejects unknown flags', () => {
   const result = runScript(cleanArtifactsScriptPath, ['--unknown']);
 
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /\[clean:artifacts\] Unknown argument "--unknown"\. Supported flags: --dry-run, --help\./u);
+  assert.match(result.stderr, /\[clean:artifacts\] Unknown argument "--unknown"\. Supported flags: --dry-run, --json, --help\./u);
 });
 
 test('generated artifact guard script prints usage for --help', () => {
@@ -79,4 +79,23 @@ test('clean artifact script removes reported candidates without dry-run mode', (
   assert.match(result.stdout, /\[clean:artifacts\] removed 2 accidental build artifact target\(s\)\./u);
   assert.equal(fs.existsSync(generatedOutputPath), false);
   assert.equal(fs.existsSync(buildDirectoryPath), false);
+});
+
+test('clean artifact script emits JSON summary when --json is set', () => {
+  const tempRepoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'artifact-cli-json-'));
+  const generatedOutputPath = path.join(tempRepoRoot, 'test', 'integration', 'headless.output');
+  writeFileEnsuringParent(generatedOutputPath);
+
+  const result = runScript(cleanArtifactsScriptPath, ['--dry-run', '--json'], { cwd: tempRepoRoot });
+
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, '');
+  const parsedOutput = JSON.parse(result.stdout.trim());
+  assert.deepEqual(parsedOutput, {
+    mode: 'dry-run',
+    removedCount: 1,
+    deletedDirectories: [],
+    deletedFiles: ['test/integration/headless.output'],
+  });
+  assert.equal(fs.existsSync(generatedOutputPath), true);
 });

@@ -9,7 +9,7 @@ const GENERATED_FILE_SCAN_ROOTS = [
   path.join('test', 'performance', 'testroms'),
   path.join('test', 'integration'),
 ];
-const SCRIPT_USAGE = `Usage: node scripts/clean-accidental-build-artifacts.mjs [--dry-run]\n\nOptions:\n  --dry-run  Print cleanup candidates without deleting files.\n  --help     Show this usage message.\n`;
+const SCRIPT_USAGE = `Usage: node scripts/clean-accidental-build-artifacts.mjs [--dry-run] [--json]\n\nOptions:\n  --dry-run  Print cleanup candidates without deleting files.\n  --json     Emit machine-readable JSON summary.\n  --help     Show this usage message.\n`;
 
 /**
  * @param {string} absolutePath
@@ -103,6 +103,7 @@ export async function cleanAccidentalBuildArtifacts(options = {}) {
  */
 export function parseCleanArtifactsArgs(argv) {
   let dryRun = false;
+  let jsonOutput = false;
 
   for (const token of argv) {
     if (token === '--dry-run') {
@@ -110,14 +111,19 @@ export function parseCleanArtifactsArgs(argv) {
       continue;
     }
 
-    if (token === '--help' || token === '-h') {
-      return { dryRun: false, shouldPrintUsage: true };
+    if (token === '--json') {
+      jsonOutput = true;
+      continue;
     }
 
-    throw new Error(`Unknown argument "${token}". Supported flags: --dry-run, --help.`);
+    if (token === '--help' || token === '-h') {
+      return { dryRun: false, jsonOutput: false, shouldPrintUsage: true };
+    }
+
+    throw new Error(`Unknown argument "${token}". Supported flags: --dry-run, --json, --help.`);
   }
 
-  return { dryRun, shouldPrintUsage: false };
+  return { dryRun, jsonOutput, shouldPrintUsage: false };
 }
 
 const currentFilePath = fileURLToPath(import.meta.url);
@@ -135,17 +141,27 @@ if (shouldRunAsScript) {
       const result = await cleanAccidentalBuildArtifacts({ dryRun: args.dryRun });
       const removedCount = result.deletedDirectories.length + result.deletedFiles.length;
       const summaryVerb = args.dryRun ? 'would remove' : 'removed';
+      const summary = {
+        mode: args.dryRun ? 'dry-run' : 'apply',
+        removedCount,
+        deletedDirectories: result.deletedDirectories,
+        deletedFiles: result.deletedFiles,
+      };
 
-      process.stdout.write(`[clean:artifacts] ${summaryVerb} ${removedCount} accidental build artifact target(s).\n`);
+      if (args.jsonOutput) {
+        process.stdout.write(`${JSON.stringify(summary)}\n`);
+      } else {
+        process.stdout.write(`[clean:artifacts] ${summaryVerb} ${removedCount} accidental build artifact target(s).\n`);
 
-      if (result.deletedDirectories.length > 0) {
-        process.stdout.write(
-          `[clean:artifacts] ${args.dryRun ? 'candidate' : 'removed'} directories: ${result.deletedDirectories.join(', ')}\n`,
-        );
-      }
+        if (result.deletedDirectories.length > 0) {
+          process.stdout.write(
+            `[clean:artifacts] ${args.dryRun ? 'candidate' : 'removed'} directories: ${result.deletedDirectories.join(', ')}\n`,
+          );
+        }
 
-      if (result.deletedFiles.length > 0) {
-        process.stdout.write(`[clean:artifacts] ${args.dryRun ? 'candidate' : 'removed'} files: ${result.deletedFiles.join(', ')}\n`);
+        if (result.deletedFiles.length > 0) {
+          process.stdout.write(`[clean:artifacts] ${args.dryRun ? 'candidate' : 'removed'} files: ${result.deletedFiles.join(', ')}\n`);
+        }
       }
     }
   } catch (error) {

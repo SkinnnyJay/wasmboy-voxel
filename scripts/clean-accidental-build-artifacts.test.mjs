@@ -107,12 +107,21 @@ test('cleanAccidentalBuildArtifacts dry-run reports candidates without deleting 
 });
 
 test('parseCleanArtifactsArgs supports dry-run and usage flags', () => {
-  assert.deepEqual(parseCleanArtifactsArgs([]), { dryRun: false, shouldPrintUsage: false });
-  assert.deepEqual(parseCleanArtifactsArgs(['--dry-run']), { dryRun: true, shouldPrintUsage: false });
-  assert.deepEqual(parseCleanArtifactsArgs(['--help']), { dryRun: false, shouldPrintUsage: true });
-  assert.deepEqual(parseCleanArtifactsArgs(['-h']), { dryRun: false, shouldPrintUsage: true });
+  assert.deepEqual(parseCleanArtifactsArgs([]), { dryRun: false, jsonOutput: false, shouldPrintUsage: false });
+  assert.deepEqual(parseCleanArtifactsArgs(['--dry-run']), { dryRun: true, jsonOutput: false, shouldPrintUsage: false });
+  assert.deepEqual(parseCleanArtifactsArgs(['--json']), { dryRun: false, jsonOutput: true, shouldPrintUsage: false });
+  assert.deepEqual(parseCleanArtifactsArgs(['--dry-run', '--json']), {
+    dryRun: true,
+    jsonOutput: true,
+    shouldPrintUsage: false,
+  });
+  assert.deepEqual(parseCleanArtifactsArgs(['--help']), { dryRun: false, jsonOutput: false, shouldPrintUsage: true });
+  assert.deepEqual(parseCleanArtifactsArgs(['-h']), { dryRun: false, jsonOutput: false, shouldPrintUsage: true });
 });
 
 test('parseCleanArtifactsArgs rejects unknown flags', () => {
-  assert.throws(() => parseCleanArtifactsArgs(['--unknown']), /Unknown argument "--unknown"\. Supported flags: --dry-run, --help\./u);
+  assert.throws(
+    () => parseCleanArtifactsArgs(['--unknown']),
+    /Unknown argument "--unknown"\. Supported flags: --dry-run, --json, --help\./u,
+  );
 });

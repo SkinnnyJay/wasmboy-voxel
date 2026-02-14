@@ -434,6 +434,9 @@ npm run automation:check
 # Preview generated artifact cleanup targets without deleting files
 npm run clean:artifacts:precommit:dry-run
 
+# Print machine-readable cleanup summary JSON
+node scripts/clean-accidental-build-artifacts.mjs --dry-run --json
+
 # Show generated artifact guard usage/help
 node scripts/guard-generated-artifacts-precommit.mjs --help
 

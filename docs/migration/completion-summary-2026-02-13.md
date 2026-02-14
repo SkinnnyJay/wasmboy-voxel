@@ -484,6 +484,7 @@ Workflow hardening applied:
 - next-cycle `task126` is now completed by adding subprocess dry-run/cleanup behavior tests for the cleanup CLI, proving candidate reporting and real deletion semantics in isolated temp-workspace executions
 - next-cycle `task127` is now completed by adding explicit type guards to shared artifact-policy path helpers with regression tests for non-string inputs, improving failure clarity and input-contract robustness
 - next-cycle `task128` is now completed by adding strict input contract validation to guard blocked-path collection (array + string entries) with regression tests to fail fast on malformed consumer inputs
+- next-cycle `task129` is now completed by adding machine-readable `--json` output mode for the cleanup CLI with parser and subprocess contract coverage, enabling deterministic automation integration without log scraping
 
 ## Security posture at completion
 
