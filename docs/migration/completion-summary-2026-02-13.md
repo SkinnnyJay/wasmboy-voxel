@@ -417,6 +417,7 @@ Workflow hardening applied:
 - debugger worker lifecycle now includes crash auto-restart handling (bounded restart budget + listener rebind), with regression tests covering `error`/`messageerror` restart triggers and dispose-time restart suppression
 - debugger selector consumption now uses scalar frame selectors to reduce unnecessary rerender pressure from object-selector allocations, with regression tests validating frame-selector stability across non-frame state updates
 - debugger usage documentation now explicitly captures memory panel constraints for large dumps, including bounded-render behavior and recommended export/pagination workflows for heavy memory inspection
+- voxel-wrapper snapshot-read paths were audited for repeated per-frame allocations, documenting fallback-path hotspots (single-byte register section reads, full-snapshot layer overread, memory-read `Array.from` copies) and a prioritized mitigation sequence in `docs/migration/voxel-wrapper-snapshot-allocation-audit-2026-02-14.md`
 
 ## Security posture at completion
 
