@@ -99,6 +99,10 @@ schemas for versioned payloads (starting with `contracts/v1`):
 Use these contracts to validate payloads at API boundaries and preserve
 compatibility during refactors.
 
+### Migration and versioning
+
+For migrating between **old** (upstream or pre-fork), **V1** (current JS/WASM + headless), and **V2** (TypeScript lib + migration stack), see **[MIGRATION.md](./MIGRATION.md)**. It covers entry points, breaking changes, and the planned V1/V2 layout and Makefile (see PLAN44.md §4.8).
+
 ### Migration Stack (Workspace Packages/Apps)
 
 New migration components are now available in-repo:
