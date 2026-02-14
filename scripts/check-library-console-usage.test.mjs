@@ -2,8 +2,14 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import test from 'node:test';
-import { findConsoleUsageViolations, runLibraryConsoleUsageCheck } from './check-library-console-usage.mjs';
+import { fileURLToPath } from 'node:url';
+import { findConsoleUsageViolations, parseLibraryConsoleUsageArgs, runLibraryConsoleUsageCheck } from './check-library-console-usage.mjs';
+
+const currentFilePath = fileURLToPath(import.meta.url);
+const currentDirectory = path.dirname(currentFilePath);
+const checkLibraryConsoleUsageScriptPath = path.join(currentDirectory, 'check-library-console-usage.mjs');
 
 function createTempRepoRoot(prefix) {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
@@ -13,6 +19,55 @@ function writeFileSyncEnsuringParent(filePath, contents) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, contents, 'utf8');
 }
+
+test('parseLibraryConsoleUsageArgs supports repo-root and help flags', () => {
+  assert.deepEqual(parseLibraryConsoleUsageArgs([]), {
+    showHelp: false,
+    repoRootOverride: '',
+  });
+  assert.deepEqual(parseLibraryConsoleUsageArgs(['--repo-root', '/workspace']), {
+    showHelp: false,
+    repoRootOverride: '/workspace',
+  });
+  assert.deepEqual(parseLibraryConsoleUsageArgs(['--repo-root=/workspace']), {
+    showHelp: false,
+    repoRootOverride: '/workspace',
+  });
+  assert.deepEqual(parseLibraryConsoleUsageArgs(['--help']), {
+    showHelp: true,
+    repoRootOverride: '',
+  });
+  assert.deepEqual(parseLibraryConsoleUsageArgs(['--repo-root', '/workspace', '--help']), {
+    showHelp: true,
+    repoRootOverride: '',
+  });
+});
+
+test('parseLibraryConsoleUsageArgs rejects malformed and duplicate arguments', () => {
+  assert.throws(() => parseLibraryConsoleUsageArgs('--help'), /Expected argv to be an array\./u);
+  assert.throws(() => parseLibraryConsoleUsageArgs(['--help', 3]), /Expected argv\[1\] to be a string\./u);
+  assert.throws(() => parseLibraryConsoleUsageArgs(['--unknown']), /Unknown argument: --unknown/u);
+  assert.throws(
+    () => parseLibraryConsoleUsageArgs(['--repo-root', '/workspace', '--repo-root=/tmp/repo']),
+    /Duplicate --repo-root flag received\./u,
+  );
+  assert.throws(() => parseLibraryConsoleUsageArgs(['--repo-root']), /Missing value for --repo-root argument\./u);
+  assert.throws(() => parseLibraryConsoleUsageArgs(['--repo-root=']), /Missing value for --repo-root argument\./u);
+  assert.throws(() => parseLibraryConsoleUsageArgs(['--repo-root==/workspace']), /Malformed inline value for --repo-root argument\./u);
+});
+
+test('check-library-console-usage script prints usage for --help', () => {
+  const result = spawnSync(process.execPath, [checkLibraryConsoleUsageScriptPath, '--help'], {
+    cwd: process.cwd(),
+    encoding: 'utf8',
+    env: process.env,
+  });
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Usage:/u);
+  assert.match(result.stdout, /--repo-root/u);
+  assert.equal(result.stderr, '');
+});
 
 test('findConsoleUsageViolations allows explicitly approved console lines', () => {
   const source = `

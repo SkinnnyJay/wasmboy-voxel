@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { access, readdir, readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
 
 const CONSOLE_CALL_PATTERN = /\bconsole\.(debug|error|info|log|warn)\s*\(/u;
 
@@ -29,6 +30,18 @@ const ALLOWED_CONSOLE_LINES = new Map([
 ]);
 
 const IGNORED_DIRECTORY_PREFIXES = ['lib/3p/'];
+const HELP_SHORT_FLAG = '-h';
+const HELP_LONG_FLAG = '--help';
+const REPO_ROOT_FLAG = '--repo-root';
+const HELP_ARGS = new Set([HELP_LONG_FLAG, HELP_SHORT_FLAG]);
+const KNOWN_ARGS = new Set([REPO_ROOT_FLAG, HELP_LONG_FLAG, HELP_SHORT_FLAG]);
+const USAGE_TEXT = `Usage:
+node scripts/check-library-console-usage.mjs [--repo-root <path>] [--help]
+
+Options:
+  --repo-root <path>         Override repository root used for source discovery
+  --repo-root=<path>         Inline repo-root override variant
+  -h, --help                 Show this help message`;
 
 /**
  * @param {string} left
@@ -39,6 +52,78 @@ function compareOrdinalStrings(left, right) {
     return 0;
   }
   return left < right ? -1 : 1;
+}
+
+/**
+ * @param {string[]} argv
+ */
+export function parseLibraryConsoleUsageArgs(argv) {
+  if (!Array.isArray(argv)) {
+    throw new Error('Expected argv to be an array.');
+  }
+
+  for (let index = 0; index < argv.length; index += 1) {
+    if (typeof argv[index] !== 'string') {
+      throw new Error(`Expected argv[${String(index)}] to be a string.`);
+    }
+  }
+
+  if (argv.some(token => HELP_ARGS.has(token))) {
+    return {
+      showHelp: true,
+      repoRootOverride: '',
+    };
+  }
+
+  /** @type {{showHelp: boolean; repoRootOverride: string}} */
+  const parsed = {
+    showHelp: false,
+    repoRootOverride: '',
+  };
+  let repoRootConfigured = false;
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const token = argv[index];
+
+    if (token === REPO_ROOT_FLAG) {
+      if (repoRootConfigured) {
+        throw new Error(`Duplicate ${REPO_ROOT_FLAG} flag received.`);
+      }
+      const repoRootValue = readRequiredArgumentValue(argv, index, {
+        flagName: REPO_ROOT_FLAG,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: false,
+      });
+      parsed.repoRootOverride = repoRootValue;
+      repoRootConfigured = true;
+      index += 1;
+      continue;
+    }
+
+    if (token.startsWith(`${REPO_ROOT_FLAG}=`)) {
+      if (repoRootConfigured) {
+        throw new Error(`Duplicate ${REPO_ROOT_FLAG} flag received.`);
+      }
+      const repoRootValue = token.slice(`${REPO_ROOT_FLAG}=`.length);
+      if (repoRootValue.startsWith('=')) {
+        throw new Error(`Malformed inline value for ${REPO_ROOT_FLAG} argument.`);
+      }
+      validateRequiredArgumentValue(repoRootValue, {
+        flagName: REPO_ROOT_FLAG,
+        knownArgs: KNOWN_ARGS,
+        allowDoubleDashValue: false,
+        allowWhitespaceOnly: false,
+      });
+      parsed.repoRootOverride = repoRootValue;
+      repoRootConfigured = true;
+      continue;
+    }
+
+    throw new Error(`Unknown argument: ${token}`);
+  }
+
+  return parsed;
 }
 
 /**
@@ -195,7 +280,15 @@ const shouldRunAsScript = invokedFilePath === currentFilePath;
 
 if (shouldRunAsScript) {
   try {
-    const result = await runLibraryConsoleUsageCheck();
+    const parsedArgs = parseLibraryConsoleUsageArgs(process.argv.slice(2));
+    if (parsedArgs.showHelp) {
+      process.stdout.write(`${USAGE_TEXT}\n`);
+      process.exit(0);
+    }
+
+    const result = await runLibraryConsoleUsageCheck({
+      repoRoot: parsedArgs.repoRootOverride || undefined,
+    });
     if (!result.isValid) {
       process.stderr.write('[lint:library:console] Unexpected console usage detected:\n');
       for (const violation of result.violations) {
@@ -207,7 +300,7 @@ if (shouldRunAsScript) {
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown console lint error';
-    process.stderr.write(`[lint:library:console] ${message}\n`);
+    process.stderr.write(`[lint:library:console] ${message}\n${USAGE_TEXT}\n`);
     process.exitCode = 1;
   }
 }
