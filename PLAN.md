@@ -765,3 +765,4 @@
 - 2026-02-14: Re-ran core no-build CI aggregate command (`npm run test:core:nobuild:ci`) to reconfirm save-state/isolation/timing/interrupt/audio/memory/graphics regression suites and performance guard tests remain green in the direct core quality path.
 - 2026-02-14: Re-ran full build-inclusive aggregate command (`npm run test:all`) after the latest direct integration/core reruns to reconfirm end-to-end build + no-build quality composition remains stable in the single top-level release-signoff path.
 - 2026-02-14: Re-ran strict release verification wrapper (`npm run release:verify:strict`) after the latest full/integration/core reruns to reconfirm local strict CI parity plus changeset status checks remain stable in the top-level release gate.
+- 2026-02-14: Re-ran strict workspace security scan (`npm run security:scan:workspaces:strict`) to reconfirm zero-vulnerability status across root, API, CLI, and debugger workspaces as an isolated security gate.
