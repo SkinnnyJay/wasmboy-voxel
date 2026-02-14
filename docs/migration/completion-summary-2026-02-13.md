@@ -509,6 +509,7 @@ Workflow hardening applied:
 - next-cycle `task151` is now completed by adding deterministic timestamp override support (`WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS`) through shared summary helpers, with executable contracts verifying override behavior in cleanup/guard JSON payloads
 - next-cycle `task152` is now completed by adding subprocess failure-mode contracts for malformed summary timestamp overrides, ensuring cleanup/guard CLIs fail deterministically with actionable diagnostics
 - next-cycle `task153` is now completed by adding whitespace-tolerant parsing for summary timestamp overrides with helper/executable regression coverage, improving operator ergonomics while preserving strict positive-integer validation
+- next-cycle `task154` is now completed by adding explicit `timestampSource` metadata in artifact JSON summaries, enabling downstream automation to distinguish system-clock timestamps from env-overridden timestamps deterministically
 
 ## Security posture at completion
 

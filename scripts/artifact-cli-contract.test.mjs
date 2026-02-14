@@ -26,9 +26,10 @@ function writeFileEnsuringParent(filePath, contents = 'fixture') {
   fs.writeFileSync(filePath, contents, 'utf8');
 }
 
-function assertSummaryMetadata(summaryPayload, expectedTool) {
+function assertSummaryMetadata(summaryPayload, expectedTool, expectedTimestampSource = 'system-clock') {
   assert.equal(summaryPayload.tool, expectedTool);
   assert.equal(summaryPayload.schemaVersion, 1);
+  assert.equal(summaryPayload.timestampSource, expectedTimestampSource);
   assert.equal(typeof summaryPayload.timestampMs, 'number');
   assert.equal(Number.isInteger(summaryPayload.timestampMs), true);
   assert.equal(summaryPayload.timestampMs > 0, true);
@@ -185,6 +186,7 @@ test('clean artifact script honors summary timestamp override environment variab
   assert.equal(result.status, 0);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
+  assert.equal(parsedOutput.timestampSource, 'env-override');
   assert.equal(parsedOutput.timestampMs, 789);
 });
 
@@ -263,6 +265,7 @@ test('generated artifact guard script honors summary timestamp override environm
   assert.equal(result.status, 0);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
+  assert.equal(parsedOutput.timestampSource, 'env-override');
   assert.equal(parsedOutput.timestampMs, 789);
 });
 

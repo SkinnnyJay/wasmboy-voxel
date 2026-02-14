@@ -7,6 +7,8 @@ import {
   CLEAN_ARTIFACT_SUMMARY_TOOL,
   GUARD_ARTIFACT_SUMMARY_TOOL,
   resolveArtifactSummaryTimestampOverride,
+  SUMMARY_TIMESTAMP_SOURCE_ENV_OVERRIDE,
+  SUMMARY_TIMESTAMP_SOURCE_SYSTEM_CLOCK,
 } from './artifact-summary-contract.mjs';
 
 test('buildArtifactSummaryMetadata emits schema and timestamp defaults', () => {
@@ -14,6 +16,7 @@ test('buildArtifactSummaryMetadata emits schema and timestamp defaults', () => {
 
   assert.equal(summary.tool, CLEAN_ARTIFACT_SUMMARY_TOOL);
   assert.equal(summary.schemaVersion, ARTIFACT_SUMMARY_SCHEMA_VERSION);
+  assert.equal(summary.timestampSource, SUMMARY_TIMESTAMP_SOURCE_SYSTEM_CLOCK);
   assert.equal(typeof summary.timestampMs, 'number');
   assert.equal(Number.isInteger(summary.timestampMs), true);
   assert.equal(summary.timestampMs > 0, true);
@@ -25,6 +28,7 @@ test('buildArtifactSummaryMetadata supports explicit deterministic timestamp ove
   assert.deepEqual(summary, {
     tool: GUARD_ARTIFACT_SUMMARY_TOOL,
     schemaVersion: ARTIFACT_SUMMARY_SCHEMA_VERSION,
+    timestampSource: SUMMARY_TIMESTAMP_SOURCE_ENV_OVERRIDE,
     timestampMs: 123,
   });
 });

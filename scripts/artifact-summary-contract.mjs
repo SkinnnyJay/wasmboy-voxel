@@ -2,6 +2,8 @@ export const ARTIFACT_SUMMARY_SCHEMA_VERSION = 1;
 export const CLEAN_ARTIFACT_SUMMARY_TOOL = 'clean:artifacts';
 export const GUARD_ARTIFACT_SUMMARY_TOOL = 'guard:generated-artifacts';
 export const ARTIFACT_SUMMARY_TIMESTAMP_ENV_NAME = 'WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS';
+export const SUMMARY_TIMESTAMP_SOURCE_SYSTEM_CLOCK = 'system-clock';
+export const SUMMARY_TIMESTAMP_SOURCE_ENV_OVERRIDE = 'env-override';
 
 /**
  * @param {string} tool
@@ -36,10 +38,12 @@ export function buildArtifactSummaryMetadata(tool, options = {}) {
 
   const timestampMs = options.timestampMs ?? Date.now();
   assertTimestampMs(timestampMs);
+  const timestampSource = options.timestampMs === undefined ? SUMMARY_TIMESTAMP_SOURCE_SYSTEM_CLOCK : SUMMARY_TIMESTAMP_SOURCE_ENV_OVERRIDE;
 
   return {
     tool,
     schemaVersion: ARTIFACT_SUMMARY_SCHEMA_VERSION,
+    timestampSource,
     timestampMs,
   };
 }

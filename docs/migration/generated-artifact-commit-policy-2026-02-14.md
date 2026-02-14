@@ -17,8 +17,9 @@ This protects the repo from accidental generated-output drift.
 - `scripts/clean-accidental-build-artifacts.mjs` removes transient generated files
   (use `node scripts/clean-accidental-build-artifacts.mjs --dry-run` to inspect
   candidates without deleting, or `--dry-run --json` for machine-readable
-  summaries; JSON payloads include `tool`, `schemaVersion`, and `timestampMs`
-  metadata for traceability plus explicit `deletedDirectoryCount` /
+  summaries; JSON payloads include `tool`, `schemaVersion`, `timestampSource`,
+  and `timestampMs` metadata for traceability plus explicit
+  `deletedDirectoryCount` /
   `deletedFileCount` totals; `--help`/`-h` always prints usage even when mixed
   with other flags; set `WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS` to emit a
   deterministic timestamp in JSON output when needed (leading/trailing
@@ -29,8 +30,9 @@ This protects the repo from accidental generated-output drift.
 - `scripts/guard-generated-artifacts-precommit.mjs` blocks staged generated paths
   and integration output artifacts (use `--help` for invocation/usage details,
   or `--json` for machine-readable validation summaries; JSON payloads include
-  `tool`, `schemaVersion`, and `timestampMs` metadata; `--help`/`-h` always
-  prints usage even when mixed with other flags; payloads also expose
+  `tool`, `schemaVersion`, `timestampSource`, and `timestampMs` metadata;
+  `--help`/`-h` always prints usage even when mixed with other flags; payloads
+  also expose
   `blockedPathCount` alongside `blockedPaths`; set
   `WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS` to emit a deterministic timestamp in
   JSON output when needed (leading/trailing whitespace is ignored; invalid
