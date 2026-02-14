@@ -9,6 +9,7 @@ import { RomLoaderPanel } from '../components/RomLoaderPanel';
 import { SnapshotTimelinePanel } from '../components/SnapshotTimelinePanel';
 import { contractsClient } from '../lib/contracts-client';
 import { exportDebugDataJsonl } from '../lib/export-jsonl';
+import { markFrameRendered, measureFrameRenderLatency } from '../lib/performance-marks';
 import { createDebuggerWorker } from '../lib/worker-loader';
 import { debuggerSelectors, useDebuggerStore } from '../store/debugger-store';
 
@@ -19,10 +20,10 @@ export default function HomePage() {
   const frameMetadata = useDebuggerStore(debuggerSelectors.frameMetadata);
   const snapshots = useDebuggerStore(debuggerSelectors.snapshots);
   const events = useDebuggerStore(debuggerSelectors.eventStream);
-  const setSandboxMode = useDebuggerStore((state) => state.setSandboxMode);
-  const setRateLimitMs = useDebuggerStore((state) => state.setRateLimitMs);
-  const captureSnapshot = useDebuggerStore((state) => state.captureSnapshot);
-  const appendInterruptEvent = useDebuggerStore((state) => state.appendInterruptEvent);
+  const setSandboxMode = useDebuggerStore(state => state.setSandboxMode);
+  const setRateLimitMs = useDebuggerStore(state => state.setRateLimitMs);
+  const captureSnapshot = useDebuggerStore(state => state.captureSnapshot);
+  const appendInterruptEvent = useDebuggerStore(state => state.appendInterruptEvent);
 
   useEffect(() => {
     try {
@@ -40,6 +41,15 @@ export default function HomePage() {
       return undefined;
     }
   }, []);
+
+  useEffect(() => {
+    if (frameMetadata.frameId <= 0) {
+      return;
+    }
+
+    markFrameRendered(frameMetadata.frameId);
+    measureFrameRenderLatency(frameMetadata.frameId);
+  }, [frameMetadata.frameId]);
 
   return (
     <div>

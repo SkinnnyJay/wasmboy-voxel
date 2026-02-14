@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { markFrameCaptured } from '../lib/performance-marks';
 
 export interface DebuggerEvent {
   type: 'input' | 'interrupt' | 'snapshot' | 'system';
@@ -119,6 +120,7 @@ export const useDebuggerStore = create<DebuggerStore>((set, get) => ({
 
     const frameId = state.frameId + 1;
     const timestampMs = nowMs;
+    markFrameCaptured(frameId, timestampMs);
     const checksums: SnapshotChecksums = {
       tileDataHash: hashBytes(JSON.stringify(snapshot)),
       bgTileMapHash: hashBytes(JSON.stringify(snapshot.registers)),
@@ -162,7 +164,7 @@ export const debuggerSelectors = {
   }),
   latestChecksums: (state: DebuggerStoreState) =>
     state.snapshots.length > 0
-      ? ((state.snapshots[state.snapshots.length - 1] ?? null)?.checksums ?? null)
+      ? (state.snapshots[state.snapshots.length - 1] ?? null)?.checksums ?? null
       : null,
   eventStream: (state: DebuggerStoreState) => state.events,
   snapshots: (state: DebuggerStoreState) => state.snapshots,

@@ -411,6 +411,7 @@ Workflow hardening applied:
 - debugger test coverage now includes repeated worker init/dispose lifecycle regression checks, asserting no active worker accumulation and stable `createDebuggerWorker` constructor options through high-cycle churn
 - debugger panel rendering coverage now includes high-volume event-log scenarios, asserting `EventLogPanel` renders large mocked event streams and does not regress to empty-state fallback output
 - debugger AI debug route now sanitizes malformed frame/event/snapshot/checksum payload segments before responding, with regression tests proving normalized output when store state contains invalid contract-frame data
+- debugger now emits frame-render performance marks/measures (capture→render latency) with utility-level regression tests covering both successful measurements and graceful failure behavior when marks are unavailable
 
 ## Security posture at completion
 
