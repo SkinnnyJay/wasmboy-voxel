@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   compareCommand,
   contractCheckCommand,
@@ -17,6 +17,15 @@ function createTempDir(): string {
 
 function writeJson(filePath: string, payload: unknown): void {
   fs.writeFileSync(filePath, JSON.stringify(payload, null, 2));
+}
+
+class MockFilesystemError extends Error {
+  public readonly code: string;
+
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+  }
 }
 
 describe('cli commands', () => {
@@ -253,6 +262,64 @@ describe('cli commands', () => {
       } else {
         throw error;
       }
+    }
+  });
+
+  it('formats snapshot output permission errors with operation + errno details', () => {
+    const dir = createTempDir();
+    const romPath = path.join(dir, 'sample.gb');
+    fs.writeFileSync(romPath, Buffer.from([1, 2, 3]));
+
+    const writeSpy = vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {
+      throw new MockFilesystemError('EACCES', 'permission denied');
+    });
+
+    try {
+      expect(() => snapshotCommand(romPath, path.join(dir, 'snapshot.json'))).toThrowError(
+        CliError,
+      );
+      try {
+        snapshotCommand(romPath, path.join(dir, 'snapshot.json'));
+      } catch (error) {
+        if (error instanceof CliError) {
+          expect(error.code).toBe('InvalidOperation');
+          expect(error.message).toContain('write failed for');
+          expect(error.message).toContain('EACCES');
+          expect(error.message).toContain('permission denied');
+        } else {
+          throw error;
+        }
+      }
+    } finally {
+      writeSpy.mockRestore();
+    }
+  });
+
+  it('formats ROM read permission errors with operation + errno details', () => {
+    const dir = createTempDir();
+    const romPath = path.join(dir, 'sample.gb');
+    fs.writeFileSync(romPath, Buffer.from([1, 2, 3]));
+
+    const readSpy = vi.spyOn(fs, 'readFileSync').mockImplementation(() => {
+      throw new MockFilesystemError('EACCES', 'permission denied');
+    });
+
+    try {
+      expect(() => runCommand(romPath)).toThrowError(CliError);
+      try {
+        runCommand(romPath);
+      } catch (error) {
+        if (error instanceof CliError) {
+          expect(error.code).toBe('InvalidOperation');
+          expect(error.message).toContain('read failed for');
+          expect(error.message).toContain('EACCES');
+          expect(error.message).toContain('permission denied');
+        } else {
+          throw error;
+        }
+      }
+    } finally {
+      readSpy.mockRestore();
     }
   });
 });

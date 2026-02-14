@@ -400,6 +400,7 @@ Workflow hardening applied:
 - packages/cli parser/path error messaging was audited and documented with a full current-message inventory, inconsistency findings, and normalization recommendations (`docs/migration/packages-cli-error-phrasing-audit-2026-02-13.md`)
 - packages/cli command parsing now rejects unknown options with nearest-flag suggestions for `snapshot`, `compare`, and `contract-check`, with regression coverage for typo hints (`--ot`, `--currnt`, `--contrct`)
 - packages/cli now enforces mutually exclusive alias pairs for output/current options (`--out` vs `-o`, `--current` vs `-c`) and includes regression tests for conflict diagnostics
+- packages/cli filesystem read/write failures are now surfaced through normalized `CliError` InvalidOperation messages (including errno + operation + path), with permission-denied formatting regressions for `run` and `snapshot`
 
 ## Security posture at completion
 

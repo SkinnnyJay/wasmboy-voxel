@@ -70,8 +70,35 @@ export function assertKnownCommandOptions(
   }
 }
 
+function formatFilesystemError(error: unknown): string {
+  if (error instanceof Error) {
+    const errorCode = Reflect.get(error, 'code');
+    if (typeof errorCode === 'string' && errorCode.length > 0) {
+      return `${errorCode}: ${error.message}`;
+    }
+    return error.message;
+  }
+
+  return 'Unknown filesystem error';
+}
+
+function createFilesystemCliError(
+  operation: 'read' | 'write',
+  filePath: string,
+  error: unknown,
+): CliError {
+  return new CliError(
+    'InvalidOperation',
+    `${operation} failed for "${filePath}": ${formatFilesystemError(error)}`,
+  );
+}
+
 function readFileBuffer(filePath: string): Buffer {
-  return fs.readFileSync(filePath);
+  try {
+    return fs.readFileSync(filePath);
+  } catch (error) {
+    throw createFilesystemCliError('read', filePath, error);
+  }
 }
 
 function sha256Hex(buffer: Buffer): string {
@@ -128,7 +155,11 @@ export function snapshotCommand(romPath: string, outputPath?: string): void {
   const serialized = JSON.stringify(payload, null, 2);
   if (outputPath) {
     const resolvedOut = resolveInputPath(outputPath);
-    fs.writeFileSync(resolvedOut, serialized);
+    try {
+      fs.writeFileSync(resolvedOut, serialized);
+    } catch (error) {
+      throw createFilesystemCliError('write', resolvedOut, error);
+    }
     log({
       level: 'info',
       message: 'snapshot command wrote output',
