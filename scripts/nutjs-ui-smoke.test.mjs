@@ -169,6 +169,13 @@ test('runNutjsUiSmoke default smoke action reports platform shortcut mapping met
     keep: ['nutjs-smoke-run-darwin-local-manual-1700000000000-0001.png', 'nutjs-smoke-run-darwin-local-manual-1699999999999-0001.png'],
     prune: ['nutjs-smoke-run-darwin-local-manual-1699999999998-0001.png'],
   });
+  assert.deepEqual(summary.smokeMetadata.actionDslTimeline, [
+    { name: 'collect-shortcut', attempt: 1, status: 'passed' },
+    { name: 'collect-pointer', attempt: 1, status: 'passed' },
+    { name: 'collect-image-threshold', attempt: 1, status: 'passed' },
+    { name: 'collect-memory-guard', attempt: 1, status: 'passed' },
+    { name: 'collect-artifacts', attempt: 1, status: 'passed' },
+  ]);
 });
 
 test('runNutjsUiSmoke reports macOS accessibility retry hints when untrusted', async () => {

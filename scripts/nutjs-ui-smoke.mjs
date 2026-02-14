@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { runNutjsActionPlan } from './nutjs-action-dsl.mjs';
 import { buildNutjsArtifactNames, resolveNutjsArtifactTimestamp, selectNutjsArtifactsForRetention } from './nutjs-artifacts.mjs';
 import { transformNutjsPointerCoordinate } from './nutjs-display-scale.mjs';
 import { resolveNutjsImageMatchThreshold } from './nutjs-image-thresholds.mjs';
@@ -146,56 +147,91 @@ async function runDefaultSmokeAction(nutjsModule, platform, environment) {
     throw new Error('NutJS module export is empty; expected at least one API key.');
   }
 
-  const memoryGuard = createNutjsMemoryGuard({
-    maxTrackedBuffers: 4,
-    maxTrackedBytes: 1024,
-  });
-  memoryGuard.trackSnapshot(new Uint8Array(256), 'baseline-template');
-  memoryGuard.trackSnapshot(new Uint8Array(384), 'candidate-snapshot');
-  memoryGuard.trackSnapshot(new Uint8Array(512), 'overflow-snapshot');
-  const memoryGuardState = memoryGuard.getState();
-  memoryGuard.dispose();
-  const disposedGuardState = memoryGuard.getState();
-  const artifactTimestamp = resolveNutjsArtifactTimestamp(environment);
-  const artifactSample = buildNutjsArtifactNames({
-    scenario: 'smoke-run',
-    platform,
-    timestampMs: artifactTimestamp,
-    sequence: 1,
-  });
-  const retentionSample = selectNutjsArtifactsForRetention(
-    [
-      artifactSample.screenshot,
-      buildNutjsArtifactNames({
-        scenario: 'smoke-run',
-        platform,
-        timestampMs: artifactTimestamp - 1,
-        sequence: 1,
-      }).screenshot,
-      buildNutjsArtifactNames({
-        scenario: 'smoke-run',
-        platform,
-        timestampMs: artifactTimestamp - 2,
-        sequence: 1,
-      }).screenshot,
+  const actionPlan = await runNutjsActionPlan({
+    actionSteps: [
+      { name: 'collect-shortcut' },
+      { name: 'collect-pointer' },
+      { name: 'collect-image-threshold' },
+      { name: 'collect-memory-guard' },
+      { name: 'collect-artifacts' },
     ],
-    2,
-  );
+    handlers: {
+      async 'collect-shortcut'() {
+        return {
+          defaultShortcutAction: 'open-devtools',
+          defaultShortcutScanCodes: resolveNutjsShortcutScanCodes('open-devtools', platform),
+          defaultShortcutKeyNames: resolveNutjsShortcutKeyNames('open-devtools', platform),
+        };
+      },
+      async 'collect-pointer'() {
+        return transformNutjsPointerCoordinate({ x: 320, y: 180 }, { platform, env: environment });
+      },
+      async 'collect-image-threshold'() {
+        return resolveNutjsImageMatchThreshold({ platform, env: environment });
+      },
+      async 'collect-memory-guard'() {
+        const memoryGuard = createNutjsMemoryGuard({
+          maxTrackedBuffers: 4,
+          maxTrackedBytes: 1024,
+        });
+        memoryGuard.trackSnapshot(new Uint8Array(256), 'baseline-template');
+        memoryGuard.trackSnapshot(new Uint8Array(384), 'candidate-snapshot');
+        memoryGuard.trackSnapshot(new Uint8Array(512), 'overflow-snapshot');
+        const beforeDispose = memoryGuard.getState();
+        memoryGuard.dispose();
+        const afterDispose = memoryGuard.getState();
+        return {
+          beforeDispose,
+          afterDispose,
+        };
+      },
+      async 'collect-artifacts'() {
+        const artifactTimestamp = resolveNutjsArtifactTimestamp(environment);
+        const artifactSample = buildNutjsArtifactNames({
+          scenario: 'smoke-run',
+          platform,
+          timestampMs: artifactTimestamp,
+          sequence: 1,
+        });
+        return {
+          artifactSample,
+          artifactRetentionSample: selectNutjsArtifactsForRetention(
+            [
+              artifactSample.screenshot,
+              buildNutjsArtifactNames({
+                scenario: 'smoke-run',
+                platform,
+                timestampMs: artifactTimestamp - 1,
+                sequence: 1,
+              }).screenshot,
+              buildNutjsArtifactNames({
+                scenario: 'smoke-run',
+                platform,
+                timestampMs: artifactTimestamp - 2,
+                sequence: 1,
+              }).screenshot,
+            ],
+            2,
+          ),
+        };
+      },
+    },
+  });
+  const shortcutMetadata = actionPlan.results['collect-shortcut'];
+  const artifactMetadata = actionPlan.results['collect-artifacts'];
 
   return {
     exportedKeyCount: exportedKeys.length,
     exportedKeys: exportedKeys.slice(0, 10),
-    defaultShortcutAction: 'open-devtools',
-    defaultShortcutScanCodes: resolveNutjsShortcutScanCodes('open-devtools', platform),
-    defaultShortcutKeyNames: resolveNutjsShortcutKeyNames('open-devtools', platform),
-    pointerTransformSample: transformNutjsPointerCoordinate({ x: 320, y: 180 }, { platform, env: environment }),
-    imageMatchThreshold: resolveNutjsImageMatchThreshold({ platform, env: environment }),
-    memoryGuard: {
-      beforeDispose: memoryGuardState,
-      afterDispose: disposedGuardState,
-    },
-    artifactSample,
-    artifactRetentionSample: retentionSample,
+    defaultShortcutAction: shortcutMetadata.defaultShortcutAction,
+    defaultShortcutScanCodes: shortcutMetadata.defaultShortcutScanCodes,
+    defaultShortcutKeyNames: shortcutMetadata.defaultShortcutKeyNames,
+    pointerTransformSample: actionPlan.results['collect-pointer'],
+    imageMatchThreshold: actionPlan.results['collect-image-threshold'],
+    memoryGuard: actionPlan.results['collect-memory-guard'],
+    artifactSample: artifactMetadata.artifactSample,
+    artifactRetentionSample: artifactMetadata.artifactRetentionSample,
+    actionDslTimeline: actionPlan.timeline,
   };
 }
 
