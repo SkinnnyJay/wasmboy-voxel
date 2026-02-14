@@ -368,6 +368,7 @@ Workflow hardening applied:
 - bundle-diagnostics duplicate-flag matrix now explicitly covers duplicate-vs-malformed inline collision precedence for timeout/output/message flags, locking deterministic duplicate-first behavior when the first inline token is valid
 - changeset-status command-spawn diagnostics now include regression coverage for non-ENOENT execution failures (present but non-executable `changeset` binary), preserving generic execution-failure messaging distinct from missing-command classification
 - cli-timeout coverage now includes omitted `defaultValue` semantics, asserting missing defaults fail fast with explicit invalid-default diagnostics
+- bundle-diagnostics help-literal handling now includes long/short alias-collision regressions for trailing help flags after message literals in both split and equals forms (`--help` value followed by `-h`, and `-h` value followed by `--help`)
 
 ## Security posture at completion
 

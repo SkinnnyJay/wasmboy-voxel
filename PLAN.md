@@ -470,3 +470,4 @@
 - 2026-02-13: Expanded `bundle-diagnostics` duplicate-flag matrix with duplicate-vs-malformed inline precedence coverage for timeout/output/message flags, locking deterministic duplicate-first behavior when the first inline flag is valid and malformed-first behavior otherwise.
 - 2026-02-13: Added `changeset-status-ci` non-ENOENT spawn-failure regression coverage, asserting generic execution-failure diagnostics remain distinct from missing-command classification when `changeset` is present but non-executable.
 - 2026-02-13: Added missing-default-value regression coverage for `resolveTimeoutFromCliAndEnv`, ensuring omitted `defaultValue` fields fail fast with explicit invalid-default diagnostics.
+- 2026-02-13: Expanded help-alias collision coverage for `bundle-diagnostics` message literals, adding long/short cross-alias trailing-help regressions for both split and equals-form message values (`--help` ↔ `-h`).
