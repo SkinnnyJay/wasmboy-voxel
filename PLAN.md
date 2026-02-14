@@ -510,3 +510,4 @@
 - 2026-02-13: Refactored CLI logger hot path to avoid spread/newline concatenation allocations (explicit record serialization + direct stream writes) and added dedicated logger output contract tests for stdout/stderr JSONL behavior.
 - 2026-02-13: Expanded CLI package documentation with non-zero exit code semantics and troubleshooting guidance, including failure JSON envelope examples and `InvalidInput`/`InvalidOperation`/`OutOfBounds` code interpretation.
 - 2026-02-13: Added release checklist automation for package publish dry-runs via `scripts/release-checklist-dry-run.mjs`, wired to `release:checklist:npm-dry-run` and the release workflow, with automation tests for success/failure command execution paths.
+- 2026-02-14: Completed debugger worker boot-path race-condition audit and documented readiness/handshake/lifecycle risks plus mitigation sequence in `docs/migration/debugger-worker-boot-race-audit-2026-02-14.md`.

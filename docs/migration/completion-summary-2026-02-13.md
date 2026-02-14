@@ -407,6 +407,7 @@ Workflow hardening applied:
 - packages/cli logger hot path was refactored to reduce redundant allocations (no object spread/newline template allocation on each log), with new logger tests locking stdout/stderr JSONL output contracts
 - packages/cli README now documents non-zero exit behavior and troubleshooting patterns, including structured stderr failure envelope examples and interpretation of `InvalidInput` / `InvalidOperation` / `OutOfBounds`
 - release workflow now includes automated npm publish dry-run checklist execution (`release:checklist:npm-dry-run`), backed by a dedicated script and automation tests validating both success and failure/reporting paths
+- debugger worker boot/lifecycle paths were audited for WASM-load race conditions; findings and mitigation sequence (handshake readiness barrier, error-channel wiring, attempt IDs, abortable fetch) are documented in `docs/migration/debugger-worker-boot-race-audit-2026-02-14.md`
 
 ## Security posture at completion
 
