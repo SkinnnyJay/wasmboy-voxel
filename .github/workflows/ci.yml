@@ -198,6 +198,11 @@ jobs:
           set -o pipefail
           npm run automation:test 2>&1 | tee "automation-cross-platform-${{ matrix.lane }}.log"
 
+      - name: Run NutJS UI smoke harness
+        run: |
+          set -o pipefail
+          npm run test:ui:smoke 2>&1 | tee "nutjs-ui-smoke-${{ matrix.lane }}.log"
+
       - name: Upload cross-platform automation diagnostics
         if: ${{ failure() || cancelled() }}
         uses: actions/upload-artifact@v4
@@ -207,6 +212,7 @@ jobs:
           if-no-files-found: ignore
           path: |
             automation-cross-platform-${{ matrix.lane }}.log
+            nutjs-ui-smoke-${{ matrix.lane }}.log
 
   lint-typecheck-test:
     runs-on: ubuntu-latest
