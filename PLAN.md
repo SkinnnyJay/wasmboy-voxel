@@ -507,3 +507,4 @@
 - 2026-02-13: Added Windows-style path + quoted-path CLI coverage by normalizing backslash separators and stripping wrapping quotes in path resolution; added regression tests for quoted/backslash ROM and output paths.
 - 2026-02-13: Added stdin piping integration support/tests for CLI ROM commands (`run`/`snapshot`) via `<rom> = "-"`, including help-text examples and regression assertions for stdin-sourced snapshot payload metadata.
 - 2026-02-13: Added CLI startup-dispatch smoke benchmark coverage (`executeCli --help` loop with stdout mocking) and explicit latency budget assertions to catch major cold-path regressions.
+- 2026-02-13: Refactored CLI logger hot path to avoid spread/newline concatenation allocations (explicit record serialization + direct stream writes) and added dedicated logger output contract tests for stdout/stderr JSONL behavior.

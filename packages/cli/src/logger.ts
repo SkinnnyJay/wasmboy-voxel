@@ -6,15 +6,27 @@ export interface LogRecord {
   context?: Record<string, unknown>;
 }
 
-export function log(record: LogRecord): void {
-  const payload = {
-    timestamp: new Date().toISOString(),
-    ...record,
-  };
-  const serialized = JSON.stringify(payload);
-  if (record.level === 'error') {
-    process.stderr.write(`${serialized}\n`);
-    return;
+function serializeLogRecord(record: LogRecord): string {
+  const timestamp = new Date().toISOString();
+  if (record.context === undefined) {
+    return JSON.stringify({
+      timestamp,
+      level: record.level,
+      message: record.message,
+    });
   }
-  process.stdout.write(`${serialized}\n`);
+
+  return JSON.stringify({
+    timestamp,
+    level: record.level,
+    message: record.message,
+    context: record.context,
+  });
+}
+
+export function log(record: LogRecord): void {
+  const serialized = serializeLogRecord(record);
+  const stream = record.level === 'error' ? process.stderr : process.stdout;
+  stream.write(serialized);
+  stream.write('\n');
 }
