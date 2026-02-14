@@ -271,6 +271,51 @@ describe('contracts v1', () => {
     }
   });
 
+  it('preserves debug frame payload validity across JSON serialization roundtrip', () => {
+    const payload = {
+      ...makeValidDebugFrame(),
+      events: [
+        {
+          type: 'frame-start',
+          payload: {
+            line: 144,
+            mode: 'vblank',
+            flags: [true, false],
+            metrics: {
+              cycle: 70224,
+            },
+          },
+        },
+        {
+          type: 'apu',
+          payload: {
+            channel: 1,
+            envelope: {
+              volume: 7,
+            },
+          },
+        },
+      ],
+    };
+
+    const serializedPayload = JSON.stringify(payload);
+    const parsedPayload = JSON.parse(serializedPayload);
+
+    const directResult = validateContractPayload(V1Schemas.DebugFrameSchema, parsedPayload);
+    expect(directResult.success).toBe(true);
+    expect(directResult.errorMessage).toBeNull();
+    expect(directResult.data).toEqual(payload);
+
+    const registryResult = validateRegistryPayload(
+      CONTRACT_VERSION_V1,
+      'debugFrame',
+      parsedPayload,
+    );
+    expect(registryResult.success).toBe(true);
+    expect(registryResult.errorMessage).toBeNull();
+    expect(registryResult.data).toEqual(payload);
+  });
+
   it('validates known registry schemas and reports unknown keys', () => {
     const ok = validateRegistryPayload(CONTRACT_VERSION_V1, 'registers', makeValidRegisters());
     expect(ok.success).toBe(true);
