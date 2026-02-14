@@ -87,8 +87,8 @@ WasmBoy-Voxel CLI
 
 Usage:
   wasmboy-voxel run <rom>
-  wasmboy-voxel snapshot <rom> [--out <jsonPath>]
-  wasmboy-voxel compare <baselineSummary> [--current <summaryPath>]
+  wasmboy-voxel snapshot <rom> [--out <jsonPath> | -o <jsonPath>]
+  wasmboy-voxel compare <baselineSummary> [--current <summaryPath> | -c <summaryPath>]
   wasmboy-voxel contract-check --contract <name> --file <jsonPath>
 
 Examples:

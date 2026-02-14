@@ -193,4 +193,66 @@ describe('cli commands', () => {
       }
     }
   });
+
+  it('enforces mutual exclusion between snapshot output aliases', () => {
+    const dir = createTempDir();
+    const romPath = path.join(dir, 'sample.gb');
+    fs.writeFileSync(romPath, Buffer.from([1, 2, 3]));
+
+    expect(() =>
+      executeCli([
+        'snapshot',
+        romPath,
+        '--out',
+        path.join(dir, 'first.json'),
+        '-o',
+        path.join(dir, 'second.json'),
+      ]),
+    ).toThrowError(CliError);
+
+    try {
+      executeCli([
+        'snapshot',
+        romPath,
+        '--out',
+        path.join(dir, 'first.json'),
+        '-o',
+        path.join(dir, 'second.json'),
+      ]);
+    } catch (error) {
+      if (error instanceof CliError) {
+        expect(error.code).toBe('InvalidInput');
+        expect(error.message).toContain(
+          'snapshot command options --out, -o are mutually exclusive',
+        );
+      } else {
+        throw error;
+      }
+    }
+  });
+
+  it('enforces mutual exclusion between compare current aliases', () => {
+    const dir = createTempDir();
+    const baselinePath = path.join(dir, 'baseline.json');
+    writeJson(baselinePath, {
+      roms: [{ rom: 'foo.gb', tileDataSha256: 'abc', oamDataSha256: 'def' }],
+    });
+
+    expect(() =>
+      executeCli(['compare', baselinePath, '--current', baselinePath, '-c', baselinePath]),
+    ).toThrowError(CliError);
+
+    try {
+      executeCli(['compare', baselinePath, '--current', baselinePath, '-c', baselinePath]);
+    } catch (error) {
+      if (error instanceof CliError) {
+        expect(error.code).toBe('InvalidInput');
+        expect(error.message).toContain(
+          'compare command options --current, -c are mutually exclusive',
+        );
+      } else {
+        throw error;
+      }
+    }
+  });
 });

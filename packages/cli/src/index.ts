@@ -9,6 +9,37 @@ import {
 import { CliError } from './errors.js';
 import { log } from './logger.js';
 
+const SNAPSHOT_OUTPUT_FLAGS = ['--out', '-o'] as const;
+const COMPARE_CURRENT_FLAGS = ['--current', '-c'] as const;
+
+function assertMutuallyExclusiveFlags(
+  commandName: string,
+  args: string[],
+  mutuallyExclusiveFlags: readonly string[],
+): void {
+  const presentFlags = mutuallyExclusiveFlags.filter(flag => args.includes(flag));
+  if (presentFlags.length <= 1) {
+    return;
+  }
+
+  throw new CliError(
+    'InvalidInput',
+    `${commandName} command options ${presentFlags.join(', ')} are mutually exclusive`,
+  );
+}
+
+function readFirstFlagValue(args: string[], flags: readonly string[]): string | undefined {
+  for (const flag of flags) {
+    const flagIndex = args.indexOf(flag);
+    if (flagIndex < 0) {
+      continue;
+    }
+    return args[flagIndex + 1];
+  }
+
+  return undefined;
+}
+
 export function executeCli(argv: string[]): void {
   const [command, ...rest] = argv;
 
@@ -27,9 +58,10 @@ export function executeCli(argv: string[]): void {
   if (command === 'snapshot') {
     const romPath = rest[0];
     if (!romPath) throw new CliError('InvalidInput', 'snapshot command requires <rom>');
-    assertKnownCommandOptions('snapshot', rest.slice(1), ['--out']);
-    const outFlagIndex = rest.indexOf('--out');
-    const outPath = outFlagIndex >= 0 ? rest[outFlagIndex + 1] : undefined;
+    const commandArgs = rest.slice(1);
+    assertKnownCommandOptions('snapshot', commandArgs, SNAPSHOT_OUTPUT_FLAGS);
+    assertMutuallyExclusiveFlags('snapshot', commandArgs, SNAPSHOT_OUTPUT_FLAGS);
+    const outPath = readFirstFlagValue(commandArgs, SNAPSHOT_OUTPUT_FLAGS);
     snapshotCommand(romPath, outPath);
     return;
   }
@@ -39,9 +71,10 @@ export function executeCli(argv: string[]): void {
     if (!baselinePath) {
       throw new CliError('InvalidInput', 'compare command requires <baselineSummary>');
     }
-    assertKnownCommandOptions('compare', rest.slice(1), ['--current']);
-    const currentFlagIndex = rest.indexOf('--current');
-    const currentPath = currentFlagIndex >= 0 ? rest[currentFlagIndex + 1] : undefined;
+    const commandArgs = rest.slice(1);
+    assertKnownCommandOptions('compare', commandArgs, COMPARE_CURRENT_FLAGS);
+    assertMutuallyExclusiveFlags('compare', commandArgs, COMPARE_CURRENT_FLAGS);
+    const currentPath = readFirstFlagValue(commandArgs, COMPARE_CURRENT_FLAGS);
     compareCommand(baselinePath, currentPath);
     return;
   }
