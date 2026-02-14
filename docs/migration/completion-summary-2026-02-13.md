@@ -358,6 +358,7 @@ Workflow hardening applied:
 - bundle-diagnostics tar spawn failures now classify missing-command (`ENOENT`) cases into a deterministic “tar command was not found in PATH” error, with regression coverage and placeholder cleanup assertions
 - changeset-status suppressed-warning sorting now uses deterministic code-point ordering (instead of locale-sensitive comparison), with regression coverage using locale-sensitive fixture names (`z-module` vs `ä-module`)
 - changeset-status parser now rejects malformed inline timeout forms with double equals (`--timeout-ms==...`) at parse time, with explicit usage-guidance regression coverage
+- timeout options-container validation coverage now includes unprintable non-plain object fixtures (Date instances with throwing `toString`) across direct and composed top-level/env/cli container guards
 
 ## Security posture at completion
 

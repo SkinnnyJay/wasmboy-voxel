@@ -8,6 +8,14 @@ const UNPRINTABLE_VALUE = {
   },
 };
 
+function createUnprintableDateValue() {
+  const value = new Date();
+  value.toString = () => {
+    throw new Error('cannot stringify date');
+  };
+  return value;
+}
+
 test('resolveStrictPositiveIntegerEnv returns default for undefined values', () => {
   const timeout = resolveStrictPositiveIntegerEnv({
     name: 'TEST_TIMEOUT',
@@ -52,6 +60,10 @@ test('resolveStrictPositiveIntegerEnv rejects Map options objects', () => {
 
 test('resolveStrictPositiveIntegerEnv rejects Set options objects', () => {
   assert.throws(() => resolveStrictPositiveIntegerEnv(new Set()), /Invalid timeout env resolution options\./u);
+});
+
+test('resolveStrictPositiveIntegerEnv rejects unprintable non-plain options objects', () => {
+  assert.throws(() => resolveStrictPositiveIntegerEnv(createUnprintableDateValue()), /Invalid timeout env resolution options\./u);
 });
 
 test('resolveStrictPositiveIntegerEnv rejects empty option names', () => {
@@ -558,6 +570,10 @@ test('resolveTimeoutFromCliAndEnv rejects Set top-level options', () => {
   assert.throws(() => resolveTimeoutFromCliAndEnv(new Set()), /Invalid timeout resolution options\./u);
 });
 
+test('resolveTimeoutFromCliAndEnv rejects unprintable non-plain top-level options', () => {
+  assert.throws(() => resolveTimeoutFromCliAndEnv(createUnprintableDateValue()), /Invalid timeout resolution options\./u);
+});
+
 test('resolveTimeoutFromCliAndEnv rejects missing env option objects', () => {
   assert.throws(
     () =>
@@ -660,6 +676,18 @@ test('resolveTimeoutFromCliAndEnv rejects Set env option values', () => {
       resolveTimeoutFromCliAndEnv({
         defaultValue: 120000,
         env: new Set(),
+        cli: { name: '--test-timeout', rawValue: undefined },
+      }),
+    /Invalid timeout env options\./u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects unprintable non-plain env option values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: createUnprintableDateValue(),
         cli: { name: '--test-timeout', rawValue: undefined },
       }),
     /Invalid timeout env options\./u,
@@ -769,6 +797,18 @@ test('resolveTimeoutFromCliAndEnv rejects Set cli option values', () => {
         defaultValue: 120000,
         env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
         cli: new Set(),
+      }),
+    /Invalid timeout cli options\./u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv rejects unprintable non-plain cli option values', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: undefined },
+        cli: createUnprintableDateValue(),
       }),
     /Invalid timeout cli options\./u,
   );
