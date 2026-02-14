@@ -421,6 +421,26 @@ test('bundle-diagnostics archives matched files in deterministic sorted order', 
   assert.ok(aIndex < bIndex, 'archive entries should be stable and sorted lexicographically');
 });
 
+test('bundle-diagnostics keeps distinct case-variant filenames when deduplicating', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-case-collision-'));
+  const logsDirectory = path.join(tempDirectory, 'logs');
+  fs.mkdirSync(logsDirectory, { recursive: true });
+  fs.writeFileSync(path.join(logsDirectory, 'Case.log'), 'upper case entry\n', 'utf8');
+  fs.writeFileSync(path.join(logsDirectory, 'case.log'), 'lower case entry\n', 'utf8');
+
+  runBundlerCommand(tempDirectory, ['--output', 'artifacts/case-collision.tar.gz', '--pattern', 'logs/*.log']);
+
+  const archiveContents = listArchiveContents(tempDirectory, 'artifacts/case-collision.tar.gz');
+  assert.ok(
+    archiveContents.some(entry => entry.endsWith('logs/Case.log')),
+    'archive should retain uppercase case-variant filename',
+  );
+  assert.ok(
+    archiveContents.some(entry => entry.endsWith('logs/case.log')),
+    'archive should retain lowercase case-variant filename',
+  );
+});
+
 test('bundle-diagnostics archives files whose names start with a dash', () => {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-diagnostics-dash-file-'));
   const dashFilePath = path.join(tempDirectory, '-special.log');
