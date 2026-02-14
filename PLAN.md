@@ -816,3 +816,4 @@
 - 2026-02-14: Re-ran workspace aggregate typecheck gate (`npm run stack:typecheck`) to reconfirm package/app TypeScript project checks remain green across API/CLI/debugger workspaces with a clean working tree.
 - 2026-02-14: Re-ran workspace aggregate lint gate (`npm run stack:lint`) to reconfirm package/app typecheck + Prettier invariants remain green across API/CLI/debugger workspaces with a clean working tree.
 - 2026-02-14: Re-ran workspace aggregate test gate (`npm run stack:test`) to reconfirm package/app Vitest suites remain green across API/CLI/debugger workspaces with a clean working tree.
+- 2026-02-14: Re-ran scoped workspace smoke gate (`npm run stack:test:smoke:scopes`) to reconfirm package/app scoped test entrypoint wiring remains green across API/CLI/debugger workspaces with a clean working tree.
