@@ -13,9 +13,9 @@ Ownership tags are subsystem owners (team-level), not individual names.
 
 ## Open debt items
 
-| Debt ID | Area               | Description                                                                                       | Severity | Owner Tag        | Source                                                            | Status |
-| ------- | ------------------ | ------------------------------------------------------------------------------------------------- | -------- | ---------------- | ----------------------------------------------------------------- | ------ |
-| TD-003  | Core graphics perf | Branch-heavy hot loops in scanline/background/sprite paths need selective branch-hoist refactors. | S3       | `@core-graphics` | `docs/migration/core-graphics-branch-churn-profile-2026-02-14.md` | Open   |
+| Debt ID | Area | Description | Severity | Owner Tag | Source | Status |
+| ------- | ---- | ----------- | -------- | --------- | ------ | ------ |
+
 
 ## Closed debt items (resolved in migration cycle)
 
@@ -35,6 +35,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C012 | Debugger large-dataset UX    | Added paginated timeline deep-inspection UX with oldest/older/newer/newest controls and tested page-window selection helpers for large snapshot histories.                                               | S4                | `@debugger-ui`        |
 | TD-C013 | Core memory banking          | Split `handleBanking` branch fan-out into focused banking helpers (RAM enable, ROM lower bits, RAM/upper ROM select, mode toggles) while preserving behavior and validating with core/integration tests. | S3                | `@core-memory`        |
 | TD-C014 | Core sound perf/clarity      | Consolidated repeated sound-channel frequency synchronization writes into shared `syncFrequencyFromRegisters()` helpers across channels 1-3, reducing redundant update sites while preserving behavior.  | S3                | `@core-audio`         |
+| TD-C015 | Core graphics perf           | Hoisted frame-stable config/mode branches out of background pixel loops and cached per-iteration scanline cycle budget in graphics update loop; validated with throughput + headless integration tests.  | S3                | `@core-graphics`      |
 
 ## Triage cadence
 

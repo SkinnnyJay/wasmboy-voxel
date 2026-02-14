@@ -88,3 +88,22 @@ Correctness-sensitive, but still a major branch fan-out region.
 ## Conclusion
 
 No immediate correctness regressions were observed, but branch churn is concentrated in the background/window and sprite inner loops. The most promising low-risk optimization is hoisting stable mode/config checks out of pixel loops before pursuing deeper structural refactors.
+
+## 2026-02-14 resolution update
+
+Implemented the low-risk branch-hoist items in:
+
+- `core/graphics/backgroundWindow.ts`
+  - hoisted frame-stable `Config.tileCaching`, `Config.tileRendering`, and
+    `Cpu.GBCEnabled` checks out of the per-pixel inner loop.
+- `core/graphics/graphics.ts`
+  - cached `MAX_CYCLES_PER_SCANLINE()` once per loop iteration in
+    `updateGraphics(...)` instead of re-evaluating it twice.
+
+Validation run:
+
+- `npm run core:build`
+- `npm run lib:build:wasm`
+- `npm run test:performance:throughput`
+  - observed: **830.39 FPS** (`1200` frames in `1445.11ms`)
+- `npm run test:integration:headless`

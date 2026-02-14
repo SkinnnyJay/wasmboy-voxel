@@ -17,7 +17,7 @@ import {
   eightBitLoadFromGBMemory,
   eightBitStoreIntoGBMemory,
   loadBooleanDirectlyFromWasmMemory,
-  storeBooleanDirectlyToWasmMemory
+  storeBooleanDirectlyToWasmMemory,
 } from '../memory/index';
 
 export class Graphics {
@@ -220,10 +220,15 @@ export function updateGraphics(numberOfCycles: i32): void {
 
     let graphicsDisableScanlineRendering = Config.graphicsDisableScanlineRendering;
 
-    while (Graphics.scanlineCycleCounter >= Graphics.MAX_CYCLES_PER_SCANLINE()) {
+    while (true) {
+      let maxCyclesPerScanline = Graphics.MAX_CYCLES_PER_SCANLINE();
+      if (Graphics.scanlineCycleCounter < maxCyclesPerScanline) {
+        break;
+      }
+
       // Reset the scanlineCycleCounter
       // Don't set to zero to catch extra cycles
-      Graphics.scanlineCycleCounter -= Graphics.MAX_CYCLES_PER_SCANLINE();
+      Graphics.scanlineCycleCounter -= maxCyclesPerScanline;
 
       // Move to next scanline
       // let scanlineRegister: i32 = eightBitLoadFromGBMemory(Graphics.memoryLocationScanlineRegister);
