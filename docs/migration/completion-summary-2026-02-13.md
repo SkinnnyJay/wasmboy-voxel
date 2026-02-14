@@ -452,6 +452,7 @@ Workflow hardening applied:
 - onboarding documentation now includes a repository architecture diagram (`docs/migration/repository-architecture-map-2026-02-14.md`) mapping core/runtime/workspace/quality layers and contributor entry points
 - cross-subsystem performance budgets are now documented (`docs/migration/performance-budgets-2026-02-14.md`) for scripts/CLI/debugger/core paths, and debugger instrumentation now has an explicit smoke budget regression (`apps/debugger/test/performance-budget.test.ts`)
 - a weekly regression checklist now links CI status, local gates, focused safety checks, performance budgets, and docs/debt synchronization (`docs/migration/weekly-regression-checklist-2026-02-14.md`)
+- a formal iterative backlog process now defines how to generate and execute each new 100-item hardening cycle (`docs/migration/iterative-backlog-process-2026-02-14.md`), including scoring, source signals, execution protocol, and a reusable next-100 template
 
 ## Security posture at completion
 

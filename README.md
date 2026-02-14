@@ -116,6 +116,7 @@ Guides:
 - Repository architecture map: `docs/migration/repository-architecture-map-2026-02-14.md`
 - Performance budgets: `docs/migration/performance-budgets-2026-02-14.md`
 - Weekly regression checklist: `docs/migration/weekly-regression-checklist-2026-02-14.md`
+- Iterative backlog process: `docs/migration/iterative-backlog-process-2026-02-14.md`
 
 # In-Game Screenshots
 
