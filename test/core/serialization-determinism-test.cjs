@@ -31,6 +31,8 @@ const WASMBOY_CONFIG_ARGS = [
   0, // enableAudioDebugging
 ];
 
+const VOLATILE_WASMBOY_STATE_DIFF_INDICES = new Set([54, 350, 351, 397, 400, 401, 450, 451, 500, 501, 502, 503]);
+
 function readStateSlices(wasmboy, wasmByteMemoryArray) {
   return {
     cartridgeRam: wasmByteMemoryArray.slice(
@@ -68,10 +70,31 @@ function assertStateSliceEqual(first, second, label) {
   );
 }
 
+function assertWasmBoyStateDeterminism(first, second, label) {
+  assert.strictEqual(first.length, second.length, `${label} length should match`);
+
+  const unexpectedDiffs = [];
+  for (let index = 0; index < first.length; index += 1) {
+    if (first[index] === second[index]) {
+      continue;
+    }
+    if (!VOLATILE_WASMBOY_STATE_DIFF_INDICES.has(index)) {
+      unexpectedDiffs.push(index);
+    }
+  }
+
+  assert.deepStrictEqual(
+    unexpectedDiffs,
+    [],
+    `${label} should only differ at volatile indices (${Array.from(VOLATILE_WASMBOY_STATE_DIFF_INDICES).join(', ')})`,
+  );
+}
+
 function assertSnapshotsEqual(firstSnapshot, secondSnapshot) {
   assertStateSliceEqual(firstSnapshot.cartridgeRam, secondSnapshot.cartridgeRam, 'cartridgeRam');
   assertStateSliceEqual(firstSnapshot.gameboyMemory, secondSnapshot.gameboyMemory, 'gameboyMemory');
   assertStateSliceEqual(firstSnapshot.paletteMemory, secondSnapshot.paletteMemory, 'paletteMemory');
+  assertWasmBoyStateDeterminism(firstSnapshot.wasmboyState, secondSnapshot.wasmboyState, 'wasmboyState');
 }
 
 describe('Core serialization determinism', function () {
