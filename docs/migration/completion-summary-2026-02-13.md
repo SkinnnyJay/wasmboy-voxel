@@ -392,6 +392,7 @@ Workflow hardening applied:
 - packages/api contract tests now include full-register-field bounds and coercion rejection coverage, verifying all register keys reject out-of-range and string/boolean payloads without coercion
 - packages/api snapshot schema tests now enforce required-field stability by asserting all snapshot keys remain non-optional and any omitted field fails validation
 - packages/api validation coverage now includes non-object payload rejection across all v1 contract entrypoints, for both `validateRegistryPayload` and `validateContractPayload` paths
+- packages/api numeric validation coverage now includes non-finite value rejection (`NaN`, `Infinity`, `-Infinity`) across register bytes, snapshot byte arrays, memory-section numeric fields, and debug-frame numeric fields; debug-frame `timestampMs` and `fps` are now explicitly constrained to finite numbers
 
 ## Security posture at completion
 

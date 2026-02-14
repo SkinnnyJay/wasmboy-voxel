@@ -32,6 +32,7 @@ const REGISTER_KEYS: (keyof Registers)[] = [
   'obp0',
   'obp1',
 ];
+const NON_FINITE_NUMBERS = [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
 
 const makeValidDebugFrame = () => ({
   version: 'v1',
@@ -189,6 +190,85 @@ describe('contracts v1', () => {
     expect(
       V1Schemas.DebugFrameSchema.safeParse({ ...makeValidDebugFrame(), frameId: 1n }).success,
     ).toBe(false);
+  });
+
+  it('rejects NaN and Infinity across numeric contract fields', () => {
+    for (const nonFiniteNumber of NON_FINITE_NUMBERS) {
+      for (const registerKey of REGISTER_KEYS) {
+        expect(
+          V1Schemas.RegistersSchema.safeParse({
+            ...makeValidRegisters(),
+            [registerKey]: nonFiniteNumber,
+          }).success,
+        ).toBe(false);
+      }
+
+      const snapshotWithInvalidTileData = makeValidPpuSnapshot();
+      snapshotWithInvalidTileData.tileData[0] = nonFiniteNumber;
+      expect(V1Schemas.PpuSnapshotSchema.safeParse(snapshotWithInvalidTileData).success).toBe(
+        false,
+      );
+
+      const snapshotWithInvalidBgTileMap = makeValidPpuSnapshot();
+      snapshotWithInvalidBgTileMap.bgTileMap[0] = nonFiniteNumber;
+      expect(V1Schemas.PpuSnapshotSchema.safeParse(snapshotWithInvalidBgTileMap).success).toBe(
+        false,
+      );
+
+      const snapshotWithInvalidWindowTileMap = makeValidPpuSnapshot();
+      snapshotWithInvalidWindowTileMap.windowTileMap[0] = nonFiniteNumber;
+      expect(V1Schemas.PpuSnapshotSchema.safeParse(snapshotWithInvalidWindowTileMap).success).toBe(
+        false,
+      );
+
+      const snapshotWithInvalidOamData = makeValidPpuSnapshot();
+      snapshotWithInvalidOamData.oamData[0] = nonFiniteNumber;
+      expect(V1Schemas.PpuSnapshotSchema.safeParse(snapshotWithInvalidOamData).success).toBe(false);
+
+      expect(
+        V1Schemas.MemorySectionSchema.safeParse({
+          version: 'v1',
+          start: nonFiniteNumber,
+          endExclusive: 4,
+          bytes: [1, 2, 3, 4],
+        }).success,
+      ).toBe(false);
+      expect(
+        V1Schemas.MemorySectionSchema.safeParse({
+          version: 'v1',
+          start: 0,
+          endExclusive: nonFiniteNumber,
+          bytes: [1, 2, 3, 4],
+        }).success,
+      ).toBe(false);
+      expect(
+        V1Schemas.MemorySectionSchema.safeParse({
+          version: 'v1',
+          start: 0,
+          endExclusive: 4,
+          bytes: [nonFiniteNumber, 2, 3, 4],
+        }).success,
+      ).toBe(false);
+
+      expect(
+        V1Schemas.DebugFrameSchema.safeParse({
+          ...makeValidDebugFrame(),
+          frameId: nonFiniteNumber,
+        }).success,
+      ).toBe(false);
+      expect(
+        V1Schemas.DebugFrameSchema.safeParse({
+          ...makeValidDebugFrame(),
+          timestampMs: nonFiniteNumber,
+        }).success,
+      ).toBe(false);
+      expect(
+        V1Schemas.DebugFrameSchema.safeParse({
+          ...makeValidDebugFrame(),
+          fps: nonFiniteNumber,
+        }).success,
+      ).toBe(false);
+    }
   });
 
   it('validates known registry schemas and reports unknown keys', () => {

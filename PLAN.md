@@ -495,3 +495,4 @@
 - 2026-02-13: Added snapshot schema stability regression coverage in `packages/api`, asserting all `PpuSnapshotSchema` fields remain non-optional and any single-field omission fails validation.
 - 2026-02-13: Expanded `packages/api` contract validation coverage for non-object payloads across all v1 entrypoints (`registers`, `ppuSnapshot`, `memorySection`, `debugFrame`, `metadata`) for both registry-based and direct schema validation paths.
 - 2026-02-13: Expanded `packages/api` numeric-type strictness coverage with bigint rejection regressions across register, snapshot, memory section, and debug frame numeric fields.
+- 2026-02-13: Expanded `packages/api` numeric validation coverage for non-finite values (NaN/±Infinity) across register bytes, snapshot byte arrays, memory-section numeric spans, and debug-frame numeric fields; tightened debug-frame `timestampMs`/`fps` schemas with finite-number constraints.
