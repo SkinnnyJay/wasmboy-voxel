@@ -43,7 +43,7 @@ function assertStringArray(candidateArray, parameterName) {
  * @param {string[]} values
  */
 function sortedStringArray(values) {
-  return [...values].sort((left, right) => left.localeCompare(right));
+  return [...values].sort((left, right) => (left === right ? 0 : left < right ? -1 : 1));
 }
 
 /**

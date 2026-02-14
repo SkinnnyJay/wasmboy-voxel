@@ -194,3 +194,21 @@ test('summary builders expose boolean convenience flags for no-op payloads', () 
   assert.equal(cleanupSummary.hasRemovals, false);
   assert.equal(guardSummary.hasBlockedPaths, false);
 });
+
+test('summary builders use locale-independent ordinal sorting for path arrays', () => {
+  const cleanupSummary = buildCleanupArtifactSummary({
+    dryRun: true,
+    deletedDirectories: ['dist/a', 'dist/B'],
+    deletedFiles: ['test/integration/z.output', 'test/integration/A.output'],
+  });
+  const guardSummary = buildGuardArtifactSummary({
+    allowGeneratedEdits: false,
+    isValid: false,
+    blockedPaths: ['dist/generated-z.js', 'dist/generated-A.js'],
+    stagedPathCount: 2,
+  });
+
+  assert.deepEqual(cleanupSummary.deletedDirectories, ['dist/B', 'dist/a']);
+  assert.deepEqual(cleanupSummary.deletedFiles, ['test/integration/A.output', 'test/integration/z.output']);
+  assert.deepEqual(guardSummary.blockedPaths, ['dist/generated-A.js', 'dist/generated-z.js']);
+});

@@ -85,6 +85,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C062 | Guard summary count invariant             | Enforced shared guard-summary invariant (`stagedPathCount >= blockedPathCount`) with regression coverage, preventing impossible machine-readable payload combinations from propagating to automation consumers.                 | S4                | `@automation-tooling` |
 | TD-C063 | Guard summary validity invariant          | Enforced shared guard-summary validity invariant (`isValid` requires zero blocked paths) with regression coverage, preventing contradictory machine-readable payload states from propagating to automation consumers.           | S4                | `@automation-tooling` |
 | TD-C064 | Artifact summary deterministic list order | Added deterministic sorting for machine-readable summary list fields (`deletedDirectories`, `deletedFiles`, `blockedPaths`) in shared summary builders, with helper and executable contract coverage to prevent ordering drift. | S4                | `@automation-tooling` |
+| TD-C065 | Artifact summary locale-independent sort  | Replaced locale-sensitive path sorting with ordinal string comparison in artifact summary builders and added mixed-case regression coverage to lock cross-platform deterministic ordering in machine-readable payloads.         | S4                | `@automation-tooling` |
 
 ## Triage cadence
 
