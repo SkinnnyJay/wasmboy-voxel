@@ -34,7 +34,12 @@ When `headless: true` and Workers are used (default):
 For environments where Workers are unreliable or you need deterministic frame stepping:
 
 - Use **WasmBoyHeadless** (see [lib/headless/WasmBoyHeadless.js](lib/headless/WasmBoyHeadless.js)) for a synchronous API: `loadROM()`, `stepFrame()` / `stepFrames(n)`, `getFrameBuffer()`, `getPpuSnapshot()`, `readMemory()` / `writeMemory()`, `setJoypadState()`, `saveState()` / `loadState()`.
-- Or use the standard `WasmBoy` with `headless: true` and `mainThread: true` so the core runs on the main thread and snapshot/memory APIs avoid Worker round-trips.
+- Or use the standard `WasmBoy` with `headless: true` and `mainThread: true` so the core runs on the main thread and snapshot/memory APIs avoid Worker round-trips. Run `npm run test:integration:headless:mainthread` to verify.
+
+## Consumer integration (e.g. gameboy-remix)
+
+- **This fork:** Headless is confirmed here: `npm run build` produces `dist/wasmboy.headless.esm.js` and `dist/wasmboy.headless.cjs.cjs`; `test:integration:headless:callback`, `test:integration:headless:class`, and `test:integration:headless:mainthread` pass.
+- **Consumer app:** Point the dependency at this fork (e.g. `github:SkinnnyJay/wasmboy-voxel#master`), add headless types in the consumer if needed (e.g. `src/types/wasmboy.d.ts`), then run a fresh `npm install` (or clear git cache and update). To fully confirm headless from the consumer, add a small integration test that imports the headless bundle, loads a ROM, steps frames, and calls `getPpuSnapshot()` or `readMemory()`.
 
 ## See also
 

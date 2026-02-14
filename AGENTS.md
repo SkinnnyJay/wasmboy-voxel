@@ -13,6 +13,10 @@ rendering. It is consumed by the parent `gameboy-remix` project via
 - `voxel-wrapper.ts` and `index.ts` add voxel snapshot helpers.
 - `demo/` debugger, benchmark, iframe demos.
 
+## Headless
+- **Config headless:** `config({ headless: true, updateGraphicsCallback })` skips canvas/audio; frames are delivered to the callback when Workers are used (e.g. Node with `--experimental-worker`). Canvas is optional. See `docs/HEADLESS_MODE.md`.
+- **WasmBoyHeadless:** Import from `dist/wasmboy.headless.esm.js` (or `.cjs.cjs`) for a synchronous API (no Workers); suitable for headless Chrome, Vitest, and CI.
+
 ## Key Constraints
 - `dist/` and `build/` are generated output; do not edit by hand.
 - Memory layout constants in `core/constants.ts` are fixed; update wrapper logic
