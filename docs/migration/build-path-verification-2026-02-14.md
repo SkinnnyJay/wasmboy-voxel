@@ -72,3 +72,12 @@ that are now fixed:
   - `postcss`
 
 These fixes keep `lib:build:ts` executable in the current Node 22 ESM runtime.
+
+## 4) Dual-build sign-off automation
+
+- Added combined verification script:
+  - `npm run test:integration:dual-build:verify`
+  - sequence: WASM build + headless integration smoke + TS build + TS runtime smoke
+- Added CI job in `.github/workflows/ci.yml`:
+  - `dual-build-verify`
+  - runs the dual-build script and uploads diagnostics on failure.
