@@ -382,6 +382,7 @@ Workflow hardening applied:
 - test-fixtures coverage now includes fake-bin idempotency semantics, verifying repeated fixture writes reuse the same fake-bin path and keep all generated commands runnable
 - scripts test suites now share a centralized `UNPRINTABLE_VALUE` fixture helper, eliminating duplicated unprintable-value fixture declarations across script utility test files
 - changeset-status duplicate-argument parser tests now use reusable fixture constants for help/timeout duplicate matrices, reducing repeated literal arrays while retaining full precedence coverage
+- script-level contract coverage now includes an explicit cross-helper `formatErrorValue` regression suite, ensuring unprintable inputs are surfaced as `[unprintable]` consistently across parser/timeout/filter/fixture utilities
 
 ## Security posture at completion
 
