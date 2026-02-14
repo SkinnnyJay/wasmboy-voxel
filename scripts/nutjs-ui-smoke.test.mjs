@@ -54,6 +54,21 @@ test('runNutjsUiSmoke skips when nutjs module is unavailable', async () => {
   assert.match(summary.moduleLoadError ?? '', /Cannot find module/u);
 });
 
+test('runNutjsUiSmoke reports Linux display fallback metadata when only Wayland is present', async () => {
+  const summary = await runNutjsUiSmoke({
+    platform: 'linux',
+    env: {
+      WAYLAND_DISPLAY: 'wayland-0',
+    },
+    loader: async () => ({ keyboard: {}, mouse: {} }),
+  });
+
+  assert.equal(summary.status, 'skipped');
+  assert.deepEqual(summary.reasons, ['linux-wayland-disabled']);
+  assert.equal(summary.capabilityMetadata.linuxDisplayStrategy.fallbackBackend, 'xvfb');
+  assert.equal(summary.capabilityMetadata.linuxDisplayStrategy.selectedBackend, null);
+});
+
 test('runNutjsUiSmoke rejects unavailable environments in strict mode', async () => {
   await assert.rejects(
     () =>

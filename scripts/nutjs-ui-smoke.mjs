@@ -2,6 +2,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { transformNutjsPointerCoordinate } from './nutjs-display-scale.mjs';
 import { resolveNutjsShortcutKeyNames, resolveNutjsShortcutScanCodes } from './nutjs-keyboard-layout-map.mjs';
+import { resolveNutjsLinuxDisplayStrategy } from './nutjs-linux-display.mjs';
 
 const DEFAULT_NUTJS_PACKAGE_NAME = '@nut-tree-fork/nut-js';
 const SCRIPT_USAGE = `Usage: node scripts/nutjs-ui-smoke.mjs [--json] [--strict] [--help]\n\nOptions:\n  --json      Emit machine-readable JSON summary.\n  --strict    Fail when NutJS or host capabilities are unavailable.\n  --help, -h  Show this usage message.\n`;
@@ -56,16 +57,17 @@ export function resolveNutjsUiCapabilities(options = {}) {
   const environment = options.env ?? process.env;
   const nutjsModuleAvailable = options.nutjsModuleAvailable ?? true;
   const reasons = [];
+  const metadata = {};
 
   if (!nutjsModuleAvailable) {
     reasons.push('nutjs-module-unavailable');
   }
 
   if (platform === 'linux') {
-    const display = typeof environment.DISPLAY === 'string' ? environment.DISPLAY.trim() : '';
-    const waylandDisplay = typeof environment.WAYLAND_DISPLAY === 'string' ? environment.WAYLAND_DISPLAY.trim() : '';
-    if (display.length === 0 && waylandDisplay.length === 0) {
-      reasons.push('linux-display-unavailable');
+    const linuxDisplayStrategy = resolveNutjsLinuxDisplayStrategy({ env: environment });
+    metadata.linuxDisplayStrategy = linuxDisplayStrategy;
+    if (!linuxDisplayStrategy.isSupported) {
+      reasons.push(...linuxDisplayStrategy.reasons);
     }
   }
 
@@ -73,6 +75,7 @@ export function resolveNutjsUiCapabilities(options = {}) {
     platform,
     isSupported: reasons.length === 0,
     reasons,
+    metadata,
   };
 }
 
@@ -199,6 +202,7 @@ export async function runNutjsUiSmoke(options = {}) {
     platform,
     packageName,
     reasons: capabilities.reasons,
+    capabilityMetadata: capabilities.metadata,
     moduleLoadError: loadedModule.loadError,
     timestampMs: Date.now(),
     smokeMetadata: /** @type {Record<string, unknown>} */ ({}),
