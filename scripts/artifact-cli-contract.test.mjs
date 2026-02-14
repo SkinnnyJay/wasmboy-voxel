@@ -40,17 +40,17 @@ function runGit(args, cwd) {
 }
 
 function createTempGitRepoWithStagedGeneratedArtifact(prefix) {
+  return createTempGitRepoWithStagedPaths(prefix, ['dist/generated.js']);
+}
+
+function createTempGitRepoWithStagedPaths(prefix, stagedRelativePaths) {
   const tempRepoRoot = fs.mkdtempSync(path.join(os.tmpdir(), prefix));
   runGit(['init', '--quiet'], tempRepoRoot);
-  const stagedGeneratedRelativePath = 'dist/generated.js';
-  const stagedGeneratedAbsolutePath = path.join(tempRepoRoot, stagedGeneratedRelativePath);
-  writeFileEnsuringParent(stagedGeneratedAbsolutePath, 'console.log("generated");');
-  runGit(['add', stagedGeneratedRelativePath], tempRepoRoot);
-
-  return {
-    tempRepoRoot,
-    stagedGeneratedRelativePath,
-  };
+  stagedRelativePaths.forEach(relativePath => {
+    writeFileEnsuringParent(path.join(tempRepoRoot, relativePath), 'console.log("generated");');
+    runGit(['add', relativePath], tempRepoRoot);
+  });
+  return { tempRepoRoot, stagedRelativePaths };
 }
 
 test('clean artifact script prints usage for --help', () => {
@@ -222,7 +222,7 @@ test('generated artifact guard JSON output reports blocked staged artifacts', ()
   assert.equal(parsedOutput.allowGeneratedEdits, false);
   assert.equal(typeof parsedOutput.timestampMs, 'number');
   assert.equal(parsedOutput.isValid, false);
-  assert.deepEqual(parsedOutput.blockedPaths, [tempRepo.stagedGeneratedRelativePath]);
+  assert.deepEqual(parsedOutput.blockedPaths, [tempRepo.stagedRelativePaths[0]]);
   assert.equal(parsedOutput.stagedPathCount, 1);
 });
 
@@ -243,4 +243,19 @@ test('generated artifact guard JSON output honors generated-edit override', () =
   assert.equal(parsedOutput.isValid, true);
   assert.deepEqual(parsedOutput.blockedPaths, []);
   assert.equal(parsedOutput.stagedPathCount, 1);
+});
+
+test('generated artifact guard JSON output sorts blocked paths deterministically', () => {
+  const tempRepo = createTempGitRepoWithStagedPaths('artifact-guard-json-order-', ['dist/z-generated.js', 'build/a-generated.js']);
+
+  const result = runScript(guardArtifactsScriptPath, ['--json'], { cwd: tempRepo.tempRepoRoot });
+
+  assert.equal(result.status, 1);
+  assert.equal(result.stderr, '');
+  const parsedOutput = JSON.parse(result.stdout.trim());
+  assert.equal(parsedOutput.schemaVersion, 1);
+  assert.equal(parsedOutput.allowGeneratedEdits, false);
+  assert.equal(parsedOutput.isValid, false);
+  assert.deepEqual(parsedOutput.blockedPaths, ['build/a-generated.js', 'dist/z-generated.js']);
+  assert.equal(parsedOutput.stagedPathCount, 2);
 });

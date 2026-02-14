@@ -497,6 +497,7 @@ Workflow hardening applied:
 - next-cycle `task139` is now completed by adding subprocess regression coverage for cleanup `--json` apply-mode behavior, proving machine-readable payload correctness alongside actual artifact removal semantics
 - next-cycle `task140` is now completed by adding subprocess regression coverage for cleanup `--json` zero-removal scenarios, locking deterministic no-op payload semantics for machine-readable automation consumers
 - next-cycle `task141` is now completed by adding subprocess regression coverage for guard `--json` no-op override scenarios, ensuring override metadata and success semantics remain explicit in machine-readable payloads
+- next-cycle `task142` is now completed by adding subprocess regression coverage for deterministic blocked-path ordering in guard `--json` payloads, improving stability for downstream machine-readable automation consumers
 
 ## Security posture at completion
 
