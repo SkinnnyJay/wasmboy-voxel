@@ -194,6 +194,22 @@ test('generated artifact guard script emits JSON summary when --json is set', ()
   assert.deepEqual(parsedOutput.blockedPaths, []);
 });
 
+test('generated artifact guard JSON summary reflects override in no-op runs', () => {
+  const result = runScript(guardArtifactsScriptPath, ['--json'], {
+    env: { WASMBOY_ALLOW_GENERATED_EDITS: '1' },
+  });
+
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, '');
+  const parsedOutput = JSON.parse(result.stdout.trim());
+  assert.equal(parsedOutput.schemaVersion, 1);
+  assert.equal(parsedOutput.allowGeneratedEdits, true);
+  assert.equal(typeof parsedOutput.timestampMs, 'number');
+  assert.equal(parsedOutput.isValid, true);
+  assert.equal(parsedOutput.stagedPathCount, 0);
+  assert.deepEqual(parsedOutput.blockedPaths, []);
+});
+
 test('generated artifact guard JSON output reports blocked staged artifacts', () => {
   const tempRepo = createTempGitRepoWithStagedGeneratedArtifact('artifact-guard-json-');
 
