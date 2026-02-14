@@ -915,3 +915,4 @@
 - 2026-02-14: Re-ran audit umbrella (`npm run audit:check`) to reconfirm strict workspace security scanning remains green with zero vulnerabilities across root, `packages/api`, `packages/cli`, and `apps/debugger`, with a clean working tree.
 - 2026-02-14: Re-ran standalone changeset status CI gate (`npm run changeset:status:ci`) to reconfirm expected workspace dependency notice suppression and stable minor-bump classification output remain green with a clean working tree.
 - 2026-02-14: Re-ran Playwright headless no-build smoke gate (`npm run test:e2e:playwright:headless:nobuild`) to reconfirm browser-side end-to-end smoke coverage remains green without rebuild prerequisites, with a clean working tree.
+- 2026-02-14: Re-ran Playwright headless build-inclusive smoke gate (`npm run test:e2e:playwright:headless`) to reconfirm rebuild + browser-side end-to-end smoke sequencing remains green (`lib:build:wasm` + headless no-build smoke) with a clean working tree.
