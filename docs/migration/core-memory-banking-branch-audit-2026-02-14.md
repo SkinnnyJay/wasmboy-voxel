@@ -77,3 +77,21 @@ Small but frequently reached in ROM switchable-bank reads.
 ## Conclusion
 
 Memory banking and write traps are intentionally branch-heavy due hardware behavior, but the current shape contains opportunities to reduce repeated checks and improve readability/hot-path predictability. The safest first step is localizing repeated model-flag reads and adding focused microbench/regression coverage before structural refactors.
+
+## 2026-02-14 resolution update
+
+The primary `handleBanking()` fan-out item has been addressed by splitting offset
+range handlers into focused helpers:
+
+- `updateRamBankingEnabledState`
+- `updateRomBankLowBits`
+- `updateRamBankOrMbc1UpperRomBits`
+- `updateMbc1RomMode`
+
+This keeps behavior-compatible routing while reducing nested branch complexity in
+the main banking entrypoint. Validation run:
+
+- `npm run core:build`
+- `npm run lib:build:wasm`
+- `npm run test:core:memorytraps`
+- `npm run test:integration:memorybounds`
