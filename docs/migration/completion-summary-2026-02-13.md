@@ -495,6 +495,7 @@ Workflow hardening applied:
 - next-cycle `task137` is now completed by adding strict argv-shape/token-type validation to cleanup/guard parser helpers with regression coverage, improving fail-fast diagnostics for malformed internal invocations
 - next-cycle `task138` is now completed by introducing `schemaVersion` metadata in cleanup/guard JSON outputs with executable contract and policy-doc updates, providing explicit versioning for future machine-readable payload evolution
 - next-cycle `task139` is now completed by adding subprocess regression coverage for cleanup `--json` apply-mode behavior, proving machine-readable payload correctness alongside actual artifact removal semantics
+- next-cycle `task140` is now completed by adding subprocess regression coverage for cleanup `--json` zero-removal scenarios, locking deterministic no-op payload semantics for machine-readable automation consumers
 
 ## Security posture at completion
 

@@ -65,6 +65,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C042 | Artifact parser argv contracts        | Added strict argv array/token type validation in cleanup/guard parser helpers with regression coverage, preventing malformed internal consumer payloads from triggering opaque runtime parser failures.                  | S4                | `@automation-tooling` |
 | TD-C043 | Artifact JSON schema versioning       | Added `schemaVersion: 1` to cleanup/guard JSON summaries with executable contract and policy-doc updates so machine-readable consumers can detect payload evolution explicitly.                                          | S4                | `@automation-tooling` |
 | TD-C044 | Cleanup JSON apply-mode contract      | Added subprocess coverage for cleanup `--json` apply mode to verify payload semantics and real artifact deletion behavior stay aligned for machine-readable automation consumers.                                        | S4                | `@automation-tooling` |
+| TD-C045 | Cleanup JSON no-op payload contract   | Added subprocess coverage for cleanup `--json` no-op runs to lock deterministic zero-removal payload semantics (`removedCount: 0`, empty deletion lists) for machine-readable automation consumers.                      | S4                | `@automation-tooling` |
 
 ## Triage cadence
 
