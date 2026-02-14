@@ -471,3 +471,4 @@
 - 2026-02-13: Added `changeset-status-ci` non-ENOENT spawn-failure regression coverage, asserting generic execution-failure diagnostics remain distinct from missing-command classification when `changeset` is present but non-executable.
 - 2026-02-13: Added missing-default-value regression coverage for `resolveTimeoutFromCliAndEnv`, ensuring omitted `defaultValue` fields fail fast with explicit invalid-default diagnostics.
 - 2026-02-13: Expanded help-alias collision coverage for `bundle-diagnostics` message literals, adding long/short cross-alias trailing-help regressions for both split and equals-form message values (`--help` ↔ `-h`).
+- 2026-02-13: Added null-byte timeout-value regressions in `cli-timeout` helpers, covering both direct env parsing and composed env+cli resolution precedence paths.

@@ -369,6 +369,7 @@ Workflow hardening applied:
 - changeset-status command-spawn diagnostics now include regression coverage for non-ENOENT execution failures (present but non-executable `changeset` binary), preserving generic execution-failure messaging distinct from missing-command classification
 - cli-timeout coverage now includes omitted `defaultValue` semantics, asserting missing defaults fail fast with explicit invalid-default diagnostics
 - bundle-diagnostics help-literal handling now includes long/short alias-collision regressions for trailing help flags after message literals in both split and equals forms (`--help` value followed by `-h`, and `-h` value followed by `--help`)
+- cli-timeout parsing now includes null-byte timeout regression coverage for both direct env parsing and env+cli precedence paths, ensuring embedded null bytes are rejected deterministically
 
 ## Security posture at completion
 

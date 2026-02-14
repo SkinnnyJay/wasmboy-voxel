@@ -410,6 +410,18 @@ test('resolveStrictPositiveIntegerEnv rejects non-numeric suffix values', () => 
   );
 });
 
+test('resolveStrictPositiveIntegerEnv rejects values containing null bytes', () => {
+  assert.throws(
+    () =>
+      resolveStrictPositiveIntegerEnv({
+        name: 'TEST_TIMEOUT',
+        rawValue: '5000\u0000',
+        defaultValue: 120000,
+      }),
+    /Invalid TEST_TIMEOUT value: 5000/u,
+  );
+});
+
 test('resolveStrictPositiveIntegerEnv rejects plus-prefixed values', () => {
   assert.throws(
     () =>
@@ -843,6 +855,18 @@ test('resolveTimeoutFromCliAndEnv fails for invalid env timeout even when cli ti
         cli: { name: '--test-timeout', rawValue: '50' },
       }),
     /Invalid TEST_TIMEOUT_ENV value: invalid-timeout/u,
+  );
+});
+
+test('resolveTimeoutFromCliAndEnv fails for null-byte env timeout even when cli timeout is valid', () => {
+  assert.throws(
+    () =>
+      resolveTimeoutFromCliAndEnv({
+        defaultValue: 120000,
+        env: { name: 'TEST_TIMEOUT_ENV', rawValue: '5000\u0000' },
+        cli: { name: '--test-timeout', rawValue: '50' },
+      }),
+    /Invalid TEST_TIMEOUT_ENV value: 5000/u,
   );
 });
 
