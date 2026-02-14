@@ -513,3 +513,4 @@
 - 2026-02-14: Completed debugger worker boot-path race-condition audit and documented readiness/handshake/lifecycle risks plus mitigation sequence in `docs/migration/debugger-worker-boot-race-audit-2026-02-14.md`.
 - 2026-02-14: Added debugger worker lifecycle stability regression coverage with repeated init/dispose cycle tests for `createDebuggerWorker`, asserting no active-worker accumulation and consistent worker-constructor options across cycles.
 - 2026-02-14: Added debugger panel rendering regression coverage for large event logs by mocking store payloads and asserting `EventLogPanel` renders high-volume event entries without falling back to empty-state messaging.
+- 2026-02-14: Added malformed-frame resilience coverage for debugger AI route payloads, including sanitization of invalid frame metadata/checksum/event/snapshot entries and regression tests verifying `GET /api/ai/debug` returns safe normalized envelopes.

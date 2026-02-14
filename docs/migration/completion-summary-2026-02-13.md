@@ -410,6 +410,7 @@ Workflow hardening applied:
 - debugger worker boot/lifecycle paths were audited for WASM-load race conditions; findings and mitigation sequence (handshake readiness barrier, error-channel wiring, attempt IDs, abortable fetch) are documented in `docs/migration/debugger-worker-boot-race-audit-2026-02-14.md`
 - debugger test coverage now includes repeated worker init/dispose lifecycle regression checks, asserting no active worker accumulation and stable `createDebuggerWorker` constructor options through high-cycle churn
 - debugger panel rendering coverage now includes high-volume event-log scenarios, asserting `EventLogPanel` renders large mocked event streams and does not regress to empty-state fallback output
+- debugger AI debug route now sanitizes malformed frame/event/snapshot/checksum payload segments before responding, with regression tests proving normalized output when store state contains invalid contract-frame data
 
 ## Security posture at completion
 
