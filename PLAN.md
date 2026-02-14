@@ -780,3 +780,4 @@
 - 2026-02-14: Re-ran integration no-build CI aggregate (`npm run test:integration:nobuild:ci`) to reconfirm lib/voxel/headless/compat/memory/tick/baseline integration suites plus cleanup-wrapped headless artifact hygiene remain green with a clean working tree.
 - 2026-02-14: Re-ran core no-build CI aggregate (`npm run test:core:nobuild:ci`) to reconfirm save-state/isolation/timer/interrupt/audio/memory/graphics regression suites remain green with a clean working tree.
 - 2026-02-14: Re-ran full build-inclusive aggregate command (`npm run test:all`) to reconfirm end-to-end build + strict no-build quality composition remains green with zero vulnerabilities and a clean working tree.
+- 2026-02-14: Re-ran versioned V2 wrapper gate (`make v2-test`) to reconfirm workspace package/app tests, TS runtime integration smoke, and no-build Playwright browser smoke remain green through documented Makefile orchestration with a clean working tree.
