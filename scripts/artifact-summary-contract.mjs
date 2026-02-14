@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 export const ARTIFACT_SUMMARY_SCHEMA_VERSION = 1;
 export const CLEAN_ARTIFACT_SUMMARY_TOOL = 'clean:artifacts';
 export const GUARD_ARTIFACT_SUMMARY_TOOL = 'guard:generated-artifacts';
@@ -43,7 +45,7 @@ function assertStringArray(candidateArray, parameterName) {
  * @param {string[]} values
  */
 function sortedUniqueStringArray(values) {
-  const normalizedValues = values.map(value => value.replaceAll('\\', '/'));
+  const normalizedValues = values.map(value => path.posix.normalize(value.replaceAll('\\', '/')));
   return [...new Set(normalizedValues)].sort((left, right) => (left === right ? 0 : left < right ? -1 : 1));
 }
 

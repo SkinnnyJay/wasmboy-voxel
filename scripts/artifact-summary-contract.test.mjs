@@ -256,3 +256,24 @@ test('summary builders normalize windows separators before de-duplication', () =
   assert.deepEqual(guardSummary.blockedPaths, ['dist/generated.js']);
   assert.equal(guardSummary.blockedPathCount, 1);
 });
+
+test('summary builders normalize dot path segments before de-duplication', () => {
+  const cleanupSummary = buildCleanupArtifactSummary({
+    dryRun: false,
+    deletedDirectories: ['./build/output', 'build/./output'],
+    deletedFiles: ['./test/integration/../integration/headless.output', 'test/integration/headless.output'],
+  });
+  const guardSummary = buildGuardArtifactSummary({
+    allowGeneratedEdits: false,
+    isValid: false,
+    blockedPaths: ['./dist/./generated.js', 'dist/generated.js'],
+    stagedPathCount: 2,
+  });
+
+  assert.deepEqual(cleanupSummary.deletedDirectories, ['build/output']);
+  assert.deepEqual(cleanupSummary.deletedFiles, ['test/integration/headless.output']);
+  assert.equal(cleanupSummary.removedCount, 2);
+
+  assert.deepEqual(guardSummary.blockedPaths, ['dist/generated.js']);
+  assert.equal(guardSummary.blockedPathCount, 1);
+});
