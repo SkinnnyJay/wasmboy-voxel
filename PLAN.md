@@ -767,3 +767,4 @@
 - 2026-02-14: Re-ran strict release verification wrapper (`npm run release:verify:strict`) after the latest full/integration/core reruns to reconfirm local strict CI parity plus changeset status checks remain stable in the top-level release gate.
 - 2026-02-14: Re-ran strict workspace security scan (`npm run security:scan:workspaces:strict`) to reconfirm zero-vulnerability status across root, API, CLI, and debugger workspaces as an isolated security gate.
 - 2026-02-14: Re-ran release-checklist dry-run script unit coverage (`node --test "scripts/release-checklist-dry-run.test.mjs"`) to reconfirm parser/help/timeout/failure handling contracts and package-context diagnostics remain green.
+- 2026-02-14: Re-ran standalone changeset status check (`npm run changeset:status:ci`) to reconfirm expected workspace dependency notices remain suppressed and release bump classification output stays stable.
