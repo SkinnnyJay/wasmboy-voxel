@@ -1,2 +1,2 @@
-export { loadMainThreadWasm } from './mainThreadCore.wasm.js';
-export { WasmBoyHeadless } from './WasmBoyHeadless.js';
+export { loadMainThreadWasm } from './mainThreadCore.wasm.entry';
+export { WasmBoyHeadless } from './WasmBoyHeadless.entry';

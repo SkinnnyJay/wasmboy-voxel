@@ -1,7 +1,7 @@
 /**
  * Type declaration for the vendored WasmBoy fork ESM build (./dist/wasmboy.wasm.esm.js).
  */
-declare module "./dist/wasmboy.wasm.esm.js" {
+declare module './dist/wasmboy.wasm.esm.js' {
   export interface WasmBoyConfig {
     headless?: boolean;
     mainThread?: boolean;
@@ -96,7 +96,14 @@ declare module "./dist/wasmboy.wasm.esm.js" {
  * Headless runner (main-thread WASM, no Workers).
  * Use for testing, CI, and deterministic frame stepping.
  */
-declare module "./dist/wasmboy.headless.esm.js" {
+declare module './dist/wasmboy.headless.esm.js' {
+  export interface WasmBoyHeadlessCoreLoadResult {
+    instance: { exports: Record<string, unknown> };
+    byteMemory: Uint8Array;
+  }
+
+  export type WasmBoyHeadlessButton = 'UP' | 'RIGHT' | 'DOWN' | 'LEFT' | 'A' | 'B' | 'SELECT' | 'START';
+
   export interface WasmBoyHeadlessPpuSnapshot {
     registers: {
       scx: number;
@@ -114,10 +121,7 @@ declare module "./dist/wasmboy.headless.esm.js" {
     oamData: Uint8Array;
   }
 
-  export function loadMainThreadWasm(): Promise<{
-    instance: { exports: Record<string, unknown> };
-    byteMemory: Uint8Array;
-  }>;
+  export function loadMainThreadWasm(): Promise<WasmBoyHeadlessCoreLoadResult>;
 
   export class WasmBoyHeadless {
     loadROM(rom: Uint8Array, options?: { enableBootRom?: boolean; isGbcEnabled?: boolean }): Promise<void>;
@@ -127,7 +131,7 @@ declare module "./dist/wasmboy.headless.esm.js" {
     getPpuSnapshot(): WasmBoyHeadlessPpuSnapshot | null;
     readMemory(address: number): number;
     writeMemory(address: number, value: number): void;
-    setButton(button: string, pressed: boolean): void;
+    setButton(button: WasmBoyHeadlessButton, pressed: boolean): void;
     setJoypadState(state: {
       UP?: boolean;
       RIGHT?: boolean;
