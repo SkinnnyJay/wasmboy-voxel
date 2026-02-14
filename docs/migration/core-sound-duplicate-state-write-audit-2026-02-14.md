@@ -85,3 +85,22 @@ Interpretation:
 ## Conclusion
 
 The highest-impact duplicated state writes are in per-sample/per-update channel state synchronization and accumulator-flag resets. The most practical near-term win is minimizing unconditional mixer flag writes; deeper channel frequency deduplication should be test-first due to high APU correctness sensitivity.
+
+## 2026-02-14 resolution update
+
+Implemented the medium-risk channel-frequency deduplication step by introducing
+`syncFrequencyFromRegisters()` helpers in:
+
+- `core/sound/channel1.ts`
+- `core/sound/channel2.ts`
+- `core/sound/channel3.ts`
+
+`updateNRx3`, `updateNRx4`, and channel-set frequency paths now route through the
+same helper instead of repeating inline frequency recomputation logic.
+
+Validation run:
+
+- `npm run core:build`
+- `npm run lib:build:wasm`
+- `npm run test:core:serialization`
+- `npm run test:integration:headless`

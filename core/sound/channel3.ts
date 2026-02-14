@@ -13,7 +13,7 @@ import {
   eightBitLoadFromGBMemory,
   eightBitStoreIntoGBMemory,
   loadBooleanDirectlyFromWasmMemory,
-  storeBooleanDirectlyToWasmMemory
+  storeBooleanDirectlyToWasmMemory,
 } from '../memory/index';
 import { checkBitOnByte, log } from '../helpers/index';
 import { i32Portable } from '../portable/portable';
@@ -73,11 +73,12 @@ export class Channel3 {
   static readonly memoryLocationNRx3: i32 = 0xff1d;
   // FFFF FFFF Frequency LSB
   static NRx3FrequencyLSB: i32 = 0;
+  static syncFrequencyFromRegisters(): void {
+    Channel3.frequency = (Channel3.NRx4FrequencyMSB << 8) | Channel3.NRx3FrequencyLSB;
+  }
   static updateNRx3(value: i32): void {
     Channel3.NRx3FrequencyLSB = value;
-
-    // Update Channel Frequency
-    Channel3.frequency = (Channel3.NRx4FrequencyMSB << 8) | value;
+    Channel3.syncFrequencyFromRegisters();
   }
 
   // NR34 -> Frequency higher data (R/W)
@@ -91,7 +92,7 @@ export class Channel3 {
     // To correctly reset timing
     let frequencyMSB = value & 0x07;
     Channel3.NRx4FrequencyMSB = frequencyMSB;
-    Channel3.frequency = (frequencyMSB << 8) | Channel3.NRx3FrequencyLSB;
+    Channel3.syncFrequencyFromRegisters();
 
     // Obscure behavior
     // http://gbdev.gg8.se/wiki/articles/Gameboy_sound_hardware#Obscure_Behavior

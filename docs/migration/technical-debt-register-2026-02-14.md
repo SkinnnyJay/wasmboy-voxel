@@ -13,10 +13,9 @@ Ownership tags are subsystem owners (team-level), not individual names.
 
 ## Open debt items
 
-| Debt ID | Area                    | Description                                                                                                 | Severity | Owner Tag        | Source                                                                | Status |
-| ------- | ----------------------- | ----------------------------------------------------------------------------------------------------------- | -------- | ---------------- | --------------------------------------------------------------------- | ------ |
-| TD-003  | Core graphics perf      | Branch-heavy hot loops in scanline/background/sprite paths need selective branch-hoist refactors.           | S3       | `@core-graphics` | `docs/migration/core-graphics-branch-churn-profile-2026-02-14.md`     | Open   |
-| TD-004  | Core sound perf/clarity | Duplicate state-write sites and repeated frequency sync paths in sound channels remain partially redundant. | S3       | `@core-audio`    | `docs/migration/core-sound-duplicate-state-write-audit-2026-02-14.md` | Open   |
+| Debt ID | Area               | Description                                                                                       | Severity | Owner Tag        | Source                                                            | Status |
+| ------- | ------------------ | ------------------------------------------------------------------------------------------------- | -------- | ---------------- | ----------------------------------------------------------------- | ------ |
+| TD-003  | Core graphics perf | Branch-heavy hot loops in scanline/background/sprite paths need selective branch-hoist refactors. | S3       | `@core-graphics` | `docs/migration/core-graphics-branch-churn-profile-2026-02-14.md` | Open   |
 
 ## Closed debt items (resolved in migration cycle)
 
@@ -35,6 +34,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C011 | Debugger worker lifecycle    | Added worker restart telemetry events, capped exponential backoff tuning, and surfaced restart diagnostics in debugger UI state (`apps/debugger/lib/worker-loader.ts`, `apps/debugger/app/page.tsx`).    | S3                | `@debugger-runtime`   |
 | TD-C012 | Debugger large-dataset UX    | Added paginated timeline deep-inspection UX with oldest/older/newer/newest controls and tested page-window selection helpers for large snapshot histories.                                               | S4                | `@debugger-ui`        |
 | TD-C013 | Core memory banking          | Split `handleBanking` branch fan-out into focused banking helpers (RAM enable, ROM lower bits, RAM/upper ROM select, mode toggles) while preserving behavior and validating with core/integration tests. | S3                | `@core-memory`        |
+| TD-C014 | Core sound perf/clarity      | Consolidated repeated sound-channel frequency synchronization writes into shared `syncFrequencyFromRegisters()` helpers across channels 1-3, reducing redundant update sites while preserving behavior.  | S3                | `@core-audio`         |
 
 ## Triage cadence
 

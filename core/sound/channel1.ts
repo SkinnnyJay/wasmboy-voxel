@@ -11,7 +11,7 @@ import {
   eightBitLoadFromGBMemory,
   eightBitStoreIntoGBMemory,
   loadBooleanDirectlyFromWasmMemory,
-  storeBooleanDirectlyToWasmMemory
+  storeBooleanDirectlyToWasmMemory,
 } from '../memory/index';
 import { checkBitOnByte, log, logTimeout } from '../helpers/index';
 
@@ -109,11 +109,12 @@ export class Channel1 {
   static readonly memoryLocationNRx3: i32 = 0xff13;
   // FFFF FFFF Frequency LSB
   static NRx3FrequencyLSB: i32 = 0;
+  static syncFrequencyFromRegisters(): void {
+    Channel1.frequency = (Channel1.NRx4FrequencyMSB << 8) | Channel1.NRx3FrequencyLSB;
+  }
   static updateNRx3(value: i32): void {
     Channel1.NRx3FrequencyLSB = value;
-
-    // Update Channel Frequency
-    Channel1.frequency = (Channel1.NRx4FrequencyMSB << 8) | value;
+    Channel1.syncFrequencyFromRegisters();
   }
 
   // NR14 -> Frequency hi (R/W)
@@ -129,7 +130,7 @@ export class Channel1 {
     // As this is modified if we trigger for length.
     let frequencyMSB = value & 0x07;
     Channel1.NRx4FrequencyMSB = frequencyMSB;
-    Channel1.frequency = (frequencyMSB << 8) | Channel1.NRx3FrequencyLSB;
+    Channel1.syncFrequencyFromRegisters();
 
     // Obscure behavior
     // http://gbdev.gg8.se/wiki/articles/Gameboy_sound_hardware#Obscure_Behavior
@@ -238,7 +239,7 @@ export class Channel1 {
     store<u16>(getSaveStateMemoryOffset(0x2e, Channel1.saveStateSlot), Channel1.sweepShadowFrequency);
     storeBooleanDirectlyToWasmMemory(
       getSaveStateMemoryOffset(0x31, Channel1.saveStateSlot),
-      Channel1.sweepNegateShouldDisableChannelOnClear
+      Channel1.sweepNegateShouldDisableChannelOnClear,
     );
   }
 
@@ -287,7 +288,7 @@ export class Channel1 {
     Channel1.sweepCounter = load<u8>(getSaveStateMemoryOffset(0x2a, Channel1.saveStateSlot));
     Channel1.sweepShadowFrequency = load<u8>(getSaveStateMemoryOffset(0x2e, Channel1.saveStateSlot));
     Channel1.sweepNegateShouldDisableChannelOnClear = loadBooleanDirectlyFromWasmMemory(
-      getSaveStateMemoryOffset(0x31, Channel1.saveStateSlot)
+      getSaveStateMemoryOffset(0x31, Channel1.saveStateSlot),
     );
   }
 
@@ -560,7 +561,7 @@ export class Channel1 {
     // Save the frequency for ourselves without triggering memory traps
     Channel1.NRx3FrequencyLSB = passedFrequencyLowBits;
     Channel1.NRx4FrequencyMSB = passedFrequencyHighBits;
-    Channel1.frequency = (Channel1.NRx4FrequencyMSB << 8) | Channel1.NRx3FrequencyLSB;
+    Channel1.syncFrequencyFromRegisters();
   }
   // Done!
 }

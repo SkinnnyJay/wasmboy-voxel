@@ -464,6 +464,7 @@ Workflow hardening applied:
 - next-cycle `task108` is now completed by adding debugger worker restart telemetry plus capped exponential backoff tuning in `createAutoRestartingDebuggerWorker`, then surfacing worker lifecycle diagnostics in the debugger app shell; validated with the debugger Vitest suite and recorded as debt-register closure for TD-008
 - next-cycle `task109` is now completed by adding paginated snapshot timeline deep-inspection controls for large datasets (oldest/older/newer/newest navigation) backed by deterministic page-window helper tests in the debugger suite, recorded as debt-register closure for TD-009
 - next-cycle `task105` is now completed by splitting core memory-banking branch fan-out in `handleBanking` into focused helper paths while preserving behavior, validated through rebuilt core bundles and targeted core/integration regression runs, and recorded as debt-register closure for TD-005
+- next-cycle `task104` is now completed by deduplicating sound channel frequency synchronization paths through shared `syncFrequencyFromRegisters()` helpers in channels 1–3, validated with rebuilt core bundles plus serialization/headless regressions, and recorded as debt-register closure for TD-004
 
 ## Security posture at completion
 
