@@ -9,9 +9,17 @@ const SCRIPT_USAGE = `Usage: node scripts/guard-generated-artifacts-precommit.mj
  * @param {string[]} stagedPaths
  */
 export function findBlockedArtifactPaths(stagedPaths) {
+  if (!Array.isArray(stagedPaths)) {
+    throw new TypeError('[guard:generated-artifacts] Expected stagedPaths to be an array.');
+  }
+
   const blockedPathSet = new Set();
 
-  for (const stagedPath of stagedPaths) {
+  for (let index = 0; index < stagedPaths.length; index += 1) {
+    const stagedPath = stagedPaths[index];
+    if (typeof stagedPath !== 'string') {
+      throw new TypeError(`[guard:generated-artifacts] Expected stagedPaths[${String(index)}] to be a string path.`);
+    }
     const normalizedPath = normalizeArtifactPath(stagedPath);
     if (shouldBlockStagedArtifactPath(normalizedPath)) {
       blockedPathSet.add(normalizedPath);

@@ -34,6 +34,17 @@ test('findBlockedArtifactPaths de-duplicates equivalent blocked paths', () => {
   assert.deepEqual(blockedPaths, ['dist/wasmboy.wasm.esm.js']);
 });
 
+test('findBlockedArtifactPaths validates staged path array contracts', () => {
+  assert.throws(
+    () => findBlockedArtifactPaths('dist/wasmboy.wasm.esm.js'),
+    /\[guard:generated-artifacts\] Expected stagedPaths to be an array\./u,
+  );
+  assert.throws(
+    () => findBlockedArtifactPaths(['dist/wasmboy.wasm.esm.js', 7]),
+    /\[guard:generated-artifacts\] Expected stagedPaths\[1\] to be a string path\./u,
+  );
+});
+
 test('findBlockedArtifactPaths blocks non-golden accuracy and performance outputs', () => {
   const blockedPaths = findBlockedArtifactPaths([
     'test/accuracy/testroms/suite/frame.output',

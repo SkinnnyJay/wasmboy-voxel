@@ -53,6 +53,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C030 | Artifact policy normalization reuse | Consolidated shared artifact-policy predicate flow to avoid redundant normalization between remove/block helpers and added windows-path generated-output block coverage to protect cross-platform behavior.  | S4                | `@automation-tooling` |
 | TD-C031 | Cleanup CLI behavior contracts      | Added subprocess-level dry-run vs destructive cleanup behavior tests in temporary workspaces to ensure command-line cleanup semantics stay correct beyond internal helper unit coverage.                     | S4                | `@automation-tooling` |
 | TD-C032 | Artifact policy input guards        | Added explicit string-parameter validation in shared artifact-policy helpers plus non-string regression tests, making consumer contract violations fail fast with actionable diagnostics.                    | S4                | `@automation-tooling` |
+| TD-C033 | Guard input contract checks         | Added strict staged-path input validation (array + string entries) in `findBlockedArtifactPaths` with regression coverage to prevent opaque failures from malformed guard helper consumers.                  | S4                | `@automation-tooling` |
 
 ## Triage cadence
 
