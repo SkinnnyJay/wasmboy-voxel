@@ -134,6 +134,22 @@ test('runNutjsUiSmoke default smoke action reports platform shortcut mapping met
     threshold: 0.94,
     source: 'default',
   });
+  assert.deepEqual(summary.smokeMetadata.memoryGuard.beforeDispose, {
+    maxTrackedBuffers: 4,
+    maxTrackedBytes: 1024,
+    trackedBuffers: 2,
+    trackedBytes: 896,
+    evictedBuffers: 1,
+    evictedBytes: 256,
+  });
+  assert.deepEqual(summary.smokeMetadata.memoryGuard.afterDispose, {
+    maxTrackedBuffers: 4,
+    maxTrackedBytes: 1024,
+    trackedBuffers: 0,
+    trackedBytes: 0,
+    evictedBuffers: 1,
+    evictedBytes: 256,
+  });
 });
 
 test('runNutjsUiSmoke reports macOS accessibility retry hints when untrusted', async () => {

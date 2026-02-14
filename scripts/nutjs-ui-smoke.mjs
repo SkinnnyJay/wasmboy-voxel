@@ -5,6 +5,7 @@ import { resolveNutjsImageMatchThreshold } from './nutjs-image-thresholds.mjs';
 import { resolveNutjsShortcutKeyNames, resolveNutjsShortcutScanCodes } from './nutjs-keyboard-layout-map.mjs';
 import { resolveNutjsLinuxDisplayStrategy } from './nutjs-linux-display.mjs';
 import { resolveNutjsMacOsPermissionState } from './nutjs-macos-permissions.mjs';
+import { createNutjsMemoryGuard } from './nutjs-memory-guard.mjs';
 
 const DEFAULT_NUTJS_PACKAGE_NAME = '@nut-tree-fork/nut-js';
 const SCRIPT_USAGE = `Usage: node scripts/nutjs-ui-smoke.mjs [--json] [--strict] [--help]\n\nOptions:\n  --json      Emit machine-readable JSON summary.\n  --strict    Fail when NutJS or host capabilities are unavailable.\n  --help, -h  Show this usage message.\n`;
@@ -143,6 +144,17 @@ async function runDefaultSmokeAction(nutjsModule, platform, environment) {
     throw new Error('NutJS module export is empty; expected at least one API key.');
   }
 
+  const memoryGuard = createNutjsMemoryGuard({
+    maxTrackedBuffers: 4,
+    maxTrackedBytes: 1024,
+  });
+  memoryGuard.trackSnapshot(new Uint8Array(256), 'baseline-template');
+  memoryGuard.trackSnapshot(new Uint8Array(384), 'candidate-snapshot');
+  memoryGuard.trackSnapshot(new Uint8Array(512), 'overflow-snapshot');
+  const memoryGuardState = memoryGuard.getState();
+  memoryGuard.dispose();
+  const disposedGuardState = memoryGuard.getState();
+
   return {
     exportedKeyCount: exportedKeys.length,
     exportedKeys: exportedKeys.slice(0, 10),
@@ -151,6 +163,10 @@ async function runDefaultSmokeAction(nutjsModule, platform, environment) {
     defaultShortcutKeyNames: resolveNutjsShortcutKeyNames('open-devtools', platform),
     pointerTransformSample: transformNutjsPointerCoordinate({ x: 320, y: 180 }, { platform, env: environment }),
     imageMatchThreshold: resolveNutjsImageMatchThreshold({ platform, env: environment }),
+    memoryGuard: {
+      beforeDispose: memoryGuardState,
+      afterDispose: disposedGuardState,
+    },
   };
 }
 
