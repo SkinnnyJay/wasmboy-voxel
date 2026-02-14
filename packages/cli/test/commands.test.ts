@@ -116,4 +116,81 @@ describe('cli commands', () => {
       }
     }
   });
+
+  it('suggests closest snapshot option for unknown flags', () => {
+    const dir = createTempDir();
+    const romPath = path.join(dir, 'sample.gb');
+    fs.writeFileSync(romPath, Buffer.from([1, 2, 3]));
+
+    expect(() =>
+      executeCli(['snapshot', romPath, '--ot', path.join(dir, 'out.json')]),
+    ).toThrowError(CliError);
+
+    try {
+      executeCli(['snapshot', romPath, '--ot', path.join(dir, 'out.json')]);
+    } catch (error) {
+      if (error instanceof CliError) {
+        expect(error.code).toBe('InvalidInput');
+        expect(error.message).toContain('Unknown option "--ot"');
+        expect(error.message).toContain('Did you mean "--out"?');
+      } else {
+        throw error;
+      }
+    }
+  });
+
+  it('suggests closest compare option for unknown flags', () => {
+    const dir = createTempDir();
+    const baselinePath = path.join(dir, 'baseline.json');
+    writeJson(baselinePath, {
+      roms: [{ rom: 'foo.gb', tileDataSha256: 'abc', oamDataSha256: 'def' }],
+    });
+
+    expect(() => executeCli(['compare', baselinePath, '--currnt', baselinePath])).toThrowError(
+      CliError,
+    );
+
+    try {
+      executeCli(['compare', baselinePath, '--currnt', baselinePath]);
+    } catch (error) {
+      if (error instanceof CliError) {
+        expect(error.code).toBe('InvalidInput');
+        expect(error.message).toContain('Unknown option "--currnt"');
+        expect(error.message).toContain('Did you mean "--current"?');
+      } else {
+        throw error;
+      }
+    }
+  });
+
+  it('suggests closest contract-check option for unknown flags', () => {
+    const dir = createTempDir();
+    const payloadPath = path.join(dir, 'registers.json');
+    writeJson(payloadPath, {
+      scx: 1,
+      scy: 2,
+      wx: 3,
+      wy: 4,
+      lcdc: 5,
+      bgp: 6,
+      obp0: 7,
+      obp1: 8,
+    });
+
+    expect(() =>
+      executeCli(['contract-check', '--contrct', 'registers', '--file', payloadPath]),
+    ).toThrowError(CliError);
+
+    try {
+      executeCli(['contract-check', '--contrct', 'registers', '--file', payloadPath]);
+    } catch (error) {
+      if (error instanceof CliError) {
+        expect(error.code).toBe('InvalidInput');
+        expect(error.message).toContain('Unknown option "--contrct"');
+        expect(error.message).toContain('Did you mean "--contract"?');
+      } else {
+        throw error;
+      }
+    }
+  });
 });

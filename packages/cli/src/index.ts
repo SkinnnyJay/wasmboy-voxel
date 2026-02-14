@@ -1,4 +1,5 @@
 import {
+  assertKnownCommandOptions,
   contractCheckCommand,
   compareCommand,
   printHelp,
@@ -26,6 +27,7 @@ export function executeCli(argv: string[]): void {
   if (command === 'snapshot') {
     const romPath = rest[0];
     if (!romPath) throw new CliError('InvalidInput', 'snapshot command requires <rom>');
+    assertKnownCommandOptions('snapshot', rest.slice(1), ['--out']);
     const outFlagIndex = rest.indexOf('--out');
     const outPath = outFlagIndex >= 0 ? rest[outFlagIndex + 1] : undefined;
     snapshotCommand(romPath, outPath);
@@ -37,6 +39,7 @@ export function executeCli(argv: string[]): void {
     if (!baselinePath) {
       throw new CliError('InvalidInput', 'compare command requires <baselineSummary>');
     }
+    assertKnownCommandOptions('compare', rest.slice(1), ['--current']);
     const currentFlagIndex = rest.indexOf('--current');
     const currentPath = currentFlagIndex >= 0 ? rest[currentFlagIndex + 1] : undefined;
     compareCommand(baselinePath, currentPath);

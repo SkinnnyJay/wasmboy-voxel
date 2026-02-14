@@ -501,3 +501,4 @@
 - 2026-02-13: Expanded `packages/api` README with concrete invalid-payload handling examples for both direct schema validation and registry validation, documenting how to consume `errorMessage` diagnostics from failed validation envelopes.
 - 2026-02-13: Added a dedicated `@wasmboy/api` semantic-version policy mapping section in the changelog, explicitly documenting patch/minor/major contract-surface change categories for contract schemas, registry keys, and validation helpers.
 - 2026-02-13: Completed `packages/cli` parser error-phrasing audit and documented inconsistent message patterns, code-path inventory, and normalization recommendations in `docs/migration/packages-cli-error-phrasing-audit-2026-02-13.md`.
+- 2026-02-13: Added `packages/cli` unknown-option suggestion handling/tests for `snapshot`, `compare`, and `contract-check` commands, including typo-to-flag hints (`--ot`→`--out`, `--currnt`→`--current`, `--contrct`→`--contract`).

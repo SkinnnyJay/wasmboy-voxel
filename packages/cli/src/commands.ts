@@ -5,12 +5,80 @@ import { CliError } from './errors.js';
 import { log } from './logger.js';
 import { assertFilePath, assertRomPath, resolveInputPath } from './paths.js';
 
+function levenshteinDistance(left: string, right: string): number {
+  const columns = right.length + 1;
+  const previousRow = Array.from({ length: columns }, (_, columnIndex) => columnIndex);
+
+  for (let leftIndex = 1; leftIndex <= left.length; leftIndex += 1) {
+    let diagonal = previousRow[0] ?? 0;
+    previousRow[0] = leftIndex;
+
+    for (let rightIndex = 1; rightIndex <= right.length; rightIndex += 1) {
+      const cached = previousRow[rightIndex] ?? 0;
+      const insertion = (previousRow[rightIndex - 1] ?? 0) + 1;
+      const deletion = cached + 1;
+      const substitution = diagonal + (left[leftIndex - 1] === right[rightIndex - 1] ? 0 : 1);
+      previousRow[rightIndex] = Math.min(insertion, deletion, substitution);
+      diagonal = cached;
+    }
+  }
+
+  return previousRow[right.length] ?? Number.POSITIVE_INFINITY;
+}
+
+function getOptionSuggestion(option: string, knownOptions: readonly string[]): string | null {
+  let bestMatch: string | null = null;
+  let smallestDistance = Number.POSITIVE_INFINITY;
+
+  for (const knownOption of knownOptions) {
+    const distance = levenshteinDistance(option, knownOption);
+    if (distance < smallestDistance) {
+      smallestDistance = distance;
+      bestMatch = knownOption;
+    }
+  }
+
+  return smallestDistance <= 3 ? bestMatch : null;
+}
+
+export function assertKnownCommandOptions(
+  commandName: string,
+  args: string[],
+  knownOptions: readonly string[],
+): void {
+  const knownOptionSet = new Set(knownOptions);
+
+  for (let index = 0; index < args.length; index += 1) {
+    const token = args[index];
+    if (!token?.startsWith('-')) {
+      continue;
+    }
+
+    if (knownOptionSet.has(token)) {
+      if (index < args.length - 1) {
+        index += 1;
+      }
+      continue;
+    }
+
+    const suggestion = getOptionSuggestion(token, knownOptions);
+    const suggestionText = suggestion ? ` Did you mean "${suggestion}"?` : '';
+    throw new CliError(
+      'InvalidInput',
+      `Unknown option "${token}" for ${commandName} command.${suggestionText}`,
+    );
+  }
+}
+
 function readFileBuffer(filePath: string): Buffer {
   return fs.readFileSync(filePath);
 }
 
 function sha256Hex(buffer: Buffer): string {
-  return crypto.createHash('sha256').update(buffer).digest('hex');
+  return crypto
+    .createHash('sha256')
+    .update(buffer)
+    .digest('hex');
 }
 
 export function printHelp(): void {
@@ -88,10 +156,10 @@ export function compareCommand(baselinePath: string, currentPath?: string): void
   const current = readSummary(currentPath ?? baselinePath);
 
   const baselineMap = new Map<string, { tileDataSha256?: string; oamDataSha256?: string }>();
-  baseline.roms.forEach((entry) => baselineMap.set(entry.rom, entry));
+  baseline.roms.forEach(entry => baselineMap.set(entry.rom, entry));
 
   const differences = current.roms
-    .map((entry) => {
+    .map(entry => {
       const base = baselineMap.get(entry.rom);
       if (!base) return { rom: entry.rom, kind: 'missing-in-baseline' };
       if (
@@ -125,6 +193,8 @@ function parseFlagValue(args: string[], flag: string): string | null {
 }
 
 export function contractCheckCommand(args: string[]): void {
+  assertKnownCommandOptions('contract-check', args, ['--contract', '--file']);
+
   const contractName = parseFlagValue(args, '--contract');
   const filePath = parseFlagValue(args, '--file');
 
