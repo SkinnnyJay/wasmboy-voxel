@@ -48,16 +48,18 @@ const makeValidDebugFrame = () => ({
   events: [],
 });
 
+const makeValidPpuSnapshot = () => ({
+  version: 'v1',
+  registers: makeValidRegisters(),
+  tileData: makeFilledBytes(0x1800, 1),
+  bgTileMap: makeFilledBytes(0x400, 2),
+  windowTileMap: makeFilledBytes(0x400, 3),
+  oamData: makeFilledBytes(0xa0, 4),
+});
+
 describe('contracts v1', () => {
   it('accepts valid PPU snapshot payload', () => {
-    const payload = {
-      version: 'v1',
-      registers: makeValidRegisters(),
-      tileData: makeFilledBytes(0x1800, 1),
-      bgTileMap: makeFilledBytes(0x400, 2),
-      windowTileMap: makeFilledBytes(0x400, 3),
-      oamData: makeFilledBytes(0xa0, 4),
-    };
+    const payload = makeValidPpuSnapshot();
 
     const parsed = V1Schemas.PpuSnapshotSchema.safeParse(payload);
     expect(parsed.success).toBe(true);
@@ -78,14 +80,7 @@ describe('contracts v1', () => {
   });
 
   it('keeps snapshot schema fields required (no optional drift)', () => {
-    const validPayload = {
-      version: 'v1',
-      registers: makeValidRegisters(),
-      tileData: makeFilledBytes(0x1800, 1),
-      bgTileMap: makeFilledBytes(0x400, 2),
-      windowTileMap: makeFilledBytes(0x400, 3),
-      oamData: makeFilledBytes(0xa0, 4),
-    };
+    const validPayload = makeValidPpuSnapshot();
 
     const snapshotShape = V1Schemas.PpuSnapshotSchema.shape;
     for (const fieldSchema of Object.values(snapshotShape)) {
@@ -174,6 +169,26 @@ describe('contracts v1', () => {
         expect(typeof directResult.errorMessage).toBe('string');
       }
     }
+  });
+
+  it('rejects bigint payload fields where numeric values are required', () => {
+    expect(V1Schemas.RegistersSchema.safeParse({ ...makeValidRegisters(), scx: 1n }).success).toBe(
+      false,
+    );
+    expect(
+      V1Schemas.PpuSnapshotSchema.safeParse({ ...makeValidPpuSnapshot(), tileData: [1n] }).success,
+    ).toBe(false);
+    expect(
+      V1Schemas.MemorySectionSchema.safeParse({
+        version: 'v1',
+        start: 0n,
+        endExclusive: 4,
+        bytes: [1, 2, 3, 4],
+      }).success,
+    ).toBe(false);
+    expect(
+      V1Schemas.DebugFrameSchema.safeParse({ ...makeValidDebugFrame(), frameId: 1n }).success,
+    ).toBe(false);
   });
 
   it('validates known registry schemas and reports unknown keys', () => {
