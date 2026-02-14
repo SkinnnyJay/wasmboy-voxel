@@ -424,6 +424,9 @@ npm run scripts:format
 # Run automation helper unit tests
 npm run automation:test
 
+# Check core invalid-offset mapping contract via wasm export
+npm run core:memory-offset:check
+
 # Run automation formatting + helper unit tests together
 npm run automation:check
 

@@ -456,6 +456,7 @@ Workflow hardening applied:
 - husky pre-commit configuration now uses explicit `husky.hooks.pre-commit` wiring (`precommit:hook`) instead of deprecated `scripts.precommit` discovery, preserving staged cleanup/guard/format behavior while removing deprecation warning noise
 - generated-artifact guard ergonomics now include explicit contributor guidance (`docs/migration/generated-artifact-commit-policy-2026-02-14.md`) for intentional `dist/build` commits, including per-command override usage and safety requirements
 - next-cycle backlog generation is now scriptable (`backlog:generate:next100` via `scripts/next-backlog-generator.mjs`) with test coverage and a generated dated draft backlog seeded from open debt items (`docs/migration/next-100-backlog-draft-2026-02-14.md`)
+- next-cycle `task101` is now completed via automated core memory-offset contract enforcement (`core:memory-offset:check` + `scripts/core-memory-offset-contract-check*.mjs`), integrated into `automation:check` with script-level regression coverage and debt-register closure for TD-001
 
 ## Security posture at completion
 
