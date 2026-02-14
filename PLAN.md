@@ -156,7 +156,7 @@
 [x] - task177 (S2 reliability): Backlog discovery candidate #77 — define validation command at implementation time.
 [x] - task178 (S2 reliability): Backlog discovery candidate #78 — define validation command at implementation time.
 [x] - task179 (S2 reliability): Backlog discovery candidate #79 — define validation command at implementation time.
-[ ] - task180 (S2 reliability): Backlog discovery candidate #80 — define validation command at implementation time.
+[x] - task180 (S2 reliability): Backlog discovery candidate #80 — define validation command at implementation time.
 [ ] - task181 (S2 reliability): Backlog discovery candidate #81 — define validation command at implementation time.
 [ ] - task182 (S2 reliability): Backlog discovery candidate #82 — define validation command at implementation time.
 [ ] - task183 (S2 reliability): Backlog discovery candidate #83 — define validation command at implementation time.
@@ -735,3 +735,4 @@
 - 2026-02-14: Addressed next-cycle `task177` by hardening next-backlog generator CLI argument parsing (`--backlog-size` / `--start-task-number` / `--help`) with strict duplicate/unknown rejection, numeric override validation, and override-aware generation coverage; validated via `node --test "scripts/next-backlog-generator.test.mjs"`; marked `task177` completed.
 - 2026-02-14: Addressed next-cycle `task178` by hardening library console-usage lint CLI argument parsing (`--repo-root` / `--help`) with strict duplicate/unknown rejection and script-level usage handling coverage; validated via `node --test "scripts/check-library-console-usage.test.mjs"`; marked `task178` completed.
 - 2026-02-14: Addressed next-cycle `task179` by hardening core memory-offset contract-check CLI argument parsing (`--repo-root` / `--help`) with strict duplicate/unknown rejection and direct-invocation guarding for import-safe helper testing; validated via `node --test "scripts/core-memory-offset-contract-check.test.mjs"`; marked `task179` completed.
+- 2026-02-14: Addressed next-cycle `task180` by hardening core-wrapper memory-layout check CLI argument parsing (`--core-constants-path` / `--wrapper-path` / `--help`) with strict duplicate/unknown rejection, custom path override support, and import-safe direct-invocation guarding; validated via `node --test "scripts/core-wrapper-memory-layout-check.test.mjs"`; marked `task180` completed.

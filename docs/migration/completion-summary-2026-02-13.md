@@ -552,3 +552,4 @@ Result at completion: **0 vulnerabilities**.
 - Hardened next-backlog generator CLI parsing with strict duplicate/unknown argument rejection, help output, and numeric `--backlog-size`/`--start-task-number` overrides wired into file generation.
 - Hardened library console-usage lint CLI parsing with strict duplicate/unknown argument rejection, `--repo-root` override support, and script-level help usage coverage.
 - Hardened core memory-offset contract-check CLI parsing with strict duplicate/unknown argument rejection, `--repo-root` override support, and script direct-invocation guards for import-safe parser testing.
+- Hardened core-wrapper memory-layout check CLI parsing with strict duplicate/unknown argument rejection, custom path override support, and script direct-invocation guards for import-safe parser testing.
