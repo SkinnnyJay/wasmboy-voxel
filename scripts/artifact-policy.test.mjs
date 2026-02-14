@@ -25,5 +25,6 @@ test('shouldBlockStagedArtifactPath blocks dist/build plus generated outputs', (
   assert.equal(shouldBlockStagedArtifactPath('dist/wasmboy.wasm.esm.js'), true);
   assert.equal(shouldBlockStagedArtifactPath('build/assets/core.untouched.wasm'), true);
   assert.equal(shouldBlockStagedArtifactPath('test/integration/headless.output'), true);
+  assert.equal(shouldBlockStagedArtifactPath('.\\test\\integration\\headless.output.png'), true);
   assert.equal(shouldBlockStagedArtifactPath('README.md'), false);
 });

@@ -61,10 +61,9 @@ function isPerformanceGeneratedOutput(candidatePath) {
 }
 
 /**
- * @param {string} relativePath
+ * @param {string} normalizedPath
  */
-export function shouldRemoveGeneratedFile(relativePath) {
-  const normalizedPath = normalizeArtifactPath(relativePath);
+function matchesGeneratedArtifactPolicy(normalizedPath) {
   return (
     isIntegrationGeneratedOutput(normalizedPath) ||
     isAccuracyGeneratedOutput(normalizedPath) ||
@@ -73,9 +72,17 @@ export function shouldRemoveGeneratedFile(relativePath) {
 }
 
 /**
+ * @param {string} relativePath
+ */
+export function shouldRemoveGeneratedFile(relativePath) {
+  const normalizedPath = normalizeArtifactPath(relativePath);
+  return matchesGeneratedArtifactPolicy(normalizedPath);
+}
+
+/**
  * @param {string} stagedPath
  */
 export function shouldBlockStagedArtifactPath(stagedPath) {
   const normalizedPath = normalizeArtifactPath(stagedPath);
-  return BLOCKED_ARTIFACT_PREFIXES.some(prefix => normalizedPath.startsWith(prefix)) || shouldRemoveGeneratedFile(normalizedPath);
+  return BLOCKED_ARTIFACT_PREFIXES.some(prefix => normalizedPath.startsWith(prefix)) || matchesGeneratedArtifactPolicy(normalizedPath);
 }
