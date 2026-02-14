@@ -506,6 +506,7 @@ Workflow hardening applied:
 - next-cycle `task148` is now completed by adding explicit machine-readable summary count fields (`deletedDirectoryCount`, `deletedFileCount`, `blockedPathCount`) and locking their contracts/documentation for downstream automation consumers
 - next-cycle `task149` is now completed by centralizing executable-contract count-consistency assertions so JSON count fields must match their corresponding list lengths across cleanup/guard scenarios
 - next-cycle `task150` is now completed by introducing a shared artifact-summary contract module used by cleanup/guard JSON emitters, reducing schema/tool/timestamp drift risk and adding direct helper contract coverage
+- next-cycle `task151` is now completed by adding deterministic timestamp override support (`WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS`) through shared summary helpers, with executable contracts verifying override behavior in cleanup/guard JSON payloads
 
 ## Security posture at completion
 

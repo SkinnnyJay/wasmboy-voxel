@@ -177,6 +177,17 @@ test('clean artifact script emits JSON summary when --json is set', () => {
   assert.equal(fs.existsSync(generatedOutputPath), true);
 });
 
+test('clean artifact script honors summary timestamp override environment variable', () => {
+  const result = runScript(cleanArtifactsScriptPath, ['--json'], {
+    env: { WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS: '789' },
+  });
+
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, '');
+  const parsedOutput = JSON.parse(result.stdout.trim());
+  assert.equal(parsedOutput.timestampMs, 789);
+});
+
 test('clean artifact script emits apply-mode JSON summary and removes files', () => {
   const tempRepoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'artifact-cli-json-apply-'));
   const generatedOutputPath = path.join(tempRepoRoot, 'test', 'integration', 'headless.output');
@@ -232,6 +243,17 @@ test('generated artifact guard script emits JSON summary when --json is set', ()
   assert.equal(parsedOutput.blockedPathCount, 0);
   assertSummaryCountConsistency(parsedOutput, 'blockedPathCount', 'blockedPaths');
   assert.deepEqual(parsedOutput.blockedPaths, []);
+});
+
+test('generated artifact guard script honors summary timestamp override environment variable', () => {
+  const result = runScript(guardArtifactsScriptPath, ['--json'], {
+    env: { WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS: '789' },
+  });
+
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, '');
+  const parsedOutput = JSON.parse(result.stdout.trim());
+  assert.equal(parsedOutput.timestampMs, 789);
 });
 
 test('generated artifact guard JSON summary reflects override in no-op runs', () => {

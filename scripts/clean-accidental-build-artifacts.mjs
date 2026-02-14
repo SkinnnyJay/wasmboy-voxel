@@ -1,7 +1,11 @@
 import path from 'node:path';
 import { access, readdir, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { buildArtifactSummaryMetadata, CLEAN_ARTIFACT_SUMMARY_TOOL } from './artifact-summary-contract.mjs';
+import {
+  buildArtifactSummaryMetadata,
+  CLEAN_ARTIFACT_SUMMARY_TOOL,
+  resolveArtifactSummaryTimestampOverride,
+} from './artifact-summary-contract.mjs';
 import { normalizeArtifactPath, shouldRemoveGeneratedFile } from './artifact-policy.mjs';
 
 const DIRECTORY_CLEAN_TARGETS = ['build', path.join('apps', 'debugger', '.next')];
@@ -186,8 +190,9 @@ if (shouldRunAsScript) {
       const result = await cleanAccidentalBuildArtifacts({ dryRun: args.dryRun });
       const removedCount = result.deletedDirectories.length + result.deletedFiles.length;
       const summaryVerb = args.dryRun ? 'would remove' : 'removed';
+      const timestampOverride = resolveArtifactSummaryTimestampOverride(process.env);
       const summary = {
-        ...buildArtifactSummaryMetadata(CLEAN_ARTIFACT_SUMMARY_TOOL),
+        ...buildArtifactSummaryMetadata(CLEAN_ARTIFACT_SUMMARY_TOOL, { timestampMs: timestampOverride }),
         mode: args.dryRun ? 'dry-run' : 'apply',
         removedCount,
         deletedDirectoryCount: result.deletedDirectories.length,

@@ -76,6 +76,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C053 | Artifact JSON explicit count fields      | Added explicit machine-readable count fields (`deletedDirectoryCount`, `deletedFileCount`, `blockedPathCount`) with executable contract and policy-doc updates so downstream automation can consume totals directly.      | S4                | `@automation-tooling` |
 | TD-C054 | Artifact JSON count consistency checks   | Centralized executable-contract assertions that enforce JSON count-field/list-length consistency across cleanup/guard summary payload scenarios, reducing drift risk in machine-readable contract coverage.               | S4                | `@automation-tooling` |
 | TD-C055 | Artifact summary metadata contract reuse | Introduced shared summary-contract helpers/constants for cleanup/guard JSON metadata (`schemaVersion`, tool IDs, timestamp validation) with direct helper tests, reducing duplicate contract logic and schema drift risk. | S4                | `@automation-tooling` |
+| TD-C056 | Artifact summary timestamp override      | Added shared support for deterministic summary timestamps via `WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS`, with helper validation and executable contracts proving override behavior for cleanup/guard JSON payloads.         | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

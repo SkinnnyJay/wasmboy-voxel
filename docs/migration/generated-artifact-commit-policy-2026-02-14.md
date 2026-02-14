@@ -20,7 +20,8 @@ This protects the repo from accidental generated-output drift.
   summaries; JSON payloads include `tool`, `schemaVersion`, and `timestampMs`
   metadata for traceability plus explicit `deletedDirectoryCount` /
   `deletedFileCount` totals; `--help`/`-h` always prints usage even when mixed
-  with other flags);
+  with other flags; set `WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS` to emit a
+  deterministic timestamp in JSON output when needed);
   npm shortcuts: `clean:artifacts:precommit:dry-run` and
   `clean:artifacts:precommit:json`).
 - `scripts/guard-generated-artifacts-precommit.mjs` blocks staged generated paths
@@ -28,7 +29,9 @@ This protects the repo from accidental generated-output drift.
   or `--json` for machine-readable validation summaries; JSON payloads include
   `tool`, `schemaVersion`, and `timestampMs` metadata; `--help`/`-h` always
   prints usage even when mixed with other flags; payloads also expose
-  `blockedPathCount` alongside `blockedPaths`; npm shortcut:
+  `blockedPathCount` alongside `blockedPaths`; set
+  `WASMBOY_ARTIFACT_SUMMARY_TIMESTAMP_MS` to emit a deterministic timestamp in
+  JSON output when needed; npm shortcut:
   `guard:generated-artifacts:precommit:json`).
 
 ## Intentional exception path
