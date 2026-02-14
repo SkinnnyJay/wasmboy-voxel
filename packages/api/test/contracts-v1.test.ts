@@ -62,6 +62,28 @@ describe('contracts v1', () => {
     expect(parsed.success).toBe(false);
   });
 
+  it('keeps snapshot schema fields required (no optional drift)', () => {
+    const validPayload = {
+      version: 'v1',
+      registers: makeValidRegisters(),
+      tileData: makeFilledBytes(0x1800, 1),
+      bgTileMap: makeFilledBytes(0x400, 2),
+      windowTileMap: makeFilledBytes(0x400, 3),
+      oamData: makeFilledBytes(0xa0, 4),
+    };
+
+    const snapshotShape = V1Schemas.PpuSnapshotSchema.shape;
+    for (const fieldSchema of Object.values(snapshotShape)) {
+      expect(fieldSchema.isOptional()).toBe(false);
+    }
+
+    for (const key of Object.keys(validPayload)) {
+      const payloadMissingOneField = { ...validPayload };
+      delete payloadMissingOneField[key as keyof typeof payloadMissingOneField];
+      expect(V1Schemas.PpuSnapshotSchema.safeParse(payloadMissingOneField).success).toBe(false);
+    }
+  });
+
   it('enforces memory section byte-length and address-span alignment', () => {
     const okPayload = {
       version: 'v1',

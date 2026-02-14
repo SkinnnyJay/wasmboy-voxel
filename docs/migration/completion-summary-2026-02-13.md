@@ -390,6 +390,7 @@ Workflow hardening applied:
 - CI now enforces post-install lockfile drift checks across root/api/cli/debugger lockfiles, preventing hidden dependency graph mutations from passing automation jobs
 - packages/api public exports were audited and documented with backward-compatibility guarantees/risks (entrypoint symbols, registry keys, export-map scope), establishing a baseline for future API stability checks
 - packages/api contract tests now include full-register-field bounds and coercion rejection coverage, verifying all register keys reject out-of-range and string/boolean payloads without coercion
+- packages/api snapshot schema tests now enforce required-field stability by asserting all snapshot keys remain non-optional and any omitted field fails validation
 
 ## Security posture at completion
 
