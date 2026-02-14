@@ -34,6 +34,38 @@ echo 'fixture command executed'
   assert.match(result.stdout, /fixture command executed/u);
 });
 
+test('writeFakeExecutable is idempotent when fake-bin directory already exists', () => {
+  const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'script-test-fixture-idempotent-'));
+  const firstFakeBinDirectory = writeFakeExecutable(
+    tempDirectory,
+    'fixture-cmd-one',
+    `#!/usr/bin/env bash
+echo 'fixture command one'
+`,
+  );
+  const secondFakeBinDirectory = writeFakeExecutable(
+    tempDirectory,
+    'fixture-cmd-two',
+    `#!/usr/bin/env bash
+echo 'fixture command two'
+`,
+  );
+
+  assert.equal(firstFakeBinDirectory, secondFakeBinDirectory);
+
+  const envWithFakeBinPath = {
+    ...process.env,
+    PATH: `${secondFakeBinDirectory}:${process.env.PATH ?? ''}`,
+  };
+  const firstResult = spawnSync('fixture-cmd-one', [], { encoding: 'utf8', env: envWithFakeBinPath });
+  const secondResult = spawnSync('fixture-cmd-two', [], { encoding: 'utf8', env: envWithFakeBinPath });
+
+  assert.equal(firstResult.status, 0);
+  assert.equal(secondResult.status, 0);
+  assert.match(firstResult.stdout, /fixture command one/u);
+  assert.match(secondResult.stdout, /fixture command two/u);
+});
+
 test('writeFakeExecutable rejects non-string temp directories', () => {
   assert.throws(
     () =>

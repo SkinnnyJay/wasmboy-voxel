@@ -379,6 +379,7 @@ Workflow hardening applied:
 - test-fixtures executable-name validation now includes explicit byte-length caps, with regression coverage for overlength names to avoid filesystem-dependent ENAMETOOLONG behavior
 - test-fixtures executable-body validation now includes explicit newline-only body regressions (`\\n\\n` and `\\r\\n\\r\\n`) to lock rejection of structurally empty shell scripts
 - test-fixtures executable-name validation now rejects Windows reserved device names (`CON`, `PRN`, etc.), ensuring fake executable generation behaves consistently across platforms
+- test-fixtures coverage now includes fake-bin idempotency semantics, verifying repeated fixture writes reuse the same fake-bin path and keep all generated commands runnable
 
 ## Security posture at completion
 
