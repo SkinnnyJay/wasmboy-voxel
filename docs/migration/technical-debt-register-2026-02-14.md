@@ -73,6 +73,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C050 | Cleanup helper options input contracts | Added strict options-shape/type validation (`options`, `repoRoot`, `dryRun`) in `cleanAccidentalBuildArtifacts` with regression coverage, preventing malformed caller payloads from causing opaque runtime failures.     | S4                | `@automation-tooling` |
 | TD-C051 | Guard helper options input contracts   | Added strict options-shape/type validation (`options`, `allowGeneratedEdits`) in `validateGeneratedArtifactStaging` with regression coverage, preventing malformed caller payloads from causing opaque runtime failures. | S4                | `@automation-tooling` |
 | TD-C052 | Artifact CLI help-first semantics      | Implemented help-first argument handling in cleanup/guard parsers so `--help/-h` prints usage regardless of mixed flags, with parser + subprocess contracts to preserve deterministic operator experience.               | S4                | `@automation-tooling` |
+| TD-C053 | Artifact JSON explicit count fields    | Added explicit machine-readable count fields (`deletedDirectoryCount`, `deletedFileCount`, `blockedPathCount`) with executable contract and policy-doc updates so downstream automation can consume totals directly.     | S4                | `@automation-tooling` |
 
 ## Triage cadence
 

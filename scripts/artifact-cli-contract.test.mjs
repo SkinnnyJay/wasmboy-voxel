@@ -162,6 +162,8 @@ test('clean artifact script emits JSON summary when --json is set', () => {
   assertSummaryMetadata(parsedOutput, 'clean:artifacts');
   assert.equal(parsedOutput.mode, 'dry-run');
   assert.equal(parsedOutput.removedCount, 1);
+  assert.equal(parsedOutput.deletedDirectoryCount, 0);
+  assert.equal(parsedOutput.deletedFileCount, 1);
   assert.deepEqual(parsedOutput.deletedDirectories, []);
   assert.deepEqual(parsedOutput.deletedFiles, ['test/integration/headless.output']);
   assert.equal(fs.existsSync(generatedOutputPath), true);
@@ -180,6 +182,8 @@ test('clean artifact script emits apply-mode JSON summary and removes files', ()
   assertSummaryMetadata(parsedOutput, 'clean:artifacts');
   assert.equal(parsedOutput.mode, 'apply');
   assert.equal(parsedOutput.removedCount, 1);
+  assert.equal(parsedOutput.deletedDirectoryCount, 0);
+  assert.equal(parsedOutput.deletedFileCount, 1);
   assert.deepEqual(parsedOutput.deletedDirectories, []);
   assert.deepEqual(parsedOutput.deletedFiles, ['test/integration/headless.output']);
   assert.equal(fs.existsSync(generatedOutputPath), false);
@@ -197,6 +201,8 @@ test('clean artifact script emits zero-count JSON summary when nothing matches',
   assertSummaryMetadata(parsedOutput, 'clean:artifacts');
   assert.equal(parsedOutput.mode, 'apply');
   assert.equal(parsedOutput.removedCount, 0);
+  assert.equal(parsedOutput.deletedDirectoryCount, 0);
+  assert.equal(parsedOutput.deletedFileCount, 0);
   assert.deepEqual(parsedOutput.deletedDirectories, []);
   assert.deepEqual(parsedOutput.deletedFiles, []);
 });
@@ -211,6 +217,7 @@ test('generated artifact guard script emits JSON summary when --json is set', ()
   assert.equal(typeof parsedOutput.allowGeneratedEdits, 'boolean');
   assert.equal(parsedOutput.isValid, true);
   assert.equal(parsedOutput.stagedPathCount, 0);
+  assert.equal(parsedOutput.blockedPathCount, 0);
   assert.deepEqual(parsedOutput.blockedPaths, []);
 });
 
@@ -226,6 +233,7 @@ test('generated artifact guard JSON summary reflects override in no-op runs', ()
   assert.equal(parsedOutput.allowGeneratedEdits, true);
   assert.equal(parsedOutput.isValid, true);
   assert.equal(parsedOutput.stagedPathCount, 0);
+  assert.equal(parsedOutput.blockedPathCount, 0);
   assert.deepEqual(parsedOutput.blockedPaths, []);
 });
 
@@ -241,6 +249,7 @@ test('generated artifact guard JSON output reports blocked staged artifacts', ()
   assert.equal(parsedOutput.allowGeneratedEdits, false);
   assert.equal(parsedOutput.isValid, false);
   assert.deepEqual(parsedOutput.blockedPaths, [tempRepo.stagedRelativePaths[0]]);
+  assert.equal(parsedOutput.blockedPathCount, 1);
   assert.equal(parsedOutput.stagedPathCount, 1);
 });
 
@@ -259,6 +268,7 @@ test('generated artifact guard JSON output honors generated-edit override', () =
   assert.equal(parsedOutput.allowGeneratedEdits, true);
   assert.equal(parsedOutput.isValid, true);
   assert.deepEqual(parsedOutput.blockedPaths, []);
+  assert.equal(parsedOutput.blockedPathCount, 0);
   assert.equal(parsedOutput.stagedPathCount, 1);
 });
 
@@ -274,5 +284,6 @@ test('generated artifact guard JSON output sorts blocked paths deterministically
   assert.equal(parsedOutput.allowGeneratedEdits, false);
   assert.equal(parsedOutput.isValid, false);
   assert.deepEqual(parsedOutput.blockedPaths, ['build/a-generated.js', 'dist/z-generated.js']);
+  assert.equal(parsedOutput.blockedPathCount, 2);
   assert.equal(parsedOutput.stagedPathCount, 2);
 });

@@ -18,7 +18,8 @@ This protects the repo from accidental generated-output drift.
   (use `node scripts/clean-accidental-build-artifacts.mjs --dry-run` to inspect
   candidates without deleting, or `--dry-run --json` for machine-readable
   summaries; JSON payloads include `tool`, `schemaVersion`, and `timestampMs`
-  metadata for traceability; `--help`/`-h` always prints usage even when mixed
+  metadata for traceability plus explicit `deletedDirectoryCount` /
+  `deletedFileCount` totals; `--help`/`-h` always prints usage even when mixed
   with other flags);
   npm shortcuts: `clean:artifacts:precommit:dry-run` and
   `clean:artifacts:precommit:json`).
@@ -26,7 +27,8 @@ This protects the repo from accidental generated-output drift.
   and integration output artifacts (use `--help` for invocation/usage details,
   or `--json` for machine-readable validation summaries; JSON payloads include
   `tool`, `schemaVersion`, and `timestampMs` metadata; `--help`/`-h` always
-  prints usage even when mixed with other flags; npm shortcut:
+  prints usage even when mixed with other flags; payloads also expose
+  `blockedPathCount` alongside `blockedPaths`; npm shortcut:
   `guard:generated-artifacts:precommit:json`).
 
 ## Intentional exception path

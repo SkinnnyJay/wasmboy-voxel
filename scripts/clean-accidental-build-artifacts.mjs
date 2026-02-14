@@ -191,6 +191,8 @@ if (shouldRunAsScript) {
         mode: args.dryRun ? 'dry-run' : 'apply',
         timestampMs: Date.now(),
         removedCount,
+        deletedDirectoryCount: result.deletedDirectories.length,
+        deletedFileCount: result.deletedFiles.length,
         deletedDirectories: result.deletedDirectories,
         deletedFiles: result.deletedFiles,
       };

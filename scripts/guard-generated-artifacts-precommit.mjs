@@ -138,6 +138,7 @@ function runPrecommitGuard(options = {}) {
     allowGeneratedEdits,
     isValid: validationResult.isValid,
     blockedPaths: validationResult.blockedPaths,
+    blockedPathCount: validationResult.blockedPaths.length,
     stagedPathCount: stagedPaths.length,
     timestampMs: Date.now(),
   };
