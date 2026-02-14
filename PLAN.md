@@ -760,3 +760,4 @@
 - 2026-02-14: Re-ran strict no-build gate directly (`npm run test:all:nobuild:strict`) to reconfirm the full CI-parity quality sequence (automation, scoped smoke, lint/typecheck/test, integration/core/perf/security) remains green as a single command path.
 - 2026-02-14: Re-ran build-backed Playwright smoke command (`npm run test:e2e:playwright:headless`) to reconfirm bundled WASM runtime generation plus headless browser execution remain stable through the published e2e wrapper.
 - 2026-02-14: Re-ran local strict CI wrapper (`npm run ci:local:strict`) to reconfirm the project-level strict command alias remains healthy and maps cleanly to the strict no-build verification pipeline.
+- 2026-02-14: Re-ran NutJS UI smoke harness command (`npm run test:ui:smoke`) to reconfirm deterministic non-strict capability reporting/skip behavior on environments without the optional NutJS dependency.
