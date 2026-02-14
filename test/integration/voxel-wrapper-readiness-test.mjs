@@ -152,3 +152,21 @@ test('clearPpuSnapshotCache forces null fallback when _getWasmConstant is unavai
   assert.equal(snapshot, null);
   assert.equal(constantCalls, 1 + SUPPORT_CHECK_MAX_RETRIES);
 });
+
+test('supportsPpuSnapshot returns false when core internals are unavailable', async () => {
+  WasmBoy.clearPpuSnapshotCache();
+  WasmBoy._getWasmConstant = undefined;
+  WasmBoy._getWasmMemorySection = async () => new Uint8Array(0);
+
+  const supported = await WasmBoy.supportsPpuSnapshot();
+  assert.equal(supported, false);
+});
+
+test('getPpuSnapshot returns null when core lacks memory-section internals', async () => {
+  WasmBoy.clearPpuSnapshotCache();
+  WasmBoy._getWasmConstant = async () => 0x1000;
+  WasmBoy._getWasmMemorySection = undefined;
+
+  const snapshot = await WasmBoy.getPpuSnapshot();
+  assert.equal(snapshot, null);
+});

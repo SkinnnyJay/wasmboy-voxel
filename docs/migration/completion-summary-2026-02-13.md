@@ -420,6 +420,7 @@ Workflow hardening applied:
 - voxel-wrapper snapshot-read paths were audited for repeated per-frame allocations, documenting fallback-path hotspots (single-byte register section reads, full-snapshot layer overread, memory-read `Array.from` copies) and a prioritized mitigation sequence in `docs/migration/voxel-wrapper-snapshot-allocation-audit-2026-02-14.md`
 - voxel-wrapper integration coverage now includes worker-readiness retry/null semantics through a dedicated Node test (`test/integration/voxel-wrapper-readiness-test.mjs`), and the suite is wired into all integration script variants via `test:integration:voxel:wrapper`
 - voxel-wrapper fallback tests now cover `_getWasmConstant` failure semantics, including cached-base snapshot success when later constant lookups fail and explicit null fallback after cache clear forces retry exhaustion
+- voxel-wrapper regression coverage now includes unsupported-core detection paths, verifying snapshot capability checks return safe false/null results when required internal hooks are missing
 
 ## Security posture at completion
 
