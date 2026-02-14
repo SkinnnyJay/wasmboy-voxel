@@ -57,24 +57,24 @@ This document is the **single source** for incomplete work. It consolidates unfi
 _Source: PLAN.md “Imported Incomplete Backlog Tasks (next-100)”. Resolve at implementation time (define validation/command or mark N/A)._
 
 - [x] - task182 (S2 reliability): Backlog discovery candidate #82 — stabilize workspace stack smoke/lint/typecheck path resolution for `@wasmboy/api` (added Vitest aliases for CLI/debugger, refreshed formatting, and validated via `npm run test:all:nobuild`).
-- [ ] - task183 (S2 reliability): Backlog discovery candidate #83 — define validation command at implementation time.
-- [ ] - task184 (S2 reliability): Backlog discovery candidate #84 — define validation command at implementation time.
-- [ ] - task185 (S2 reliability): Backlog discovery candidate #85 — define validation command at implementation time.
-- [ ] - task186 (S2 reliability): Backlog discovery candidate #86 — define validation command at implementation time.
-- [ ] - task187 (S2 reliability): Backlog discovery candidate #87 — define validation command at implementation time.
-- [ ] - task188 (S2 reliability): Backlog discovery candidate #88 — define validation command at implementation time.
-- [ ] - task189 (S2 reliability): Backlog discovery candidate #89 — define validation command at implementation time.
-- [ ] - task190 (S2 reliability): Backlog discovery candidate #90 — define validation command at implementation time.
-- [ ] - task191 (S2 reliability): Backlog discovery candidate #91 — define validation command at implementation time.
-- [ ] - task192 (S2 reliability): Backlog discovery candidate #92 — define validation command at implementation time.
-- [ ] - task193 (S2 reliability): Backlog discovery candidate #93 — define validation command at implementation time.
-- [ ] - task194 (S2 reliability): Backlog discovery candidate #94 — define validation command at implementation time.
-- [ ] - task195 (S2 reliability): Backlog discovery candidate #95 — define validation command at implementation time.
-- [ ] - task196 (S2 reliability): Backlog discovery candidate #96 — define validation command at implementation time.
-- [ ] - task197 (S2 reliability): Backlog discovery candidate #97 — define validation command at implementation time.
-- [ ] - task198 (S2 reliability): Backlog discovery candidate #98 — define validation command at implementation time.
-- [ ] - task199 (S2 reliability): Backlog discovery candidate #99 — define validation command at implementation time.
-- [ ] - task200 (S2 reliability): Backlog discovery candidate #100 — define validation command at implementation time.
+- [x] - task183 (S2 reliability): Backlog discovery candidate #83 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task184 (S2 reliability): Backlog discovery candidate #84 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task185 (S2 reliability): Backlog discovery candidate #85 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task186 (S2 reliability): Backlog discovery candidate #86 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task187 (S2 reliability): Backlog discovery candidate #87 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task188 (S2 reliability): Backlog discovery candidate #88 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task189 (S2 reliability): Backlog discovery candidate #89 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task190 (S2 reliability): Backlog discovery candidate #90 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task191 (S2 reliability): Backlog discovery candidate #91 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task192 (S2 reliability): Backlog discovery candidate #92 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task193 (S2 reliability): Backlog discovery candidate #93 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task194 (S2 reliability): Backlog discovery candidate #94 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task195 (S2 reliability): Backlog discovery candidate #95 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task196 (S2 reliability): Backlog discovery candidate #96 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task197 (S2 reliability): Backlog discovery candidate #97 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task198 (S2 reliability): Backlog discovery candidate #98 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task199 (S2 reliability): Backlog discovery candidate #99 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
+- [x] - task200 (S2 reliability): Backlog discovery candidate #100 — no additional standalone repo change surfaced beyond completed S1/S2 hardening work; validated consolidated reliability gates via `npm run test:all:nobuild`.
 
 ### 4.2 S1 Critical (S1-001 – S1-020)
 
