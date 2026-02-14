@@ -118,7 +118,7 @@ interface MemorySectionContractPayload {
   version: 'v1';
   start: number;
   endExclusive: number;
-  bytes: number[];
+  bytes: Uint8Array;
 }
 
 export interface WasmBoyPpuSnapshot {
@@ -259,7 +259,12 @@ const isValidMemorySectionContract = (payload: MemorySectionContractPayload): bo
   if (!Number.isInteger(payload.start) || payload.start < 0) return false;
   if (!Number.isInteger(payload.endExclusive) || payload.endExclusive <= payload.start) return false;
   if (payload.bytes.length !== payload.endExclusive - payload.start) return false;
-  return payload.bytes.every(isByte);
+  for (let i = 0; i < payload.bytes.length; i += 1) {
+    if (!isByte(payload.bytes[i] ?? -1)) {
+      return false;
+    }
+  }
+  return true;
 };
 
 const isProductionNodeEnv = (): boolean =>
@@ -282,6 +287,17 @@ const readRegisterFromBlock = (registerBlock: Uint8Array, address: number): numb
   }
   return registerBlock[index] ?? 0;
 };
+
+const buildRegistersFromBlock = (registerBlock: Uint8Array): WasmBoyPpuSnapshot['registers'] => ({
+  scx: readRegisterFromBlock(registerBlock, REG_SCX),
+  scy: readRegisterFromBlock(registerBlock, REG_SCY),
+  wx: readRegisterFromBlock(registerBlock, REG_WX),
+  wy: readRegisterFromBlock(registerBlock, REG_WY),
+  lcdc: readRegisterFromBlock(registerBlock, REG_LCDC),
+  bgp: readRegisterFromBlock(registerBlock, REG_BGP),
+  obp0: readRegisterFromBlock(registerBlock, REG_OBP0),
+  obp1: readRegisterFromBlock(registerBlock, REG_OBP1),
+});
 
 const readGameMemoryByte = async (api: WasmBoyInternalSnapshotApi, gameMemoryBase: number, address: number): Promise<number> => {
   const data = await readGameMemorySection(api, gameMemoryBase, address, address + 1);
@@ -426,29 +442,29 @@ const getPpuSnapshot = async (api: WasmBoyApi): Promise<WasmBoyPpuSnapshot | nul
   let oamData: Uint8Array;
 
   try {
-    [tileData, bgTileMap, windowTileMap, oamData] = await Promise.all([
+    const [nextTileData, nextBgTileMap, nextOamData] = await Promise.all([
       readGameMemorySection(internal, gameMemoryBase, TILE_DATA_START, TILE_DATA_END_EXCLUSIVE),
       readGameMemorySection(internal, gameMemoryBase, bgMapStart, bgMapStart + TILEMAP_SIZE),
-      readGameMemorySection(internal, gameMemoryBase, windowMapStart, windowMapStart + TILEMAP_SIZE),
       readGameMemorySection(internal, gameMemoryBase, OAM_START, OAM_END_EXCLUSIVE),
     ]);
+    tileData = nextTileData;
+    bgTileMap = nextBgTileMap;
+    oamData = nextOamData;
+    windowTileMap =
+      windowMapStart === bgMapStart
+        ? bgTileMap
+        : await readGameMemorySection(internal, gameMemoryBase, windowMapStart, windowMapStart + TILEMAP_SIZE);
   } catch (error) {
     emitSnapshotError(error);
     return null;
   }
 
-  const scx = readRegisterFromBlock(registerBlock, REG_SCX);
-  const scy = readRegisterFromBlock(registerBlock, REG_SCY);
-  const wx = readRegisterFromBlock(registerBlock, REG_WX);
-  const wy = readRegisterFromBlock(registerBlock, REG_WY);
-  const bgp = readRegisterFromBlock(registerBlock, REG_BGP);
-  const obp0 = readRegisterFromBlock(registerBlock, REG_OBP0);
-  const obp1 = readRegisterFromBlock(registerBlock, REG_OBP1);
+  const registers = buildRegistersFromBlock(registerBlock);
 
   lastSnapshotDurationMs = (typeof performance !== 'undefined' ? performance.now() : Date.now()) - snapshotStart;
 
   const snapshot: WasmBoyPpuSnapshot = {
-    registers: { scx, scy, wx, wy, lcdc, bgp, obp0, obp1 },
+    registers,
     tileData,
     bgTileMap,
     windowTileMap,
@@ -463,13 +479,33 @@ const getPpuSnapshot = async (api: WasmBoyApi): Promise<WasmBoyPpuSnapshot | nul
 };
 
 async function getRegisters(api: WasmBoyApi): Promise<WasmBoyPpuSnapshot['registers'] | null> {
-  const snapshot = await getPpuSnapshot(api);
-  if (!snapshot) return null;
-  if (contractValidationEnabled && !isValidRegistersContract(snapshot.registers)) {
+  if (!hasSnapshotInternals(api)) return null;
+  const internal = api as WasmBoyInternalSnapshotApi;
+  if (cachedGameMemoryBase === null) {
+    const supported = await supportsPpuSnapshot(api);
+    if (!supported) return null;
+  }
+
+  const gameMemoryBase = await resolveGameMemoryBase(internal);
+  if (gameMemoryBase === null) {
+    emitSnapshotError(new Error('resolveGameMemoryBase failed'));
+    return null;
+  }
+
+  let registerBlock: Uint8Array;
+  try {
+    registerBlock = await readRegisterBlock(internal, gameMemoryBase);
+  } catch (error) {
+    emitSnapshotError(error);
+    return null;
+  }
+
+  const registers = buildRegistersFromBlock(registerBlock);
+  if (contractValidationEnabled && !isValidRegistersContract(registers)) {
     emitSnapshotError(new Error('Registers contract validation failed.'));
     return null;
   }
-  return snapshot.registers;
+  return registers;
 }
 
 async function getPpuSnapshotLayers(api: WasmBoyApi, options?: GetPpuSnapshotLayersOptions): Promise<Partial<WasmBoyPpuSnapshot> | null> {
@@ -511,6 +547,10 @@ async function getPpuSnapshotLayers(api: WasmBoyApi, options?: GetPpuSnapshotLay
   const result: Partial<WasmBoyPpuSnapshot> = {};
   const memoryLayerReads: Promise<void>[] = [];
   const lcdc = registerBlock ? readRegisterFromBlock(registerBlock, REG_LCDC) : 0;
+  const bgMapStart = (lcdc & LCDC_BG_TILEMAP_SELECT_BIT) !== 0 ? BG_TILEMAP_1_START : BG_TILEMAP_0_START;
+  const windowMapStart = (lcdc & LCDC_WINDOW_TILEMAP_SELECT_BIT) !== 0 ? BG_TILEMAP_1_START : BG_TILEMAP_0_START;
+  const needsBgTileMap = selectedLayers.includes('bgTileMap');
+  const needsWindowTileMap = selectedLayers.includes('windowTileMap');
 
   if (selectedLayers.includes('tileData')) {
     memoryLayerReads.push(
@@ -520,17 +560,18 @@ async function getPpuSnapshotLayers(api: WasmBoyApi, options?: GetPpuSnapshotLay
     );
   }
 
-  if (selectedLayers.includes('bgTileMap')) {
-    const bgMapStart = (lcdc & LCDC_BG_TILEMAP_SELECT_BIT) !== 0 ? BG_TILEMAP_1_START : BG_TILEMAP_0_START;
+  if (needsBgTileMap) {
     memoryLayerReads.push(
       readGameMemorySection(internal, gameMemoryBase, bgMapStart, bgMapStart + TILEMAP_SIZE).then(section => {
         result.bgTileMap = section;
+        if (needsWindowTileMap && windowMapStart === bgMapStart) {
+          result.windowTileMap = section;
+        }
       }),
     );
   }
 
-  if (selectedLayers.includes('windowTileMap')) {
-    const windowMapStart = (lcdc & LCDC_WINDOW_TILEMAP_SELECT_BIT) !== 0 ? BG_TILEMAP_1_START : BG_TILEMAP_0_START;
+  if (needsWindowTileMap && !(needsBgTileMap && windowMapStart === bgMapStart)) {
     memoryLayerReads.push(
       readGameMemorySection(internal, gameMemoryBase, windowMapStart, windowMapStart + TILEMAP_SIZE).then(section => {
         result.windowTileMap = section;
@@ -554,16 +595,7 @@ async function getPpuSnapshotLayers(api: WasmBoyApi, options?: GetPpuSnapshotLay
   }
 
   if (selectedLayers.includes('registers') && registerBlock) {
-    const registers = {
-      scx: readRegisterFromBlock(registerBlock, REG_SCX),
-      scy: readRegisterFromBlock(registerBlock, REG_SCY),
-      wx: readRegisterFromBlock(registerBlock, REG_WX),
-      wy: readRegisterFromBlock(registerBlock, REG_WY),
-      lcdc: readRegisterFromBlock(registerBlock, REG_LCDC),
-      bgp: readRegisterFromBlock(registerBlock, REG_BGP),
-      obp0: readRegisterFromBlock(registerBlock, REG_OBP0),
-      obp1: readRegisterFromBlock(registerBlock, REG_OBP1),
-    };
+    const registers = buildRegistersFromBlock(registerBlock);
     if (contractValidationEnabled && !isValidRegistersContract(registers)) {
       emitSnapshotError(new Error('Registers contract validation failed.'));
       return null;
@@ -621,7 +653,7 @@ async function readMemory(api: WasmBoyApi, start: number, endExclusive: number):
       version: CONTRACT_VERSION,
       start,
       endExclusive,
-      bytes: Array.from(bytes),
+      bytes,
     };
     if (!isValidMemorySectionContract(payload)) {
       emitSnapshotError(new Error('Memory section contract validation failed.'));

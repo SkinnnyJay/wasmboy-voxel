@@ -9,6 +9,8 @@ const TILE_DATA_END_EXCLUSIVE = 0x9800;
 const BG_TILEMAP_0_START = 0x9800;
 const BG_TILEMAP_1_START = 0x9c00;
 const TILEMAP_SIZE = 0x400;
+const OAM_START = 0xfe00;
+const OAM_END_EXCLUSIVE = 0xfea0;
 const REG_LCDC = 0xff40;
 const REG_SCY = 0xff42;
 const REG_SCX = 0xff43;
@@ -312,6 +314,76 @@ test('getPpuSnapshotLayers reads one register block for registers-only requests'
     obp1: 88,
   });
   assert.deepEqual(memoryReads, [[GAME_MEMORY_BASE + REG_LCDC, GAME_MEMORY_BASE + REGISTER_BLOCK_END_EXCLUSIVE]]);
+});
+
+test('getRegisters reads only the register block without full snapshot allocations', async () => {
+  const memoryReads = [];
+  WasmBoy.clearPpuSnapshotCache();
+  WasmBoy._getWasmConstant = async () => GAME_MEMORY_BASE;
+  WasmBoy._getPpuSnapshotBuffer = undefined;
+  WasmBoy._parsePpuSnapshotBuffer = undefined;
+  WasmBoy._getWasmMemorySection = async (start, endExclusive) => {
+    memoryReads.push([start, endExclusive]);
+    if (start === GAME_MEMORY_BASE + REG_LCDC && endExclusive === GAME_MEMORY_BASE + REGISTER_BLOCK_END_EXCLUSIVE) {
+      const registerBlock = new Uint8Array(REGISTER_BLOCK_END_EXCLUSIVE - REG_LCDC);
+      registerBlock[REG_SCX - REG_LCDC] = 9;
+      registerBlock[REG_SCY - REG_LCDC] = 8;
+      registerBlock[REG_WX - REG_LCDC] = 7;
+      registerBlock[REG_WY - REG_LCDC] = 6;
+      registerBlock[REG_LCDC - REG_LCDC] = 5;
+      registerBlock[REG_BGP - REG_LCDC] = 4;
+      registerBlock[REG_OBP0 - REG_LCDC] = 3;
+      registerBlock[REG_OBP1 - REG_LCDC] = 2;
+      return registerBlock;
+    }
+    throw new Error(`unexpected read: ${String(start)}-${String(endExclusive)}`);
+  };
+
+  const registers = await WasmBoy.getRegisters();
+  assert.deepEqual(registers, {
+    scx: 9,
+    scy: 8,
+    wx: 7,
+    wy: 6,
+    lcdc: 5,
+    bgp: 4,
+    obp0: 3,
+    obp1: 2,
+  });
+  assert.deepEqual(memoryReads, [[GAME_MEMORY_BASE + REG_LCDC, GAME_MEMORY_BASE + REGISTER_BLOCK_END_EXCLUSIVE]]);
+});
+
+test('getPpuSnapshot avoids duplicate tilemap reads when bg and window map select match', async () => {
+  const memoryReads = [];
+  WasmBoy.clearPpuSnapshotCache();
+  WasmBoy._getWasmConstant = async () => GAME_MEMORY_BASE;
+  WasmBoy._getPpuSnapshotBuffer = undefined;
+  WasmBoy._parsePpuSnapshotBuffer = undefined;
+  WasmBoy._getWasmMemorySection = async (start, endExclusive) => {
+    memoryReads.push([start, endExclusive]);
+    if (start === GAME_MEMORY_BASE + REG_LCDC && endExclusive === GAME_MEMORY_BASE + REGISTER_BLOCK_END_EXCLUSIVE) {
+      const registerBlock = new Uint8Array(REGISTER_BLOCK_END_EXCLUSIVE - REG_LCDC);
+      registerBlock[0] = 0x00; // BG+window map both use 0x9800
+      return registerBlock;
+    }
+    return new Uint8Array(endExclusive - start).fill(1);
+  };
+
+  const snapshot = await WasmBoy.getPpuSnapshot();
+  assert.notEqual(snapshot, null);
+  assert.equal(snapshot.bgTileMap?.length, TILEMAP_SIZE);
+  assert.equal(snapshot.windowTileMap?.length, TILEMAP_SIZE);
+  assert.strictEqual(
+    snapshot.bgTileMap,
+    snapshot.windowTileMap,
+    'tilemap sections should reuse same Uint8Array when map selection matches',
+  );
+  assert.deepEqual(memoryReads, [
+    [GAME_MEMORY_BASE + REG_LCDC, GAME_MEMORY_BASE + REGISTER_BLOCK_END_EXCLUSIVE],
+    [GAME_MEMORY_BASE + TILE_DATA_START, GAME_MEMORY_BASE + TILE_DATA_END_EXCLUSIVE],
+    [GAME_MEMORY_BASE + BG_TILEMAP_0_START, GAME_MEMORY_BASE + BG_TILEMAP_0_START + TILEMAP_SIZE],
+    [GAME_MEMORY_BASE + OAM_START, GAME_MEMORY_BASE + OAM_END_EXCLUSIVE],
+  ]);
 });
 
 test('getPpuSnapshot returns null when a partial section read fails', async () => {
