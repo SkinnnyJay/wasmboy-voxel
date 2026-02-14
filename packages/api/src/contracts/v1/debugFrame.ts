@@ -10,18 +10,9 @@ export const DebugEventSchema = z.object({
 
 export const DebugFrameSchema = z.object({
   version: z.literal('v1'),
-  frameId: z
-    .number()
-    .int()
-    .nonnegative(),
-  timestampMs: z
-    .number()
-    .finite()
-    .nonnegative(),
-  fps: z
-    .number()
-    .finite()
-    .nonnegative(),
+  frameId: z.number().int().nonnegative(),
+  timestampMs: z.number().finite().nonnegative(),
+  fps: z.number().finite().nonnegative(),
   registers: RegistersSchema,
   checksums: z.object({
     tileDataSha256: sha256Hex,

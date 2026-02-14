@@ -49,10 +49,10 @@ export default function HomePage() {
   const frameTimestampMs = useDebuggerStore(debuggerSelectors.frameTimestampMs);
   const snapshots = useDebuggerStore(debuggerSelectors.snapshots);
   const events = useDebuggerStore(debuggerSelectors.eventStream);
-  const setSandboxMode = useDebuggerStore(state => state.setSandboxMode);
-  const setRateLimitMs = useDebuggerStore(state => state.setRateLimitMs);
-  const captureSnapshot = useDebuggerStore(state => state.captureSnapshot);
-  const appendInterruptEvent = useDebuggerStore(state => state.appendInterruptEvent);
+  const setSandboxMode = useDebuggerStore((state) => state.setSandboxMode);
+  const setRateLimitMs = useDebuggerStore((state) => state.setRateLimitMs);
+  const captureSnapshot = useDebuggerStore((state) => state.captureSnapshot);
+  const appendInterruptEvent = useDebuggerStore((state) => state.appendInterruptEvent);
 
   useEffect(() => {
     try {
@@ -67,7 +67,7 @@ export default function HomePage() {
             worker.postMessage({ ping: `hello-debugger-restart-${restartCount}` });
           },
           onTelemetry(event) {
-            setWorkerTelemetry(previous => ({
+            setWorkerTelemetry((previous) => ({
               crashes: previous.crashes + (event.eventType === 'crash-detected' ? 1 : 0),
               scheduledRestarts:
                 previous.scheduledRestarts + (event.eventType === 'restart-scheduled' ? 1 : 0),

@@ -94,14 +94,15 @@ function compactPayloadValue(value: unknown, depth: number): unknown {
     if (value.length <= MAX_EVENT_PAYLOAD_STRING_LENGTH) {
       return value;
     }
-    return `${value.slice(0, MAX_EVENT_PAYLOAD_STRING_LENGTH)}…[${value.length -
-      MAX_EVENT_PAYLOAD_STRING_LENGTH} chars omitted]`;
+    return `${value.slice(0, MAX_EVENT_PAYLOAD_STRING_LENGTH)}…[${
+      value.length - MAX_EVENT_PAYLOAD_STRING_LENGTH
+    } chars omitted]`;
   }
 
   if (Array.isArray(value)) {
     const compactArray = value
       .slice(0, MAX_EVENT_PAYLOAD_ARRAY_ITEMS)
-      .map(item => compactPayloadValue(item, depth + 1));
+      .map((item) => compactPayloadValue(item, depth + 1));
     if (value.length > MAX_EVENT_PAYLOAD_ARRAY_ITEMS) {
       compactArray.push(`[${value.length - MAX_EVENT_PAYLOAD_ARRAY_ITEMS} items omitted]`);
     }
@@ -224,7 +225,7 @@ export const debuggerSelectors = {
   frameTimestampMs: (state: DebuggerStoreState) => state.timestampMs,
   latestChecksums: (state: DebuggerStoreState) =>
     state.snapshots.length > 0
-      ? (state.snapshots[state.snapshots.length - 1] ?? null)?.checksums ?? null
+      ? ((state.snapshots[state.snapshots.length - 1] ?? null)?.checksums ?? null)
       : null,
   eventStream: (state: DebuggerStoreState) => state.events,
   snapshots: (state: DebuggerStoreState) => state.snapshots.slice(-MAX_SNAPSHOTS),

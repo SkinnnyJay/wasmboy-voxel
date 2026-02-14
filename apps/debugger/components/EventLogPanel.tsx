@@ -4,7 +4,7 @@ import { useDebuggerStore } from '../store/debugger-store';
 const MAX_EVENT_LOG_RENDER_ITEMS = 200;
 
 export function EventLogPanel() {
-  const events = useDebuggerStore(state => state.events);
+  const events = useDebuggerStore((state) => state.events);
   const renderedEvents = events.slice(-MAX_EVENT_LOG_RENDER_ITEMS);
   const hiddenEventCount = Math.max(0, events.length - renderedEvents.length);
 
@@ -20,7 +20,7 @@ export function EventLogPanel() {
         {events.length === 0 ? (
           <li className="muted">No events yet.</li>
         ) : (
-          renderedEvents.map(entry => (
+          renderedEvents.map((entry) => (
             <li key={`${entry.type}-${entry.frameId}-${entry.timestampMs}`}>
               [{entry.type}] frame {entry.frameId} @ {entry.timestampMs}ms
             </li>

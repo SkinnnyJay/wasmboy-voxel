@@ -45,13 +45,13 @@ export function buildSnapshotTimelinePage(
 }
 
 export function SnapshotTimelinePanel() {
-  const snapshots = useDebuggerStore(state => state.snapshots);
+  const snapshots = useDebuggerStore((state) => state.snapshots);
   const [pageFromNewest, setPageFromNewest] = useState(0);
 
-  const timelinePage = useMemo(() => buildSnapshotTimelinePage(snapshots, pageFromNewest), [
-    snapshots,
-    pageFromNewest,
-  ]);
+  const timelinePage = useMemo(
+    () => buildSnapshotTimelinePage(snapshots, pageFromNewest),
+    [snapshots, pageFromNewest],
+  );
 
   useEffect(() => {
     if (timelinePage.pageFromNewest !== pageFromNewest) {
@@ -110,7 +110,7 @@ export function SnapshotTimelinePanel() {
         {timelinePage.pageSnapshots.length === 0 ? (
           <li className="muted">No snapshots captured yet.</li>
         ) : (
-          timelinePage.pageSnapshots.map(snapshot => (
+          timelinePage.pageSnapshots.map((snapshot) => (
             <li key={snapshot.frameId}>
               frame {snapshot.frameId} @ {snapshot.timestampMs.toFixed(2)}ms
             </li>

@@ -21,14 +21,15 @@ function compactJsonValue(value: unknown, depth: number): unknown {
     if (value.length <= MAX_EXPORT_STRING_LENGTH) {
       return value;
     }
-    return `${value.slice(0, MAX_EXPORT_STRING_LENGTH)}…[${value.length -
-      MAX_EXPORT_STRING_LENGTH} chars omitted]`;
+    return `${value.slice(0, MAX_EXPORT_STRING_LENGTH)}…[${
+      value.length - MAX_EXPORT_STRING_LENGTH
+    } chars omitted]`;
   }
 
   if (Array.isArray(value)) {
     const compactArray = value
       .slice(0, MAX_EXPORT_ARRAY_ITEMS)
-      .map(entry => compactJsonValue(entry, depth + 1));
+      .map((entry) => compactJsonValue(entry, depth + 1));
     if (value.length > MAX_EXPORT_ARRAY_ITEMS) {
       compactArray.push(`[${value.length - MAX_EXPORT_ARRAY_ITEMS} items omitted]`);
     }
@@ -75,7 +76,7 @@ export function exportDebugDataJsonl(events: DebuggerEvent[], snapshots: Snapsho
     );
   }
 
-  eventWindow.forEach(event => {
+  eventWindow.forEach((event) => {
     const compactEvent = compactJsonRecord(event);
     lines.push(
       JSON.stringify({
@@ -85,7 +86,7 @@ export function exportDebugDataJsonl(events: DebuggerEvent[], snapshots: Snapsho
     );
   });
 
-  snapshotWindow.forEach(snapshot => {
+  snapshotWindow.forEach((snapshot) => {
     const compactSnapshot = compactJsonRecord(snapshot);
     lines.push(
       JSON.stringify({

@@ -17,7 +17,7 @@ function assertMutuallyExclusiveFlags(
   args: string[],
   mutuallyExclusiveFlags: readonly string[],
 ): void {
-  const presentFlags = mutuallyExclusiveFlags.filter(flag => args.includes(flag));
+  const presentFlags = mutuallyExclusiveFlags.filter((flag) => args.includes(flag));
   if (presentFlags.length <= 1) {
     return;
   }

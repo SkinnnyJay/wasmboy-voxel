@@ -113,7 +113,7 @@ describe('debugger smoke', () => {
       'store/debugger-store.ts',
     ];
 
-    expectedPaths.forEach(relativePath => {
+    expectedPaths.forEach((relativePath) => {
       const absolutePath = path.resolve(__dirname, '..', relativePath);
       expect(fs.existsSync(absolutePath)).toBe(true);
     });

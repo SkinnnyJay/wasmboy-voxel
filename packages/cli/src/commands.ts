@@ -110,10 +110,7 @@ function readStdinBuffer(): Buffer {
 }
 
 function sha256Hex(buffer: Buffer): string {
-  return crypto
-    .createHash('sha256')
-    .update(buffer)
-    .digest('hex');
+  return crypto.createHash('sha256').update(buffer).digest('hex');
 }
 
 export function printHelp(): void {
@@ -215,10 +212,10 @@ export function compareCommand(baselinePath: string, currentPath?: string): void
   const current = readSummary(currentPath ?? baselinePath);
 
   const baselineMap = new Map<string, { tileDataSha256?: string; oamDataSha256?: string }>();
-  baseline.roms.forEach(entry => baselineMap.set(entry.rom, entry));
+  baseline.roms.forEach((entry) => baselineMap.set(entry.rom, entry));
 
   const differences = current.roms
-    .map(entry => {
+    .map((entry) => {
       const base = baselineMap.get(entry.rom);
       if (!base) return { rom: entry.rom, kind: 'missing-in-baseline' };
       if (

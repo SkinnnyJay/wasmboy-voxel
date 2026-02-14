@@ -53,7 +53,7 @@ class RestartableMockWorker {
       this.listeners[type].add(listener);
       return;
     }
-    this.listeners[type].add(event => listener.handleEvent(event));
+    this.listeners[type].add((event) => listener.handleEvent(event));
   }
 
   removeEventListener(type: string, listener: EventListenerOrEventListenerObject): void {
@@ -77,7 +77,7 @@ class RestartableMockWorker {
   }
 
   trigger(type: 'error' | 'messageerror'): void {
-    this.listeners[type].forEach(listener => listener(new Event(type)));
+    this.listeners[type].forEach((listener) => listener(new Event(type)));
   }
 }
 
@@ -116,7 +116,7 @@ describe('worker loader', () => {
 
     expect(MockWorker.activeInstances.size).toBe(0);
     expect(MockWorker.optionsHistory.length).toBe(INIT_DISPOSE_CYCLES);
-    MockWorker.optionsHistory.forEach(workerOptions => {
+    MockWorker.optionsHistory.forEach((workerOptions) => {
       expect(workerOptions.type).toBe('module');
       expect(workerOptions.name).toBe('wasmboy-debugger-worker');
     });
@@ -243,13 +243,13 @@ describe('worker loader', () => {
       RestartableMockWorker.instances[3]?.trigger('error');
       expect(scheduledDelays).toEqual([10, 20, 25]);
 
-      const eventTypes = telemetryEvents.map(event => event.eventType);
+      const eventTypes = telemetryEvents.map((event) => event.eventType);
       expect(eventTypes).toContain('crash-detected');
       expect(eventTypes).toContain('restart-scheduled');
       expect(eventTypes).toContain('restart-completed');
       expect(
         telemetryEvents.some(
-          event => event.eventType === 'restart-skipped' && event.reason === 'budget-exhausted',
+          (event) => event.eventType === 'restart-skipped' && event.reason === 'budget-exhausted',
         ),
       ).toBe(true);
 
@@ -314,7 +314,7 @@ describe('worker loader', () => {
 
       const activeWorker = RestartableMockWorker.instances.at(-1);
       expect(activeWorker).toBeDefined();
-      RestartableMockWorker.instances.forEach(workerInstance => {
+      RestartableMockWorker.instances.forEach((workerInstance) => {
         if (workerInstance === activeWorker) {
           expect(workerInstance.getListenerCount()).toBe(2);
           expect(workerInstance.terminated).toBe(false);

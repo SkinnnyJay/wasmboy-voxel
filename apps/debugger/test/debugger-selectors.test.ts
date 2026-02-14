@@ -17,7 +17,7 @@ describe('debugger selectors', () => {
       const frameIdBefore = debuggerSelectors.frameId(stateBeforeMutation);
       const timestampBefore = debuggerSelectors.frameTimestampMs(stateBeforeMutation);
 
-      useDebuggerStore.setState(state => ({
+      useDebuggerStore.setState((state) => ({
         ...state,
         events: [
           ...state.events,
