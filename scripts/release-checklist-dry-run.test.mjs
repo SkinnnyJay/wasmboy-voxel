@@ -5,6 +5,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { writeFakeExecutable } from './test-fixtures.mjs';
+import { resolveReleaseChecklistTimeoutFromEnv } from './release-checklist-dry-run.mjs';
 
 const RELEASE_CHECKLIST_SCRIPT_PATH = path.resolve('scripts/release-checklist-dry-run.mjs');
 
@@ -87,4 +88,44 @@ exit 0
     .split('\n');
   assert.equal(commandLogLines.length, 1);
   assert.equal(commandLogLines[0], `${path.join(tempDirectory, 'packages', 'api')}|publish --dry-run --access public`);
+});
+
+test('release checklist dry-run reports timeout failures with package context', () => {
+  const tempDirectory = createTempWorkspace();
+  const fakeBinDirectory = writeFakeExecutable(
+    tempDirectory,
+    'npm',
+    `#!/usr/bin/env bash
+sleep 0.2
+exit 0
+`,
+  );
+
+  const result = spawnSync(process.execPath, [RELEASE_CHECKLIST_SCRIPT_PATH], {
+    cwd: tempDirectory,
+    encoding: 'utf8',
+    env: {
+      ...process.env,
+      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      RELEASE_CHECKLIST_NPM_TIMEOUT_MS: '50',
+    },
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /npm publish --dry-run --access public/u);
+  assert.match(result.stderr, /timed out/u);
+  assert.match(result.stderr, /@wasmboy\/api/u);
+});
+
+test('resolveReleaseChecklistTimeoutFromEnv parses and validates environment overrides', () => {
+  assert.equal(resolveReleaseChecklistTimeoutFromEnv({}), 120000);
+  assert.equal(resolveReleaseChecklistTimeoutFromEnv({ RELEASE_CHECKLIST_NPM_TIMEOUT_MS: ' 8000 ' }), 8000);
+  assert.throws(
+    () => resolveReleaseChecklistTimeoutFromEnv({ RELEASE_CHECKLIST_NPM_TIMEOUT_MS: '0' }),
+    /Invalid RELEASE_CHECKLIST_NPM_TIMEOUT_MS value: 0/u,
+  );
+  assert.throws(
+    () => resolveReleaseChecklistTimeoutFromEnv({ RELEASE_CHECKLIST_NPM_TIMEOUT_MS: 'NaN' }),
+    /Invalid RELEASE_CHECKLIST_NPM_TIMEOUT_MS value: NaN/u,
+  );
 });

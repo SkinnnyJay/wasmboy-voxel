@@ -93,6 +93,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C070 | Dependency freshness report deterministic ordering | Sorted dependency-freshness package report entries using ordinal ordering and added report-format regression coverage to keep machine-readable/readable output stable across runtimes.                                             | S4                | `@automation-tooling` |
 | TD-C071 | Dependency freshness subprocess timeout guard      | Added configurable npm outdated timeout handling (`DEPENDENCY_FRESHNESS_NPM_TIMEOUT_MS`) with timeout-specific diagnostics and regression coverage, preventing indefinite dependency-freshness audit hangs.                        | S4                | `@automation-tooling` |
 | TD-C072 | Security scan subprocess timeout guard             | Added configurable npm audit timeout handling (`SECURITY_SCAN_NPM_AUDIT_TIMEOUT_MS`) with timeout diagnostics and regression coverage, preventing indefinite workspace security scan hangs.                                        | S4                | `@automation-tooling` |
+| TD-C073 | Release checklist subprocess timeout guard         | Added configurable npm publish dry-run timeout handling (`RELEASE_CHECKLIST_NPM_TIMEOUT_MS`) with package-context timeout diagnostics and regression coverage to prevent indefinite release checklist hangs.                       | S4                | `@automation-tooling` |
 
 ## Triage cadence
 
