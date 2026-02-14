@@ -232,6 +232,14 @@ test('changeset-status-ci rejects empty inline timeout values', () => {
   assert.match(result.stderr, /Usage:/u);
 });
 
+test('changeset-status-ci rejects malformed inline timeout values with double equals', () => {
+  const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms==50']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Malformed inline value for --timeout-ms argument/u);
+  assert.match(result.stderr, /Usage:/u);
+});
+
 test('changeset-status-ci rejects help long-flag token as inline timeout value', () => {
   const result = runStatusScriptWithArgs(createNodeOnlyPath(), ['--timeout-ms=--help']);
 

@@ -459,3 +459,4 @@
 - 2026-02-13: Expanded `changeset-status-ci` filter coverage with mixed newline payload assertions (CRLF + LF in one output stream), locking cross-platform line-ending normalization semantics.
 - 2026-02-13: Hardened `bundle-diagnostics` tar spawn error classification by mapping `ENOENT` failures to a deterministic “tar command was not found in PATH” error, with regression coverage and placeholder cleanup assertions for PATH-misconfiguration failures.
 - 2026-02-13: Hardened `changeset-status-ci` suppressed-warning sort determinism by replacing locale-sensitive sort behavior with code-point ordering and adding locale-sensitive warning fixture coverage (`z-module` vs `ä-module`).
+- 2026-02-13: Hardened `changeset-status-ci` inline-timeout argument parsing by rejecting malformed double-equals forms (`--timeout-ms==...`) with explicit parse-time diagnostics, aligning timeout parser semantics with other automation scripts.

@@ -64,6 +64,9 @@ function parseArgs(argv) {
       }
 
       const value = token.slice(`${CLI_TIMEOUT_FLAG}=`.length);
+      if (value.startsWith('=')) {
+        throw new Error(`Malformed inline value for ${CLI_TIMEOUT_FLAG} argument.`);
+      }
       validateRequiredArgumentValue(value, {
         flagName: CLI_TIMEOUT_FLAG,
         knownArgs: KNOWN_ARGS,

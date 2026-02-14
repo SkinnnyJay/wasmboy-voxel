@@ -357,6 +357,7 @@ Workflow hardening applied:
 - changeset-status filter coverage now explicitly asserts mixed line-ending handling (CRLF + LF in the same output payload), locking cross-platform normalization semantics
 - bundle-diagnostics tar spawn failures now classify missing-command (`ENOENT`) cases into a deterministic “tar command was not found in PATH” error, with regression coverage and placeholder cleanup assertions
 - changeset-status suppressed-warning sorting now uses deterministic code-point ordering (instead of locale-sensitive comparison), with regression coverage using locale-sensitive fixture names (`z-module` vs `ä-module`)
+- changeset-status parser now rejects malformed inline timeout forms with double equals (`--timeout-ms==...`) at parse time, with explicit usage-guidance regression coverage
 
 ## Security posture at completion
 
