@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { globSync as globSyncPkg } from 'glob';
 import { spawnSync } from 'node:child_process';
 import { resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
 import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
@@ -272,7 +273,7 @@ function collectFiles(patterns, outputPath) {
   }
 
   for (const pattern of patterns) {
-    const matches = fs.globSync(pattern, { withFileTypes: false });
+    const matches = globSyncPkg(pattern, { withFileTypes: false });
     for (const file of matches) {
       const resolvedFilePath = path.resolve(file);
       if (resolvedFilePath === resolvedOutputPath) {
