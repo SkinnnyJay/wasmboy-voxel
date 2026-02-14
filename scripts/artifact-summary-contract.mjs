@@ -130,6 +130,10 @@ export function buildGuardArtifactSummary(options) {
     throw new RangeError('Expected options.stagedPathCount to be >= blocked path count.');
   }
 
+  if (options.isValid && options.blockedPaths.length > 0) {
+    throw new RangeError('Expected valid guard summaries to contain zero blocked paths.');
+  }
+
   return {
     ...buildArtifactSummaryMetadata(GUARD_ARTIFACT_SUMMARY_TOOL, { timestampMs: options.timestampMs }),
     allowGeneratedEdits: options.allowGeneratedEdits,

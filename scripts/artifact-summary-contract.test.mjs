@@ -172,6 +172,10 @@ test('buildGuardArtifactSummary validates options contracts', () => {
     () => buildGuardArtifactSummary({ allowGeneratedEdits: true, isValid: false, blockedPaths: ['dist/generated.js'], stagedPathCount: 0 }),
     /Expected options\.stagedPathCount to be >= blocked path count\./u,
   );
+  assert.throws(
+    () => buildGuardArtifactSummary({ allowGeneratedEdits: true, isValid: true, blockedPaths: ['dist/generated.js'], stagedPathCount: 1 }),
+    /Expected valid guard summaries to contain zero blocked paths\./u,
+  );
 });
 
 test('summary builders expose boolean convenience flags for no-op payloads', () => {

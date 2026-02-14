@@ -83,6 +83,7 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-C060 | Artifact summary payload builder reuse    | Centralized cleanup/guard JSON payload construction in shared helper builders with strict input-contract tests, reducing duplicate summary assembly logic and machine-readable contract drift risk.                          | S4                | `@automation-tooling` |
 | TD-C061 | Artifact JSON outcome convenience flags   | Added boolean outcome flags (`hasRemovals`, `hasBlockedPaths`) to cleanup/guard JSON summaries with helper and executable contract coverage, simplifying downstream automation branching logic.                              | S4                | `@automation-tooling` |
 | TD-C062 | Guard summary count invariant             | Enforced shared guard-summary invariant (`stagedPathCount >= blockedPathCount`) with regression coverage, preventing impossible machine-readable payload combinations from propagating to automation consumers.              | S4                | `@automation-tooling` |
+| TD-C063 | Guard summary validity invariant          | Enforced shared guard-summary validity invariant (`isValid` requires zero blocked paths) with regression coverage, preventing contradictory machine-readable payload states from propagating to automation consumers.        | S4                | `@automation-tooling` |
 
 ## Triage cadence
 
