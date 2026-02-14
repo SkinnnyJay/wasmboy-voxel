@@ -126,6 +126,7 @@ function runPrecommitGuard(options = {}) {
   const stagedPaths = readStagedPathsFromGit();
   const validationResult = validateGeneratedArtifactStaging(stagedPaths, { allowGeneratedEdits });
   const summary = {
+    schemaVersion: 1,
     allowGeneratedEdits,
     isValid: validationResult.isValid,
     blockedPaths: validationResult.blockedPaths,

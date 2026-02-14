@@ -135,6 +135,7 @@ test('clean artifact script emits JSON summary when --json is set', () => {
   assert.equal(result.status, 0);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
+  assert.equal(parsedOutput.schemaVersion, 1);
   assert.equal(parsedOutput.mode, 'dry-run');
   assert.equal(typeof parsedOutput.timestampMs, 'number');
   assert.equal(parsedOutput.removedCount, 1);
@@ -149,6 +150,7 @@ test('generated artifact guard script emits JSON summary when --json is set', ()
   assert.equal(result.status, 0);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
+  assert.equal(parsedOutput.schemaVersion, 1);
   assert.equal(typeof parsedOutput.allowGeneratedEdits, 'boolean');
   assert.equal(typeof parsedOutput.timestampMs, 'number');
   assert.equal(parsedOutput.isValid, true);
@@ -164,6 +166,7 @@ test('generated artifact guard JSON output reports blocked staged artifacts', ()
   assert.equal(result.status, 1);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
+  assert.equal(parsedOutput.schemaVersion, 1);
   assert.equal(parsedOutput.allowGeneratedEdits, false);
   assert.equal(typeof parsedOutput.timestampMs, 'number');
   assert.equal(parsedOutput.isValid, false);
@@ -182,6 +185,7 @@ test('generated artifact guard JSON output honors generated-edit override', () =
   assert.equal(result.status, 0);
   assert.equal(result.stderr, '');
   const parsedOutput = JSON.parse(result.stdout.trim());
+  assert.equal(parsedOutput.schemaVersion, 1);
   assert.equal(parsedOutput.allowGeneratedEdits, true);
   assert.equal(typeof parsedOutput.timestampMs, 'number');
   assert.equal(parsedOutput.isValid, true);
