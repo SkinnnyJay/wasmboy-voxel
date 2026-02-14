@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { findBlockedArtifactPaths, validateGeneratedArtifactStaging } from './guard-generated-artifacts-precommit.mjs';
+
+test('findBlockedArtifactPaths flags staged dist and build paths', () => {
+  const blockedPaths = findBlockedArtifactPaths(['dist/wasmboy.wasm.esm.js', 'build/assets/core.untouched.wasm', 'lib/index.js']);
+
+  assert.deepEqual(blockedPaths, ['build/assets/core.untouched.wasm', 'dist/wasmboy.wasm.esm.js']);
+});
+
+test('findBlockedArtifactPaths normalizes leading dot segments and windows path separators', () => {
+  const blockedPaths = findBlockedArtifactPaths(['./dist\\worker\\audio.worker.js', '.\\build\\iframe\\index.html', 'core/constants.ts']);
+
+  assert.deepEqual(blockedPaths, ['build/iframe/index.html', 'dist/worker/audio.worker.js']);
+});
+
+test('validateGeneratedArtifactStaging passes when no generated artifact paths are staged', () => {
+  const result = validateGeneratedArtifactStaging(['core/constants.ts', 'voxel-wrapper.ts']);
+
+  assert.equal(result.isValid, true);
+  assert.deepEqual(result.blockedPaths, []);
+});
+
+test('validateGeneratedArtifactStaging fails when generated artifact paths are staged', () => {
+  const result = validateGeneratedArtifactStaging(['dist/wasmboy.wasm.esm.js', 'build/debugger/index.html', 'README.md']);
+
+  assert.equal(result.isValid, false);
+  assert.deepEqual(result.blockedPaths, ['build/debugger/index.html', 'dist/wasmboy.wasm.esm.js']);
+});
+
+test('validateGeneratedArtifactStaging supports explicit override for intentional generated edits', () => {
+  const result = validateGeneratedArtifactStaging(['dist/wasmboy.wasm.esm.js'], { allowGeneratedEdits: true });
+
+  assert.equal(result.isValid, true);
+  assert.deepEqual(result.blockedPaths, []);
+});

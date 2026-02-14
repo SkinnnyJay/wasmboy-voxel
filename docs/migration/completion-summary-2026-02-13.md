@@ -433,6 +433,7 @@ Workflow hardening applied:
 - core/wrapper memory-layout coupling is now explicitly documented in `docs/migration/core-wrapper-offset-dependency-map-2026-02-14.md`, including a constant-level map (`DEBUG_GAMEBOY_MEMORY_LOCATION`, `GBC_PALETTE_LOCATION`, `GBC_PALETTE_SIZE`), derived wrapper offset formulas, and a compatibility update checklist
 - automated memory-layout compatibility enforcement now validates core/wrapper coupling in CI (`scripts/core-wrapper-memory-layout-check*.mjs` + `memory:layout:check`), asserting required core constant exports, wrapper offset literals, `_getWasmConstant` lookups, and base-offset section-read formulas; this check is now part of `automation:check`
 - a repo-level pre-commit cleanup guard now removes accidental build artifacts before formatting (`scripts/clean-accidental-build-artifacts.mjs` via `clean:artifacts:precommit`), including transient `build/`, `apps/debugger/.next`, and non-golden generated test outputs/images, with regression coverage for safe keep/delete boundaries
+- pre-commit now also enforces a generated-artifact staging guard (`scripts/guard-generated-artifacts-precommit.mjs`), blocking staged `dist/**` and `build/**` edits unless explicitly overridden (`WASMBOY_ALLOW_GENERATED_EDITS=1`), with regression coverage for normalization and allow/deny semantics
 
 ## Security posture at completion
 
