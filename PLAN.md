@@ -763,3 +763,4 @@
 - 2026-02-14: Re-ran NutJS UI smoke harness command (`npm run test:ui:smoke`) to reconfirm deterministic non-strict capability reporting/skip behavior on environments without the optional NutJS dependency.
 - 2026-02-14: Re-ran integration no-build CI aggregate command (`npm run test:integration:nobuild:ci`) to reconfirm wrapper/voxel/headless/compat/memory/tick/baseline integration suites and cleanup-wrapped headless artifact hygiene flow remain green.
 - 2026-02-14: Re-ran core no-build CI aggregate command (`npm run test:core:nobuild:ci`) to reconfirm save-state/isolation/timing/interrupt/audio/memory/graphics regression suites and performance guard tests remain green in the direct core quality path.
+- 2026-02-14: Re-ran full build-inclusive aggregate command (`npm run test:all`) after the latest direct integration/core reruns to reconfirm end-to-end build + no-build quality composition remains stable in the single top-level release-signoff path.
