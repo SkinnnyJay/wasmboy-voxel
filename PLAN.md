@@ -771,3 +771,4 @@
 - 2026-02-14: Re-ran audit umbrella command (`npm run audit:check`) to reconfirm strict workspace vulnerability scanning remains green via the documented audit entrypoint.
 - 2026-02-14: Re-ran dual-build verification pipeline (`npm run test:integration:dual-build:verify`) to reconfirm sequential WASM bundle build + headless main-thread integration + TS bundle build + TS runtime smoke execution all remain green with a clean working tree.
 - 2026-02-14: Re-ran Makefile aggregate verification (`make test-all`) to reconfirm wrapper orchestration across dual-build migration checks and the complete no-build quality gate remains green end-to-end with a clean working tree.
+- 2026-02-14: Re-ran strict release verification wrapper (`npm run release:verify:strict`) once more to reconfirm full strict CI parity chain (`test:all:nobuild:strict` + changeset status) remains green with a clean working tree.
