@@ -458,6 +458,7 @@ Workflow hardening applied:
 - next-cycle backlog generation is now scriptable (`backlog:generate:next100` via `scripts/next-backlog-generator.mjs`) with test coverage and a generated dated draft backlog seeded from open debt items (`docs/migration/next-100-backlog-draft-2026-02-14.md`)
 - next-cycle `task101` is now completed via automated core memory-offset contract enforcement (`core:memory-offset:check` + `scripts/core-memory-offset-contract-check*.mjs`), integrated into `automation:check` with script-level regression coverage and debt-register closure for TD-001
 - next-cycle `task102` is now completed by classifying volatile `WASMBOY_STATE` save/load bytes and enforcing non-volatile determinism in core serialization regression coverage (`test/core/serialization-determinism-test.cjs` + `docs/migration/core-save-state-volatile-field-classification-2026-02-14.md`), with debt-register closure for TD-002
+- next-cycle `task110` is now completed by introducing shared schema-driven throw-case test registration (`scripts/test-schema-helpers.mjs`) and migrating dense parser validation suites (`cli-arg-values`, `cli-timeout`) to the shared fixture pattern, with debt-register closure for TD-010
 
 ## Security posture at completion
 

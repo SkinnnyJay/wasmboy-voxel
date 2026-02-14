@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { resolveStrictPositiveIntegerEnv, resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
+import { registerThrowingCaseSchema } from './test-schema-helpers.mjs';
 import { UNPRINTABLE_VALUE } from './test-helpers.mjs';
 
 function createUnprintableDateValue() {
@@ -21,40 +22,56 @@ test('resolveStrictPositiveIntegerEnv returns default for undefined values', () 
   assert.equal(timeout, 120000);
 });
 
-test('resolveStrictPositiveIntegerEnv rejects missing options objects', () => {
-  assert.throws(() => resolveStrictPositiveIntegerEnv(undefined), /Invalid timeout env resolution options\./u);
-});
-
-test('resolveStrictPositiveIntegerEnv rejects null options objects', () => {
-  assert.throws(() => resolveStrictPositiveIntegerEnv(null), /Invalid timeout env resolution options\./u);
-});
-
-test('resolveStrictPositiveIntegerEnv rejects array options objects', () => {
-  assert.throws(() => resolveStrictPositiveIntegerEnv([]), /Invalid timeout env resolution options\./u);
-});
-
-test('resolveStrictPositiveIntegerEnv rejects non-object options objects', () => {
-  assert.throws(() => resolveStrictPositiveIntegerEnv(42), /Invalid timeout env resolution options\./u);
-});
-
-test('resolveStrictPositiveIntegerEnv rejects symbol options objects', () => {
-  assert.throws(() => resolveStrictPositiveIntegerEnv(Symbol('timeout-options')), /Invalid timeout env resolution options\./u);
-});
-
-test('resolveStrictPositiveIntegerEnv rejects bigint options objects', () => {
-  assert.throws(() => resolveStrictPositiveIntegerEnv(42n), /Invalid timeout env resolution options\./u);
-});
-
-test('resolveStrictPositiveIntegerEnv rejects Date options objects', () => {
-  assert.throws(() => resolveStrictPositiveIntegerEnv(new Date()), /Invalid timeout env resolution options\./u);
-});
-
-test('resolveStrictPositiveIntegerEnv rejects Map options objects', () => {
-  assert.throws(() => resolveStrictPositiveIntegerEnv(new Map()), /Invalid timeout env resolution options\./u);
-});
-
-test('resolveStrictPositiveIntegerEnv rejects Set options objects', () => {
-  assert.throws(() => resolveStrictPositiveIntegerEnv(new Set()), /Invalid timeout env resolution options\./u);
+registerThrowingCaseSchema({
+  test,
+  invoke: options => resolveStrictPositiveIntegerEnv(options),
+  cases: [
+    {
+      name: 'resolveStrictPositiveIntegerEnv rejects missing options objects',
+      value: undefined,
+      expected: /Invalid timeout env resolution options\./u,
+    },
+    {
+      name: 'resolveStrictPositiveIntegerEnv rejects null options objects',
+      value: null,
+      expected: /Invalid timeout env resolution options\./u,
+    },
+    {
+      name: 'resolveStrictPositiveIntegerEnv rejects array options objects',
+      value: [],
+      expected: /Invalid timeout env resolution options\./u,
+    },
+    {
+      name: 'resolveStrictPositiveIntegerEnv rejects non-object options objects',
+      value: 42,
+      expected: /Invalid timeout env resolution options\./u,
+    },
+    {
+      name: 'resolveStrictPositiveIntegerEnv rejects symbol options objects',
+      value: Symbol('timeout-options'),
+      expected: /Invalid timeout env resolution options\./u,
+    },
+    {
+      name: 'resolveStrictPositiveIntegerEnv rejects bigint options objects',
+      value: 42n,
+      expected: /Invalid timeout env resolution options\./u,
+    },
+    {
+      name: 'resolveStrictPositiveIntegerEnv rejects Date options objects',
+      value: new Date(),
+      expected: /Invalid timeout env resolution options\./u,
+    },
+    {
+      name: 'resolveStrictPositiveIntegerEnv rejects Map options objects',
+      value: new Map(),
+      expected: /Invalid timeout env resolution options\./u,
+    },
+    {
+      name: 'resolveStrictPositiveIntegerEnv rejects Set options objects',
+      value: new Set(),
+      expected: /Invalid timeout env resolution options\./u,
+    },
+  ],
 });
 
 test('resolveStrictPositiveIntegerEnv rejects unprintable non-plain options objects', () => {

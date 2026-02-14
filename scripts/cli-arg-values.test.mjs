@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
+import { registerThrowingCaseSchema } from './test-schema-helpers.mjs';
 import { UNPRINTABLE_VALUE } from './test-helpers.mjs';
 
 const KNOWN_ARGS = new Set(['--help', '-h', '--output', '--pattern', '--timeout-ms']);
@@ -89,36 +90,51 @@ test('validateRequiredArgumentValue safely formats unprintable values', () => {
   );
 });
 
-test('validateRequiredArgumentValue rejects missing options objects', () => {
-  assert.throws(() => validateRequiredArgumentValue('value', undefined), /Invalid required argument options\./u);
-});
-
-test('validateRequiredArgumentValue rejects non-object options', () => {
-  assert.throws(() => validateRequiredArgumentValue('value', 42), /Invalid required argument options\./u);
-});
-
-test('validateRequiredArgumentValue rejects array options', () => {
-  assert.throws(() => validateRequiredArgumentValue('value', []), /Invalid required argument options\./u);
-});
-
-test('validateRequiredArgumentValue rejects symbol options', () => {
-  assert.throws(() => validateRequiredArgumentValue('value', Symbol('required-arg-options')), /Invalid required argument options\./u);
-});
-
-test('validateRequiredArgumentValue rejects bigint options', () => {
-  assert.throws(() => validateRequiredArgumentValue('value', 42n), /Invalid required argument options\./u);
-});
-
-test('validateRequiredArgumentValue rejects Date options objects', () => {
-  assert.throws(() => validateRequiredArgumentValue('value', new Date()), /Invalid required argument options\./u);
-});
-
-test('validateRequiredArgumentValue rejects Map options objects', () => {
-  assert.throws(() => validateRequiredArgumentValue('value', new Map()), /Invalid required argument options\./u);
-});
-
-test('validateRequiredArgumentValue rejects Set options objects', () => {
-  assert.throws(() => validateRequiredArgumentValue('value', new Set()), /Invalid required argument options\./u);
+registerThrowingCaseSchema({
+  test,
+  invoke: options => validateRequiredArgumentValue('value', options),
+  cases: [
+    {
+      name: 'validateRequiredArgumentValue rejects missing options objects',
+      value: undefined,
+      expected: /Invalid required argument options\./u,
+    },
+    {
+      name: 'validateRequiredArgumentValue rejects non-object options',
+      value: 42,
+      expected: /Invalid required argument options\./u,
+    },
+    {
+      name: 'validateRequiredArgumentValue rejects array options',
+      value: [],
+      expected: /Invalid required argument options\./u,
+    },
+    {
+      name: 'validateRequiredArgumentValue rejects symbol options',
+      value: Symbol('required-arg-options'),
+      expected: /Invalid required argument options\./u,
+    },
+    {
+      name: 'validateRequiredArgumentValue rejects bigint options',
+      value: 42n,
+      expected: /Invalid required argument options\./u,
+    },
+    {
+      name: 'validateRequiredArgumentValue rejects Date options objects',
+      value: new Date(),
+      expected: /Invalid required argument options\./u,
+    },
+    {
+      name: 'validateRequiredArgumentValue rejects Map options objects',
+      value: new Map(),
+      expected: /Invalid required argument options\./u,
+    },
+    {
+      name: 'validateRequiredArgumentValue rejects Set options objects',
+      value: new Set(),
+      expected: /Invalid required argument options\./u,
+    },
+  ],
 });
 
 test('validateRequiredArgumentValue rejects symbol flag names', () => {
