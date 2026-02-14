@@ -12,6 +12,13 @@ The migration plan phases were executed end-to-end, including:
 - CI/release workflow automation
 - dependency hardening and audit cleanup
 
+## Normalized migration sections
+
+Repeated execution-log entries were consolidated into subsystem-oriented
+sections in:
+
+- `docs/migration/migration-docs-normalized-sections-2026-02-14.md`
+
 ## Validation snapshot
 
 Primary command used for final continuous validation:
