@@ -116,3 +116,8 @@ test('parseGeneratedArtifactGuardArgs supports help flags', () => {
 test('parseGeneratedArtifactGuardArgs rejects unknown flags', () => {
   assert.throws(() => parseGeneratedArtifactGuardArgs(['--dry-run']), /Unknown argument "--dry-run"\. Supported flags: --json, --help\./u);
 });
+
+test('parseGeneratedArtifactGuardArgs rejects duplicate flags', () => {
+  assert.throws(() => parseGeneratedArtifactGuardArgs(['--json', '--json']), /Duplicate --json flag received\./u);
+  assert.throws(() => parseGeneratedArtifactGuardArgs(['--help', '-h']), /Duplicate help flag received\./u);
+});

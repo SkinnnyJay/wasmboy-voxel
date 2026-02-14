@@ -490,6 +490,7 @@ Workflow hardening applied:
 - next-cycle `task132` is now completed by validating guard `--json` failure-mode payload and exit-code behavior with staged generated artifacts in isolated git repos, strengthening executable contract confidence for CI consumers
 - next-cycle `task133` is now completed by validating guard `--json` override-mode payload behavior (`WASMBOY_ALLOW_GENERATED_EDITS=1`) with staged generated artifacts, ensuring machine-readable diagnostics align with intentional override semantics
 - next-cycle `task134` is now completed by introducing reusable temporary-git-repo setup helpers in CLI contract tests, reducing duplicated fixture logic while preserving explicit generated-artifact failure/override scenario coverage
+- next-cycle `task135` is now completed by enforcing duplicate-flag rejection across cleanup/guard CLI parsers and extending executable contracts to lock deterministic duplicate-flag diagnostics for artifact-policy tooling
 
 ## Security posture at completion
 

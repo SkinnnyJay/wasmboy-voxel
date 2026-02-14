@@ -104,23 +104,38 @@ export async function cleanAccidentalBuildArtifacts(options = {}) {
 export function parseCleanArtifactsArgs(argv) {
   let dryRun = false;
   let jsonOutput = false;
+  let helpRequested = false;
 
   for (const token of argv) {
     if (token === '--dry-run') {
+      if (dryRun) {
+        throw new Error('Duplicate --dry-run flag received.');
+      }
       dryRun = true;
       continue;
     }
 
     if (token === '--json') {
+      if (jsonOutput) {
+        throw new Error('Duplicate --json flag received.');
+      }
       jsonOutput = true;
       continue;
     }
 
     if (token === '--help' || token === '-h') {
-      return { dryRun: false, jsonOutput: false, shouldPrintUsage: true };
+      if (helpRequested) {
+        throw new Error('Duplicate help flag received.');
+      }
+      helpRequested = true;
+      continue;
     }
 
     throw new Error(`Unknown argument "${token}". Supported flags: --dry-run, --json, --help.`);
+  }
+
+  if (helpRequested) {
+    return { dryRun: false, jsonOutput: false, shouldPrintUsage: true };
   }
 
   return { dryRun, jsonOutput, shouldPrintUsage: false };

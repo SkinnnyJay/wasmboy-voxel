@@ -125,3 +125,9 @@ test('parseCleanArtifactsArgs rejects unknown flags', () => {
     /Unknown argument "--unknown"\. Supported flags: --dry-run, --json, --help\./u,
   );
 });
+
+test('parseCleanArtifactsArgs rejects duplicate flags', () => {
+  assert.throws(() => parseCleanArtifactsArgs(['--dry-run', '--dry-run']), /Duplicate --dry-run flag received\./u);
+  assert.throws(() => parseCleanArtifactsArgs(['--json', '--json']), /Duplicate --json flag received\./u);
+  assert.throws(() => parseCleanArtifactsArgs(['--help', '-h']), /Duplicate help flag received\./u);
+});

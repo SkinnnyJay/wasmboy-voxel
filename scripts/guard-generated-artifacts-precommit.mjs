@@ -77,18 +77,30 @@ function readStagedPathsFromGit() {
  */
 export function parseGeneratedArtifactGuardArgs(argv) {
   let jsonOutput = false;
+  let helpRequested = false;
 
   for (const token of argv) {
     if (token === '--json') {
+      if (jsonOutput) {
+        throw new Error('Duplicate --json flag received.');
+      }
       jsonOutput = true;
       continue;
     }
 
     if (token === '--help' || token === '-h') {
-      return { jsonOutput: false, shouldPrintUsage: true };
+      if (helpRequested) {
+        throw new Error('Duplicate help flag received.');
+      }
+      helpRequested = true;
+      continue;
     }
 
     throw new Error(`Unknown argument "${token}". Supported flags: --json, --help.`);
+  }
+
+  if (helpRequested) {
+    return { jsonOutput: false, shouldPrintUsage: true };
   }
 
   return { jsonOutput, shouldPrintUsage: false };

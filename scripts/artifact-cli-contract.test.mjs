@@ -67,6 +67,13 @@ test('clean artifact script rejects unknown flags', () => {
   assert.match(result.stderr, /\[clean:artifacts\] Unknown argument "--unknown"\. Supported flags: --dry-run, --json, --help\./u);
 });
 
+test('clean artifact script rejects duplicate flags', () => {
+  const result = runScript(cleanArtifactsScriptPath, ['--json', '--json']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[clean:artifacts\] Duplicate --json flag received\./u);
+});
+
 test('generated artifact guard script prints usage for --help', () => {
   const result = runScript(guardArtifactsScriptPath, ['--help']);
 
@@ -79,6 +86,13 @@ test('generated artifact guard script rejects unknown flags', () => {
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /\[guard:generated-artifacts\] Unknown argument "--dry-run"\. Supported flags: --json, --help\./u);
+});
+
+test('generated artifact guard script rejects duplicate flags', () => {
+  const result = runScript(guardArtifactsScriptPath, ['--json', '--json']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[guard:generated-artifacts\] Duplicate --json flag received\./u);
 });
 
 test('clean artifact script dry-run reports candidates without deleting files', () => {
