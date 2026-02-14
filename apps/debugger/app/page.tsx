@@ -17,7 +17,8 @@ export default function HomePage() {
   const contractProbe = useMemo(() => contractsClient.createPlaceholderSnapshotValidation(), []);
   const [workerState, setWorkerState] = useState<string>('idle');
   const [jsonlPreview, setJsonlPreview] = useState<string>('');
-  const frameMetadata = useDebuggerStore(debuggerSelectors.frameMetadata);
+  const frameId = useDebuggerStore(debuggerSelectors.frameId);
+  const frameTimestampMs = useDebuggerStore(debuggerSelectors.frameTimestampMs);
   const snapshots = useDebuggerStore(debuggerSelectors.snapshots);
   const events = useDebuggerStore(debuggerSelectors.eventStream);
   const setSandboxMode = useDebuggerStore(state => state.setSandboxMode);
@@ -51,13 +52,13 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    if (frameMetadata.frameId <= 0) {
+    if (frameId <= 0) {
       return;
     }
 
-    markFrameRendered(frameMetadata.frameId);
-    measureFrameRenderLatency(frameMetadata.frameId);
-  }, [frameMetadata.frameId]);
+    markFrameRendered(frameId);
+    measureFrameRenderLatency(frameId);
+  }, [frameId]);
 
   return (
     <div>
@@ -72,7 +73,7 @@ export default function HomePage() {
       </p>
       <p className="muted">Worker strategy: {workerState}</p>
       <p className="muted">
-        Frame metadata: #{frameMetadata.frameId} @ {frameMetadata.timestampMs}
+        Frame metadata: #{frameId} @ {frameTimestampMs}
       </p>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
@@ -81,8 +82,8 @@ export default function HomePage() {
           onClick={() => {
             captureSnapshot({
               registers: {
-                scx: frameMetadata.frameId % 256,
-                scy: (frameMetadata.frameId + 1) % 256,
+                scx: frameId % 256,
+                scy: (frameId + 1) % 256,
                 wx: 7,
                 wy: 0,
                 lcdc: 0x91,

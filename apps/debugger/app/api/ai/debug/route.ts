@@ -78,7 +78,10 @@ function sanitizeSnapshots(snapshots: unknown): Array<Record<string, unknown>> {
 
 export async function GET(): Promise<Response> {
   const state = useDebuggerStore.getState();
-  const frame = sanitizeFrameMetadata(debuggerSelectors.frameMetadata(state));
+  const frame = sanitizeFrameMetadata({
+    frameId: debuggerSelectors.frameId(state),
+    timestampMs: debuggerSelectors.frameTimestampMs(state),
+  });
   const latestChecksums = sanitizeChecksums(debuggerSelectors.latestChecksums(state));
   const events = sanitizeEvents(debuggerSelectors.eventStream(state)).slice(-50);
   const snapshots = sanitizeSnapshots(debuggerSelectors.snapshots(state)).slice(-10);

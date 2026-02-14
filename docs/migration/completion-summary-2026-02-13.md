@@ -415,6 +415,7 @@ Workflow hardening applied:
 - debugger timeline safety now includes bounded snapshot selector/panel rendering windows and explicit truncation messaging, with regression tests confirming oversized snapshot arrays cannot trigger runaway timeline rendering growth
 - ROM loader behavior now includes recovery-oriented validation for unsupported/empty selections, with tests confirming error messaging and successful valid-selection recovery paths that re-enable load event payloads
 - debugger worker lifecycle now includes crash auto-restart handling (bounded restart budget + listener rebind), with regression tests covering `error`/`messageerror` restart triggers and dispose-time restart suppression
+- debugger selector consumption now uses scalar frame selectors to reduce unnecessary rerender pressure from object-selector allocations, with regression tests validating frame-selector stability across non-frame state updates
 
 ## Security posture at completion
 

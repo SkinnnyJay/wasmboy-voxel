@@ -158,10 +158,8 @@ export const useDebuggerStore = create<DebuggerStore>((set, get) => ({
 }));
 
 export const debuggerSelectors = {
-  frameMetadata: (state: DebuggerStoreState) => ({
-    frameId: state.frameId,
-    timestampMs: state.timestampMs,
-  }),
+  frameId: (state: DebuggerStoreState) => state.frameId,
+  frameTimestampMs: (state: DebuggerStoreState) => state.timestampMs,
   latestChecksums: (state: DebuggerStoreState) =>
     state.snapshots.length > 0
       ? (state.snapshots[state.snapshots.length - 1] ?? null)?.checksums ?? null

@@ -518,3 +518,4 @@
 - 2026-02-14: Added runaway timeline safeguards by clamping snapshot selector output and panel render windows, plus regression tests proving oversized snapshot arrays render only the latest bounded timeline segment with truncation notice messaging.
 - 2026-02-14: Added ROM loader recovery UX coverage by validating unsupported/empty file selection errors and ensuring valid follow-up selections clear error state and resume load-event payload emission.
 - 2026-02-14: Added debugger worker crash auto-restart coverage and runtime handling via restartable worker controller logic (`maxRestarts` budget + crash listener rebinds), with regression tests for error/messageerror restart paths and post-dispose no-restart guarantees.
+- 2026-02-14: Refactored debugger selector usage to scalar frame selectors (`frameId`/`frameTimestampMs`) to avoid object-selector rerender churn; added selector stability regression coverage across unrelated store updates.
