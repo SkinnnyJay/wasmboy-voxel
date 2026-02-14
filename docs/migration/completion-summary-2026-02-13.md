@@ -454,6 +454,7 @@ Workflow hardening applied:
 - a weekly regression checklist now links CI status, local gates, focused safety checks, performance budgets, and docs/debt synchronization (`docs/migration/weekly-regression-checklist-2026-02-14.md`)
 - a formal iterative backlog process now defines how to generate and execute each new 100-item hardening cycle (`docs/migration/iterative-backlog-process-2026-02-14.md`), including scoring, source signals, execution protocol, and a reusable next-100 template
 - husky pre-commit configuration now uses explicit `husky.hooks.pre-commit` wiring (`precommit:hook`) instead of deprecated `scripts.precommit` discovery, preserving staged cleanup/guard/format behavior while removing deprecation warning noise
+- generated-artifact guard ergonomics now include explicit contributor guidance (`docs/migration/generated-artifact-commit-policy-2026-02-14.md`) for intentional `dist/build` commits, including per-command override usage and safety requirements
 
 ## Security posture at completion
 

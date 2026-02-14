@@ -25,16 +25,16 @@ Ownership tags are subsystem owners (team-level), not individual names.
 | TD-008  | Debugger worker lifecycle    | Crash auto-restart exists, but restart telemetry and capped backoff tuning are not yet instrumented in UI-level diagnostics.                                  | S3       | `@debugger-runtime`   | `docs/migration/debugger-worker-boot-race-audit-2026-02-14.md`         | Open   |
 | TD-009  | Debugger large-dataset UX    | Bounded rendering is in place, but paginated/virtualized deep inspection UX for very large timelines remains incomplete.                                      | S4       | `@debugger-ui`        | `apps/debugger/docs/migration/debugger-usage-guide.md`                 | Open   |
 | TD-010  | Automation parser complexity | Wrapper helper argument/timeout suites are comprehensive but now dense; candidate for shared fixture/schema-driven generation.                                | S4       | `@automation-tooling` | `scripts/**/*.test.mjs`                                                | Open   |
-| TD-012  | Dist/build policy ergonomics | Generated-artifact guard supports override env but lacks dedicated contributor docs for intentional release-time artifact commits.                            | S4       | `@repo-tooling`       | `scripts/guard-generated-artifacts-precommit.mjs`                      | Open   |
 
 ## Closed debt items (resolved in migration cycle)
 
-| Debt ID | Area                    | Resolution                                                                                                                  | Severity at close | Owner Tag             |
-| ------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------- | ----------------- | --------------------- |
-| TD-C001 | Security/audit          | Removed vulnerable dependency chains and reached `npm audit --omit=optional` = 0 vulnerabilities.                           | S1                | `@repo-tooling`       |
-| TD-C002 | Contract drift          | Added runtime + test-level schema validation gates for v1 payloads.                                                         | S1                | `@contracts-api`      |
-| TD-C003 | CI parity drift         | Consolidated quality gates into shared scripts and cross-workflow parity commands (`ci:local`, `automation:check`).         | S2                | `@automation-tooling` |
-| TD-C004 | Pre-commit architecture | Migrated from deprecated `scripts.precommit` hook discovery to explicit `husky.hooks.pre-commit` wiring (`precommit:hook`). | S3                | `@repo-tooling`       |
+| Debt ID | Area                         | Resolution                                                                                                                                                                               | Severity at close | Owner Tag             |
+| ------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- | --------------------- |
+| TD-C001 | Security/audit               | Removed vulnerable dependency chains and reached `npm audit --omit=optional` = 0 vulnerabilities.                                                                                        | S1                | `@repo-tooling`       |
+| TD-C002 | Contract drift               | Added runtime + test-level schema validation gates for v1 payloads.                                                                                                                      | S1                | `@contracts-api`      |
+| TD-C003 | CI parity drift              | Consolidated quality gates into shared scripts and cross-workflow parity commands (`ci:local`, `automation:check`).                                                                      | S2                | `@automation-tooling` |
+| TD-C004 | Pre-commit architecture      | Migrated from deprecated `scripts.precommit` hook discovery to explicit `husky.hooks.pre-commit` wiring (`precommit:hook`).                                                              | S3                | `@repo-tooling`       |
+| TD-C005 | Dist/build policy ergonomics | Added dedicated contributor guidance for intentional generated-artifact commits, including per-command override usage and safeguards (`generated-artifact-commit-policy-2026-02-14.md`). | S4                | `@repo-tooling`       |
 
 ## Triage cadence
 
