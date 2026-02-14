@@ -5,7 +5,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { writeFakeExecutable } from './test-fixtures.mjs';
-import { resolveReleaseChecklistTimeoutFromEnv } from './release-checklist-dry-run.mjs';
+import { parseReleaseChecklistArgs, resolveReleaseChecklistTimeoutFromEnv } from './release-checklist-dry-run.mjs';
 
 const RELEASE_CHECKLIST_SCRIPT_PATH = path.resolve('scripts/release-checklist-dry-run.mjs');
 
@@ -15,6 +15,36 @@ function createTempWorkspace() {
   fs.mkdirSync(path.join(tempDirectory, 'packages', 'cli'), { recursive: true });
   return tempDirectory;
 }
+
+test('parseReleaseChecklistArgs supports timeout and help flags', () => {
+  assert.deepEqual(parseReleaseChecklistArgs([]), { showHelp: false, timeoutMsOverride: '' });
+  assert.deepEqual(parseReleaseChecklistArgs(['--timeout-ms', '5000']), { showHelp: false, timeoutMsOverride: '5000' });
+  assert.deepEqual(parseReleaseChecklistArgs(['--timeout-ms=7000']), { showHelp: false, timeoutMsOverride: '7000' });
+  assert.deepEqual(parseReleaseChecklistArgs(['--help']), { showHelp: true, timeoutMsOverride: '' });
+  assert.deepEqual(parseReleaseChecklistArgs(['--timeout-ms', '5000', '--help']), { showHelp: true, timeoutMsOverride: '' });
+});
+
+test('parseReleaseChecklistArgs rejects malformed and duplicate arguments', () => {
+  assert.throws(() => parseReleaseChecklistArgs('--help'), /Expected argv to be an array\./u);
+  assert.throws(() => parseReleaseChecklistArgs(['--help', 3]), /Expected argv\[1\] to be a string\./u);
+  assert.throws(() => parseReleaseChecklistArgs(['--unknown']), /Unknown argument: --unknown/u);
+  assert.throws(() => parseReleaseChecklistArgs(['--timeout-ms', '5000', '--timeout-ms=6000']), /Duplicate --timeout-ms flag received\./u);
+  assert.throws(() => parseReleaseChecklistArgs(['--timeout-ms']), /Missing value for --timeout-ms argument\./u);
+  assert.throws(() => parseReleaseChecklistArgs(['--timeout-ms=']), /Missing value for --timeout-ms argument\./u);
+  assert.throws(() => parseReleaseChecklistArgs(['--timeout-ms==5000']), /Malformed inline value for --timeout-ms argument\./u);
+});
+
+test('release checklist dry-run prints usage for --help', () => {
+  const result = spawnSync(process.execPath, [RELEASE_CHECKLIST_SCRIPT_PATH, '--help'], {
+    cwd: process.cwd(),
+    encoding: 'utf8',
+    env: process.env,
+  });
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Usage:/u);
+  assert.equal(result.stderr, '');
+});
 
 test('release checklist dry-run executes npm publish dry-run for api and cli', () => {
   const tempDirectory = createTempWorkspace();
@@ -120,10 +150,13 @@ exit 0
 test('resolveReleaseChecklistTimeoutFromEnv parses and validates environment overrides', () => {
   assert.equal(resolveReleaseChecklistTimeoutFromEnv({}), 120000);
   assert.equal(resolveReleaseChecklistTimeoutFromEnv({ RELEASE_CHECKLIST_NPM_TIMEOUT_MS: ' 8000 ' }), 8000);
+  assert.equal(resolveReleaseChecklistTimeoutFromEnv({}, '7000'), 7000);
+  assert.equal(resolveReleaseChecklistTimeoutFromEnv({ RELEASE_CHECKLIST_NPM_TIMEOUT_MS: '8000' }, '7000'), 7000);
   assert.throws(
     () => resolveReleaseChecklistTimeoutFromEnv({ RELEASE_CHECKLIST_NPM_TIMEOUT_MS: '0' }),
     /Invalid RELEASE_CHECKLIST_NPM_TIMEOUT_MS value: 0/u,
   );
+  assert.throws(() => resolveReleaseChecklistTimeoutFromEnv({}, '0'), /Invalid --timeout-ms value: 0/u);
   assert.throws(
     () => resolveReleaseChecklistTimeoutFromEnv({ RELEASE_CHECKLIST_NPM_TIMEOUT_MS: 'NaN' }),
     /Invalid RELEASE_CHECKLIST_NPM_TIMEOUT_MS value: NaN/u,
