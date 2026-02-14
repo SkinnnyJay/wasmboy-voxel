@@ -114,9 +114,7 @@ export function SoundRegisterWriteTraps(offset: i32, value: i32): boolean {
         Sound.frameSequencer = 0x07;
         Channel1.waveFormPositionOnDuty = 0x00;
         Channel2.waveFormPositionOnDuty = 0x00;
-
-        // TODO: Wave Channel Sample Buffer?
-        // I don't think we clear wave RAM here...
+        Channel3.sampleBuffer = 0x00;
       }
 
       // http://gbdev.gg8.se/wiki/articles/Gameboy_sound_hardware#Power_Control
@@ -162,8 +160,7 @@ export function SoundRegisterReadTraps(offset: i32): i32 {
       return register | 0xff;
     }
     case Sound.memoryLocationNR50: {
-      let register = eightBitLoadFromGBMemory(Sound.memoryLocationNR50);
-      return register | 0x00;
+      return Sound.getNR50ReadValue();
     }
 
     // Handle NRx1 on Channels

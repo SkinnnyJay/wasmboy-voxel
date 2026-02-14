@@ -67,4 +67,5 @@ describe('WasmBoyHeadless', () => {
     const frame = emu.getFrameBuffer();
     assert.strictEqual(frame.length, FRAME_SIZE_RGBA);
   });
+
 });

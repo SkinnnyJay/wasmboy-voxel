@@ -38,12 +38,11 @@ export function config(
   audioAccumulateSamples: i32,
   tileRendering: i32,
   tileCaching: i32,
-  enableAudioDebugging: i32
+  enableAudioDebugging: i32,
 ): void {
-  // TODO: depending on the boot rom, initialization may be different
-  // From: http://www.codeslinger.co.uk/pages/projects/gameboy/hardware.html
-  // All values default to zero in memory, so not setting them yet
-  // log('initializing (includeBootRom=$0)', 1, enableBootRom);
+  // Initialization differs when boot ROM execution is enabled.
+  // In boot ROM mode we preserve power-on defaults and let the boot ROM
+  // itself drive register initialization.
 
   Config.enableBootRom = enableBootRom > 0;
   Config.useGbcWhenAvailable = useGbcWhenAvailable > 0;
@@ -104,6 +103,10 @@ function initialize(): void {
 }
 
 function initializeVarious(): void {
+  if (Cpu.BootROMEnabled) {
+    return;
+  }
+
   // Various Other Registers
   if (Cpu.GBCEnabled) {
     // Various other registers

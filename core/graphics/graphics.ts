@@ -3,6 +3,10 @@ import { FRAME_LOCATION, GAMEBOY_INTERNAL_MEMORY_LOCATION, SCANLINE_DEBUG_BUFFER
 
 const VRAM_BANK_0_BASE: i32 = GAMEBOY_INTERNAL_MEMORY_LOCATION;
 const VRAM_BANK_1_BASE: i32 = GAMEBOY_INTERNAL_MEMORY_LOCATION + 0x2000;
+const LCD_MODE2_DURATION_CYCLES: i32 = 80;
+const LCD_MODE3_DURATION_CYCLES: i32 = 127;
+const LCD_MODE2_THRESHOLD_CYCLES: i32 = 456 - LCD_MODE2_DURATION_CYCLES;
+const LCD_MODE3_THRESHOLD_CYCLES: i32 = 456 - (LCD_MODE2_DURATION_CYCLES + LCD_MODE3_DURATION_CYCLES);
 import { getSaveStateMemoryOffset } from '../core';
 import { Lcd, setLcdStatus } from './lcd';
 import { renderBackground, renderWindow } from './backgroundWindow';
@@ -48,13 +52,13 @@ export class Graphics {
   }
 
   static MIN_CYCLES_SPRITES_LCD_MODE(): i32 {
-    // TODO: Confirm these clock cyles, double similar to scanline, which TCAGBD did
-    return 376 << (<i32>Cpu.GBCDoubleSpeed);
+    // Mode transitions are checked after scanline/cycle updates.
+    // Keep thresholds in terms of elapsed cycles in the active scanline.
+    return LCD_MODE2_THRESHOLD_CYCLES << (<i32>Cpu.GBCDoubleSpeed);
   }
 
   static MIN_CYCLES_TRANSFER_DATA_LCD_MODE(): i32 {
-    // TODO: Confirm these clock cyles, double similar to scanline, which TCAGBD did
-    return 249 << (<i32>Cpu.GBCDoubleSpeed);
+    return LCD_MODE3_THRESHOLD_CYCLES << (<i32>Cpu.GBCDoubleSpeed);
   }
 
   // LCD
@@ -234,7 +238,6 @@ export function updateGraphics(numberOfCycles: i32): void {
       // let scanlineRegister: i32 = eightBitLoadFromGBMemory(Graphics.memoryLocationScanlineRegister);
       let scanlineRegister = Graphics.scanlineRegister;
 
-      // Check if we've reached the last scanline
       if (scanlineRegister === 144) {
         // Draw the scanline
         if (!graphicsDisableScanlineRendering) {
@@ -255,9 +258,9 @@ export function updateGraphics(numberOfCycles: i32): void {
         }
       }
 
-      // Post increment the scanline register after drawing
-      // TODO: Need to fix graphics timing
-      if (scanlineRegister > 153) {
+      // Post increment the scanline register after drawing.
+      // 153 is the final LY value before wrapping to 0.
+      if (scanlineRegister >= 153) {
         // Check if we overflowed scanlines
         // if so, reset our scanline number
         scanlineRegister = 0;
@@ -279,17 +282,32 @@ export function updateGraphics(numberOfCycles: i32): void {
 
 // TODO: Make this a _drawPixelOnScanline, as values can be updated while drawing a scanline
 function _drawScanline(scanlineRegister: i32): void {
+  // Capture potentially mutable state once per scanline so rendering is deterministic
+  // even if memory-mapped registers are updated while drawing.
+  const scrollX = Graphics.scrollX;
+  const scrollY = Graphics.scrollY;
+  const windowX = Graphics.windowX;
+  const windowY = Graphics.windowY;
+  const bgWindowTileDataSelect = Lcd.bgWindowTileDataSelect;
+  const bgTileMapDisplaySelect = Lcd.bgTileMapDisplaySelect;
+  const windowDisplayEnabled = Lcd.windowDisplayEnabled;
+  const windowTileMapDisplaySelect = Lcd.windowTileMapDisplaySelect;
+  const spriteDisplayEnable = Lcd.spriteDisplayEnable;
+  const tallSpriteSize = Lcd.tallSpriteSize;
+  const bgDisplayEnabled = Lcd.bgDisplayEnabled;
+  const gbcEnabled = Cpu.GBCEnabled;
+
   // Capture per-scanline scroll/window params for debug API (0..143 only)
   if (scanlineRegister >= 0 && scanlineRegister < 144) {
     const base = SCANLINE_DEBUG_BUFFER_LOCATION + scanlineRegister * 4;
-    store<u8>(base, <u8>Graphics.scrollX);
-    store<u8>(base + 1, <u8>Graphics.scrollY);
-    store<u8>(base + 2, <u8>Graphics.windowX);
-    store<u8>(base + 3, <u8>Graphics.windowY);
+    store<u8>(base, <u8>scrollX);
+    store<u8>(base + 1, <u8>scrollY);
+    store<u8>(base + 2, <u8>windowX);
+    store<u8>(base + 3, <u8>windowY);
   }
   // Get our seleted tile data memory location
   let tileDataMemoryLocation = Graphics.memoryLocationTileDataSelectZeroStart;
-  if (Lcd.bgWindowTileDataSelect) {
+  if (bgWindowTileDataSelect) {
     tileDataMemoryLocation = Graphics.memoryLocationTileDataSelectOneStart;
   }
 
@@ -299,34 +317,33 @@ function _drawScanline(scanlineRegister: i32): void {
   // When Bit 0 is cleared, the background and window lose their priority -
   // the sprites will be always displayed on top of background and window,
   // independently of the priority flags in OAM and BG Map attributes.
-  // TODO: Enable this different feature for GBC
-  if (Cpu.GBCEnabled || Lcd.bgDisplayEnabled) {
+  if (gbcEnabled || bgDisplayEnabled) {
     // Get our map memory location
     let tileMapMemoryLocation = Graphics.memoryLocationTileMapSelectZeroStart;
-    if (Lcd.bgTileMapDisplaySelect) {
+    if (bgTileMapDisplaySelect) {
       tileMapMemoryLocation = Graphics.memoryLocationTileMapSelectOneStart;
     }
 
     // Finally, pass everything to draw the background
-    renderBackground(scanlineRegister, tileDataMemoryLocation, tileMapMemoryLocation);
+    renderBackground(scanlineRegister, tileDataMemoryLocation, tileMapMemoryLocation, scrollX, scrollY);
   }
 
   // Check if the window is enabled, and we are currently
   // Drawing lines on the window
-  if (Lcd.windowDisplayEnabled) {
+  if (windowDisplayEnabled) {
     // Get our map memory location
     let tileMapMemoryLocation = Graphics.memoryLocationTileMapSelectZeroStart;
-    if (Lcd.windowTileMapDisplaySelect) {
+    if (windowTileMapDisplaySelect) {
       tileMapMemoryLocation = Graphics.memoryLocationTileMapSelectOneStart;
     }
 
     // Finally, pass everything to draw the background
-    renderWindow(scanlineRegister, tileDataMemoryLocation, tileMapMemoryLocation);
+    renderWindow(scanlineRegister, tileDataMemoryLocation, tileMapMemoryLocation, windowX, windowY);
   }
 
-  if (Lcd.spriteDisplayEnable) {
+  if (spriteDisplayEnable) {
     // Sprites are enabled, render them!
-    renderSprites(scanlineRegister, Lcd.tallSpriteSize);
+    renderSprites(scanlineRegister, tallSpriteSize, gbcEnabled && !bgDisplayEnabled);
   }
 }
 

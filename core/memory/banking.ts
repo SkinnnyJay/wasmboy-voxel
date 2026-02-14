@@ -30,8 +30,8 @@ function updateRomBankLowBits(offset: i32, value: i32, isMBC1: bool, isMBC2: boo
       romBankLowerBits = romBankLowerBits & 0x7f;
       currentRomBank &= 0x80;
     } else if (isMBC5) {
-      // Going to switch the whole thing
-      currentRomBank &= 0x00;
+      // Keep high ROM bank bit (set by 0x3000-0x3FFF), update lower 8 bits.
+      currentRomBank &= 0x100;
     }
 
     // Set the lower bytes
@@ -40,10 +40,10 @@ function updateRomBankLowBits(offset: i32, value: i32, isMBC1: bool, isMBC2: boo
     return;
   }
 
-  // TODO: MBC5 High bits Rom bank, check if this works, not sure about the value
+  // MBC5 high ROM bank bit (bit 8).
   let lowByte = splitLowByte(Memory.currentRomBank);
-  let highByte = <i32>(value > 0);
-  Memory.currentRomBank = concatenateBytes(highByte, lowByte);
+  let highByte = value & 0x01;
+  Memory.currentRomBank = concatenateBytes(highByte, lowByte) & 0x1ff;
 }
 
 function updateRamBankOrMbc1UpperRomBits(value: i32, isMBC1: bool, isMBC2: bool): void {
@@ -65,8 +65,10 @@ function updateRamBankOrMbc1UpperRomBits(value: i32, isMBC1: bool, isMBC2: bool)
 
   if (Memory.isMBC3) {
     if (value >= 0x08 && value <= 0x0c) {
-      // TODO: MBC3 RTC Register Select
+      Memory.mbc3RtcRegisterSelect = value;
+      return;
     }
+    Memory.mbc3RtcRegisterSelect = -1;
   }
 
   let ramBankBits: i32 = value;
@@ -90,8 +92,67 @@ function updateMbc1RomMode(value: i32, isMBC1: bool, isMBC2: bool): void {
 
   if (isMBC1) {
     Memory.isMBC1RomModeEnabled = checkBitOnByte(0, <u8>value);
+    return;
   }
-  // TODO: MBC3 Latch Clock Data
+
+  if (Memory.isMBC3) {
+    let latchWriteValue = value & 0x01;
+    if (Memory.mbc3RtcLastLatchWrite === 0 && latchWriteValue === 1) {
+      Memory.mbc3RtcLatchedSeconds = Memory.mbc3RtcSeconds;
+      Memory.mbc3RtcLatchedMinutes = Memory.mbc3RtcMinutes;
+      Memory.mbc3RtcLatchedHours = Memory.mbc3RtcHours;
+      Memory.mbc3RtcLatchedDayLow = Memory.mbc3RtcDayLow;
+      Memory.mbc3RtcLatchedDayHigh = Memory.mbc3RtcDayHigh;
+      Memory.mbc3RtcIsLatched = true;
+    }
+    Memory.mbc3RtcLastLatchWrite = latchWriteValue;
+  }
+}
+
+export function readMbc3RtcRegister(): i32 {
+  let selectedRegister = Memory.mbc3RtcRegisterSelect;
+  if (selectedRegister < 0x08 || selectedRegister > 0x0c) {
+    return 0xff;
+  }
+
+  let isLatched = Memory.mbc3RtcIsLatched;
+  switch (selectedRegister) {
+    case 0x08:
+      return isLatched ? Memory.mbc3RtcLatchedSeconds : Memory.mbc3RtcSeconds;
+    case 0x09:
+      return isLatched ? Memory.mbc3RtcLatchedMinutes : Memory.mbc3RtcMinutes;
+    case 0x0a:
+      return isLatched ? Memory.mbc3RtcLatchedHours : Memory.mbc3RtcHours;
+    case 0x0b:
+      return isLatched ? Memory.mbc3RtcLatchedDayLow : Memory.mbc3RtcDayLow;
+    default:
+      return isLatched ? Memory.mbc3RtcLatchedDayHigh : Memory.mbc3RtcDayHigh;
+  }
+}
+
+export function writeMbc3RtcRegister(value: i32): void {
+  let selectedRegister = Memory.mbc3RtcRegisterSelect;
+  if (selectedRegister < 0x08 || selectedRegister > 0x0c) {
+    return;
+  }
+
+  switch (selectedRegister) {
+    case 0x08:
+      Memory.mbc3RtcSeconds = value & 0x3f;
+      break;
+    case 0x09:
+      Memory.mbc3RtcMinutes = value & 0x3f;
+      break;
+    case 0x0a:
+      Memory.mbc3RtcHours = value & 0x1f;
+      break;
+    case 0x0b:
+      Memory.mbc3RtcDayLow = value & 0xff;
+      break;
+    default:
+      Memory.mbc3RtcDayHigh = value & 0xc1;
+      break;
+  }
 }
 
 // Inlined because closure compiler inlines

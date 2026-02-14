@@ -2,13 +2,14 @@ import { Memory } from './memory';
 import { Cpu } from '../cpu/index';
 import { Graphics } from '../graphics/graphics';
 import { Lcd } from '../graphics/index';
-import { batchProcessAudio, SoundRegisterReadTraps, Channel3 } from '../sound/index';
+import { batchProcessAudio, SoundRegisterReadTraps, Channel3, Sound } from '../sound/index';
 import { eightBitStoreIntoGBMemory } from './store';
 import { eightBitLoadFromGBMemory } from './load';
 import { Joypad, getJoypadState } from '../joypad/index';
 import { Timers } from '../timers/index';
 import { Interrupts } from '../interrupts/index';
 import { checkBitOnByte, resetBitOnByte, splitHighByte } from '../helpers/index';
+import { readMbc3RtcRegister } from './banking';
 
 // Returns -1 if no trap found, otherwise returns a value that should be fed for the address
 export function checkReadTraps(offset: i32): i32 {
@@ -32,6 +33,18 @@ export function checkReadTraps(offset: i32): i32 {
     // }
 
     return -1;
+  }
+
+  if (
+    offset >= Memory.cartridgeRamLocation &&
+    offset < Memory.internalRamBankZeroLocation &&
+    Memory.isMBC3 &&
+    Memory.mbc3RtcRegisterSelect >= 0
+  ) {
+    if (!Memory.isRamBankingEnabled) {
+      return 0xff;
+    }
+    return readMbc3RtcRegister();
   }
 
   // ECHO Ram, E000	FDFF	Mirror of C000~DDFF (ECHO RAM)
@@ -86,7 +99,7 @@ export function checkReadTraps(offset: i32): i32 {
   // Sound
   // http://gbdev.gg8.se/wiki/articles/Gameboy_sound_hardware#Registers
   // TODO: Put these bounds on the Sound Class
-  if (offset >= 0xff10 && offset <= 0xff26) {
+  if (offset >= Sound.memoryLocationSoundRegisterStart && offset <= Sound.memoryLocationSoundRegisterEnd) {
     batchProcessAudio();
     return SoundRegisterReadTraps(offset);
   }
@@ -94,12 +107,12 @@ export function checkReadTraps(offset: i32): i32 {
   // FF27 - FF2F not used
   // http://gbdev.gg8.se/wiki/articles/Gameboy_sound_hardware#Register_Reading
   // Always read as 0xFF
-  if (offset >= 0xff27 && offset <= 0xff2f) {
+  if (offset >= Sound.memoryLocationSoundUnusedStart && offset <= Sound.memoryLocationSoundUnusedEnd) {
     return 0xff;
   }
 
   // Final Wave Table for Channel 3
-  if (offset >= 0xff30 && offset <= 0xff3f) {
+  if (offset >= Sound.memoryLocationWaveTableStart && offset <= Sound.memoryLocationWaveTableEnd) {
     batchProcessAudio();
 
     if (Channel3.isEnabled) {

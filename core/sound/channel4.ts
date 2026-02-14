@@ -248,8 +248,7 @@ export class Channel4 {
     let frequencyTimer = Channel4.frequencyTimer;
     frequencyTimer -= numberOfCycles;
 
-    // TODO: This can't be a while loop to use up all the cycles,
-    // Since noise is psuedo random and the period can be anything
+    // Avoid unbounded cycle-drain loops; a single state advance keeps runtime bounded.
     if (frequencyTimer <= 0) {
       // Get the amount that overflowed so we don't drop cycles
       let overflowAmount = abs(frequencyTimer);

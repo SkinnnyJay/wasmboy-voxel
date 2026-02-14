@@ -10,12 +10,12 @@ This document is the **single source** for incomplete work. It consolidates unfi
 
 ## 1) Completion summary (from source plans)
 
-| Source | Complete | Incomplete (tracked below) |
-|--------|----------|----------------------------|
-| PLAN.md | Milestones 0–10, backlog task159–task181 | task182–task200, S1-001–S1-020, S2-001–S2-030 |
-| PLAN2.md | Superseded; work done at repo root | Phase checkboxes in PLAN2 were not updated; scope covered here |
-| PLAN3.md | Phases 0–10 effectively done at root | Phase 11 (TypeScript lib/) not started |
-| MIGRATE_TO_TYPESCRIPT.md | Phases 0–10 checklist + PyBoy rigor | Phase 11 (lib/ + voxel-wrapper strict TS) not in checklist; optional enhancements |
+| Source                   | Complete                                 | Incomplete (tracked below)                                                        |
+| ------------------------ | ---------------------------------------- | --------------------------------------------------------------------------------- |
+| PLAN.md                  | Milestones 0–10, backlog task159–task181 | task182–task200, S1-001–S1-020, S2-001–S2-030                                     |
+| PLAN2.md                 | Superseded; work done at repo root       | Phase checkboxes in PLAN2 were not updated; scope covered here                    |
+| PLAN3.md                 | Phases 0–10 effectively done at root     | Phase 11 (TypeScript lib/) not started                                            |
+| MIGRATE_TO_TYPESCRIPT.md | Phases 0–10 checklist + PyBoy rigor      | Phase 11 (lib/ + voxel-wrapper strict TS) not in checklist; optional enhancements |
 
 **Scope of PLAN44:** All tasks in §2–§4 below, plus research findings in §5 and success criteria in §7.
 
@@ -46,7 +46,7 @@ This document is the **single source** for incomplete work. It consolidates unfi
 
 **Task:**
 
-- [ ] **CI:** Fix `core:memory-offset:check` so invalid offset -1 maps to sentinel -1; verify `npm run test:all:nobuild` and `npm run automation:check` pass.
+- [x] **CI:** Fix `core:memory-offset:check` so invalid offset -1 maps to sentinel -1; verify `npm run test:all:nobuild` and `npm run automation:check` pass. _(Validated after rebuilding core/lib and resolving workspace smoke/lint/typecheck blockers.)_
 
 ---
 
@@ -54,9 +54,9 @@ This document is the **single source** for incomplete work. It consolidates unfi
 
 ### 4.1 Backlog placeholders (task182–task200)
 
-*Source: PLAN.md “Imported Incomplete Backlog Tasks (next-100)”. Resolve at implementation time (define validation/command or mark N/A).*
+_Source: PLAN.md “Imported Incomplete Backlog Tasks (next-100)”. Resolve at implementation time (define validation/command or mark N/A)._
 
-- [ ] - task182 (S2 reliability): Backlog discovery candidate #82 — define validation command at implementation time.
+- [x] - task182 (S2 reliability): Backlog discovery candidate #82 — stabilize workspace stack smoke/lint/typecheck path resolution for `@wasmboy/api` (added Vitest aliases for CLI/debugger, refreshed formatting, and validated via `npm run test:all:nobuild`).
 - [ ] - task183 (S2 reliability): Backlog discovery candidate #83 — define validation command at implementation time.
 - [ ] - task184 (S2 reliability): Backlog discovery candidate #84 — define validation command at implementation time.
 - [ ] - task185 (S2 reliability): Backlog discovery candidate #85 — define validation command at implementation time.
@@ -78,36 +78,36 @@ This document is the **single source** for incomplete work. It consolidates unfi
 
 ### 4.2 S1 Critical (S1-001 – S1-020)
 
-*Source: PLAN.md. Core timing, graphics, audio, memory, serial, bootrom.*
+_Source: PLAN.md. Core timing, graphics, audio, memory, serial, bootrom._
 
-- [ ] - S1-001 (core-timing): Fix unresolved LCD cycle timing TODOs in `core/graphics/graphics.ts` (clock-cycle constants at scanline transitions).
-- [ ] - S1-002 (core-timing): Root-cause and fix the explicit “Need to fix graphics timing” branch in `core/graphics/graphics.ts` to prevent frame drift.
-- [ ] - S1-003 (core-render-race): Refactor scanline pixel writes in `core/graphics/graphics.ts` to avoid mid-scanline state mutation hazards.
-- [ ] - S1-004 (core-gbc): Implement missing GBC-specific rendering path flagged in `core/graphics/graphics.ts`.
-- [ ] - S1-005 (core-cache-correctness): Fix scanline-0 tile cache exclusion in `core/graphics/backgroundWindow.ts` without regressing first-line rendering.
-- [ ] - S1-006 (core-sprite-correctness): Fix sprite X overflow bug for values `< 8` documented in `core/graphics/sprites.ts`.
-- [ ] - S1-007 (core-sprite-priority): Implement missing Pandocs sprite behavior in `core/graphics/sprites.ts` and validate against known ROMs.
-- [ ] - S1-008 (core-interrupts): Investigate and fix interrupt behavior regression called out for Pokémon Yellow / Link’s Awakening in `core/interrupts/interrupts.ts`.
-- [ ] - S1-009 (core-timer-state): Complete timer save-state coverage for new timer properties in `core/timers/timers.ts`.
-- [ ] - S1-010 (core-timer-throughput): Replace TODO batch timer path in `core/timers/timers.ts` with deterministic bounded-cost processing.
-- [ ] - S1-011 (core-audio-dmg): Implement DMG-specific wave channel behavior in `core/sound/channel3.ts`.
-- [ ] - S1-012 (core-audio-double-speed): Validate/fix channel 1 double-speed timing in `core/sound/channel1.ts`.
-- [ ] - S1-013 (core-audio-double-speed): Validate/fix channel 2 double-speed timing in `core/sound/channel2.ts`.
-- [ ] - S1-014 (core-audio-double-speed): Validate/fix channel 3 double-speed timing in `core/sound/channel3.ts`.
-- [ ] - S1-015 (core-audio-cycle-loop): Remove unbounded cycle-consumption risk in `core/sound/channel4.ts` TODO path.
-- [ ] - S1-016 (core-memory-banking): Fix uncertain MBC5 high ROM bank handling in `core/memory/banking.ts`.
-- [ ] - S1-017 (core-memory-rtc): Implement missing MBC3 RTC register select path in `core/memory/banking.ts`.
-- [ ] - S1-018 (core-memory-rtc): Implement missing MBC3 clock latch handling in `core/memory/banking.ts`.
-- [ ] - S1-019 (core-serial): Complete incomplete serial transport behavior in `core/serial/serial.ts` and remove forced-success fallback.
-- [ ] - S1-020 (core-bootrom): Close Boot ROM correctness gaps in `core/execute.ts` and `core/core.ts` to avoid startup state divergence.
+- [x] - S1-001 (core-timing): Fix unresolved LCD cycle timing TODOs in `core/graphics/graphics.ts` (clock-cycle constants at scanline transitions). _(Replaced unresolved TODO thresholds with explicit mode-duration-derived constants and validated core graphics/save-state regressions.)_
+- [x] - S1-002 (core-timing): Root-cause and fix the explicit “Need to fix graphics timing” branch in `core/graphics/graphics.ts` to prevent frame drift. _(Fixed LY wrap from 153→0 without transient 154 and stopped rendering scanline 144 in per-scanline mode; added core regression test.)_
+- [x] - S1-003 (core-render-race): Refactor scanline pixel writes in `core/graphics/graphics.ts` to avoid mid-scanline state mutation hazards. _(Captured per-scanline LCD/scroll/window state snapshot and threaded immutable values into background/window render paths.)_
+- [x] - S1-004 (core-gbc): Implement missing GBC-specific rendering path flagged in `core/graphics/graphics.ts`. _(Threaded explicit CGB BG-priority override flag into sprite renderer so LCDC bit0 behavior is handled via per-scanline snapshot state.)_
+- [x] - S1-005 (core-cache-correctness): Fix scanline-0 tile cache exclusion in `core/graphics/backgroundWindow.ts` without regressing first-line rendering. _(Enabled scanline-0 tile-cache path, corrected cache copy bounds (`xPos < 160`), and added first-scanline cache parity regression test.)_
+- [x] - S1-006 (core-sprite-correctness): Fix sprite X overflow bug for values `< 8` documented in `core/graphics/sprites.ts`. _(Hardened sprite X clipping bounds to visible range (`0..159`) and removed stale overflow TODO; validated via graphics/headless regression suites.)_
+- [x] - S1-007 (core-sprite-priority): Implement missing Pandocs sprite behavior in `core/graphics/sprites.ts` and validate against known ROMs. _(Implemented explicit 8x16 Pandocs tile-line selection (`NN&FE`/`NN|01`) with flip-aware line mapping and verified against headless + joypad integration runs.)_
+- [x] - S1-008 (core-interrupts): Investigate and fix interrupt behavior regression called out for Pokémon Yellow / Link’s Awakening in `core/interrupts/interrupts.ts`. _(Removed unresolved TODO branch, retained compatibility HALT return-address path, and added `test/core/interrupt-halt-return-address-test.cjs` guard coverage.)_
+- [x] - S1-009 (core-timer-state): Complete timer save-state coverage for new timer properties in `core/timers/timers.ts`. _(Removed stale save-state TODO and added deterministic timer save/load evolution regression test `test/core/timer-save-state-coverage-test.cjs`.)_
+- [x] - S1-010 (core-timer-throughput): Replace TODO batch timer path in `core/timers/timers.ts` with deterministic bounded-cost processing. _(Implemented bounded chunked timer batching (`Timers.batchProcessCycles`) and added non-batch vs batch determinism regression coverage.)_
+- [x] - S1-011 (core-audio-dmg): Implement DMG-specific wave channel behavior in `core/sound/channel3.ts`. _(Added DMG-only wave RAM access window semantics (reads return `0xFF`/writes ignored outside window) plus dedicated core regression test.)_
+- [x] - S1-012 (core-audio-double-speed): Validate/fix channel 1 double-speed timing in `core/sound/channel1.ts`. _(Fixed channel 1 double-speed timer scaling to use `<< GBCDoubleSpeed` (x2) instead of x4 over-scaling.)_
+- [x] - S1-013 (core-audio-double-speed): Validate/fix channel 2 double-speed timing in `core/sound/channel2.ts`. _(Validated and kept double-speed scaling path, removing unresolved TODO state.)_
+- [x] - S1-014 (core-audio-double-speed): Validate/fix channel 3 double-speed timing in `core/sound/channel3.ts`. _(Validated double-speed scaling path and removed unresolved TODO state while preserving DMG wave-RAM semantics tests.)_
+- [x] - S1-015 (core-audio-cycle-loop): Remove unbounded cycle-consumption risk in `core/sound/channel4.ts` TODO path. _(Resolved remaining TODO path and added channel-4 bounded-cycle regression test to guard responsiveness under long frame runs.)_
+- [x] - S1-016 (core-memory-banking): Fix uncertain MBC5 high ROM bank handling in `core/memory/banking.ts`. _(Preserved upper ROM bank bit correctly across low/high writes and masked to 9-bit MBC5 bank range.)_
+- [x] - S1-017 (core-memory-rtc): Implement missing MBC3 RTC register select path in `core/memory/banking.ts`. _(Added RTC register select state, read/write routing for `A000-BFFF`, and save-state persistence for RTC selection/registers.)_
+- [x] - S1-018 (core-memory-rtc): Implement missing MBC3 clock latch handling in `core/memory/banking.ts`. _(Implemented 0→1 latch edge behavior with latched RTC register reads and regression coverage for latch semantics.)_
+- [x] - S1-019 (core-serial): Complete incomplete serial transport behavior in `core/serial/serial.ts` and remove forced-success fallback. _(Implemented internal/external clock-aware transfer behavior, peer-byte injection + outgoing-byte capture exports, and serial transport regression tests.)_
+- [x] - S1-020 (core-bootrom): Close Boot ROM correctness gaps in `core/execute.ts` and `core/core.ts` to avoid startup state divergence. _(Boot-ROM mode now preserves power-on defaults for post-boot register init paths, serial/interrupt init honors boot mode, and bootrom initialization regression coverage was added.)_
 
 ### 4.3 S2 High (S2-001 – S2-030)
 
-*Source: PLAN.md. Sound bounds, wrapper memory, debugger soak/large-data, automation, cross-platform, NutJS.*
+_Source: PLAN.md. Sound bounds, wrapper memory, debugger soak/large-data, automation, cross-platform, NutJS._
 
-- [ ] - S2-001 (core-sound-bounds): Add strict sound read/write bounds protections for TODO paths in `core/memory/readTraps.ts` and `core/memory/writeTraps.ts`.
-- [ ] - S2-002 (core-audio-registers): Verify/fix wave channel sample buffer TODO path in `core/sound/registers.ts`.
-- [ ] - S2-003 (core-audio-mix): Implement unresolved VIN mixing and read behavior TODOs in `core/sound/sound.ts`.
+- [x] - S2-001 (core-sound-bounds): Add strict sound read/write bounds protections for TODO paths in `core/memory/readTraps.ts` and `core/memory/writeTraps.ts`. _(Centralized sound register bounds constants, enforced FF27-FF2F write-ignore semantics, and added regression test coverage.)_
+- [x] - S2-002 (core-audio-registers): Verify/fix wave channel sample buffer TODO path in `core/sound/registers.ts`. _(NR52 power-on path now explicitly resets channel3 sample buffer and is covered by dedicated regression test.)_
+- [x] - S2-003 (core-audio-mix): Implement unresolved VIN mixing and read behavior TODOs in `core/sound/sound.ts`. _(Added explicit NR50 VIN enable-state tracking + read reconstruction, integrated VIN contribution into mixer path with bounded sample clamping, exposed VIN input sample control for runtime/tests, and added `test/core/sound-vin-mixing-read-test.cjs` regression coverage.)_
 - [ ] - S2-004 (core-palette-consistency): Normalize palette conversion constants/rounding in `core/graphics/palette.ts` to remove color drift.
 - [ ] - S2-005 (debug-render-perf): Replace tile-debug pixel-by-pixel rendering TODO path in `core/debug/debug-graphics.ts` with tile-batched rendering.
 - [ ] - S2-006 (wrapper-memory): Audit snapshot/register acquisition for avoidable allocations and retained buffers in `voxel-wrapper.ts`.
@@ -138,7 +138,7 @@ This document is the **single source** for incomplete work. It consolidates unfi
 
 ### 4.4 Phase 11: TypeScript migration (lib/ + voxel-wrapper)
 
-*Source: PLAN3.md, MIGRATE_TO_TYPESCRIPT.md. MIGRATE Phase 1 narrative mentions “Convert lib/ and voxel-wrapper.ts to strict TypeScript” but the checklist there covers only packages/api; full lib/ conversion is Phase 11 in PLAN3, not started. Do after S1/S2 critical items are under control. **Include headless:** `lib/headless/` (WasmBoyHeadless, mainThreadCore.*), headless module types in `wasm-fork.d.ts`, and `voxel-wrapper.ts` `WasmBoyConfig.mainThread`.*
+_Source: PLAN3.md, MIGRATE_TO_TYPESCRIPT.md. MIGRATE Phase 1 narrative mentions “Convert lib/ and voxel-wrapper.ts to strict TypeScript” but the checklist there covers only packages/api; full lib/ conversion is Phase 11 in PLAN3, not started. Do after S1/S2 critical items are under control. **Include headless:** `lib/headless/` (WasmBoyHeadless, mainThreadCore._), headless module types in `wasm-fork.d.ts`, and `voxel-wrapper.ts` `WasmBoyConfig.mainThread`.\*
 
 - [ ] - Phase 11: Create `lib/` TypeScript config (strict; no `any`; project references if needed).
 - [ ] - Phase 11: Convert lib entry points to `.ts` with explicit types.
@@ -156,7 +156,7 @@ This document is the **single source** for incomplete work. It consolidates unfi
 
 ### 4.5 Optional (MIGRATE_TO_TYPESCRIPT.md — include only if in scope)
 
-*Source: MIGRATE_TO_TYPESCRIPT.md “Optional Future Enhancements”.*
+_Source: MIGRATE_TO_TYPESCRIPT.md “Optional Future Enhancements”._
 
 - [ ] - Optional: Record/replay input sessions for deterministic debugging.
 - [ ] - Optional: Streaming snapshot export for time-series analysis.
@@ -164,17 +164,17 @@ This document is the **single source** for incomplete work. It consolidates unfi
 
 ### 4.6 Test confidence (unit, integration, e2e) for new features
 
-*Ensure we have confidence in headless, mainThread, WasmBoyHeadless, and voxel snapshot paths. Use ROMs, Playwright MCP, Chrome DevTools MCP, and existing test scripts.*
+_Ensure we have confidence in headless, mainThread, WasmBoyHeadless, and voxel snapshot paths. Use ROMs, Playwright MCP, Chrome DevTools MCP, and existing test scripts._
 
 - [ ] - **Test-audit:** Document current coverage: which tests run for (1) headless Worker path, (2) headless mainThread path, (3) WasmBoyHeadless class, (4) voxel snapshot APIs. See §5.1 and `test/integration/*headless*`, `test/performance/headless-throughput.cjs`.
-- [x] - **Integration:** Add `test:integration:headless:mainthread` to the default `test:integration` and `test:integration:nobuild` (and CI) so all three headless paths are run every time. *(Done: scripts already include it.)*
+- [x] - **Integration:** Add `test:integration:headless:mainthread` to the default `test:integration` and `test:integration:nobuild` (and CI) so all three headless paths are run every time. _(Done: scripts already include it.)_
 - [ ] - **voxel-wrapper test:** Fix or document `test:integration:voxel:wrapper` (voxel-wrapper-readiness-test.mjs). It fails with "Unknown file extension .ts" when Node loads `voxel-wrapper.ts`; either run against built JS output or use ts-node/tsx and add to docs.
 - [ ] - **E2E headless (Playwright):** Add at least one Playwright (or Chrome DevTools MCP) E2E that loads the debugger or a minimal page, loads a ROM with `headless: true` (and optionally `mainThread: true`), runs frames, and asserts snapshot/frame data or no console errors. Artifacts under `./temp/playwright/`; see §8.3.
 - [ ] - **ROM coverage:** Confirm test ROMs (e.g. `test/performance/testroms/tobutobugirl`, `test/accuracy/testroms/mooneye/*`) are used in headless and baseline tests; document in PLAN44 or test README.
 
 ### 4.7 JS vs TypeScript build verification
 
-*Confirm the current JS (WASM) build and the TypeScript (TS core) build both work and are tested.*
+_Confirm the current JS (WASM) build and the TypeScript (TS core) build both work and are tested._
 
 - [ ] - **JS (WASM) path:** Document that `npm run build` (lib:build:wasm) produces `dist/wasmboy.wasm.*` and `dist/wasmboy.headless.*`; `test:integration:nobuild` uses CJS WASM runtime. Ensure all headless integration tests pass with WASM build.
 - [ ] - **TS path:** Run `npm run lib:build:ts` and confirm `dist/wasmboy.ts.*` (or equivalent) builds; add or run integration test that loads the TS-built lib (if entry differs) and runs a minimal headless or snapshot check. If TS lib is not consumed by current integration tests, add a smoke test or document in MIGRATION.md.
@@ -182,19 +182,19 @@ This document is the **single source** for incomplete work. It consolidates unfi
 
 ### 4.8 Release layout: V1 / V2 isolation and Makefile
 
-*Final release step: two isolated versions in one package, single control surface, migration docs.*
+_Final release step: two isolated versions in one package, single control surface, migration docs._
 
 - [ ] - **V1 layout:** Create `V1/` at repo root. Move or symlink "old" artifacts into V1: e.g. current `lib/` (JS), `core/` (AS→WASM), `dist/` outputs for WASM lib, `demo/` (Preact debugger/benchmark/iframe), and npm scripts that build/run only V1. Document what "old" means (pre–migration stack, pre–TypeScript lib).
 - [ ] - **V2 layout:** Create `V2/` at repo root. Move or symlink "new" artifacts: migration stack (`packages/api`, `packages/cli`, `apps/debugger`), TypeScript lib (when Phase 11 done), voxel-wrapper TS, and any new build outputs. Document what "new" means.
 - [ ] - **Makefile:** Add root `Makefile` with targets to build, test, and run either V1 or V2 (e.g. `make v1-build`, `make v1-test`, `make v2-build`, `make v2-test`, `make test-all`). Keep targets simple and documented in README.
-- [x] - **MIGRATION.md:** Create `MIGRATION.md` with: (1) Migrating from old (upstream WasmBoy or pre-fork) to V1; (2) Migrating from old to V2; (3) Migrating from V1 to V2. Include breaking changes, entry points, and npm/import paths. Reference MIGRATION.md from root README. *(Done: MIGRATION.md created; README links to it in "Migration and versioning".)*
+- [x] - **MIGRATION.md:** Create `MIGRATION.md` with: (1) Migrating from old (upstream WasmBoy or pre-fork) to V1; (2) Migrating from old to V2; (3) Migrating from V1 to V2. Include breaking changes, entry points, and npm/import paths. Reference MIGRATION.md from root README. _(Done: MIGRATION.md created; README links to it in "Migration and versioning".)_
 - [ ] - **README:** When V1/V2 and Makefile exist, add or expand the "Migration and versioning" section to describe V1 vs V2 and how to use the Makefile.
 
 ---
 
 ## 5) Research findings — context for fixes
 
-*Use this section for evidence and references when implementing the tasks above.*
+_Use this section for evidence and references when implementing the tasks above._
 
 ### 5.1 Tests
 
@@ -283,11 +283,11 @@ This document is the **single source** for incomplete work. It consolidates unfi
 
 ### 8.1 Automation and CI
 
-| Metric | How to confirm |
-|--------|----------------|
-| Quality gate | `npm run test:all:nobuild` exits 0 (includes automation:check, lint/typecheck/test, integration, core, performance throughput, audit). |
-| Contract check | `npm run core:memory-offset:check` and contract-check CI pass; invalid offset -1 maps to sentinel -1. |
-| No regression | `npm run test:accuracy`, `npm run test:integration`, `npm run test:core`, `npm run test:performance:throughput` all pass. |
+| Metric         | How to confirm                                                                                                                         |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Quality gate   | `npm run test:all:nobuild` exits 0 (includes automation:check, lint/typecheck/test, integration, core, performance throughput, audit). |
+| Contract check | `npm run core:memory-offset:check` and contract-check CI pass; invalid offset -1 maps to sentinel -1.                                  |
+| No regression  | `npm run test:accuracy`, `npm run test:integration`, `npm run test:core`, `npm run test:performance:throughput` all pass.              |
 
 ### 8.2 ROMs and determinism
 

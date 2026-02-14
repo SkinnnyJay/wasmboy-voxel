@@ -22,6 +22,9 @@ export class Serial {
   static isShiftClockInternal: boolean = false;
   static isClockSpeedFast: boolean = false;
   static transferStartFlag: boolean = false;
+  static hasConnectedPeer: boolean = false;
+  static incomingByte: i32 = 0xff;
+  static outgoingByte: i32 = 0x00;
 
   static updateTransferControl(value: i32): boolean {
     Serial.isShiftClockInternal = checkBitOnByte(0, value);
@@ -38,6 +41,15 @@ export class Serial {
 export function initializeSerial(): void {
   Serial.currentCycles = 0x00;
   Serial.numberOfBitsTransferred = 0;
+  Serial.hasConnectedPeer = false;
+  Serial.incomingByte = 0xff;
+  Serial.outgoingByte = 0x00;
+
+  if (Cpu.BootROMEnabled) {
+    eightBitStoreIntoGBMemory(0xff02, 0x00);
+    Serial.updateTransferControl(0x00);
+    return;
+  }
 
   if (Cpu.GBCEnabled) {
     // FF01 = 0x00
@@ -50,13 +62,25 @@ export function initializeSerial(): void {
   }
 }
 
-// TODO: Finish serial
-// See minimal serial: https://github.com/binji/binjgb/commit/64dece05c4ef5a052c4b9b75eb3ddbbfc6677cbe
+export function setSerialIncomingByte(value: i32): void {
+  Serial.hasConnectedPeer = true;
+  Serial.incomingByte = value & 0xff;
+}
+
+export function clearSerialIncomingByte(): void {
+  Serial.hasConnectedPeer = false;
+  Serial.incomingByte = 0xff;
+}
+
+export function getSerialOutgoingByte(): i32 {
+  return Serial.outgoingByte & 0xff;
+}
+
 // Inlined because closure compiler inlines
 export function updateSerial(numberOfCycles: i32): void {
   // If we aren't starting our transfer, or transferring,
   // return
-  if (!Serial.transferStartFlag) {
+  if (!Serial.transferStartFlag || !Serial.isShiftClockInternal) {
     return;
   }
 
@@ -74,12 +98,19 @@ export function updateSerial(numberOfCycles: i32): void {
 
     Serial.currentCycles = curCycles;
     if (_checkFallingEdgeDetector(oldCycles, curCycles)) {
-      // TODO: Since no actual connection, always transfer 1
-      // Need to fix this
       let memoryLocationSerialTransferData = Serial.memoryLocationSerialTransferData;
       let transferData = eightBitLoadFromGBMemory(memoryLocationSerialTransferData);
-      transferData = (transferData << 1) + 1;
-      transferData = transferData & 0xff;
+
+      let outgoingBit = (transferData >> 7) & 0x01;
+      Serial.outgoingByte = ((Serial.outgoingByte << 1) | outgoingBit) & 0xff;
+
+      let incomingBit = 0x01;
+      if (Serial.hasConnectedPeer) {
+        incomingBit = (Serial.incomingByte >> 7) & 0x01;
+        Serial.incomingByte = (Serial.incomingByte << 1) & 0xff;
+      }
+
+      transferData = ((transferData << 1) | incomingBit) & 0xff;
       eightBitStoreIntoGBMemory(memoryLocationSerialTransferData, transferData);
       let numberOfBitsTransferred = Serial.numberOfBitsTransferred;
 
