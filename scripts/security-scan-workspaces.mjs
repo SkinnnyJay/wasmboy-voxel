@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
 import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
+import { attemptWindowsTimeoutTerminationFallback, resolveTimeoutKillSignal } from './subprocess-timeout-signals.mjs';
 
 const WORKSPACE_PATHS = ['.', 'packages/api', 'packages/cli', 'apps/debugger'];
 const FAIL_ON_VULNERABILITIES_FLAG = '--fail-on-vulnerabilities';
@@ -185,11 +186,12 @@ function runAuditForWorkspace(repoRoot, workspacePath, timeoutMs) {
     encoding: 'utf8',
     env: process.env,
     timeout: timeoutMs,
-    killSignal: 'SIGTERM',
+    killSignal: resolveTimeoutKillSignal(),
   });
 
   if (result.error) {
     if (result.error.code === 'ETIMEDOUT') {
+      attemptWindowsTimeoutTerminationFallback(result.pid);
       throw new Error(`npm audit timed out in ${workspacePath} after ${String(timeoutMs)}ms.`);
     }
     throw new Error(`Failed to run npm audit in ${workspacePath}: ${result.error.message}`);

@@ -3,14 +3,12 @@
 import typescript from 'rollup-plugin-typescript';
 import babel from 'rollup-plugin-babel';
 import bundleSize from 'rollup-plugin-bundle-size';
+import fs from 'node:fs';
 
 // TODO(torch2424), write a file in core/portable/instantiateWasm.js
 // That simply gives back our wasmInstance and WasmByte Memory already instantiated
 // That way it will be as if we got the Core directly from JS like the TS build.
 // Rename core.*.js to core.ts.*.js, and follow same for wasm
-
-// Fs for some extra needed files
-const fs = require('fs');
 
 let typescriptPluginOptions = {
   tsconfig: './core/tsconfig.json',

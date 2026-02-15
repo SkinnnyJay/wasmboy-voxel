@@ -1,0 +1,1 @@
+import './wasmboy.worker.js';

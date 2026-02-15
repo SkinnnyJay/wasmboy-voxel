@@ -2,22 +2,21 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
+import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
+import { runSubprocess } from './subprocess-test-harness.mjs';
 
 const scriptsDirectory = path.dirname(fileURLToPath(import.meta.url));
 const cleanArtifactsScriptPath = path.join(scriptsDirectory, 'clean-accidental-build-artifacts.mjs');
 const guardArtifactsScriptPath = path.join(scriptsDirectory, 'guard-generated-artifacts-precommit.mjs');
+installTempDirectoryCleanup(fs);
 
 function runScript(scriptPath, args, options = {}) {
-  return spawnSync(process.execPath, [scriptPath, ...args], {
-    cwd: options.cwd ?? process.cwd(),
-    encoding: 'utf8',
-    env: {
-      ...process.env,
-      ...options.env,
-    },
+  return runSubprocess(process.execPath, [scriptPath, ...args], {
+    cwd: options.cwd,
+    env: options.env,
+    description: `node ${path.basename(scriptPath)}`,
   });
 }
 
@@ -42,10 +41,9 @@ function assertSummaryCountConsistency(summaryPayload, countFieldName, listField
 }
 
 function runGit(args, cwd) {
-  const result = spawnSync('git', args, {
+  const result = runSubprocess('git', args, {
     cwd,
-    encoding: 'utf8',
-    env: process.env,
+    description: `git ${args.join(' ')}`,
   });
 
   if (result.status !== 0) {

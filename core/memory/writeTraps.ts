@@ -2,12 +2,12 @@ import { Memory } from './memory';
 import { Cpu } from '../cpu/index';
 import { Graphics } from '../graphics/graphics';
 import { Palette, writeColorPaletteToMemory, Lcd } from '../graphics/index';
-import { batchProcessAudio, SoundRegisterWriteTraps, Channel3 } from '../sound/index';
+import { batchProcessAudio, SoundRegisterWriteTraps, Channel3, Sound } from '../sound/index';
 import { Timers, batchProcessTimers } from '../timers/index';
 import { Serial } from '../serial/serial';
 import { Interrupts } from '../interrupts/index';
 import { Joypad } from '../joypad/index';
-import { handleBanking } from './banking';
+import { handleBanking, writeMbc3RtcRegister } from './banking';
 import { eightBitStoreIntoGBMemory } from './store';
 import { startDmaTransfer, startHdmaTransfer } from './dma';
 
@@ -64,6 +64,18 @@ export function checkWriteTraps(offset: i32, value: i32): boolean {
     return true;
   }
 
+  if (
+    offset >= Memory.cartridgeRamLocation &&
+    offset < Memory.internalRamBankZeroLocation &&
+    Memory.isMBC3 &&
+    Memory.mbc3RtcRegisterSelect >= 0
+  ) {
+    if (Memory.isRamBankingEnabled) {
+      writeMbc3RtcRegister(value);
+    }
+    return false;
+  }
+
   // Be sure to copy everything in EchoRam to Work Ram
   // Codeslinger: The ECHO memory region (0xE000-0xFDFF) is quite different because any data written here is also written in the equivelent ram memory region 0xC000-0xDDFF.
   // Hence why it is called echo
@@ -104,15 +116,17 @@ export function checkWriteTraps(offset: i32, value: i32): boolean {
 
   // Sound
   // http://gbdev.gg8.se/wiki/articles/Gameboy_sound_hardware#Registers
-  if (offset >= 0xff10 && offset <= 0xff26) {
+  if (offset >= Sound.memoryLocationSoundRegisterStart && offset <= Sound.memoryLocationSoundRegisterEnd) {
     batchProcessAudio();
     return SoundRegisterWriteTraps(offset, value);
   }
 
-  // FF27 - FF2F not used
+  if (offset >= Sound.memoryLocationSoundUnusedStart && offset <= Sound.memoryLocationSoundUnusedEnd) {
+    return false;
+  }
 
   // Final Wave Table for Channel 3
-  if (offset >= 0xff30 && offset <= 0xff3f) {
+  if (offset >= Sound.memoryLocationWaveTableStart && offset <= Sound.memoryLocationWaveTableEnd) {
     batchProcessAudio();
 
     // Need to handle the write if channel 3 is enabled

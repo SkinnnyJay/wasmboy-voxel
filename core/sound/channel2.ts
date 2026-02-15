@@ -259,8 +259,6 @@ export class Channel2 {
   // Function to reset our timer, useful for GBC double speed mode
   static resetTimer(): void {
     let frequencyTimer = (2048 - Channel2.frequency) << 2;
-
-    // TODO: Ensure this is correct for GBC Double Speed Mode
     Channel2.frequencyTimer = frequencyTimer << (<i32>Cpu.GBCDoubleSpeed);
   }
 

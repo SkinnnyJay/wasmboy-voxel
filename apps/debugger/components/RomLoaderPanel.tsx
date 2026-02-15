@@ -38,8 +38,9 @@ export function resolveRomSelection(file: RomSelection | null): RomLoadSelection
   if (!SUPPORTED_EXTENSIONS.has(extension)) {
     return {
       romName: file.name,
-      loadError: `Unsupported ROM format "${extension ||
-        '[no extension]'}". Expected .gb, .gbc, or .zip.`,
+      loadError: `Unsupported ROM format "${
+        extension || '[no extension]'
+      }". Expected .gb, .gbc, or .zip.`,
       eventPayload: null,
     };
   }
@@ -67,7 +68,7 @@ export function RomLoaderPanel() {
   const [romName, setRomName] = useState<string>('No ROM loaded');
   const [loadError, setLoadError] = useState<string | null>(null);
   const acceptValue = useMemo(() => SUPPORTED_ACCEPT, []);
-  const appendInputEvent = useDebuggerStore(state => state.appendInputEvent);
+  const appendInputEvent = useDebuggerStore((state) => state.appendInputEvent);
 
   return (
     <section className="panel">
@@ -76,7 +77,7 @@ export function RomLoaderPanel() {
       <input
         type="file"
         accept={acceptValue}
-        onChange={event => {
+        onChange={(event) => {
           const file = event.target.files?.[0];
           const selection = resolveRomSelection(file ? { name: file.name, size: file.size } : null);
           setRomName(selection.romName);

@@ -18,6 +18,8 @@ import {
 import { checkBitOnByte, log } from '../helpers/index';
 import { i32Portable } from '../portable/portable';
 
+const DMG_WAVE_RAM_ACCESS_WINDOW_CYCLES: i32 = 2;
+
 export class Channel3 {
   // Cycle Counter for our sound accumulator
   static cycleCounter: i32 = 0;
@@ -148,6 +150,7 @@ export class Channel3 {
   static volumeCode: i32 = 0x00;
   static volumeCodeChanged: boolean = false;
   static sampleBuffer: i32 = 0x00;
+  static dmgWaveRamAccessWindowCycles: i32 = 0x00;
 
   // Save States
 
@@ -187,6 +190,7 @@ export class Channel3 {
     store<u8>(getSaveStateMemoryOffset(0x25, Channel3.saveStateSlot), Channel3.volumeCode);
     storeBooleanDirectlyToWasmMemory(getSaveStateMemoryOffset(0x26, Channel3.saveStateSlot), Channel3.volumeCodeChanged);
     store<i32>(getSaveStateMemoryOffset(0x27, Channel3.saveStateSlot), Channel3.sampleBuffer);
+    store<i32>(getSaveStateMemoryOffset(0x2b, Channel3.saveStateSlot), Channel3.dmgWaveRamAccessWindowCycles);
   }
 
   // Function to load the save state from memory
@@ -223,6 +227,7 @@ export class Channel3 {
     Channel3.volumeCode = load<i32>(getSaveStateMemoryOffset(0x25, Channel3.saveStateSlot));
     Channel3.volumeCodeChanged = loadBooleanDirectlyFromWasmMemory(getSaveStateMemoryOffset(0x26, Channel3.saveStateSlot));
     Channel3.sampleBuffer = load<i32>(getSaveStateMemoryOffset(0x27, Channel3.saveStateSlot));
+    Channel3.dmgWaveRamAccessWindowCycles = load<i32>(getSaveStateMemoryOffset(0x2b, Channel3.saveStateSlot));
   }
 
   // Memory Read Trap
@@ -234,8 +239,9 @@ export class Channel3 {
     // if made within a couple of clocks of the wave channel accessing wave RAM;
     // if made at any other time, reads return $FF and writes have no effect.
 
-    // TODO: Handle DMG case
-
+    if (!Cpu.GBCEnabled && Channel3.dmgWaveRamAccessWindowCycles <= 0) {
+      return 0xff;
+    }
     return readCurrentSampleByteFromWaveRam();
   }
 
@@ -247,6 +253,10 @@ export class Channel3 {
     // accessing the current byte selected by the waveform position. Further, on the DMG accesses will only work in this manner,
     // if made within a couple of clocks of the wave channel accessing wave RAM;
     // if made at any other time, reads return $FF and writes have no effect.
+
+    if (!Cpu.GBCEnabled && Channel3.dmgWaveRamAccessWindowCycles <= 0) {
+      return;
+    }
 
     // Thus we want to write the value to the current sample position
     // Will Find the position, and knock off any remainder
@@ -265,6 +275,7 @@ export class Channel3 {
 
     // The volume code changed
     Channel3.volumeCodeChanged = true;
+    Channel3.dmgWaveRamAccessWindowCycles = 0;
   }
 
   // Function to get a sample using the cycle counter on the channel
@@ -277,12 +288,19 @@ export class Channel3 {
   // Function to reset our timer, useful for GBC double speed mode
   static resetTimer(): void {
     let frequencyTimer = (2048 - Channel3.frequency) << 1;
-
-    // TODO: Ensure this is correct for GBC Double Speed Mode
     Channel3.frequencyTimer = frequencyTimer << (<i32>Cpu.GBCDoubleSpeed);
   }
 
   static getSample(numberOfCycles: i32): i32 {
+    let waveRamAccessWindowCycles = Channel3.dmgWaveRamAccessWindowCycles;
+    if (waveRamAccessWindowCycles > 0) {
+      waveRamAccessWindowCycles -= numberOfCycles;
+      if (waveRamAccessWindowCycles < 0) {
+        waveRamAccessWindowCycles = 0;
+      }
+      Channel3.dmgWaveRamAccessWindowCycles = waveRamAccessWindowCycles;
+    }
+
     // Check if we are enabled
     if (!Channel3.isEnabled || !Channel3.isDacEnabled) {
       // Return silence
@@ -426,6 +444,7 @@ function advanceWavePositionAndSampleBuffer(): void {
   // Load the next sample byte from wave ram,
   // into the sample buffer
   Channel3.sampleBuffer = readCurrentSampleByteFromWaveRam();
+  Channel3.dmgWaveRamAccessWindowCycles = DMG_WAVE_RAM_ACCESS_WINDOW_CYCLES;
 }
 
 function readCurrentSampleByteFromWaveRam(): i32 {

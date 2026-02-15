@@ -2,14 +2,16 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { runSubprocess } from './subprocess-test-harness.mjs';
+import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
 import { findConsoleUsageViolations, parseLibraryConsoleUsageArgs, runLibraryConsoleUsageCheck } from './check-library-console-usage.mjs';
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirectory = path.dirname(currentFilePath);
 const checkLibraryConsoleUsageScriptPath = path.join(currentDirectory, 'check-library-console-usage.mjs');
+installTempDirectoryCleanup(fs);
 
 function createTempRepoRoot(prefix) {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
@@ -57,10 +59,9 @@ test('parseLibraryConsoleUsageArgs rejects malformed and duplicate arguments', (
 });
 
 test('check-library-console-usage script prints usage for --help', () => {
-  const result = spawnSync(process.execPath, [checkLibraryConsoleUsageScriptPath, '--help'], {
+  const result = runSubprocess(process.execPath, [checkLibraryConsoleUsageScriptPath, '--help'], {
     cwd: process.cwd(),
-    encoding: 'utf8',
-    env: process.env,
+    description: 'check-library-console-usage help',
   });
 
   assert.equal(result.status, 0);

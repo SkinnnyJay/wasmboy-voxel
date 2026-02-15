@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { filterChangesetStatusOutput } from './changeset-status-ci-lib.mjs';
 import { resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
 import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
+import { attemptWindowsTimeoutTerminationFallback, resolveTimeoutKillSignal } from './subprocess-timeout-signals.mjs';
 
 const DEFAULT_TIMEOUT_MS = 120000;
 const TIMEOUT_ENV_VARIABLE = 'CHANGESET_STATUS_CI_TIMEOUT_MS';
@@ -127,11 +128,12 @@ try {
 const statusResult = spawnSync('changeset', ['status'], {
   encoding: 'utf8',
   timeout: timeoutMs,
-  killSignal: 'SIGTERM',
+  killSignal: resolveTimeoutKillSignal(),
 });
 
 if (statusResult.error) {
   if (statusResult.error.code === 'ETIMEDOUT') {
+    attemptWindowsTimeoutTerminationFallback(statusResult.pid);
     console.error(`[changeset:status:ci] changeset status timed out after ${timeoutMs}ms.`);
     process.exit(1);
   }

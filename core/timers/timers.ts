@@ -135,7 +135,6 @@ export class Timers {
   static readonly saveStateSlot: i32 = 5;
 
   // Function to save the state of the class
-  // TODO: Save state for new properties on Timers
   static saveState(): void {
     // Batch Processing
     store<i32>(getSaveStateMemoryOffset(0x00, Timers.saveStateSlot), Timers.currentCycles);
@@ -231,9 +230,21 @@ export function initializeTimers(): void {
 // Only checked on writes
 // Function to batch process our Timers after we skipped so many cycles
 export function batchProcessTimers(): void {
-  // TODO: Did a timer rewrite, make a proper batch processing
-  // For timers
-  updateTimers(Timers.currentCycles);
+  let remainingCycles = Timers.currentCycles;
+  if (remainingCycles <= 0) {
+    Timers.currentCycles = 0;
+    return;
+  }
+
+  // Process in deterministic bounded chunks so very large batches don't
+  // monopolize a single trap call.
+  const maxCyclesPerBatch = Timers.batchProcessCycles();
+  while (remainingCycles > 0) {
+    const cyclesForBatch = remainingCycles > maxCyclesPerBatch ? maxCyclesPerBatch : remainingCycles;
+    updateTimers(cyclesForBatch);
+    remainingCycles -= cyclesForBatch;
+  }
+
   Timers.currentCycles = 0;
 }
 

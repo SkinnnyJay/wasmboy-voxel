@@ -29,6 +29,14 @@ import { i32Portable } from '../portable/portable';
 
 const SAMPLE_PRECISION: i32 = 100000;
 const SAMPLE_MAX_DIVIDER: i32 = i32Portable((120 * SAMPLE_PRECISION) / 254);
+const CHANNEL_SAMPLE_SILENCE: i32 = 15;
+const MIXED_CHANNEL_SAMPLE_SILENCE: i32 = CHANNEL_SAMPLE_SILENCE * 4;
+const VIN_INPUT_MIN_SAMPLE: i32 = 0;
+const VIN_INPUT_MAX_SAMPLE: i32 = 30;
+const MIXED_CHANNEL_SAMPLE_MIN: i32 = 0;
+const MIXED_CHANNEL_SAMPLE_MAX: i32 = 120;
+const UNSIGNED_AUDIO_SAMPLE_MIN: i32 = 0;
+const UNSIGNED_AUDIO_SAMPLE_MAX: i32 = 254;
 
 export class Sound {
   // Current cycles
@@ -36,6 +44,12 @@ export class Sound {
   // https://github.com/binji/binjgb/commit/e028f45e805bc0b0aa4697224a209f9ae514c954
   // TODO: May Also need to do this for Reads
   static currentCycles: i32 = 0;
+  static readonly memoryLocationSoundRegisterStart: i32 = 0xff10;
+  static readonly memoryLocationSoundRegisterEnd: i32 = 0xff26;
+  static readonly memoryLocationSoundUnusedStart: i32 = 0xff27;
+  static readonly memoryLocationSoundUnusedEnd: i32 = 0xff2f;
+  static readonly memoryLocationWaveTableStart: i32 = 0xff30;
+  static readonly memoryLocationWaveTableEnd: i32 = 0xff3f;
 
   // Number of cycles to run in each batch process
   // This number should be in sync so that sound doesn't run too many cyles at once
@@ -52,11 +66,35 @@ export class Sound {
 
   // Channel control / On-OFF / Volume (RW)
   static readonly memoryLocationNR50: i32 = 0xff24;
+  static NR50IsVinEnabledOnLeftOutput: boolean = false;
+  static NR50IsVinEnabledOnRightOutput: boolean = false;
   static NR50LeftMixerVolume: i32 = 0;
   static NR50RightMixerVolume: i32 = 0;
+  static vinInputSample: i32 = CHANNEL_SAMPLE_SILENCE;
   static updateNR50(value: i32): void {
+    Sound.NR50IsVinEnabledOnLeftOutput = checkBitOnByte(7, value);
     Sound.NR50LeftMixerVolume = (value >> 4) & 0x07;
+    Sound.NR50IsVinEnabledOnRightOutput = checkBitOnByte(3, value);
     Sound.NR50RightMixerVolume = value & 0x07;
+  }
+  static getNR50ReadValue(): i32 {
+    let register = 0x00;
+    register |= Sound.NR50IsVinEnabledOnLeftOutput ? 0x80 : 0x00;
+    register |= (Sound.NR50LeftMixerVolume & 0x07) << 4;
+    register |= Sound.NR50IsVinEnabledOnRightOutput ? 0x08 : 0x00;
+    register |= Sound.NR50RightMixerVolume & 0x07;
+    return register;
+  }
+  static setVinInputSample(value: i32): void {
+    if (value < VIN_INPUT_MIN_SAMPLE) {
+      Sound.vinInputSample = VIN_INPUT_MIN_SAMPLE;
+      return;
+    }
+    if (value > VIN_INPUT_MAX_SAMPLE) {
+      Sound.vinInputSample = VIN_INPUT_MAX_SAMPLE;
+      return;
+    }
+    Sound.vinInputSample = value;
   }
 
   // 0xFF25 selects which output each channel goes to, Referred to as NR51
@@ -162,6 +200,11 @@ export class Sound {
     store<u8>(getSaveStateMemoryOffset(0x21, Sound.saveStateSlot), SoundAccumulator.rightChannelSampleUnsignedByte);
     storeBooleanDirectlyToWasmMemory(getSaveStateMemoryOffset(0x22, Sound.saveStateSlot), SoundAccumulator.mixerVolumeChanged);
     storeBooleanDirectlyToWasmMemory(getSaveStateMemoryOffset(0x23, Sound.saveStateSlot), SoundAccumulator.mixerEnabledChanged);
+
+    // VIN
+    storeBooleanDirectlyToWasmMemory(getSaveStateMemoryOffset(0x24, Sound.saveStateSlot), Sound.NR50IsVinEnabledOnLeftOutput);
+    storeBooleanDirectlyToWasmMemory(getSaveStateMemoryOffset(0x25, Sound.saveStateSlot), Sound.NR50IsVinEnabledOnRightOutput);
+    store<i32>(getSaveStateMemoryOffset(0x26, Sound.saveStateSlot), Sound.vinInputSample);
   }
 
   // Function to load the save state from memory
@@ -204,6 +247,11 @@ export class Sound {
     SoundAccumulator.mixerVolumeChanged = loadBooleanDirectlyFromWasmMemory(getSaveStateMemoryOffset(0x22, Sound.saveStateSlot));
     SoundAccumulator.mixerEnabledChanged = loadBooleanDirectlyFromWasmMemory(getSaveStateMemoryOffset(0x23, Sound.saveStateSlot));
 
+    // VIN
+    Sound.NR50IsVinEnabledOnLeftOutput = loadBooleanDirectlyFromWasmMemory(getSaveStateMemoryOffset(0x24, Sound.saveStateSlot));
+    Sound.NR50IsVinEnabledOnRightOutput = loadBooleanDirectlyFromWasmMemory(getSaveStateMemoryOffset(0x25, Sound.saveStateSlot));
+    Sound.setVinInputSample(load<i32>(getSaveStateMemoryOffset(0x26, Sound.saveStateSlot)));
+
     // Finally clear the audio buffer
     clearAudioBuffer();
   }
@@ -215,8 +263,11 @@ export class Sound {
 export function initializeSound(): void {
   // Reset Stateful variables
   Sound.currentCycles = 0;
+  Sound.NR50IsVinEnabledOnLeftOutput = false;
+  Sound.NR50IsVinEnabledOnRightOutput = false;
   Sound.NR50LeftMixerVolume = 0;
   Sound.NR50RightMixerVolume = 0;
+  Sound.vinInputSample = CHANNEL_SAMPLE_SILENCE;
   Sound.NR51IsChannel1EnabledOnLeftOutput = true;
   Sound.NR51IsChannel2EnabledOnLeftOutput = true;
   Sound.NR51IsChannel3EnabledOnLeftOutput = true;
@@ -290,6 +341,10 @@ export function getNumberOfSamplesInAudioBuffer(): i32 {
 // Function to reset the audio queue
 export function clearAudioBuffer(): void {
   Sound.audioQueueIndex = 0;
+}
+
+export function setVinInputSample(sample: i32): void {
+  Sound.setVinInputSample(sample);
 }
 
 // Inlined because closure compiler inlines
@@ -457,8 +512,6 @@ export function mixChannelSamples(
   // I push out 1024 samples at a time and use 96000 hz sampling rate, so I guess i'm a bit less than one frame,
   // but I let the queue fill up with 4 x 1024 samples before I start waiting for the audio
 
-  // TODO: Vin Mixing
-
   SoundAccumulator.mixerVolumeChanged = false;
 
   // Get our channel volume for left/right
@@ -479,6 +532,14 @@ export function mixChannelSamples(
   rightChannelSample += Sound.NR51IsChannel3EnabledOnRightOutput ? channel3Sample : 15;
   rightChannelSample += Sound.NR51IsChannel4EnabledOnRightOutput ? channel4Sample : 15;
 
+  let vinInputDelta = Sound.vinInputSample - CHANNEL_SAMPLE_SILENCE;
+  if (Sound.NR50IsVinEnabledOnLeftOutput) {
+    leftChannelSample += vinInputDelta;
+  }
+  if (Sound.NR50IsVinEnabledOnRightOutput) {
+    rightChannelSample += vinInputDelta;
+  }
+
   // Update our accumulator
   SoundAccumulator.mixerEnabledChanged = false;
   SoundAccumulator.needToRemixSamples = false;
@@ -491,8 +552,14 @@ export function mixChannelSamples(
 
   // Convert our samples from unsigned 32 to unsigned byte
   // Reason being, We want to be able to pass in wasm memory as usigned byte. Javascript will handle the conversion back
-  let leftChannelSampleUnsignedByte: i32 = getSampleAsUnsignedByte(leftChannelSample, Sound.NR50LeftMixerVolume + 1);
-  let rightChannelSampleUnsignedByte: i32 = getSampleAsUnsignedByte(rightChannelSample, Sound.NR50RightMixerVolume + 1);
+  let leftChannelSampleUnsignedByte: i32 = getSampleAsUnsignedByte(
+    clampMixedChannelSample(leftChannelSample),
+    Sound.NR50LeftMixerVolume + 1,
+  );
+  let rightChannelSampleUnsignedByte: i32 = getSampleAsUnsignedByte(
+    clampMixedChannelSample(rightChannelSample),
+    Sound.NR50RightMixerVolume + 1,
+  );
 
   // Save these samples in the accumulator
   SoundAccumulator.leftChannelSampleUnsignedByte = leftChannelSampleUnsignedByte;
@@ -504,7 +571,7 @@ export function mixChannelSamples(
 function getSampleAsUnsignedByte(sample: i32, mixerVolume: i32): i32 {
   // If the sample is silence, return silence as unsigned byte
   // Silence is common, and should be checked for performance
-  if (sample === 60) {
+  if (sample === MIXED_CHANNEL_SAMPLE_SILENCE) {
     return 127;
   }
 
@@ -524,7 +591,24 @@ function getSampleAsUnsignedByte(sample: i32, mixerVolume: i32): i32 {
   // Ensure we have an i32 and not a float for JS builds
   convertedSample = i32Portable(convertedSample);
 
+  if (convertedSample < UNSIGNED_AUDIO_SAMPLE_MIN) {
+    return UNSIGNED_AUDIO_SAMPLE_MIN;
+  }
+  if (convertedSample > UNSIGNED_AUDIO_SAMPLE_MAX) {
+    return UNSIGNED_AUDIO_SAMPLE_MAX;
+  }
+
   return convertedSample;
+}
+
+function clampMixedChannelSample(sample: i32): i32 {
+  if (sample < MIXED_CHANNEL_SAMPLE_MIN) {
+    return MIXED_CHANNEL_SAMPLE_MIN;
+  }
+  if (sample > MIXED_CHANNEL_SAMPLE_MAX) {
+    return MIXED_CHANNEL_SAMPLE_MAX;
+  }
+  return sample;
 }
 
 // Function to set our left and right channels at the correct queue index

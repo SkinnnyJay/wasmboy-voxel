@@ -18,6 +18,18 @@ test('validateRequiredArgumentValue accepts ordinary values', () => {
   });
 });
 
+test('validateRequiredArgumentValue accepts UTF-16 text and CRLF payloads', () => {
+  assert.doesNotThrow(() => {
+    validateRequiredArgumentValue('🧪 diagnostics\r\nline-two', {
+      flagName: '--message',
+      knownArgs: KNOWN_ARGS,
+      allowDoubleDashValue: true,
+      allowWhitespaceOnly: true,
+      allowedKnownValues: HELP_ARGS,
+    });
+  });
+});
+
 test('validateRequiredArgumentValue rejects missing values', () => {
   assert.throws(
     () =>
@@ -750,6 +762,19 @@ test('readRequiredArgumentValue returns and validates following token', () => {
   });
 
   assert.equal(value, '00050');
+});
+
+test('readRequiredArgumentValue preserves UTF-16 and CRLF argument tokens', () => {
+  const args = ['--message', '🧪 diagnostics\r\nline-two'];
+  const value = readRequiredArgumentValue(args, 0, {
+    flagName: '--message',
+    knownArgs: KNOWN_ARGS,
+    allowDoubleDashValue: true,
+    allowWhitespaceOnly: true,
+    allowedKnownValues: HELP_ARGS,
+  });
+
+  assert.equal(value, '🧪 diagnostics\r\nline-two');
 });
 
 test('readRequiredArgumentValue rejects non-array argv inputs', () => {

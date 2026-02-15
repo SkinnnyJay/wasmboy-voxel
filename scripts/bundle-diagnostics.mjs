@@ -2,8 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { globSync as globSyncPkg } from 'glob';
 import { spawnSync } from 'node:child_process';
+import { create as createTarArchive } from 'tar';
 import { resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
 import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
+import { attemptWindowsTimeoutTerminationFallback, resolveTimeoutKillSignal } from './subprocess-timeout-signals.mjs';
 
 /**
  * Usage:
@@ -300,20 +302,21 @@ function createPlaceholderFile(outputPath, message) {
   return placeholderPath;
 }
 
-function createArchive(outputPath, files, timeoutMs) {
+function createArchiveWithTarCommand(outputPath, files, timeoutMs) {
   const archiveResult = spawnSync('tar', ['-czf', outputPath, '--', ...files], {
     stdio: 'inherit',
     timeout: timeoutMs,
-    killSignal: 'SIGTERM',
+    killSignal: resolveTimeoutKillSignal(),
   });
 
   if (archiveResult.error) {
     if (archiveResult.error.code === 'ETIMEDOUT') {
+      attemptWindowsTimeoutTerminationFallback(archiveResult.pid);
       throw new Error(`tar timed out after ${timeoutMs}ms`);
     }
 
     if (archiveResult.error.code === 'ENOENT') {
-      throw new Error('tar command was not found in PATH');
+      return false;
     }
 
     throw archiveResult.error;
@@ -322,6 +325,53 @@ function createArchive(outputPath, files, timeoutMs) {
   if (archiveResult.status !== 0) {
     throw new Error(`tar exited with status ${archiveResult.status ?? 'unknown'}`);
   }
+
+  return true;
+}
+
+/**
+ * @param {Promise<void>} task
+ * @param {number} timeoutMs
+ */
+async function withTimeout(task, timeoutMs) {
+  let timeoutId;
+  const timeoutTask = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(`node tar fallback timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
+  });
+
+  try {
+    await Promise.race([task, timeoutTask]);
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  }
+}
+
+async function createArchiveWithNodeFallback(outputPath, files, timeoutMs) {
+  const archiveTask = createTarArchive(
+    {
+      cwd: process.cwd(),
+      file: outputPath,
+      gzip: true,
+      portable: true,
+      noMtime: true,
+    },
+    files,
+  );
+  await withTimeout(archiveTask, timeoutMs);
+}
+
+async function createArchive(outputPath, files, timeoutMs) {
+  const usedTarCommand = createArchiveWithTarCommand(outputPath, files, timeoutMs);
+  if (usedTarCommand) {
+    return;
+  }
+
+  process.stdout.write('[bundle-diagnostics] tar command not found; using Node tar fallback.\n');
+  await createArchiveWithNodeFallback(outputPath, files, timeoutMs);
 }
 
 function toErrorMessage(error) {
@@ -333,7 +383,7 @@ function failWithUsage(message) {
   console.error(USAGE_TEXT);
 }
 
-function main() {
+async function main() {
   let args;
   try {
     args = parseArgs(process.argv.slice(2));
@@ -374,7 +424,7 @@ function main() {
     placeholderFile = matchedFiles.length > 0 ? null : createPlaceholderFile(args.output, args.message);
     const filesToArchive = matchedFiles.length > 0 ? matchedFiles : [placeholderFile];
 
-    createArchive(args.output, filesToArchive, tarTimeoutMs);
+    await createArchive(args.output, filesToArchive, tarTimeoutMs);
   } catch (error) {
     console.error(`[bundle-diagnostics] ${toErrorMessage(error)}`);
     process.exitCode = 1;
@@ -390,4 +440,7 @@ function main() {
   }
 }
 
-main();
+main().catch(error => {
+  console.error(`[bundle-diagnostics] ${toErrorMessage(error)}`);
+  process.exitCode = 1;
+});

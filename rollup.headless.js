@@ -7,7 +7,9 @@ import babel from 'rollup-plugin-babel';
 import json from 'rollup-plugin-json';
 
 const plugins = [
-  resolve(),
+  resolve({
+    extensions: ['.mjs', '.js', '.json', '.node', '.ts'],
+  }),
   commonjs(),
   json(),
   babel({
@@ -18,7 +20,7 @@ const plugins = [
 
 export default [
   {
-    input: 'lib/headless/index.js',
+    input: 'lib/headless/index.ts',
     output: {
       file: 'dist/wasmboy.headless.esm.js',
       format: 'es',
@@ -28,7 +30,7 @@ export default [
     plugins,
   },
   {
-    input: 'lib/headless/index.js',
+    input: 'lib/headless/index.ts',
     output: {
       file: 'dist/wasmboy.headless.cjs.cjs',
       format: 'cjs',

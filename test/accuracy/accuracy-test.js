@@ -1,5 +1,9 @@
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+
 // Common test functions
-const commonTest = require('../common-test');
+const commonTest = require('../common-test.cjs');
 
 // Wasm Boy library
 const WasmBoy = require('../../dist/wasmboy.wasm.cjs.cjs').WasmBoy;
@@ -11,7 +15,7 @@ const fs = require('fs');
 const assert = require('assert');
 
 // Golden file handling
-const { goldenFileCompareOrCreate, goldenImageDataArrayCompare } = require('../golden-compare');
+const { goldenFileCompareOrCreate, goldenImageDataArrayCompare } = require('../golden-compare.cjs');
 
 // Some Timeouts for specified test roms
 const TEST_ROM_DEFAULT_TIMEOUT = 7500;
@@ -25,7 +29,7 @@ console.log(`WasmBoy version: ${WasmBoy.getVersion()}`);
 WasmBoy.config({
   headless: true,
   gameboySpeed: 100.0,
-  isGbcEnabled: true
+  isGbcEnabled: true,
 });
 
 const resetWasmBoyAccuracy = async () => {
@@ -33,7 +37,7 @@ const resetWasmBoyAccuracy = async () => {
   await WasmBoy.reset({
     headless: true,
     gameboySpeed: 100.0,
-    isGbcEnabled: true
+    isGbcEnabled: true,
   });
 };
 
@@ -46,7 +50,7 @@ const resetWasmBoyPerformance = async () => {
     audioBatchProcessing: true,
     audioAccumulateSamples: true,
     tileRendering: true,
-    tileCaching: true
+    tileCaching: true,
   });
 };
 

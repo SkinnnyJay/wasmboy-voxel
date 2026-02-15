@@ -20,12 +20,32 @@ function isWindowsReservedExecutableName(executableName) {
 }
 
 /**
+ * @param {string} candidatePath
+ * @param {string} platform
+ */
+function hasWindowsReservedPathSegment(candidatePath, platform) {
+  if (platform !== 'win32') {
+    return false;
+  }
+
+  return candidatePath
+    .replace(/^\\\\\?\\?/u, '')
+    .split(/[\\/]+/u)
+    .some(pathSegment => pathSegment.length > 0 && isWindowsReservedExecutableName(pathSegment));
+}
+
+/**
  * @param {string} tempDirectory
  * @param {string} executableName
  * @param {string} body
  */
 export function writeFakeExecutable(tempDirectory, executableName, body) {
-  if (typeof tempDirectory !== 'string' || tempDirectory.trim().length === 0 || tempDirectory.includes('\0')) {
+  if (
+    typeof tempDirectory !== 'string' ||
+    tempDirectory.trim().length === 0 ||
+    tempDirectory.includes('\0') ||
+    hasWindowsReservedPathSegment(tempDirectory, process.platform)
+  ) {
     throw new Error(`Invalid temp directory: ${formatErrorValue(tempDirectory)}`);
   }
 

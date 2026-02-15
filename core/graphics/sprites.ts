@@ -1,6 +1,5 @@
 // Functions for rendering the sprites
 import { Graphics, loadFromVramBank, setPixelOnFrame } from './graphics';
-import { Lcd } from './lcd';
 import { Cpu } from '../cpu/index';
 import { getTileDataAddress } from './tiles';
 import { getColorizedGbHexColorFromPalette, getRgbColorFromPalette, getColorComponentFromRgb } from './palette';
@@ -13,7 +12,7 @@ import { eightBitLoadFromGBMemory } from '../memory/load';
 import { checkBitOnByte } from '../helpers/index';
 
 // Inlined because closure compiler inlines
-export function renderSprites(scanlineRegister: i32, useLargerSprites: boolean): void {
+export function renderSprites(scanlineRegister: i32, useLargerSprites: boolean, forceSpritesAboveBackground: boolean = false): void {
   // Need to loop through all 40 sprites to check their status
   // Going backwards since lower sprites draw over higher ones
   // Will fix dragon warrior 3 intro
@@ -37,8 +36,7 @@ export function renderSprites(scanlineRegister: i32, useLargerSprites: boolean):
     // Bit3   Tile VRAM-Bank  **CGB Mode Only**     (0=Bank 0, 1=Bank 1)
     // Bit2-0 Palette number  **CGB Mode Only**     (OBP0-7)
 
-    // Apply sprite X and Y offset
-    // TODO: Sprites are overflowing on x if less than 8
+    // Apply sprite X and Y offset.
     spriteYPosition -= 16;
     spriteXPosition -= 8;
 
@@ -46,13 +44,9 @@ export function renderSprites(scanlineRegister: i32, useLargerSprites: boolean):
     let spriteHeight = 8;
     if (useLargerSprites) {
       spriteHeight = 16;
-      // @binji says in 8x16 mode, even tileId always drawn first
-      // This will fix shantae sprites which always uses odd numbered indexes
-
-      // TODO: Do the actual Pandocs thing:
-      // "In 8x16 mode, the lower bit of the tile number is ignored. Ie. the upper 8x8 tile is "NN AND FEh", and the lower 8x8 tile is "NN OR 01h"."
-      // So just knock off the last bit? :)
-      spriteTileId -= spriteTileId & 1;
+      // Pandocs (OBJ 8x16): bit 0 of tile id is ignored.
+      // Upper tile is NN & FE, lower tile is NN | 01.
+      spriteTileId &= 0xfe;
     }
 
     // Find if our sprite is on the current scanline
@@ -69,17 +63,18 @@ export function renderSprites(scanlineRegister: i32, useLargerSprites: boolean):
       let flipSpriteY = checkBitOnByte(6, spriteAttributes);
       let flipSpriteX = checkBitOnByte(5, spriteAttributes);
 
-      // TODO: Torch2424 continue here.
-
       // Find which line on the sprite we are on
       let currentSpriteLine = scanlineRegister - spriteYPosition;
 
       // If we fliiped the Y axis on our sprite, need to read from memory backwards to acheive the same effect
       if (flipSpriteY) {
-        currentSpriteLine = spriteHeight - currentSpriteLine;
+        currentSpriteLine = spriteHeight - currentSpriteLine - 1;
+      }
 
-        // Bug fix for the flipped flies in link's awakening
-        currentSpriteLine -= 1;
+      // In 8x16 mode, choose upper/lower tile according to the selected line.
+      if (useLargerSprites) {
+        spriteTileId += currentSpriteLine >> 3;
+        currentSpriteLine &= 0x07;
       }
 
       // Each line of a tile takes two bytes of memory
@@ -121,14 +116,14 @@ export function renderSprites(scanlineRegister: i32, useLargerSprites: boolean):
           // Find our actual X pixel location on the gameboy "camera" view
           // This cannot be less than zero, i32 will overflow
           let spriteXPixelLocationInCameraView = spriteXPosition + (7 - tilePixel);
-          if (spriteXPixelLocationInCameraView >= 0 && spriteXPixelLocationInCameraView <= 160) {
+          if (spriteXPixelLocationInCameraView >= 0 && spriteXPixelLocationInCameraView < 160) {
             // There are two cases where wouldnt draw the pixel on top of the Bg/window
             // 1. if isSpritePriorityBehindWindowAndBackground, sprite can only draw over color 0
             // 2. if bit 2 of our priority is set, then BG-to-OAM Priority from pandoc
             //  is active, meaning BG tile will have priority above all OBJs
             //  (regardless of the priority bits in OAM memory)
-            // But if GBC and Bit 0 of LCDC is set, we always draw the object
-            let shouldShowFromLcdcPriority = isGbc && !Lcd.bgDisplayEnabled;
+            // On CGB, when LCDC bit 0 is cleared, BG/Window lose priority over sprites.
+            let shouldShowFromLcdcPriority = forceSpritesAboveBackground;
             let shouldHideFromOamPriority = false;
             let shouldHideFromBgPriority = false;
 

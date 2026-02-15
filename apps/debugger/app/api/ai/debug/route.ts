@@ -41,7 +41,7 @@ function sanitizeChecksums(checksums: unknown): Record<string, string> | null {
     oamDataHash: toStringOrFallback(checksums.oamDataHash),
   };
 
-  return Object.values(sanitized).every(value => value.length > 0) ? sanitized : null;
+  return Object.values(sanitized).every((value) => value.length > 0) ? sanitized : null;
 }
 
 function sanitizeEvents(events: unknown): Array<Record<string, unknown>> {
@@ -50,9 +50,9 @@ function sanitizeEvents(events: unknown): Array<Record<string, unknown>> {
   }
 
   return events
-    .filter(entry => isObjectRecord(entry))
-    .filter(entry => EVENT_TYPES.has(toStringOrFallback(entry.type)))
-    .map(entry => ({
+    .filter((entry) => isObjectRecord(entry))
+    .filter((entry) => EVENT_TYPES.has(toStringOrFallback(entry.type)))
+    .map((entry) => ({
       type: toStringOrFallback(entry.type),
       frameId: toFiniteNumber(entry.frameId, 0),
       timestampMs: toFiniteNumber(entry.timestampMs, 0),
@@ -66,14 +66,14 @@ function sanitizeSnapshots(snapshots: unknown): Array<Record<string, unknown>> {
   }
 
   return snapshots
-    .filter(entry => isObjectRecord(entry))
-    .map(entry => ({
+    .filter((entry) => isObjectRecord(entry))
+    .map((entry) => ({
       frameId: toFiniteNumber(entry.frameId, 0),
       timestampMs: toFiniteNumber(entry.timestampMs, 0),
       registers: isObjectRecord(entry.registers) ? entry.registers : {},
       checksums: sanitizeChecksums(entry.checksums),
     }))
-    .filter(entry => entry.checksums !== null);
+    .filter((entry) => entry.checksums !== null);
 }
 
 export async function GET(): Promise<Response> {

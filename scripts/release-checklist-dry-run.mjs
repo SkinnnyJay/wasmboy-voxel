@@ -2,6 +2,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { resolveTimeoutFromCliAndEnv } from './cli-timeout.mjs';
 import { readRequiredArgumentValue, validateRequiredArgumentValue } from './cli-arg-values.mjs';
+import { attemptWindowsTimeoutTerminationFallback, resolveTimeoutKillSignal } from './subprocess-timeout-signals.mjs';
 
 const RELEASE_TARGETS = [
   { packageName: '@wasmboy/api', packageDirectory: 'packages/api' },
@@ -124,11 +125,12 @@ function runNpmPublishDryRun(repoRoot, releaseTarget, timeoutMs) {
     encoding: 'utf8',
     env: process.env,
     timeout: timeoutMs,
-    killSignal: 'SIGTERM',
+    killSignal: resolveTimeoutKillSignal(),
   });
 
   if (result.error) {
     if (result.error.code === 'ETIMEDOUT') {
+      attemptWindowsTimeoutTerminationFallback(result.pid);
       throw new Error(
         `"${command}" timed out for ${releaseTarget.packageName} after ${String(timeoutMs)}ms in ${releaseTarget.packageDirectory}.`,
       );

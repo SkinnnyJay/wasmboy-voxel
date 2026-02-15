@@ -1,0 +1,20 @@
+export const HEADLESS_FRAME_WIDTH: 160;
+export const HEADLESS_FRAME_HEIGHT: 144;
+export const HEADLESS_FRAME_RGBA_CHANNELS: 4;
+export const HEADLESS_FRAME_BUFFER_RGBA_SIZE: number;
+export const HEADLESS_ROM_MAX_BYTES: number;
+export const HEADLESS_CARTRIDGE_RAM_MAX_BYTES: number;
+export const HEADLESS_GAMEBOY_ADDRESS_MIN: 0;
+export const HEADLESS_GAMEBOY_ADDRESS_MAX: number;
+export const HEADLESS_BYTE_MASK: number;
+export const HEADLESS_SCHEMA_VERSION: 'WasmBoyHeadless';
+export const HEADLESS_BUTTON_INDEX: {
+  UP: number;
+  RIGHT: number;
+  DOWN: number;
+  LEFT: number;
+  A: number;
+  B: number;
+  SELECT: number;
+  START: number;
+};

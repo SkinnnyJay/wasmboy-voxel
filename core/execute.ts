@@ -137,8 +137,6 @@ export function executeUntilCondition(checkMaxCyclesPerFrame: boolean = true, ma
     return Execute.RESPONSE_CONDITION_BREAKPOINT;
   }
 
-  // TODO: Boot ROM handling
-
   // There was an error, return -1, and push the program counter back to grab the error opcode
   Cpu.programCounter = u16Portable(Cpu.programCounter - 1);
   return -1;

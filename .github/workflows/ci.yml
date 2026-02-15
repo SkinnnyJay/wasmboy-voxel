@@ -144,6 +144,76 @@ jobs:
           path: |
             artifacts/automation-matrix-node-${{ matrix.node-version }}-diagnostics.tar.gz
 
+  automation-cross-platform-smoke:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            node-version: '22'
+            lane: windows
+          - os: macos-latest
+            node-version: '22'
+            lane: macos
+          - os: ubuntu-22.04
+            node-version: '22'
+            lane: linux-glibc-baseline
+          - os: ubuntu-24.04
+            node-version: '22'
+            lane: linux-modern
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            packages/api/package-lock.json
+            packages/cli/package-lock.json
+            apps/debugger/package-lock.json
+
+      - name: Install workspace dependencies
+        run: npm run install:stack:ci
+
+      - name: Verify lockfile drift
+        run: |
+          set -o pipefail
+          git diff --exit-code -- \
+            package-lock.json \
+            packages/api/package-lock.json \
+            packages/cli/package-lock.json \
+            apps/debugger/package-lock.json
+
+      - name: Run automation script smoke suite
+        run: |
+          set -o pipefail
+          npm run automation:test 2>&1 | tee "automation-cross-platform-${{ matrix.lane }}.log"
+
+      - name: Run NutJS UI smoke harness
+        run: |
+          set -o pipefail
+          npm run test:ui:smoke 2>&1 | tee "nutjs-ui-smoke-${{ matrix.lane }}.log"
+
+      - name: Upload cross-platform automation diagnostics
+        if: ${{ failure() || cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: automation-cross-platform-${{ matrix.lane }}-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 14
+          if-no-files-found: ignore
+          path: |
+            automation-cross-platform-${{ matrix.lane }}.log
+            nutjs-ui-smoke-${{ matrix.lane }}.log
+
   lint-typecheck-test:
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -222,3 +292,51 @@ jobs:
           if-no-files-found: ignore
           path: |
             artifacts/ci-diagnostics.tar.gz
+
+  dual-build-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            packages/api/package-lock.json
+            packages/cli/package-lock.json
+            apps/debugger/package-lock.json
+
+      - name: Install workspace dependencies
+        run: npm run install:stack:ci
+
+      - name: Verify lockfile drift
+        run: |
+          set -o pipefail
+          git diff --exit-code -- \
+            package-lock.json \
+            packages/api/package-lock.json \
+            packages/cli/package-lock.json \
+            apps/debugger/package-lock.json
+
+      - name: Run dual build verification (WASM + TS)
+        run: |
+          set -o pipefail
+          npm run test:integration:dual-build:verify 2>&1 | tee dual-build-verify.log
+
+      - name: Upload dual-build diagnostics
+        if: ${{ failure() || cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: dual-build-verify-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 14
+          if-no-files-found: ignore
+          path: |
+            dual-build-verify.log

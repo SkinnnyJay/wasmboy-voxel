@@ -14,7 +14,7 @@ function toChunkText(chunk: unknown): string {
 describe('logger', () => {
   it('writes info records as newline-terminated JSON to stdout', () => {
     const stdoutChunks: string[] = [];
-    const stdoutSpy = vi.spyOn(process.stdout, 'write').mockImplementation(chunk => {
+    const stdoutSpy = vi.spyOn(process.stdout, 'write').mockImplementation((chunk) => {
       stdoutChunks.push(toChunkText(chunk));
       return true;
     });
@@ -52,7 +52,7 @@ describe('logger', () => {
   it('writes error records as newline-terminated JSON to stderr', () => {
     const stdoutSpy = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
     const stderrChunks: string[] = [];
-    const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(chunk => {
+    const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation((chunk) => {
       stderrChunks.push(toChunkText(chunk));
       return true;
     });

@@ -34,3 +34,18 @@ test('artifact cleanup and staging guard allow golden and baseline reference art
   assert.deepEqual(blocked, []);
   assert.deepEqual(cleaned, []);
 });
+
+test('artifact cleanup and staging guard classify mixed-case paths consistently', () => {
+  const mixedCasePaths = [
+    'TEST/ACCURACY/TESTROMS/SUITE/FRAME.OUTPUT',
+    'test/accuracy/testroms/suite/frame.output',
+    'Test/Integration/Headless-Simple.OUTPUT.PNG',
+    'test/integration/headless-simple.output.png',
+  ];
+
+  const blocked = findBlockedArtifactPaths(mixedCasePaths);
+  const cleaned = mixedCasePaths.filter(path => shouldRemoveGeneratedFile(path));
+
+  assert.deepEqual(blocked, ['TEST/ACCURACY/TESTROMS/SUITE/FRAME.OUTPUT', 'Test/Integration/Headless-Simple.OUTPUT.PNG']);
+  assert.equal(cleaned.length, mixedCasePaths.length);
+});

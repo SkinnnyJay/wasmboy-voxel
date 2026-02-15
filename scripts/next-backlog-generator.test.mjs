@@ -2,8 +2,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
 import test from 'node:test';
+import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
+import { runSubprocess } from './subprocess-test-harness.mjs';
 import {
   createNextHundredBacklogMarkdown,
   generateNextBacklogFile,
@@ -28,6 +29,7 @@ const SAMPLE_DEBT_REGISTER = `
 `;
 
 const NEXT_BACKLOG_GENERATOR_SCRIPT_PATH = path.resolve('scripts/next-backlog-generator.mjs');
+installTempDirectoryCleanup(fs);
 
 test('parseOpenDebtItems extracts only open debt table rows', () => {
   const parsed = parseOpenDebtItems(SAMPLE_DEBT_REGISTER);
@@ -214,10 +216,9 @@ test('generateNextBacklogFile honors backlog size and start-task overrides', asy
 });
 
 test('next backlog generator script prints usage for --help', () => {
-  const result = spawnSync(process.execPath, [NEXT_BACKLOG_GENERATOR_SCRIPT_PATH, '--help'], {
+  const result = runSubprocess(process.execPath, [NEXT_BACKLOG_GENERATOR_SCRIPT_PATH, '--help'], {
     cwd: process.cwd(),
-    encoding: 'utf8',
-    env: process.env,
+    description: 'next-backlog-generator help',
   });
 
   assert.equal(result.status, 0);

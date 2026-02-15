@@ -52,31 +52,31 @@ plugins.push(bundleSize());
 // Define our worker input and output
 const workerFiles = [
   {
-    input: 'lib/graphics/worker/graphics.worker.js',
+    input: 'lib/graphics/worker/graphics.worker.ts',
     output: 'dist/worker/graphics.worker.js',
   },
   {
-    input: 'lib/audio/worker/audio.worker.js',
+    input: 'lib/audio/worker/audio.worker.ts',
     output: 'dist/worker/audio.worker.js',
   },
   {
-    input: 'lib/controller/worker/controller.worker.js',
+    input: 'lib/controller/worker/controller.worker.ts',
     output: 'dist/worker/controller.worker.js',
   },
   {
-    input: 'lib/memory/worker/memory.worker.js',
+    input: 'lib/memory/worker/memory.worker.ts',
     output: 'dist/worker/memory.worker.js',
   },
 ];
 if (process.env.TS) {
   workerFiles.push({
-    input: 'lib/wasmboy/worker/wasmboy.worker.js',
+    input: 'lib/wasmboy/worker/wasmboy.worker.ts',
     output: 'dist/worker/wasmboy.ts.worker.js',
   });
 }
 if (process.env.WASM) {
   workerFiles.push({
-    input: 'lib/wasmboy/worker/wasmboy.worker.js',
+    input: 'lib/wasmboy/worker/wasmboy.worker.ts',
     output: 'dist/worker/wasmboy.wasm.worker.js',
   });
 }

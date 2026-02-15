@@ -13,6 +13,19 @@ import { markFrameRendered, measureFrameRenderLatency } from '../lib/performance
 import { createAutoRestartingDebuggerWorker } from '../lib/worker-loader';
 import { debuggerSelectors, useDebuggerStore } from '../store/debugger-store';
 
+const MAX_JSONL_PREVIEW_CHARS = 2000;
+
+function buildJsonlPreview(exportedJsonl: string): string {
+  if (exportedJsonl.length <= MAX_JSONL_PREVIEW_CHARS) {
+    return exportedJsonl;
+  }
+  const omittedCharacters = exportedJsonl.length - MAX_JSONL_PREVIEW_CHARS;
+  return `${exportedJsonl.slice(
+    0,
+    MAX_JSONL_PREVIEW_CHARS,
+  )}\n…[${omittedCharacters} chars omitted from preview]`;
+}
+
 export default function HomePage() {
   const contractProbe = useMemo(() => contractsClient.createPlaceholderSnapshotValidation(), []);
   const [workerState, setWorkerState] = useState<string>('idle');
@@ -36,10 +49,10 @@ export default function HomePage() {
   const frameTimestampMs = useDebuggerStore(debuggerSelectors.frameTimestampMs);
   const snapshots = useDebuggerStore(debuggerSelectors.snapshots);
   const events = useDebuggerStore(debuggerSelectors.eventStream);
-  const setSandboxMode = useDebuggerStore(state => state.setSandboxMode);
-  const setRateLimitMs = useDebuggerStore(state => state.setRateLimitMs);
-  const captureSnapshot = useDebuggerStore(state => state.captureSnapshot);
-  const appendInterruptEvent = useDebuggerStore(state => state.appendInterruptEvent);
+  const setSandboxMode = useDebuggerStore((state) => state.setSandboxMode);
+  const setRateLimitMs = useDebuggerStore((state) => state.setRateLimitMs);
+  const captureSnapshot = useDebuggerStore((state) => state.captureSnapshot);
+  const appendInterruptEvent = useDebuggerStore((state) => state.appendInterruptEvent);
 
   useEffect(() => {
     try {
@@ -54,7 +67,7 @@ export default function HomePage() {
             worker.postMessage({ ping: `hello-debugger-restart-${restartCount}` });
           },
           onTelemetry(event) {
-            setWorkerTelemetry(previous => ({
+            setWorkerTelemetry((previous) => ({
               crashes: previous.crashes + (event.eventType === 'crash-detected' ? 1 : 0),
               scheduledRestarts:
                 previous.scheduledRestarts + (event.eventType === 'restart-scheduled' ? 1 : 0),
@@ -149,7 +162,9 @@ export default function HomePage() {
         </button>
         <button
           type="button"
-          onClick={() => setJsonlPreview(exportDebugDataJsonl(events, snapshots))}
+          onClick={() =>
+            setJsonlPreview(buildJsonlPreview(exportDebugDataJsonl(events, snapshots)))
+          }
         >
           Export JSONL
         </button>
@@ -166,7 +181,7 @@ export default function HomePage() {
       {jsonlPreview.length > 0 ? (
         <section className="panel" style={{ marginTop: 12 }}>
           <h3>JSONL Export Preview</h3>
-          <pre style={{ whiteSpace: 'pre-wrap' }}>{jsonlPreview.slice(0, 2000)}</pre>
+          <pre style={{ whiteSpace: 'pre-wrap' }}>{jsonlPreview}</pre>
         </section>
       ) : null}
     </div>

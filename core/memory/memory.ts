@@ -55,6 +55,21 @@ export class Memory {
   static isMBC3: boolean = false;
   static isMBC5: boolean = false;
 
+  // MBC3 RTC
+  static mbc3RtcRegisterSelect: i32 = -1;
+  static mbc3RtcSeconds: i32 = 0;
+  static mbc3RtcMinutes: i32 = 0;
+  static mbc3RtcHours: i32 = 0;
+  static mbc3RtcDayLow: i32 = 0;
+  static mbc3RtcDayHigh: i32 = 0;
+  static mbc3RtcLatchedSeconds: i32 = 0;
+  static mbc3RtcLatchedMinutes: i32 = 0;
+  static mbc3RtcLatchedHours: i32 = 0;
+  static mbc3RtcLatchedDayLow: i32 = 0;
+  static mbc3RtcLatchedDayHigh: i32 = 0;
+  static mbc3RtcIsLatched: boolean = false;
+  static mbc3RtcLastLatchWrite: i32 = 0;
+
   // DMA
   static memoryLocationHdmaSourceHigh: i32 = 0xff51;
   static memoryLocationHdmaSourceLow: i32 = 0xff52;
@@ -97,6 +112,20 @@ export class Memory {
     store<i32>(getSaveStateMemoryOffset(0x10, Memory.saveStateSlot), Memory.hblankHdmaTransferLengthRemaining);
     store<i32>(getSaveStateMemoryOffset(0x14, Memory.saveStateSlot), Memory.hblankHdmaSource);
     store<i32>(getSaveStateMemoryOffset(0x18, Memory.saveStateSlot), Memory.hblankHdmaDestination);
+
+    store<i32>(getSaveStateMemoryOffset(0x1c, Memory.saveStateSlot), Memory.mbc3RtcRegisterSelect);
+    store<u8>(getSaveStateMemoryOffset(0x20, Memory.saveStateSlot), <u8>Memory.mbc3RtcSeconds);
+    store<u8>(getSaveStateMemoryOffset(0x21, Memory.saveStateSlot), <u8>Memory.mbc3RtcMinutes);
+    store<u8>(getSaveStateMemoryOffset(0x22, Memory.saveStateSlot), <u8>Memory.mbc3RtcHours);
+    store<u8>(getSaveStateMemoryOffset(0x23, Memory.saveStateSlot), <u8>Memory.mbc3RtcDayLow);
+    store<u8>(getSaveStateMemoryOffset(0x24, Memory.saveStateSlot), <u8>Memory.mbc3RtcDayHigh);
+    store<u8>(getSaveStateMemoryOffset(0x25, Memory.saveStateSlot), <u8>Memory.mbc3RtcLatchedSeconds);
+    store<u8>(getSaveStateMemoryOffset(0x26, Memory.saveStateSlot), <u8>Memory.mbc3RtcLatchedMinutes);
+    store<u8>(getSaveStateMemoryOffset(0x27, Memory.saveStateSlot), <u8>Memory.mbc3RtcLatchedHours);
+    store<u8>(getSaveStateMemoryOffset(0x28, Memory.saveStateSlot), <u8>Memory.mbc3RtcLatchedDayLow);
+    store<u8>(getSaveStateMemoryOffset(0x29, Memory.saveStateSlot), <u8>Memory.mbc3RtcLatchedDayHigh);
+    storeBooleanDirectlyToWasmMemory(getSaveStateMemoryOffset(0x2a, Memory.saveStateSlot), Memory.mbc3RtcIsLatched);
+    store<u8>(getSaveStateMemoryOffset(0x2b, Memory.saveStateSlot), <u8>Memory.mbc3RtcLastLatchWrite);
   }
 
   // Function to load the save state from memory
@@ -118,6 +147,20 @@ export class Memory {
     Memory.hblankHdmaTransferLengthRemaining = load<i32>(getSaveStateMemoryOffset(0x10, Memory.saveStateSlot));
     Memory.hblankHdmaSource = load<i32>(getSaveStateMemoryOffset(0x14, Memory.saveStateSlot));
     Memory.hblankHdmaDestination = load<i32>(getSaveStateMemoryOffset(0x18, Memory.saveStateSlot));
+
+    Memory.mbc3RtcRegisterSelect = load<i32>(getSaveStateMemoryOffset(0x1c, Memory.saveStateSlot));
+    Memory.mbc3RtcSeconds = load<u8>(getSaveStateMemoryOffset(0x20, Memory.saveStateSlot));
+    Memory.mbc3RtcMinutes = load<u8>(getSaveStateMemoryOffset(0x21, Memory.saveStateSlot));
+    Memory.mbc3RtcHours = load<u8>(getSaveStateMemoryOffset(0x22, Memory.saveStateSlot));
+    Memory.mbc3RtcDayLow = load<u8>(getSaveStateMemoryOffset(0x23, Memory.saveStateSlot));
+    Memory.mbc3RtcDayHigh = load<u8>(getSaveStateMemoryOffset(0x24, Memory.saveStateSlot));
+    Memory.mbc3RtcLatchedSeconds = load<u8>(getSaveStateMemoryOffset(0x25, Memory.saveStateSlot));
+    Memory.mbc3RtcLatchedMinutes = load<u8>(getSaveStateMemoryOffset(0x26, Memory.saveStateSlot));
+    Memory.mbc3RtcLatchedHours = load<u8>(getSaveStateMemoryOffset(0x27, Memory.saveStateSlot));
+    Memory.mbc3RtcLatchedDayLow = load<u8>(getSaveStateMemoryOffset(0x28, Memory.saveStateSlot));
+    Memory.mbc3RtcLatchedDayHigh = load<u8>(getSaveStateMemoryOffset(0x29, Memory.saveStateSlot));
+    Memory.mbc3RtcIsLatched = loadBooleanDirectlyFromWasmMemory(getSaveStateMemoryOffset(0x2a, Memory.saveStateSlot));
+    Memory.mbc3RtcLastLatchWrite = load<u8>(getSaveStateMemoryOffset(0x2b, Memory.saveStateSlot));
   }
 }
 
@@ -140,6 +183,19 @@ export function initializeCartridge(): void {
 
   Memory.currentRomBank = 0x01;
   Memory.currentRamBank = 0x00;
+  Memory.mbc3RtcRegisterSelect = -1;
+  Memory.mbc3RtcSeconds = 0;
+  Memory.mbc3RtcMinutes = 0;
+  Memory.mbc3RtcHours = 0;
+  Memory.mbc3RtcDayLow = 0;
+  Memory.mbc3RtcDayHigh = 0;
+  Memory.mbc3RtcLatchedSeconds = 0;
+  Memory.mbc3RtcLatchedMinutes = 0;
+  Memory.mbc3RtcLatchedHours = 0;
+  Memory.mbc3RtcLatchedDayLow = 0;
+  Memory.mbc3RtcLatchedDayHigh = 0;
+  Memory.mbc3RtcIsLatched = false;
+  Memory.mbc3RtcLastLatchWrite = 0;
 
   // Set our GBC Banks
   eightBitStoreIntoGBMemory(Memory.memoryLocationGBCVRAMBank, 0x00);

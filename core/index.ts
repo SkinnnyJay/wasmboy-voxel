@@ -8,11 +8,12 @@ export {
   executeFrame,
   executeFrameAndCheckAudio,
   executeUntilCondition,
-  executeStep
+  executeStep,
 } from './execute';
 export { getCyclesPerCycleSet, getCycleSets, getCycles } from './cycles';
 export { setJoypadState } from './joypad/joypad';
-export { getNumberOfSamplesInAudioBuffer, clearAudioBuffer } from './sound/sound';
+export { getNumberOfSamplesInAudioBuffer, clearAudioBuffer, setVinInputSample } from './sound/sound';
+export { getColorComponentFromRgb } from './graphics/palette';
 export { setManualColorizationPalette } from './graphics/colors';
 export {
   WASMBOY_MEMORY_LOCATION,
@@ -63,7 +64,7 @@ export {
   DEBUG_GAMEBOY_MEMORY_LOCATION,
   DEBUG_GAMEBOY_MEMORY_SIZE,
   SCANLINE_DEBUG_BUFFER_LOCATION,
-  SCANLINE_DEBUG_BUFFER_SIZE
+  SCANLINE_DEBUG_BUFFER_SIZE,
 } from './constants';
 export { getWasmBoyOffsetFromGameBoyOffset } from './memory/memoryMap';
 export {
@@ -74,7 +75,7 @@ export {
   setWriteGbMemoryBreakpoint,
   resetWriteGbMemoryBreakpoint,
   getLastBreakpointAddress,
-  getLastBreakpointAccess
+  getLastBreakpointAccess,
 } from './debug/breakpoints';
 export {
   getRegisterA,
@@ -87,7 +88,7 @@ export {
   getRegisterF,
   getProgramCounter,
   getStackPointer,
-  getOpcodeAtProgramCounter
+  getOpcodeAtProgramCounter,
 } from './debug/debug-cpu';
 export {
   getLY,
@@ -97,7 +98,8 @@ export {
   getWindowY,
   drawBackgroundMapToWasmMemory,
   drawTileDataToWasmMemory,
-  drawOamToWasmMemory
+  drawOamToWasmMemory,
 } from './debug/debug-graphics';
 export { getDIV, getTIMA, getTMA, getTAC } from './debug/debug-timer';
 export { updateDebugGBMemory } from './debug/debug-memory';
+export { setSerialIncomingByte, clearSerialIncomingByte, getSerialOutgoingByte } from './serial/serial';

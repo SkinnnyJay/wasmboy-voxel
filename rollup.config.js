@@ -1,13 +1,10 @@
 // Rollup config to export the correct componation of bundles
-import libBundles from './rollup.lib';
-import workerBundles from './rollup.worker';
-import coreTsBundles from './rollup.core';
-import getCoreBundles from './rollup.getcore';
-import debuggerBundles from './rollup.debugger';
-import benchmarkBundles from './rollup.benchmark';
-import ampBundles from './rollup.amp';
+import libBundles from './rollup.lib.js';
+import workerBundles from './rollup.worker.js';
+import coreTsBundles from './rollup.core.js';
+import getCoreBundles from './rollup.getcore.js';
 
-function buildExports(iframeBundles) {
+async function buildExports() {
   let exports = [];
 
   if (!process.env.SKIP_LIB) {
@@ -20,23 +17,30 @@ function buildExports(iframeBundles) {
   }
 
   if (process.env.DEBUGGER) {
+    const debuggerBundlesModule = await import('./rollup.debugger.js');
+    const debuggerBundles = debuggerBundlesModule.default;
     exports = [...exports, ...debuggerBundles];
   }
 
   if (process.env.BENCHMARK) {
+    const benchmarkBundlesModule = await import('./rollup.benchmark.js');
+    const benchmarkBundles = benchmarkBundlesModule.default;
     exports = [...exports, ...benchmarkBundles];
   }
 
   if (process.env.AMP) {
+    const ampBundlesModule = await import('./rollup.amp.js');
+    const ampBundles = ampBundlesModule.default;
     exports = [...exports, ...ampBundles];
   }
 
   if (process.env.IFRAME) {
+    const iframeBundlesModule = await import('./rollup.iframe.js');
+    const iframeBundles = iframeBundlesModule.default;
     exports = [...exports, ...iframeBundles];
   }
 
   return exports;
 }
 
-// Load iframe (Svelte) only when building iframe to avoid pulling in Svelte/compiler for debugger
-export default process.env.IFRAME ? import('./rollup.iframe.js').then(mod => buildExports(mod.default)) : buildExports([]);
+export default buildExports();

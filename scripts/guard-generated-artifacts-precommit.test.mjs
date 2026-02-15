@@ -19,6 +19,16 @@ test('findBlockedArtifactPaths normalizes leading dot segments and windows path 
   assert.deepEqual(blockedPaths, ['build/iframe/index.html', 'dist/worker/audio.worker.js']);
 });
 
+test('findBlockedArtifactPaths normalizes Windows drive-letter absolute paths', () => {
+  const blockedPaths = findBlockedArtifactPaths([
+    'C:\\agent\\_work\\1\\s\\dist\\worker\\audio.worker.js',
+    'D:/agent/_work/1/s/test/integration/headless.output',
+    'core/constants.ts',
+  ]);
+
+  assert.deepEqual(blockedPaths, ['agent/_work/1/s/dist/worker/audio.worker.js', 'agent/_work/1/s/test/integration/headless.output']);
+});
+
 test('findBlockedArtifactPaths flags staged integration output artifacts', () => {
   const blockedPaths = findBlockedArtifactPaths([
     'test/integration/headless-simple.golden.output.png',
@@ -33,6 +43,18 @@ test('findBlockedArtifactPaths de-duplicates equivalent blocked paths', () => {
   const blockedPaths = findBlockedArtifactPaths(['dist/wasmboy.wasm.esm.js', './dist/wasmboy.wasm.esm.js', '.\\dist\\wasmboy.wasm.esm.js']);
 
   assert.deepEqual(blockedPaths, ['dist/wasmboy.wasm.esm.js']);
+});
+
+test('findBlockedArtifactPaths de-duplicates case-variant blocked paths', () => {
+  const blockedPaths = findBlockedArtifactPaths([
+    'dist/wasmboy.wasm.esm.js',
+    'DIST/WASMBOY.WASM.ESM.JS',
+    'Dist\\WasmBoy.wasm.esm.js',
+    'TEST/INTEGRATION/HEADLESS.OUTPUT',
+    'test/integration/headless.output',
+  ]);
+
+  assert.deepEqual(blockedPaths, ['TEST/INTEGRATION/HEADLESS.OUTPUT', 'dist/wasmboy.wasm.esm.js']);
 });
 
 test('findBlockedArtifactPaths sorts blocked paths using ordinal ordering', () => {

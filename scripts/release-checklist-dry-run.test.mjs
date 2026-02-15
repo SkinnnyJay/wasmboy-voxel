@@ -2,18 +2,24 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { writeFakeExecutable } from './test-fixtures.mjs';
+import { installTempDirectoryCleanup } from './temp-directory-cleanup.mjs';
+import { runSubprocess } from './subprocess-test-harness.mjs';
 import { parseReleaseChecklistArgs, resolveReleaseChecklistTimeoutFromEnv } from './release-checklist-dry-run.mjs';
 
 const RELEASE_CHECKLIST_SCRIPT_PATH = path.resolve('scripts/release-checklist-dry-run.mjs');
+installTempDirectoryCleanup(fs);
 
 function createTempWorkspace() {
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'release-checklist-dry-run-'));
   fs.mkdirSync(path.join(tempDirectory, 'packages', 'api'), { recursive: true });
   fs.mkdirSync(path.join(tempDirectory, 'packages', 'cli'), { recursive: true });
   return fs.realpathSync(tempDirectory);
+}
+
+function prependPath(pathEntry) {
+  return [pathEntry, process.env.PATH ?? ''].filter(value => value.length > 0).join(path.delimiter);
 }
 
 test('parseReleaseChecklistArgs supports timeout and help flags', () => {
@@ -35,10 +41,9 @@ test('parseReleaseChecklistArgs rejects malformed and duplicate arguments', () =
 });
 
 test('release checklist dry-run prints usage for --help', () => {
-  const result = spawnSync(process.execPath, [RELEASE_CHECKLIST_SCRIPT_PATH, '--help'], {
+  const result = runSubprocess(process.execPath, [RELEASE_CHECKLIST_SCRIPT_PATH, '--help'], {
     cwd: process.cwd(),
-    encoding: 'utf8',
-    env: process.env,
+    description: 'release-checklist help',
   });
 
   assert.equal(result.status, 0);
@@ -58,14 +63,13 @@ exit 0
 `,
   );
 
-  const result = spawnSync(process.execPath, [RELEASE_CHECKLIST_SCRIPT_PATH], {
+  const result = runSubprocess(process.execPath, [RELEASE_CHECKLIST_SCRIPT_PATH], {
     cwd: tempDirectory,
-    encoding: 'utf8',
     env: {
-      ...process.env,
-      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      PATH: prependPath(fakeBinDirectory),
       RELEASE_DRY_RUN_LOG: executionLogPath,
     },
+    description: 'release-checklist dry-run success fixture',
   });
 
   assert.equal(result.status, 0);
@@ -99,14 +103,13 @@ exit 0
 `,
   );
 
-  const result = spawnSync(process.execPath, [RELEASE_CHECKLIST_SCRIPT_PATH], {
+  const result = runSubprocess(process.execPath, [RELEASE_CHECKLIST_SCRIPT_PATH], {
     cwd: tempDirectory,
-    encoding: 'utf8',
     env: {
-      ...process.env,
-      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      PATH: prependPath(fakeBinDirectory),
       RELEASE_DRY_RUN_LOG: executionLogPath,
     },
+    description: 'release-checklist dry-run failure fixture',
   });
 
   assert.equal(result.status, 1);
@@ -134,14 +137,13 @@ exit 0
 `,
   );
 
-  const result = spawnSync(process.execPath, [RELEASE_CHECKLIST_SCRIPT_PATH], {
+  const result = runSubprocess(process.execPath, [RELEASE_CHECKLIST_SCRIPT_PATH], {
     cwd: tempDirectory,
-    encoding: 'utf8',
     env: {
-      ...process.env,
-      PATH: `${fakeBinDirectory}:${process.env.PATH ?? ''}`,
+      PATH: prependPath(fakeBinDirectory),
       RELEASE_CHECKLIST_NPM_TIMEOUT_MS: '50',
     },
+    description: 'release-checklist dry-run timeout fixture',
   });
 
   assert.equal(result.status, 1);

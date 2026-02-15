@@ -101,7 +101,18 @@ compatibility during refactors.
 
 ### Migration and versioning
 
-For migrating between **old** (upstream or pre-fork), **V1** (current JS/WASM + headless), and **V2** (TypeScript lib + migration stack), see **[MIGRATION.md](./MIGRATION.md)**. It covers entry points, breaking changes, and the planned V1/V2 layout and Makefile (see PLAN44.md §4.8).
+For migrating between **old** (upstream or pre-fork), **V1** (current JS/WASM + headless), and **V2** (TypeScript lib + migration stack), see **[MIGRATION.md](./MIGRATION.md)**.
+
+Repository layout anchors:
+
+- **V1:** `./V1/README.md` (classic core/lib/dist/demo stack)
+- **V2:** `./V2/README.md` (migration packages/apps + typed wrapper surfaces)
+
+Root Makefile targets:
+
+- `make v1-build`, `make v1-test`, `make v1-run`
+- `make v2-build`, `make v2-test`, `make v2-run`
+- `make test-all`
 
 ### Migration Stack (Workspace Packages/Apps)
 

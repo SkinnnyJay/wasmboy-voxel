@@ -18,14 +18,14 @@ import { i32Portable } from '../portable/portable';
 // https://github.com/torch2424/wasmboy/issues/216
 
 // Inlined because closure compiler inlines
-export function renderBackground(scanlineRegister: i32, tileDataMemoryLocation: i32, tileMapMemoryLocation: i32): void {
+export function renderBackground(
+  scanlineRegister: i32,
+  tileDataMemoryLocation: i32,
+  tileMapMemoryLocation: i32,
+  scrollX: i32,
+  scrollY: i32,
+): void {
   // NOTE: Camera is reffering to what you can see inside the 160x144 viewport of the entire rendered 256x256 map.
-
-  // Get our scrollX and scrollY (u16 to play nice with assemblyscript)
-  // let scrollX: i32 = eightBitLoadFromGBMemory(Graphics.memoryLocationScrollX);
-  // let scrollY: i32 = eightBitLoadFromGBMemory(Graphics.memoryLocationScrollY);
-  let scrollX: i32 = Graphics.scrollX;
-  let scrollY: i32 = Graphics.scrollY;
 
   // Get our current pixel y positon on the 160x144 camera (Row that the scanline draws across)
   // this is done by getting the current scroll Y position,
@@ -42,13 +42,13 @@ export function renderBackground(scanlineRegister: i32, tileDataMemoryLocation: 
 }
 
 // Inlined because closure compiler inlines
-export function renderWindow(scanlineRegister: i32, tileDataMemoryLocation: i32, tileMapMemoryLocation: i32): void {
-  // Get our windowX and windowY
-  // let windowX: i32 = eightBitLoadFromGBMemory(Graphics.memoryLocationWindowX);
-  // let windowY: i32 = eightBitLoadFromGBMemory(Graphics.memoryLocationWindowY);
-  let windowX: i32 = Graphics.windowX;
-  let windowY: i32 = Graphics.windowY;
-
+export function renderWindow(
+  scanlineRegister: i32,
+  tileDataMemoryLocation: i32,
+  tileMapMemoryLocation: i32,
+  windowX: i32,
+  windowY: i32,
+): void {
   // NOTE: Camera is reffering to what you can see inside the 160x144 viewport of the entire rendered 256x256 map.
 
   // First ensure that the scanline is greater than our window
@@ -354,10 +354,10 @@ function drawLineOfTileFromTileCache(
   // First, initialize how many pixels we have drawn
   let pixelsDrawn: i32 = 0;
 
-  // Check if the current tile matches our tileId
-  // TODO: Allow the first line to use the tile cache, for some odd reason it doesn't work when scanline is 0
+  // Check if the current tile matches our tileId.
+  // Allow scanline 0 to use the cache as long as we have a valid previous tile.
   let nextXIndexToPerformCacheCheck = TileCache.nextXIndexToPerformCacheCheck;
-  if (yPixel > 0 && xPixel > 8 && <i32>tileIdFromTileMap === TileCache.tileId && xPixel === nextXIndexToPerformCacheCheck) {
+  if (xPixel > 8 && <i32>tileIdFromTileMap === TileCache.tileId && xPixel === nextXIndexToPerformCacheCheck) {
     // Was last tile flipped
     let wasLastTileHorizontallyFlipped = checkBitOnByte(5, eightBitLoadFromGBMemory(tileMapAddress - 1));
     let isCurrentTileHorizontallyFlipped = checkBitOnByte(5, eightBitLoadFromGBMemory(tileMapAddress));
@@ -367,7 +367,7 @@ function drawLineOfTileFromTileCache(
     for (let tileCacheIndex = 0; tileCacheIndex < 8; ++tileCacheIndex) {
       const srcIndex = flipOffset !== 0 ? 7 - tileCacheIndex : tileCacheIndex;
       const xPos = xPixel + srcIndex;
-      if (xPos <= 160) {
+      if (xPos < 160) {
         const previousXPixel = xPos - 8;
         const previousTilePixelLocation = FRAME_LOCATION + getRgbPixelStart(previousXPixel, yPixel);
 
